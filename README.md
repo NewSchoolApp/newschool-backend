@@ -32,3 +32,6 @@ Isso acontecerá automaticamente.
 # Código de conduta
 
 # Bugs
+
+hello world (depois vou apagar)
+Só pra validar a integração github-slack
