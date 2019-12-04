@@ -32,3 +32,4 @@ Isso acontecerá automaticamente.
 # Código de conduta
 
 # Bugs
+teste
