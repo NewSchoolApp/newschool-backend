@@ -18,6 +18,12 @@ export class User extends Audit {
   @Column()
   password: string;
 
+  @Column({ name: 'url_facebook' })
+  urlFacebook: string;
+
+  @Column({ name: 'url_instagram' })
+  urlInstagram: string;
+
   @Column()
   salt: string;
 

@@ -9,5 +9,11 @@ export class UserUpdateDTO {
   email: User['email'];
 
   @ApiModelProperty({ type: String })
+  urlFacebook: User['urlFacebook'];
+
+  @ApiModelProperty({ type: String })
+  urlInstagram: User['urlInstagram'];
+
+  @ApiModelProperty({ type: String })
   password: User['password'];
 }
