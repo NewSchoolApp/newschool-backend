@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { Role } from '../../SecurityModule/entity';
+import { RoleEnum } from '../../SecurityModule/enum';
 
 @Entity()
 export class User extends Audit {
@@ -24,9 +24,11 @@ export class User extends Audit {
   @Column({ name: 'url_instagram' })
   urlInstagram: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   salt: string;
 
-  @ManyToOne(() => Role, (role: Role) => role.users)
-  role: string;
+  @Column({ type: 'varchar', nullable: false })
+  role: RoleEnum;
 }

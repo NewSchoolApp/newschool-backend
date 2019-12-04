@@ -16,7 +16,7 @@ const typeOrmConfiguration = (): MysqlConnectionOptions => {
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    // dropSchema: process.env.NODE_ENV === 'test',
+    dropSchema: process.env.NODE_ENV === 'test',
     synchronize: process.env.NODE_ENV !== 'prod',
   };
 };
