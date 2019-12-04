@@ -5,7 +5,8 @@ import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { ClientCredentials } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, GrantTypeEnum } from '../../src/SecurityModule/enum';
+import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
+import { User } from '../../src/UserModule/entity';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -37,6 +38,7 @@ describe('SecurityController (e2e)', () => {
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum.FRONT;
     clientCredentials.secret = 'test';
+    clientCredentials.role = RoleEnum.ADMIN;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
   });
@@ -60,7 +62,7 @@ describe('SecurityController (e2e)', () => {
         expect(res.body.accessToken).not.toBeNull();
         expect(res.body.refreshToken).not.toBeNull();
         expect(res.body.tokenType).toBe('bearer');
-        expect(res.body.expiresIn).toBe(120);
+        expect(res.body.expiresIn).toBe(Number(process.env.EXPIRES_IN_ACCESS_TOKEN));
       });
   });
 
@@ -69,6 +71,7 @@ describe('SecurityController (e2e)', () => {
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum.FRONT;
     clientCredentials.secret = 'test';
+    clientCredentials.role = RoleEnum.ADMIN;
     await clientCredentialRepository.save(clientCredentials);
 
     const authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
@@ -79,6 +82,47 @@ describe('SecurityController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', 'INVALID GRANT TYPE')
       .expect(400);
+  });
+
+  it('should throw 404 if client credentials is wrong', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${stringToBase64('wrong:authorization')}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .expect(404);
+  });
+
+  it('should validate grant type password', async () => {
+    const userRepository: Repository<User> = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+    const user: User = new User();
+    user.name = 'test user1';
+    user.email = 'my@email.com';
+    user.password = 'mypass';
+    user.urlFacebook = 'facebook';
+    user.urlInstagram = 'instagram';
+    user.salt = '';
+    user.role = RoleEnum.ADMIN;
+    await userRepository.save(user);
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.PASSWORD)
+      .field('username', user.email)
+      .field('password', user.password)
+      .expect(200);
+  });
+
+  it('should return 404 if user not found', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.PASSWORD)
+      .field('username', 'randomUserEmail')
+      .field('password', 'randomPass')
+      .expect(404);
   });
 
   afterAll(async () => {

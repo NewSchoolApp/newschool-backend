@@ -68,7 +68,7 @@ export class SecurityService {
     if (!name) {
       throw new InvalidClientCredentialsError();
     }
-    const clientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(name, secret);
+    const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(name, secret);
     if (!clientCredentials) {
       throw new InvalidClientCredentialsError();
     }
