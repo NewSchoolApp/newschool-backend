@@ -5,6 +5,8 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { SecurityModule } from './SecurityModule';
 import { UserModule } from './UserModule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CourseModule } from './CourseModule';
+
 
 const typeOrmConfiguration = (): MysqlConnectionOptions => {
   return {
@@ -26,6 +28,7 @@ const typeOrmConfiguration = (): MysqlConnectionOptions => {
     TypeOrmModule.forRootAsync({ useFactory: typeOrmConfiguration }),
     SecurityModule,
     UserModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
