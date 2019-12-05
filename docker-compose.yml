@@ -6,8 +6,28 @@ services:
     restart: always
     command: npm run start:dev
     volumes:
-      - './:/newschool'
+      - "./:/newschool"
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: "development"
+      DATABASE_NAME: "newschool"
+      DATABASE_USER: "newschool"
+      DATABASE_PASSWORD: "newschool123456"
+      DATABASE_PORT: 3306
+      PORT: 3000
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: "newschool"
+      MYSQL_USER: "newschool"
+      MYSQL_PASSWORD: "newschool123456"
+      MYSQL_ROOT_PASSWORD: "newschool123456"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - "./data/db/mysql:/var/lib/mysql"

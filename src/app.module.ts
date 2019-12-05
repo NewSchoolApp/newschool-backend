@@ -2,17 +2,20 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
+import { Settings} from './Settings';
+
+const settings = new Settings();
 
 const typeOrmConfiguration = (): MysqlConnectionOptions => {
   return {
     type: 'mysql',
     host: process.env.DATABASE_HOST,
-    database: process.env.DATABASE_NAME,
-    port: 5432,
-    username: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD,
+    database: settings.getDatabaseName(),
+    port: Number(settings.getDatabasePort()),
+    username: settings.getDatabaseUser(),
+    password: settings.getDatabasePassword(),
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: process.env.DATABASE_ENV !== 'prod',
+    synchronize: settings.getEnvironment() !== 'prod',
   };
 };
 
