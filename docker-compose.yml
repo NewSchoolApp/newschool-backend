@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    restart: always
+    command: npm run start:dev
+    volumes:
+      - './:/newschool'
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: "development"
