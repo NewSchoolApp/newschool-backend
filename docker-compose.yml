@@ -10,7 +10,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: "development"
+      NODE_ENV: "test"
       DATABASE_NAME: "newschool"
       DATABASE_USER: "newschool"
       DATABASE_PASSWORD: "newschool123456"
