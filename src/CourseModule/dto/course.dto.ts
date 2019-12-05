@@ -8,6 +8,9 @@ export class CourseDTO {
   @ApiModelProperty({ type: String })
   title: Course['title'];
 
+  @ApiModelProperty({ type: String })
+  thumbUrl: Course['thumbUrl'];
+
   @ApiModelProperty({ type: Number })
   authorId: Course['authorId'];
 

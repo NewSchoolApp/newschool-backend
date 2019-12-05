@@ -17,6 +17,11 @@ export class Course extends Audit {
   description: string;
 
   @Column({
+    nullable: true
+  })
+  thumbUrl: string;
+
+  @Column({
     type: 'int',
     nullable: false,
   })
