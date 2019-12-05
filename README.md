@@ -1,5 +1,5 @@
 #@NewSchool/back
-> Backend da NewSchool, desenvolvido em NodeJS
+> Backend da New School, desenvolvido em NodeJS
 
 # Como rodar o projeto
 
@@ -29,7 +29,7 @@ Isso acontecerá automaticamente.
 
 # Como contribuir
 
-1 - CONHEÇA O PROJETO NewSchool
+1 - CONHEÇA O PROJETO **New School**
 
 https://youtu.be/u4O8wE0gYO0
 
@@ -37,7 +37,7 @@ https://youtu.be/u4O8wE0gYO0
 
 https://join.slack.com/t/newschoolgrupo/shared_invite/enQtODQ4NjUyMjAzNTUzLTg3NTJiNmQ1ODE3YzYzMjcyYzVhYTNkZjIzYjViMjI4NTBjYzFiYTc3Njg0ZWI3YTk2MjE5NDY3MDlkYzViOGI
 
-2.2 - LÁ NO SLACK, ENTRE NO CANAL #BACKEND
+2.1 - LÁ NO SLACK, ENTRE NO CANAL #BACKEND
 
 - Se apresente. Nome, cidade, profissão, e principais habilidades.
 - Pergunte sobre as tarefas em aberto.
@@ -47,7 +47,7 @@ https://join.slack.com/t/newschoolgrupo/shared_invite/enQtODQ4NjUyMjAzNTUzLTg3NT
 
 https://trello.com/invite/b/2MHuWn0C/b1a15b7112ea11b856cfa78174a6f72d/projeto-new-school-app
 
-3.2 - PEGUE UMA TAREFA NO TRELLO.
+3.1 - PEGUE UMA TAREFA NO TRELLO.
 
 - https://trello.com/b/2MHuWn0C/projeto-new-school-app
 - Coloque no seu nome e mova para DOING.
