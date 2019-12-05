@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { RoleEnum } from '../../SecurityModule/enum';
@@ -31,4 +32,9 @@ export class User extends Audit {
 
   @Column({ type: 'varchar', nullable: false })
   role: RoleEnum;
+
+  validPassword(password: string) {
+    const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
+    return this.password === hash;
+  }
 }
