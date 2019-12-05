@@ -6,7 +6,10 @@ export class CourseDTO {
   id: Course['id'];
 
   @ApiModelProperty({ type: String })
-  name: Course['name'];
+  title: Course['title'];
+
+  @ApiModelProperty({ type: Number })
+  authorId: Course['authorId'];
 
 
 }

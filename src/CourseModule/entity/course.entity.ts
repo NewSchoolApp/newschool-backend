@@ -9,6 +9,17 @@ export class Course extends Audit {
   @Column({
     nullable: false,
   })
-  name: string;
+  title: string;
+
+  @Column({
+    nullable: false,
+  })
+  description: string;
+
+  @Column({
+    type: 'int',
+    nullable: false,
+  })
+  authorId: string;
 
 }
