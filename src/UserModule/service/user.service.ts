@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../repository';
 import { User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
@@ -25,7 +25,11 @@ export class UserService {
     return user;
   }
 
-  public add(user: NewUserDTO): Promise<User> {
+  public async add(user: NewUserDTO): Promise<User> {
+    const userWithSameEmail: User = await this.repository.findByEmail(user.email);
+    if (userWithSameEmail) {
+      throw new ConflictException();
+    }
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
     return this.repository.save({
