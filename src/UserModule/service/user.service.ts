@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../repository';
 import { User } from '../entity';
@@ -25,7 +26,13 @@ export class UserService {
   }
 
   public add(user: NewUserDTO): Promise<User> {
-    return this.repository.save(user);
+    const salt: string = this.createSalt();
+    const hashPassword: string = this.createHashedPassword(user.password, salt);
+    return this.repository.save({
+      ...user,
+      salt,
+      password: hashPassword,
+    });
   }
 
   public async delete(id: User['id']): Promise<void> {
@@ -38,10 +45,21 @@ export class UserService {
   }
 
   public async findByEmailAndPassword(email: string, password: string): Promise<User> {
-    const user = await this.repository.findByEmailAndPassword(email, password);
+    const user: User = await this.repository.findByEmail(email);
     if (!user) {
       throw new UserNotFoundError();
     }
+    if (!user.validPassword(password)) {
+      throw new UserNotFoundError();
+    }
     return user;
+  }
+
+  private createSalt(): string {
+    return crypto.randomBytes(16).toString('hex');
+  }
+
+  private createHashedPassword(password: string, salt: string): string {
+    return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
   }
 }
