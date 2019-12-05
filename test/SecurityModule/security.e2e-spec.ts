@@ -7,9 +7,18 @@ import { ClientCredentials } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { User } from '../../src/UserModule/entity';
+import * as crypto from 'crypto';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
+};
+
+const createSalt = (): string => {
+  return crypto.randomBytes(16).toString('hex');
+};
+
+const createHashedPassword = (password: string, salt: string): string => {
+  return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
 };
 
 describe('SecurityController (e2e)', () => {
@@ -96,12 +105,13 @@ describe('SecurityController (e2e)', () => {
   it('should validate grant type password', async () => {
     const userRepository: Repository<User> = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
     const user: User = new User();
+    const salt = createSalt();
     user.name = 'test user1';
     user.email = 'my@email.com';
-    user.password = 'mypass';
+    user.salt = salt;
+    user.password = createHashedPassword('mypass', user.salt);
     user.urlFacebook = 'facebook';
     user.urlInstagram = 'instagram';
-    user.salt = '';
     user.role = RoleEnum.ADMIN;
     await userRepository.save(user);
     return request(app.getHttpServer())
@@ -110,7 +120,7 @@ describe('SecurityController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.PASSWORD)
       .field('username', user.email)
-      .field('password', user.password)
+      .field('password', 'mypass')
       .expect(200);
   });
 
