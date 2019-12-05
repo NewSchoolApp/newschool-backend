@@ -20,8 +20,6 @@ export class CourseController {
   @HttpCode(200)
   @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
   @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
   public async getAll(): Promise<CourseDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll());
   }
@@ -31,8 +29,6 @@ export class CourseController {
   @ApiOkResponse({ type: CourseDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find Course by id', description: 'Find Course by id' })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
   public async findById(@Param('id') id: CourseDTO['id']): Promise<CourseDTO> {
     return this.mapper.toDto(await this.service.findById(id));
   }
