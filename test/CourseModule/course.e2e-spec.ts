@@ -89,7 +89,7 @@ describe('CourseController (e2e)', () => {
           .get(`${courseUrl}/${savedCourse.id}`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .expect((response) => {
-            expect(response.body.email).toBe(savedCourse.description);
+            expect(response.body.description).toBe(savedCourse.description);
           });
       });
   });
