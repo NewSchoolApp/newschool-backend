@@ -7,6 +7,7 @@ import { ClientCredentials } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
+import { CourseRepository, Course } from 'src/CourseModule';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -70,18 +71,26 @@ describe('CourseController (e2e)', () => {
 
 
   it('should find course by id', async () => {
+    const course: Course = new Course();
+    const courseRepository: Repository<Course> = moduleFixture.get<Repository<Course>>(getRepositoryToken(ClientCredentials));
+
+    course.description = 'Teste';
+    course.thumbUrl = '';
+    course.authorId = '1';
+    const savedCourse = await courseRepository.save(course);
+
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(async (res) => {
         return request(app.getHttpServer())
-          .get(`${courseUrl}/0`)
-          .set('Accept', 'application/json')
+          .get(`${courseUrl}/${savedCourse.id}`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .expect('Content-Type', /json/)
-          .expect(404);
+          .expect((response) => {
+            expect(response.body.email).toBe(savedCourse.description);
+          });
       });
   });
 
