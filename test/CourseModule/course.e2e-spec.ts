@@ -7,7 +7,7 @@ import { ClientCredentials } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { CourseRepository, Course } from 'src/CourseModule';
+import { CourseRepository, Course } from '../../src/CourseModule';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
