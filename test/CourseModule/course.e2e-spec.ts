@@ -77,8 +77,9 @@ describe('CourseController (e2e)', () => {
     course.description = 'Teste';
     course.thumbUrl = '';
     course.authorId = '1';
+    course.id = '2';
     const savedCourse = await courseRepository.save(course);
-
+    
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
