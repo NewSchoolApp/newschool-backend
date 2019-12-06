@@ -20,6 +20,10 @@ os seguintes comandos:
 >**DATABASE_NAME=newschool**
 >**DATABASE_USERNAME=root**
 >**DATABASE_PASSWORD=123456**
+>**NODE_ENV=test**
+>**JWT_SECRET=secret**
+>**EXPIRES_IN_ACCESS_TOKEN=12000**
+>**EXPIRES_IN_REFRESH_TOKEN=24000**
 
 4- Rodar o comando para iniciar o ambiente de desenvolvimento local
 >**npm run start:dev**

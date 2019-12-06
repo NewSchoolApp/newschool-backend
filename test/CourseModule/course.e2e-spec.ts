@@ -17,7 +17,7 @@ describe('CourseController (e2e)', () => {
   let moduleFixture: TestingModule;
   let queryRunner: QueryRunner;
   let authorization: string;
-  const CourseUrl: string = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
+  const courseUrl: string = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -50,6 +50,39 @@ describe('CourseController (e2e)', () => {
 
   afterEach(async () => {
     await queryRunner.rollbackTransaction();
+  });
+
+  it('should find course by id', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .then((res) => {
+        return request(app.getHttpServer())
+          .get(`${courseUrl}/`)
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${res.body.accessToken}`)
+          .expect('Content-Type', /json/)
+          .expect(200);
+      });
+  });
+
+
+  it('should find course by id', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .then((res) => {
+        return request(app.getHttpServer())
+          .get(`${courseUrl}/0`)
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${res.body.accessToken}`)
+          .expect('Content-Type', /json/)
+          .expect(404);
+      });
   });
 
 
