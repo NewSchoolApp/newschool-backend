@@ -42,6 +42,9 @@ que estamos com o hot reloading no Docker também, ou seja, você não precisar�
 ficar parando o container e subindo ele novamente a cada mudança que você fizer.
 Isso acontecerá automaticamente.
 
+5- Para executar os teste E2E execute o script abaixo
+>**npm run test:e2e**
+
 # Guidelines
 
 # Como contribuir
