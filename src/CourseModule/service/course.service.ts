@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
-import { CourseNotFoundError } from '../../SecurityModule/exception';
 @Injectable()
 export class CourseService {
 
@@ -15,11 +14,11 @@ export class CourseService {
   }
 
   public async findById(id: Course['id']): Promise<Course> {
-    const Course: Course | undefined = await this.repository.findOne(id);
-    if (!Course) {
+    const course: Course | undefined = await this.repository.findOne(id);
+    if (!course) {
       throw new NotFoundException();
     }
-    return Course;
+    return course;
   }
 
 
@@ -29,10 +28,10 @@ export class CourseService {
 
 
   public async findByTitle(title: string): Promise<Course> {
-    const Course = await this.repository.findByTitle(title);
-    if (!Course) {
-      throw new CourseNotFoundError();
+    const course = await this.repository.findByTitle(title);
+    if (!course) {
+      throw new NotFoundException();
     }
-    return Course;
+    return course;
   }
 }
