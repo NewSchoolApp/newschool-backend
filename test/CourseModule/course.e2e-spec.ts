@@ -53,7 +53,7 @@ describe('CourseController (e2e)', () => {
     await queryRunner.rollbackTransaction();
   });
 
-  it('should find course by id', async () => {
+  it('should find all courses', async () => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
