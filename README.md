@@ -1,5 +1,6 @@
 #@NewSchool/back
 > Backend da NewSchool, desenvolvido em NodeJS
+> Banco de Dados MySQL
 
 # Como rodar o project
 
@@ -11,7 +12,16 @@ os seguintes comandos:
 1- Instalar o NestJs cli globalmente na sua máquina  
 >**npm i -g @nestjs/cli**
 
-2- Rodar o comando para iniciar o ambiente de desenvolvimento local
+2- Rodar o comando para instalar as depedencias do projeto
+>**npm install**
+
+3- Configurar as variaveis de ambiente
+>**DATABASE_HOST=127.0.0.1**
+>**DATABASE_NAME=newschool**
+>**DATABASE_USERNAME=root**
+>**DATABASE_PASSWORD=123456**
+
+4- Rodar o comando para iniciar o ambiente de desenvolvimento local
 >**npm run start:dev**
 
 Ou, você pode optar por rodar o projeto via Docker. Para isso precisamos 
