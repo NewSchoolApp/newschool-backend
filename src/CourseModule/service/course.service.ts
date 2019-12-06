@@ -28,8 +28,8 @@ export class CourseService {
   }
 
 
-  public async findByName(title: string): Promise<Course> {
-    const Course = await this.repository.findByName(title);
+  public async findByTitle(title: string): Promise<Course> {
+    const Course = await this.repository.findByTitle(title);
     if (!Course) {
       throw new CourseNotFoundError();
     }
