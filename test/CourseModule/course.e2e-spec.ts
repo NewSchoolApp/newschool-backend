@@ -79,7 +79,7 @@ describe('CourseController (e2e)', () => {
     course.authorId = '1';
     course.id = '2';
     const savedCourse = await courseRepository.save(course);
-    
+
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -95,6 +95,21 @@ describe('CourseController (e2e)', () => {
       });
   });
 
+  it('should return 404 if ID doesnt exist', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .then((res) => {
+        return request(app.getHttpServer())
+          .get(`${courseUrl}/0`)
+          .set('Accept', 'application/json')
+          .set('Authorization', `Bearer ${res.body.accessToken}`)
+          .expect('Content-Type', /json/)
+          .expect(404);
+      });
+  });
 
 
   afterAll(async () => {
