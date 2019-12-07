@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials } from '../../src/SecurityModule/entity';
+import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
@@ -18,7 +18,8 @@ describe('UserController (e2e)', () => {
   let moduleFixture: TestingModule;
   let queryRunner: QueryRunner;
   let authorization: string;
-  const userUrl: string = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
+  let adminRole: Role;
+  const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -36,11 +37,17 @@ describe('UserController (e2e)', () => {
     // @ts-ignore
     queryRunner = manager.queryRunner = dbConnection.createQueryRunner('master');
 
+    const roleRepository: Repository<Role> = moduleFixture.get<Repository<Role>>(getRepositoryToken(Role));
+    const role: Role = new Role();
+    role.name = RoleEnum.ADMIN;
+    const savedRole = await roleRepository.save(role);
+    adminRole = savedRole;
+
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum.FRONT;
     clientCredentials.secret = 'test2';
-    clientCredentials.role = RoleEnum.ADMIN;
+    clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
   });
@@ -53,7 +60,7 @@ describe('UserController (e2e)', () => {
     await queryRunner.rollbackTransaction();
   });
 
-  it('should add user', async () => {
+  it('should add user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -69,13 +76,14 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: RoleEnum.ADMIN,
+            role: adminRole,
           } as NewUserDTO)
-          .expect(201);
+          .expect(201)
+          .then(() => done());
       });
   });
 
-  it('should throw if user is missing a required property', async () => {
+  it('should throw if user is missing a required property', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -90,13 +98,14 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: RoleEnum.ADMIN,
+            role: adminRole,
           } as NewUserDTO)
-          .expect(400);
+          .expect(400)
+          .then(() => done());
       });
   });
 
-  it('should find user by id', async () => {
+  it('should find user by id', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -112,7 +121,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: RoleEnum.ADMIN,
+            role: adminRole,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -120,12 +129,14 @@ describe('UserController (e2e)', () => {
               .set('Authorization', `Bearer ${res.body.accessToken}`)
               .expect((response) => {
                 expect(response.body.email).toBe('my-user2@email.com');
-              });
+              })
+              .expect(200)
+              .then(() => done());
           });
       });
   });
 
-  it('should update user', async () => {
+  it('should update user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -141,7 +152,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: RoleEnum.ADMIN,
+            role: adminRole,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -157,13 +168,14 @@ describe('UserController (e2e)', () => {
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
                   .expect((response) => {
                     expect(response.body.name).toBe('updated name');
-                  });
+                  })
+                  .then(() => done());
               });
           });
       });
   });
 
-  it('should delete user', async () => {
+  it('should delete user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -179,7 +191,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: RoleEnum.ADMIN,
+            role: adminRole,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -190,7 +202,8 @@ describe('UserController (e2e)', () => {
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
                   .expect(404);
-              });
+              })
+              .then(() => done());
           });
       });
   });

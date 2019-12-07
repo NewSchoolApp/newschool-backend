@@ -1,7 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { User } from '../entity';
-import { IsEnum, IsNotEmpty } from 'class-validator';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { IsNotEmpty } from 'class-validator';
 
 export class NewUserDTO {
   @ApiModelProperty({ type: String })
@@ -22,8 +21,7 @@ export class NewUserDTO {
   @ApiModelProperty({ type: String })
   urlInstagram: User['urlInstagram'];
 
-  @ApiModelProperty({ enum: RoleEnum })
-  @IsEnum(RoleEnum)
+  @ApiModelProperty({ type: User['role'] })
   @IsNotEmpty()
   role: User['role'];
 }

@@ -5,6 +5,6 @@ import { User } from '../entity';
 export class UserRepository extends Repository<User> {
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.findOne({ email });
+    return this.findOne({ email }, { relations: ['role'] });
   }
 }
