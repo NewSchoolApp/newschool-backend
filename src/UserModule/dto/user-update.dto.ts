@@ -27,5 +27,5 @@ export class UserUpdateDTO {
   @ApiModelProperty({ enum: RoleEnum })
   @IsEnum(RoleEnum)
   @IsNotEmpty()
-  role: RoleEnum;
+  role: User['role'];
 }

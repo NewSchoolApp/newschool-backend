@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ClientCredentialsEnum, RoleEnum } from '../enum';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ClientCredentialsEnum } from '../enum';
 import { Audit } from '../../CommonsModule';
 import { IsEnum } from 'class-validator';
+import { Role } from './role.entity';
 
 @Entity({ name: 'client-credentials' })
 export class ClientCredentials extends Audit {
@@ -18,6 +19,6 @@ export class ClientCredentials extends Audit {
   @Column({ type: 'varchar' })
   secret: string;
 
-  @Column()
-  role: RoleEnum.ADMIN;
+  @ManyToOne<Role>(() => Role, (role: Role) => role.clientCredentials)
+  role: Role;
 }
