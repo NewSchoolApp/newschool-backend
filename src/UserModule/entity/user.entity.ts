@@ -1,7 +1,6 @@
 import * as crypto from 'crypto';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { RoleEnum } from '../../SecurityModule/enum';
 import { Role } from '../../SecurityModule/entity';
 
 @Entity()
