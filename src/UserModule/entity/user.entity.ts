@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { Role } from '../../SecurityModule/entity';
+import { Role } from '../../SecurityModule';
 
 @Entity()
 export class User extends Audit {

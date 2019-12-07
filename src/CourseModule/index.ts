@@ -1,4 +1,4 @@
-export * from './course.module';
-export * from './entity';
-export * from './repository';
-export * from './service';
+export { CourseModule } from './course.module';
+export { Course } from './entity';
+export { CourseRepository } from './repository';
+export { CourseService } from './service';

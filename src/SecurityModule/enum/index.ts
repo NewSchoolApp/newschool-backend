@@ -1,3 +1,3 @@
-export * from './role.enum';
-export * from './client-credentials.enum';
-export * from './grant-type.enum';
+export { RoleEnum } from './role.enum';
+export { ClientCredentialsEnum } from './client-credentials.enum';
+export { GrantTypeEnum } from './grant-type.enum';

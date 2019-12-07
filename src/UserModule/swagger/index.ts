@@ -1,2 +1,2 @@
-export * from './new-user.swagger';
-export * from './user-updated-info.swagger';
+export { NewUserSwagger } from './new-user.swagger';
+export { UserUpdatedInfoSwagger } from './user-updated-info.swagger';

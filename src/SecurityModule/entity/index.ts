@@ -1,2 +1,2 @@
-export * from './client-credentials.entity';
-export * from './role.entity';
+export { ClientCredentials } from './client-credentials.entity';
+export { Role } from './role.entity';

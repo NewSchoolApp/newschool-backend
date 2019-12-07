@@ -1,4 +1,4 @@
-export * from './security.module';
-export * from './entity';
-export * from './repository';
-export * from './service';
+export { SecurityModule } from './security.module';
+export { Role, ClientCredentials } from './entity';
+export { RoleRepository, ClientCredentialsRepository } from './repository';
+export { SecurityService } from './service';

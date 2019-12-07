@@ -1,2 +1,2 @@
-export * from './role-metadata.guard';
-export * from './role.guard';
+export { NeedRole } from './role-metadata.guard';
+export { RoleGuard } from './role.guard';

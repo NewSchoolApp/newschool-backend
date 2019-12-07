@@ -3,7 +3,7 @@ import { RoleEnum } from '../enum';
 import { Audit } from '../../CommonsModule/entity';
 import { ClientCredentials } from './client-credentials.entity';
 import { IsEnum } from 'class-validator';
-import { User } from '../../UserModule/entity';
+import { User } from '../../UserModule';
 
 @Entity()
 export class Role extends Audit {
