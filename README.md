@@ -1,5 +1,8 @@
-#@NewSchool/back
-> Backend da New School, desenvolvido em NodeJS
+# @NewSchool/back
+
+> Backend da NewSchool, desenvolvido em NodeJS
+> Banco de Dados MySQL
+
 
 # Como rodar o projeto
 
@@ -10,10 +13,21 @@ os seguintes comandos:
 
 1 - Faça uma cópia do arquivo **.env.example** para **.env**
 
-2 - Instalar as dependências
->**npm install**
+2- Rodar o comando para instalar as depedencias do projeto
+>**npm install ou npm i**
 
-3 - Rodar o comando para iniciar o ambiente de desenvolvimento local
+3- Configurar as variaveis de ambiente
+>**DATABASE_HOST=127.0.0.1**
+>**DATABASE_NAME=newschool**
+>**DATABASE_USERNAME=root**
+>**DATABASE_PASSWORD=123456**
+>**NODE_ENV=test**
+>**JWT_SECRET=secret**
+>**EXPIRES_IN_ACCESS_TOKEN=12000**
+>**EXPIRES_IN_REFRESH_TOKEN=24000**
+
+4- Rodar o comando para iniciar o ambiente de desenvolvimento local
+
 >**npm run start:dev**
 
 ## Docker
@@ -29,7 +43,14 @@ que estamos com o hot reloading no Docker também, ou seja, você não precisar�
 ficar parando o container e subindo ele novamente a cada mudança que você fizer.
 Isso acontecerá automaticamente.
 
+5- Para executar os teste E2E execute o script abaixo
+>**npm run test:e2e**
+
+# Guidelines
+
+
 # Como contribuir passo-a-passo
+
 
 1 - CONHEÇA O PROJETO **New School**
 
