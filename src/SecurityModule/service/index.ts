@@ -1,1 +1,1 @@
-export * from './security.service';
+export { SecurityService } from './security.service';

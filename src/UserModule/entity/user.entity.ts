@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { Role } from '../../SecurityModule';
 
 @Entity()
 export class User extends Audit {
@@ -30,8 +30,8 @@ export class User extends Audit {
   })
   salt: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  role: RoleEnum;
+  @ManyToOne(() => Role, (role: Role) => role.users)
+  role: Role;
 
   validPassword(password: string) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);

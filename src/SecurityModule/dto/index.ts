@@ -1,2 +1,2 @@
-export * from './auth.dto';
-export * from './generated-token.dto';
+export { AuthDTO } from './auth.dto';
+export { GeneratedTokenDTO } from './generated-token.dto';

@@ -1,1 +1,1 @@
-export * from './course.service';
+export { CourseService } from './course.service';

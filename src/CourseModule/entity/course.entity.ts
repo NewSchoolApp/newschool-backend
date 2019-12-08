@@ -17,12 +17,12 @@ export class Course extends Audit {
   description: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   thumbUrl: string;
 
   @Column({
-    type: 'int',
+    type: 'varchar',
     nullable: false,
   })
   authorId: string;

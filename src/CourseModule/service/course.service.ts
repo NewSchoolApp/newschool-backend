@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
+
 @Injectable()
 export class CourseService {
 
@@ -14,18 +15,16 @@ export class CourseService {
   }
 
   public async findById(id: Course['id']): Promise<Course> {
-    const course: Course | undefined = await this.repository.findOne(id);
+    const course: Course = await this.repository.findOne(id);
     if (!course) {
       throw new NotFoundException();
     }
     return course;
   }
 
-
   public async delete(id: Course['id']): Promise<void> {
     await this.repository.delete(id);
   }
-
 
   public async findByTitle(title: string): Promise<Course> {
     const course = await this.repository.findByTitle(title);

@@ -1,1 +1,1 @@
-export * from './security.controller';
+export { SecurityController } from './security.controller';

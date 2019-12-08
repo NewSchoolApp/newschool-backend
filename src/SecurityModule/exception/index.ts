@@ -1,2 +1,2 @@
-export * from './invalid-client-credentials.error';
-export * from './user-not-found.error';
+export { InvalidClientCredentialsError } from './invalid-client-credentials.error';
+export { UserNotFoundError } from './user-not-found.error';
