@@ -4,7 +4,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+
+  require('dotenv-flow').config();
+
+  const appOptions = {cors: true};
+  const app = await NestFactory.create(AppModule, appOptions);
 
   const options = new DocumentBuilder()
     .setTitle('@NewSchool/back')
@@ -19,7 +23,7 @@ async function bootstrap() {
     whitelist: true,
   }));
 
-  await app.listen(3000);
+  await app.listen(process.env.EXPRESS_PORT || 3000);
 }
 
 bootstrap();
