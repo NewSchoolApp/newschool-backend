@@ -101,8 +101,8 @@ export class UserController {
   @ApiGoneResponse({ description: 'thrown if change password request time is up' })
   @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  // @NeedRole(RoleEnum.EXTERNAL)
-  // @UseGuards(RoleGuard)
+  @NeedRole(RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
     await this.service.validateChangePassword(changePasswordRequestId);
   }
