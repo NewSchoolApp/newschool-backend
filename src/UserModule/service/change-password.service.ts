@@ -19,7 +19,7 @@ export class ChangePasswordService {
   }
 
   public async findById(id: string) {
-    const changePassword: ChangePassword = await this.repository.findOne({ id });
+    const changePassword: ChangePassword = await this.repository.findOne({ id }, { relations: [ 'user' ] });
     if (!changePassword) {
       throw new NotFoundException();
     }

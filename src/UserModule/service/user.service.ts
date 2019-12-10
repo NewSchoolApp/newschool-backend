@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
@@ -7,6 +7,7 @@ import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { CONFIG } from '../../config/typeOrmConfiguration';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -81,6 +82,16 @@ export class UserService {
     if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
       throw new GoneException();
     }
+  }
+
+  public async changePassword(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO) {
+    if (changePasswordDTO.password !== changePasswordDTO.validatePassword) {
+      throw new BadRequestException();
+    }
+    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    await this.repository.save(user);
   }
 
   private createSalt(): string {

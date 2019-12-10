@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { NewUserSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
@@ -105,6 +106,22 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
     await this.service.validateChangePassword(changePasswordRequestId);
+  }
+
+  @Post('/forgot-password/:changePasswordRequestId')
+  @HttpCode(200)
+  @ApiOperation({
+    title: 'change password',
+  })
+  @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @NeedRole(RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
+  public async changePassword(
+    @Param('changePasswordRequestId') changePasswordRequestId: string,
+    @Body() changePasswordDTO: ChangePasswordDTO,
+  ): Promise<void> {
+    await this.service.changePassword(changePasswordRequestId, changePasswordDTO);
   }
 
   @Delete('/:id')
