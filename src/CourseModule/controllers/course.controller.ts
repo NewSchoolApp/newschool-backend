@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { CourseDTO } from '../dto';
+import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
 import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
@@ -35,6 +35,39 @@ export class CourseController {
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: CourseDTO['id']): Promise<CourseDTO> {
     return this.mapper.toDto(await this.service.findById(id));
+  }
+  
+  @Post()
+  @HttpCode(201)
+  @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
+  @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
+  @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async add(@Body() course): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.add(course));
+  }
+
+  @Put('/:id')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CourseDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
+  @ApiOperation({ title: 'Update course', description: 'Update course by id' })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async update(@Param('id') id: CourseDTO['id'], @Body() courseUpdatedInfo: CourseUpdateDTO): Promise<CourseDTO> {
+    return await this.service.update(id, this.mapper.toEntity(courseUpdatedInfo as CourseDTO));
+  }
+
+  @Delete('/:id')
+  @HttpCode(200)
+  @ApiOkResponse({ type: null })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
+  @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
+    await this.service.delete(id);
   }
 
  
