@@ -1,1 +1,1 @@
-web: npm heroku-postbuild
+web: npm run start:prod
