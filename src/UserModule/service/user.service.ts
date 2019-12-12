@@ -56,7 +56,7 @@ export class UserService {
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
     const user: User = await this.findByEmail(forgotPasswordDTO.email);
     const changePassword: ChangePassword = await this.changePasswordService.createChangePasswordRequest(user);
-    await this.sendChangePasswordEmail(user);
+    await this.sendChangePasswordEmail(user, changePassword.id);
     return changePassword.id;
   }
 
@@ -101,7 +101,7 @@ export class UserService {
     return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
   }
 
-  private async sendChangePasswordEmail(user: User): Promise<void> {
+  private async sendChangePasswordEmail(user: User, changePasswordRequestId: string): Promise<void> {
     try {
       await this.mailerService.sendMail({
         to: user.email,
@@ -110,7 +110,7 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}`,
+          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}?changePasswordRequestId=${changePasswordRequestId}`,
         },
       });
     } catch (e) {
