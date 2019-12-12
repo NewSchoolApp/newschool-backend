@@ -16,7 +16,7 @@ import { UserModule } from '../UserModule';
       ClientCredentialsRepository,
     ]),
     JwtModule.register({
-      secret: 'secret',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN },
     }),
     UserModule,

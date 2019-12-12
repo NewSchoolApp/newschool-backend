@@ -6,7 +6,6 @@ import { UserNotFoundError } from '../../SecurityModule/exception';
 import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
-import { CONFIG } from '../../config/typeOrmConfiguration';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 
 @Injectable()
@@ -106,12 +105,12 @@ export class UserService {
     try {
       await this.mailerService.sendMail({
         to: user.email,
-        from: CONFIG.EMAIL_FROM,
-        subject: CONFIG.CHANGE_PASSWORD_SUBJECT,
+        from: 'NewSchool@email.com',
+        subject: 'Troca de senha',
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${CONFIG.FRONT_URL}/${CONFIG.CHANGE_PASSWORD_URL}`,
+          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}`,
         },
       });
     } catch (e) {

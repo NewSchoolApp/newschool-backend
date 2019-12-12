@@ -37,7 +37,7 @@ export class SecurityService {
     clientCredentialsFront.secret = 'NEWSCHOOL@FRONTSECRET';
     await this.clientCredentialsRepository.save(clientCredentialsFront);
     const clientCredentialsFrontChangePassword = new ClientCredentials();
-    clientCredentialsFrontChangePassword.name = ClientCredentialsEnum.FRONT_CHANGE_PASSWORD;
+    clientCredentialsFrontChangePassword.name = ClientCredentialsEnum['NEWSCHOOL@FRONT_CHANGE_PASSWORD'];
     clientCredentialsFrontChangePassword.secret = 'NEWSCHOOL@FRONTSECRET';
     clientCredentialsFrontChangePassword.role = savedRoleExternal;
     await this.clientCredentialsRepository.save(clientCredentialsFrontChangePassword);
