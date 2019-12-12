@@ -4,7 +4,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+
+  require('dotenv-flow').config();
+
+  const appOptions = {cors: true};
+  const app = await NestFactory.create(AppModule, appOptions);
 
   const options = new DocumentBuilder()
     .setTitle('@NewSchool/back')
@@ -12,14 +16,14 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
   }));
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 
 bootstrap();
