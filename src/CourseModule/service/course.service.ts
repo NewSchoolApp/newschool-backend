@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
+import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 
 @Injectable()
 export class CourseService {
@@ -9,6 +10,23 @@ export class CourseService {
     private readonly repository: CourseRepository,
   ) {
   }
+
+  public async add(course: NewCourseDTO): Promise<Course> {
+
+    const courseSameTitle: Course = await this.repository.findByTitle(course.title);
+    if (courseSameTitle) {
+      throw new ConflictException();
+    }
+    
+    return this.repository.save(course);
+  }
+
+  public async update(id: Course['id'], userUpdatedInfo: CourseUpdateDTO): Promise<Course> {
+    const course: Course = await this.findById(id);
+    return this.repository.save({ ...course, ...userUpdatedInfo });
+  }
+
+
 
   public async getAll(): Promise<Course[]> {
     return this.repository.find();

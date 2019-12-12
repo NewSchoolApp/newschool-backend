@@ -1,21 +1,17 @@
-import { Course } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
+import { Course } from '../entity';
+import { IsNotEmpty } from 'class-validator';
 
-export class CourseDTO {
-  @ApiModelProperty({ type: Number })
-  id: Course['id'];
-
+export class NewCourseDTO {
   @ApiModelProperty({ type: String })
   title: Course['title'];
-  
-  @ApiModelProperty({ type: String })
-  description: Course['description'];
 
   @ApiModelProperty({ type: String })
   thumbUrl: Course['thumbUrl'];
 
+  @ApiModelProperty({ type: String })
+  description: Course['description'];
+
   @ApiModelProperty({ type: Number })
   authorId: Course['authorId'];
-
-
 }
