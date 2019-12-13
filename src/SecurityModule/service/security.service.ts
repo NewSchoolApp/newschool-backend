@@ -5,7 +5,7 @@ import { ClientCredentialsEnum } from '../enum';
 import { classToPlain } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
-import { ClientCredentialsRepository } from '../repository';
+import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../UserModule/entity';
 
@@ -14,6 +14,7 @@ export class SecurityService {
 
   constructor(
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {
@@ -27,6 +28,7 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
+
     return this.generateLoginObject(clientCredentials);
   }
 
@@ -39,7 +41,7 @@ export class SecurityService {
   }
 
   private base64ToString(base64Login: string): string {
-    return new Buffer(base64Login, 'base64')
+    return Buffer.from(base64Login, 'base64')
       .toString('ascii');
   }
 
@@ -57,8 +59,8 @@ export class SecurityService {
 
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
     return {
-      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN }),
-      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: process.env.EXPIRES_IN_REFRESH_TOKEN }),
+      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: Number(process.env.EXPIRES_IN_ACCESS_TOKEN) }),
+      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: Number(process.env.EXPIRES_IN_REFRESH_TOKEN) }),
       tokenType: 'bearer',
       expiresIn: Number(process.env.EXPIRES_IN_ACCESS_TOKEN),
     };

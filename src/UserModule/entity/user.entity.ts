@@ -1,7 +1,8 @@
 import * as crypto from 'crypto';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Role } from '../../SecurityModule';
+import { ChangePassword } from './change-password.entity';
 
 @Entity()
 export class User extends Audit {
@@ -32,6 +33,9 @@ export class User extends Audit {
 
   @ManyToOne(() => Role, (role: Role) => role.users)
   role: Role;
+
+  @OneToMany<ChangePassword>(() => ChangePassword, (changePassword: ChangePassword) => changePassword.user)
+  changePasswordRequests: ChangePassword[];
 
   validPassword(password: string) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
