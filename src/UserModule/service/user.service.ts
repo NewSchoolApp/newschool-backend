@@ -1,15 +1,21 @@
 import * as crypto from 'crypto';
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../repository';
-import { User } from '../entity';
+import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { NewUserDTO, UserUpdateDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { ChangePasswordService } from './change-password.service';
+import { MailerService } from '@nest-modules/mailer';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class UserService {
 
   constructor(
     private readonly repository: UserRepository,
+    private readonly changePasswordService: ChangePasswordService,
+    private readonly mailerService: MailerService,
   ) {
   }
 
@@ -48,15 +54,44 @@ export class UserService {
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }
 
-  public async findByEmailAndPassword(email: string, password: string): Promise<User> {
+  public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
+    const user: User = await this.findByEmail(forgotPasswordDTO.email);
+    const changePassword: ChangePassword = await this.changePasswordService.createChangePasswordRequest(user);
+    await this.sendChangePasswordEmail(user, changePassword.id);
+    return changePassword.id;
+  }
+
+  public async findByEmail(email: string): Promise<User> {
     const user: User = await this.repository.findByEmail(email);
     if (!user) {
       throw new UserNotFoundError();
     }
+    return user;
+  }
+
+  public async findByEmailAndPassword(email: string, password: string): Promise<User> {
+    const user: User = await this.findByEmail(email);
     if (!user.validPassword(password)) {
       throw new UserNotFoundError();
     }
     return user;
+  }
+
+  public async validateChangePassword(changePasswordRequestId: string) {
+    const changePassword: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
+      throw new GoneException();
+    }
+  }
+
+  public async changePassword(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO) {
+    if (changePasswordDTO.password !== changePasswordDTO.validatePassword) {
+      throw new BadRequestException();
+    }
+    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    await this.repository.save(user);
   }
 
   private createSalt(): string {
@@ -65,5 +100,22 @@ export class UserService {
 
   private createHashedPassword(password: string, salt: string): string {
     return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+  }
+
+  private async sendChangePasswordEmail(user: User, changePasswordRequestId: string): Promise<void> {
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: 'NewSchool@email.com',
+        subject: 'Troca de senha',
+        template: 'change-password',
+        context: {
+          name: user.name,
+          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}?changePasswordRequestId=${changePasswordRequestId}`,
+        },
+      });
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 }

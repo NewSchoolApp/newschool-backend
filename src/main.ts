@@ -7,7 +7,7 @@ async function bootstrap() {
 
   require('dotenv-flow').config();
 
-  const appOptions = {cors: true};
+  const appOptions = { cors: true };
   const app = await NestFactory.create(AppModule, appOptions);
 
   const options = new DocumentBuilder()
