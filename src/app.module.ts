@@ -17,7 +17,7 @@ import { CourseModule } from './CourseModule';
         port: Number(process.env.SMTP_PORT),
         secure: Number(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
         auth: {
-          user: process.env.SMTP_USER,
+          user: 'usuario que vai dar errado' + process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,
         },
       },

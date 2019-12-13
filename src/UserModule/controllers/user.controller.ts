@@ -84,8 +84,8 @@ export class UserController {
   @ApiOperation({ title: 'Create change password request', description: 'Create change password request' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  // @NeedRole(RoleEnum.EXTERNAL)
-  // @UseGuards(RoleGuard)
+  @NeedRole(RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
   public async forgotPassword(@Body() forgotPasswordDTO: ForgotPasswordDTO): Promise<ChangePasswordRequestIdDTO> {
     const forgotPasswordRequestId = await this.service.forgotPassword(forgotPasswordDTO);
     const changePasswordRequestIdDTO = new ChangePasswordRequestIdDTO();
