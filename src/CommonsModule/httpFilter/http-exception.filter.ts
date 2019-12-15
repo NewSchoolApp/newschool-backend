@@ -18,9 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 
         const objResponse = exception.getResponse();
         
-        console.error(objResponse);
-
-        rollbar.warning(JSON.stringify(objResponse));
+        rollbar.log(JSON.stringify(objResponse));
 
         response.status(status).json(objResponse);
     }
