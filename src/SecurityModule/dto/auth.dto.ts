@@ -17,4 +17,9 @@ export class AuthDTO {
   @IsString()
   @IsOptional()
   password: string;
+
+  @ApiModelProperty()
+  @IsString()
+  @IsOptional()
+  refresh_token: string;
 }
