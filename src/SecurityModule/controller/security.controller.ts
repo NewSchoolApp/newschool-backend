@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, HttpCode, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -19,6 +19,7 @@ export class SecurityController {
   async authenticateUser(
     // eslint-disable-next-line @typescript-eslint/camelcase
     @Body() { grant_type, username, password }: AuthDTO,
+    @UploadedFiles() files,
     @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
     // Basic <base64login>
