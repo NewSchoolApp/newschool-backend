@@ -23,6 +23,9 @@ import { UserModule } from '../UserModule';
   ],
   controllers: [SecurityController],
   providers: [SecurityService],
+  exports: [
+    SecurityService,
+  ],
 })
 export class SecurityModule {
 }

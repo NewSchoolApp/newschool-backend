@@ -1,4 +1,4 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { GrantTypeEnum } from '../enum';
 import { ApiModelProperty } from '@nestjs/swagger';
 
@@ -9,8 +9,12 @@ export class AuthDTO {
   grant_type: GrantTypeEnum;
 
   @ApiModelProperty()
+  @IsString()
+  @IsOptional()
   username: string;
 
   @ApiModelProperty()
+  @IsString()
+  @IsOptional()
   password: string;
 }
