@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, forwardRef, Get, Headers, HttpCode, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
@@ -18,6 +18,8 @@ import {
 import { NewUserSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { SecurityService } from '../../SecurityModule';
+import { User } from '../entity';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
@@ -26,6 +28,8 @@ export class UserController {
   constructor(
     private readonly service: UserService,
     private readonly mapper: UserMapper,
+    @Inject(forwardRef(() => SecurityService))
+    private readonly securityService: SecurityService,
   ) {
   }
 
@@ -40,17 +44,39 @@ export class UserController {
     return this.mapper.toDtoList(await this.service.getAll());
   }
 
+  @Get('/me')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find user by jwt id', description: 'Decodes de jwt and finds the user by the jwt id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findUserByJwtId(
+    @Headers('authorization') authorization: string,
+  ): Promise<UserDTO> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split( ' ')[1]);
+    return this.mapper.toDto(await this.service.findById(id));
+  }
+
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async findById(@Param('id') id: UserDTO['id']): Promise<UserDTO> {
+  public async findById(
+    @Param('id') id: UserDTO['id'],
+  ): Promise<UserDTO> {
     return this.mapper.toDto(await this.service.findById(id));
+  }
+
+  private isAdmin(role: RoleEnum) {
+    return role === RoleEnum.ADMIN;
   }
 
   @Post()
@@ -74,7 +100,9 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async update(@Param('id') id: UserDTO['id'], @Body() userUpdatedInfo: UserUpdateDTO): Promise<UserDTO> {
+  public async update(
+    @Param('id') id: UserDTO['id'], @Body() userUpdatedInfo: UserUpdateDTO,
+  ): Promise<UserDTO> {
     return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo as UserDTO));
   }
 

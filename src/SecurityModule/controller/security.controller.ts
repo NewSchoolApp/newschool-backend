@@ -23,7 +23,7 @@ export class SecurityController {
   ): Promise<GeneratedTokenDTO> {
     if (!authorization)
       throw new UnauthorizedException();
-      
+
     // Basic <base64login>
     const [, base64Login]: string[] = authorization.split(' ');
     // eslint-disable-next-line @typescript-eslint/camelcase
