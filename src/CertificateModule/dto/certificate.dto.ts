@@ -1,4 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
+import { Certificate } from '../entity';
+import { User } from '../../UserModule/entity';
 import { Expose } from 'class-transformer';
 
 export class CertificateDTO {
