@@ -3,21 +3,22 @@
 > Backend da NewSchool, desenvolvido em NodeJS
 > Banco de Dados MySQL
 
-
 # Como rodar o projeto
 
 Você pode rodar o projeto direto da sua máquina.
 
-1 - Faça uma cópia do arquivo **.env.example** para **.env**
+1 - Tenha a versão 12 do Node.js instalada em sua máquina.
 
-2- Instale as depedências do projeto
+2 - Faça uma cópia do arquivo **.env.example** para **.env**
+
+3- Instale as depedências do projeto
 >**npm install**
 
-3- Inicie a aplicação
+4- Inicie a aplicação
 
 >**npm run start:dev**
 
-4- Veja o swagger pelo navegador
+5- Veja o swagger pelo navegador
 
 >**http://localhost:3000/api/**
 
