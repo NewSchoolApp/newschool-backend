@@ -22,7 +22,7 @@ export class UserMapper extends Mapper<User, UserDTO> {
     return super.toEntity(dtoObject);
   }
 
-  toEntityList(dtoArray: UserDTO): User[] {
+  toEntityList(dtoArray: UserDTO[]): User[] {
     return super.toEntityList(dtoArray);
   }
 

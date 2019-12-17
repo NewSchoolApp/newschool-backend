@@ -51,7 +51,7 @@ describe('SecurityController (e2e)', () => {
 
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum.FRONT;
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
@@ -85,7 +85,7 @@ describe('SecurityController (e2e)', () => {
   it('should throw if grant type is invalid', async (done) => {
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum.FRONT;
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test';
     clientCredentials.role = adminRole;
     await clientCredentialRepository.save(clientCredentials);

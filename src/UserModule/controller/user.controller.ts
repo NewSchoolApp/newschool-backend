@@ -91,7 +91,7 @@ export class UserController {
     return this.mapper.toDto(await this.service.add(user));
   }
 
-  @Put('/:id')
+  @Put(':id')
   @HttpCode(200)
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
@@ -101,7 +101,8 @@ export class UserController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async update(
-    @Param('id') id: UserDTO['id'], @Body() userUpdatedInfo: UserUpdateDTO,
+    @Param('id') id: UserDTO['id'],
+    @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
     return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo as UserDTO));
   }
@@ -150,6 +151,14 @@ export class UserController {
     @Body() changePasswordDTO: ChangePasswordDTO,
   ): Promise<void> {
     await this.service.changePassword(changePasswordRequestId, changePasswordDTO);
+  }
+
+  @Post('/:userId/certificate/:certificateId')
+  public async addCertificateToUser(
+    @Param('userId') userId: string,
+    @Param('certificateId') certificateId: string,
+  ) {
+    this.service.addCertificateToUser(userId, certificateId);
   }
 
   @Delete('/:id')

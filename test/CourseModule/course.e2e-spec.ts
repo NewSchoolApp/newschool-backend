@@ -44,7 +44,7 @@ describe('CourseController (e2e)', () => {
 
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum.FRONT;
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
@@ -74,7 +74,7 @@ describe('CourseController (e2e)', () => {
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
             authorId: '1',
-            description: 'Este é um registro de teste'
+            description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .expect(201)
           .then(() => done());
@@ -109,9 +109,10 @@ describe('CourseController (e2e)', () => {
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .send({
-            title: 'Teste E3E',
+            title: 'Teste E3E2',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1'
+            authorId: '1',
+            description: 'teste 2',
           } as NewCourseDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -142,7 +143,6 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-
   it('should delete course by id', async () => {
     return request(app.getHttpServer())
       .post('/oauth/token')
@@ -157,7 +157,7 @@ describe('CourseController (e2e)', () => {
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
             authorId: '1',
-            description: 'Este é um registro de teste'
+            description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -168,7 +168,7 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-  it('should update course', async () => {
+  it('should update course', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -182,19 +182,27 @@ describe('CourseController (e2e)', () => {
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
             authorId: '1',
-            description: 'Este é um registro de teste'
+            description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .then((_res) => {
-            _res.body.title = 'Test Update';
             return request(app.getHttpServer())
-              .post(`${courseUrl}/${_res.body.id}`)
+              .put(`${courseUrl}/${_res.body.id}`)
               .send({
-                title: _res.body.title,
-                thumbUrl: _res.body.thumb,
-                authorId: _res.body.authorId
+                title: 'Test Update',
+                thumbUrl: _res.body.thumbUrl,
+                authorId: _res.body.authorId,
+                description: _res.body.description,
               } as CourseUpdateDTO)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect(200);
+              .then((__res) => {
+                return request(app.getHttpServer())
+                  .get(`${courseUrl}/${__res.body.id}`)
+                  .set('Authorization', `Bearer ${res.body.accessToken}`)
+                  .expect((response) => {
+                    expect(response.body.title).toBe('Test Update');
+                  })
+                  .then(() => done());
+              });
           });
       });
   });
