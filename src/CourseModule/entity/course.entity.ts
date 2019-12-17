@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Audit } from '../../CommonsModule';
+import { Lesson } from './lesson.entity';
 
 @Entity()
 export class Course extends Audit {
@@ -27,4 +28,10 @@ export class Course extends Audit {
   })
   authorId: string;
 
+  @OneToMany(
+    type => Lesson,
+    lesson => lesson.course,
+    { eager: true },
+  )
+  lessons: Lesson[];
 }
