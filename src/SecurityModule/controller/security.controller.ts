@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, HttpCode, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, Post, UseInterceptors, UnauthorizedException } from '@nestjs/common';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -21,6 +21,9 @@ export class SecurityController {
     @Body() { grant_type, username, password }: AuthDTO,
     @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
+    if (!authorization)
+      throw new UnauthorizedException();
+      
     // Basic <base64login>
     const [, base64Login]: string[] = authorization.split(' ');
     // eslint-disable-next-line @typescript-eslint/camelcase
