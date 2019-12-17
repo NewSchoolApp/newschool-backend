@@ -7,14 +7,16 @@ import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { Certificate } from '../../CertificateModule/entity';
+import { CertificateService } from '../../CertificateModule/service';
 
 @Injectable()
 export class UserService {
-
   constructor(
     private readonly repository: UserRepository,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
+    private readonly certificateService: CertificateService,
   ) {
   }
 
@@ -25,7 +27,7 @@ export class UserService {
   public async findById(id: User['id']): Promise<User> {
     const user: User | undefined = await this.repository.findOne(id);
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('User not found');
     }
     return user;
   }
@@ -45,11 +47,13 @@ export class UserService {
   }
 
   public async delete(id: User['id']): Promise<void> {
+    await this.findById(id);
     await this.repository.delete(id);
   }
 
   public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
+    const teste = { ...user, ...userUpdatedInfo };
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }
 
@@ -91,6 +95,18 @@ export class UserService {
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
     await this.repository.save(user);
+  }
+
+  public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
+    const [ user, certificate ]: [User, Certificate] = await Promise.all([
+      this.repository.findByIdWithCertificates(userId),
+      this.certificateService.findById(certificateId),
+    ]);
+    // console.log(user.certificates);
+    // if (!user.certificates) {
+    //   user.certificates = [];
+    // }
+    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate ] })
   }
 
   private createSalt(): string {
