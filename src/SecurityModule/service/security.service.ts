@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
-import { classToPlain } from 'class-transformer';
+import { classToPlain, plainToClass } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
@@ -55,6 +55,10 @@ export class SecurityService {
     );
     const user: User = await this.userService.findByEmailAndPassword(username, password);
     return this.generateLoginObject(user);
+  }
+
+  public getUserFromToken(jwt: string): User {
+    return plainToClass<User, any>(User, this.jwtService.decode(jwt));
   }
 
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {

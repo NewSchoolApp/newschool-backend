@@ -9,7 +9,7 @@ export class Mapper<E, D> {
   }
 
   toDto(entityObject: E): D {
-    return plainToClass<D, E>(this.dtoClass, entityObject);
+    return plainToClass<D, E>(this.dtoClass, entityObject, { excludeExtraneousValues: true });
   }
 
   toDtoList(entityArray: E[]): D[] {
@@ -17,7 +17,7 @@ export class Mapper<E, D> {
   }
 
   toEntity(dtoObject: D): E {
-    return plainToClass<E, D>(this.entityClass, dtoObject);
+    return plainToClass<E, D>(this.entityClass, dtoObject, { excludeExtraneousValues: true });
   }
 
   toEntityList(dtoArray: D): E[] {
