@@ -33,10 +33,4 @@ export class Course extends Audit {
   })
   @Expose()
   authorId: string;
-
-  @OneToMany(
-    () => Lesson,
-    lesson => lesson.course,
-  )
-  lessons: Lesson[];
 }
