@@ -53,7 +53,6 @@ export class UserService {
 
   public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
-    const teste = { ...user, ...userUpdatedInfo };
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }
 

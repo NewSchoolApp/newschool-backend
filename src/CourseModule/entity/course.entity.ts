@@ -33,4 +33,5 @@ export class Course extends Audit {
   })
   @Expose()
   authorId: string;
+
 }
