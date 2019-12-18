@@ -53,7 +53,6 @@ export class UserService {
 
   public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
-    const teste = { ...user, ...userUpdatedInfo };
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }
 
@@ -102,10 +101,6 @@ export class UserService {
       this.repository.findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),
     ]);
-    // console.log(user.certificates);
-    // if (!user.certificates) {
-    //   user.certificates = [];
-    // }
     return await this.repository.save({ ...user, certificates: [...user.certificates, certificate ] })
   }
 
