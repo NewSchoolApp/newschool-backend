@@ -35,7 +35,7 @@ export class Course extends Audit {
   authorId: string;
 
   @OneToMany(
-    type => Lesson,
+    () => Lesson,
     lesson => lesson.course,
   )
   lessons: Lesson[];
