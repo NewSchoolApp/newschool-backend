@@ -13,7 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "prestart:prod": "rimraf dist && npm run build",
-    "postinstall": "npm run prestart:prod",    
+    "postinstall": "npm run prestart:prod",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
