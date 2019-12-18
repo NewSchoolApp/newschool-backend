@@ -16,7 +16,6 @@ export class Lesson extends Audit {
   @ManyToOne(
     type => Course,
     course => course.lessons,
-    { eager: false },
   )
   course: Course;
 }
