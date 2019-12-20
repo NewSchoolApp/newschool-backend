@@ -27,7 +27,6 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
-
     return this.generateLoginObject(clientCredentials);
   }
 

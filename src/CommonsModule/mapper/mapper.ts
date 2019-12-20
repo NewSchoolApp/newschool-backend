@@ -1,4 +1,4 @@
-import { deserializeArray, plainToClass, serialize } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 
 export class Mapper<E, D> {
 
@@ -13,15 +13,15 @@ export class Mapper<E, D> {
   }
 
   toDtoList(entityArray: E[]): D[] {
-    return deserializeArray<D>(this.dtoClass, serialize<E>(entityArray));
+    return plainToClass<D, E>(this.dtoClass, entityArray, { excludeExtraneousValues: true });
   }
 
   toEntity(dtoObject: D): E {
     return plainToClass<E, D>(this.entityClass, dtoObject, { excludeExtraneousValues: true });
   }
 
-  toEntityList(dtoArray: D): E[] {
-    return deserializeArray<E>(this.entityClass, serialize<D>(dtoArray));
+  toEntityList(dtoArray: D[]): E[] {
+    return plainToClass<E, D>(this.entityClass, dtoArray, { excludeExtraneousValues: true });
   }
 
 }
