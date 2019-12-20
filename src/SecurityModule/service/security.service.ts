@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
-import { classToPlain } from 'class-transformer';
+import { classToPlain, plainToClass } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
@@ -11,7 +11,6 @@ import { User } from '../../UserModule/entity';
 
 @Injectable()
 export class SecurityService {
-
   constructor(
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
     private readonly roleRepository: RoleRepository,
@@ -28,7 +27,6 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
-
     return this.generateLoginObject(clientCredentials);
   }
 
@@ -49,12 +47,29 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    this.findClientCredentialsByNameAndSecret(
+    await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
     );
     const user: User = await this.userService.findByEmailAndPassword(username, password);
     return this.generateLoginObject(user);
+  }
+
+  public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
+    const [name, secret]: string[] = this.splitClientCredentials(
+      this.base64ToString(base64Login),
+    );
+    await this.findClientCredentialsByNameAndSecret(
+      ClientCredentialsEnum[name],
+      secret,
+    );
+    const { email, password }: User = this.getUserFromToken(refreshToken.split(' ')[1]);
+    const user: User = await this.userService.findByEmailAndPassword(email, password);
+    return this.generateLoginObject(user);
+  }
+
+  public getUserFromToken(jwt: string): User {
+    return this.jwtService.verify<User>(jwt);
   }
 
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {

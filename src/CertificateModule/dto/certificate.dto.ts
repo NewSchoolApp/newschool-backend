@@ -1,21 +1,14 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Course } from '../entity';
 import { Expose } from 'class-transformer';
 
-export class NewCourseDTO {
+export class CertificateDTO {
   @ApiModelProperty({ type: String })
   @Expose()
-  title: Course['title'];
-
+  id: string;
   @ApiModelProperty({ type: String })
   @Expose()
-  thumbUrl: Course['thumbUrl'];
-
+  title: string;
   @ApiModelProperty({ type: String })
   @Expose()
-  description: Course['description'];
-
-  @ApiModelProperty({ type: Number })
-  @Expose()
-  authorId: Course['authorId'];
+  text: string;
 }

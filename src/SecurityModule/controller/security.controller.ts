@@ -18,12 +18,12 @@ export class SecurityController {
   @HttpCode(200)
   async authenticateUser(
     // eslint-disable-next-line @typescript-eslint/camelcase
-    @Body() { grant_type, username, password }: AuthDTO,
+    @Body() { grant_type, username, password, refresh_token }: AuthDTO,
     @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
     if (!authorization)
       throw new UnauthorizedException();
-      
+
     // Basic <base64login>
     const [, base64Login]: string[] = authorization.split(' ');
     // eslint-disable-next-line @typescript-eslint/camelcase
@@ -37,6 +37,13 @@ export class SecurityController {
         username,
         password,
       );
+    }
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    if (grant_type === GrantTypeEnum.REFRESH_TOKEN) {
+      return this.service.refreshToken(
+        base64Login,
+        refresh_token,
+      )
     }
   }
 

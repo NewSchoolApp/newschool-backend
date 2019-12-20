@@ -2,11 +2,12 @@ import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { database } from './config/database';
+import { database } from './Config/database';
 import { SecurityModule } from './SecurityModule';
 import { UserModule } from './UserModule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseModule } from './CourseModule';
+import { CertificateModule } from './CertificateModule';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CourseModule } from './CourseModule';
     SecurityModule,
     UserModule,
     CourseModule,
+    CertificateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
