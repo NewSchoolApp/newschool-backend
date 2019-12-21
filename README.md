@@ -19,7 +19,7 @@ Você pode rodar o projeto direto da sua máquina.
 
 4- Veja o swagger pelo navegador
 
->**http://localhost:3000/api/**
+>**http://localhost:3000/swagger**
 
 ## Docker
 
