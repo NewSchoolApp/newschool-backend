@@ -1,12 +1,11 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 
 async function bootstrap() {
-
-  require('dotenv-flow').config();
 
   const appOptions = { cors: true };
   const app = await NestFactory.create(AppModule, appOptions);
@@ -22,11 +21,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
-  }));  
-  
+  }));
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  await app.listen(process.env.PORT || 3000);
+  const configService = app.get<ConfigService>(ConfigService);
+  await app.listen(configService.get<string>('PORT') || 3000);
 }
 
 bootstrap();

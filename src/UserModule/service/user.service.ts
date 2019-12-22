@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import { BadRequestException, ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
@@ -17,6 +18,7 @@ export class UserService {
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
+    private readonly configService: ConfigService,
   ) {
   }
 
@@ -97,11 +99,11 @@ export class UserService {
   }
 
   public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
-    const [ user, certificate ]: [User, Certificate] = await Promise.all([
+    const [user, certificate]: [User, Certificate] = await Promise.all([
       this.repository.findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),
     ]);
-    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate ] })
+    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate] });
   }
 
   private createSalt(): string {
@@ -121,7 +123,7 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}?changePasswordRequestId=${changePasswordRequestId}`,
+          urlTrocaSenha: `${this.configService.get<string>('FRONT_URL')}/${this.configService.get<string>('CHANGE_PASSWORD_URL')}?changePasswordRequestId=${changePasswordRequestId}`,
         },
       });
     } catch (e) {
