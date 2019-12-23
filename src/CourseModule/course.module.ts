@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { CourseController } from './controllers';
 import { CourseService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,7 +12,6 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     TypeOrmModule.forFeature([Course, CourseRepository]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },

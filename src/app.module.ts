@@ -12,14 +12,14 @@ import { CertificateModule } from './CertificateModule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       useFactory: database,
       inject: [ConfigService],
     }),
     MailerModule.forRootAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get<string>('SMTP_HOST'),
