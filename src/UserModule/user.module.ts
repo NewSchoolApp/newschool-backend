@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ChangePasswordService, UserService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { ChangePasswordRepository, UserRepository } from './repository';
 import { ChangePassword, User } from './entity';
 import { UserMapper } from './mapper';
@@ -19,7 +19,6 @@ import { CertificateModule } from '../CertificateModule';
       ChangePasswordRepository,
     ]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
@@ -28,7 +27,6 @@ import { CertificateModule } from '../CertificateModule';
     }),
     forwardRef(() => SecurityModule),
     CertificateModule,
-    ConfigModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserMapper, ChangePasswordService],

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { SecurityController } from './controller';
 import { SecurityService } from './service';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,7 +17,6 @@ import { UserModule } from '../UserModule';
       ClientCredentialsRepository,
     ]),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
@@ -25,7 +24,6 @@ import { UserModule } from '../UserModule';
       inject: [ConfigService],
     }),
     UserModule,
-    ConfigModule,
   ],
   controllers: [SecurityController],
   providers: [SecurityService],
