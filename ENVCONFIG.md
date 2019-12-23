@@ -18,7 +18,7 @@ Para utilizar o `ConfigService` em uma classe, será necessário:
 - Importar a classe `ConfigService`
 >**import { ConfigService } from '@nestjs/config';**
 
-- Em um módulo, sempre que for necessário importar um módulo do Nest (ex.: `JwtModule`) com uso de variáveis de ambiente, deve-se usar o método `RegisterAsync`, inserindo o `ConfigService` por injeção de dependência. Exemplo:
+- Em um módulo, sempre que for necessário importar um módulo do Nest (ex.: `JwtModule`) com uso de variáveis de ambiente, deve-se usar os métodos `RegisterAsync` ou `forRootAsync` (ao invés dos métodos `Register` ou `forRoot`), inserindo o `ConfigService` por injeção de dependência. Exemplo:
 ```
 JwtModule.registerAsync({
   useFactory: async (configService: ConfigService) => ({
