@@ -25,10 +25,11 @@ async function bootstrap() {
     whitelist: true,
   }));
 
-  app.useGlobalFilters(new HttpExceptionFilter());
-
   const configService = app.get<ConfigService>(ConfigService);
-  await app.listen(configService.get<string>('PORT') || 3000);
+
+  app.useGlobalFilters(new HttpExceptionFilter(configService));
+
+  await app.listen(configService.get<number>('PORT') || 3000);
 }
 
 bootstrap();
