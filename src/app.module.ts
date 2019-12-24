@@ -1,5 +1,6 @@
 import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { database } from './config/database';
@@ -11,24 +12,33 @@ import { CertificateModule } from './CertificateModule';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({ useFactory: database }),
-    MailerModule.forRoot({
-      transport: {
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        secure: Number(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
-        auth: {
-          user: 'usuario que vai dar errado' + process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: database,
+      inject: [ConfigService],
+    }),
+    MailerModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          secure: configService.get<number>('SMTP_PORT') === 465, // true for 465, false for other ports
+          auth: {
+            user: 'usuario que vai dar errado' + configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASSWORD'),
+          },
         },
-      },
-      template: {
-        dir: __dirname + '/../templates',
-        adapter: new HandlebarsAdapter(), // or new PugAdapter()
-        options: {
-          strict: true,
+        template: {
+          dir: __dirname + '/../templates',
+          adapter: new HandlebarsAdapter(), // or new PugAdapter()
+          options: {
+            strict: true,
+          },
         },
-      },
+      }),
+      inject: [ConfigService],
     }),
     SecurityModule,
     UserModule,
