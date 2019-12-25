@@ -6,7 +6,7 @@ import {
   Get,
   Headers,
   HttpCode,
-  Inject,
+  Inject, Logger,
   LoggerService,
   Param,
   Post,
@@ -39,12 +39,13 @@ import { User } from '../entity';
 @ApiBearerAuth()
 @Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`)
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(
     private readonly service: UserService,
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
-    private readonly logger: LoggerService,
   ) {
   }
 
