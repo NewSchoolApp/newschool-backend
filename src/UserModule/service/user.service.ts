@@ -1,5 +1,12 @@
 import * as crypto from 'crypto';
-import { BadRequestException, ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  GoneException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
@@ -53,7 +60,7 @@ export class UserService {
     await this.repository.delete(id);
   }
 
-  public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
+  public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
     const user: User = await this.findById(id);
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }

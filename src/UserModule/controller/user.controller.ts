@@ -6,8 +6,8 @@ import {
   Get,
   Headers,
   HttpCode,
-  Inject, Logger,
-  LoggerService,
+  Inject,
+  Logger,
   Param,
   Post,
   Put,
@@ -72,7 +72,7 @@ export class UserController {
   public async findUserByJwtId(
     @Headers('authorization') authorization: string,
   ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(authorization.split( ' ')[1]);
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
   }
@@ -103,14 +103,14 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
-    return this.mapper.toDto(await this.service.add(user));
+    return this.mapper.toDto(await this.service.add(this.mapper.toEntity(user as unknown as UserDTO)));
   }
 
   @Put(':id')
   @HttpCode(200)
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
-  @ApiOkResponse({ type: NewUserDTO })
+  @ApiOkResponse({ type: UserDTO })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -120,7 +120,7 @@ export class UserController {
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
-    return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo as UserDTO));
+    return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo));
   }
 
   @Post('/forgot-password')
