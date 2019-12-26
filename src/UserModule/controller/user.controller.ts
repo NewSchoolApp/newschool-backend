@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, forwardRef, Get, Headers, HttpCode, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  forwardRef,
+  Get,
+  Headers,
+  HttpCode,
+  Inject, Logger,
+  LoggerService,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
@@ -25,6 +39,8 @@ import { User } from '../entity';
 @ApiBearerAuth()
 @Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`)
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(
     private readonly service: UserService,
     private readonly mapper: UserMapper,
@@ -57,6 +73,7 @@ export class UserController {
     @Headers('authorization') authorization: string,
   ): Promise<UserDTO> {
     const { id }: User = this.securityService.getUserFromToken(authorization.split( ' ')[1]);
+    this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
   }
 
@@ -72,11 +89,8 @@ export class UserController {
   public async findById(
     @Param('id') id: UserDTO['id'],
   ): Promise<UserDTO> {
+    this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
-  }
-
-  private isAdmin(role: RoleEnum) {
-    return role === RoleEnum.ADMIN;
   }
 
   @Post()
@@ -88,6 +102,7 @@ export class UserController {
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
+    this.logger.log(`user: ${user}`);
     return this.mapper.toDto(await this.service.add(user));
   }
 
@@ -104,6 +119,7 @@ export class UserController {
     @Param('id') id: UserDTO['id'],
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
+    this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
     return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo as UserDTO));
   }
 
@@ -116,6 +132,7 @@ export class UserController {
   @NeedRole(RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async forgotPassword(@Body() forgotPasswordDTO: ForgotPasswordDTO): Promise<ChangePasswordRequestIdDTO> {
+    this.logger.log(`forgot password: ${forgotPasswordDTO}`);
     const forgotPasswordRequestId = await this.service.forgotPassword(forgotPasswordDTO);
     const changePasswordRequestIdDTO = new ChangePasswordRequestIdDTO();
     changePasswordRequestIdDTO.id = forgotPasswordRequestId;
@@ -134,6 +151,7 @@ export class UserController {
   @NeedRole(RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
+    this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
   }
 
@@ -150,6 +168,7 @@ export class UserController {
     @Param('changePasswordRequestId') changePasswordRequestId: string,
     @Body() changePasswordDTO: ChangePasswordDTO,
   ): Promise<void> {
+    this.logger.log(`change password request id: ${changePasswordRequestId}, change password information: ${changePasswordDTO}`);
     await this.service.changePassword(changePasswordRequestId, changePasswordDTO);
   }
 
@@ -158,7 +177,8 @@ export class UserController {
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
   ) {
-    this.service.addCertificateToUser(userId, certificateId);
+    this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
+    await this.service.addCertificateToUser(userId, certificateId);
   }
 
   @Delete('/:id')
@@ -171,6 +191,7 @@ export class UserController {
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: UserDTO['id']): Promise<void> {
+    this.logger.log(`user id: ${id}`);
     await this.service.delete(id);
   }
 }
