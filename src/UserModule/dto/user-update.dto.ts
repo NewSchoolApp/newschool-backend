@@ -9,6 +9,12 @@ export class UserUpdateDTO {
   @IsString()
   @IsOptional()
   @Expose()
+  id: User['id'];
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @IsOptional()
+  @Expose()
   name: User['name'];
 
   @ApiModelProperty({ type: String })
@@ -28,12 +34,6 @@ export class UserUpdateDTO {
   @IsOptional()
   @Expose()
   urlInstagram: User['urlInstagram'];
-
-  @ApiModelProperty({ type: String })
-  @IsString()
-  @IsOptional()
-  @Expose()
-  password: User['password'];
 
   @ApiModelProperty({ type: Role })
   @IsOptional()

@@ -1,25 +1,27 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
+import { CourseMapper } from '../mapper';
 
 @Injectable()
 export class CourseService {
 
-    constructor(
-        private readonly repository: CourseRepository,
-    ) {
+  constructor(
+    private readonly repository: CourseRepository,
+    private readonly mapper: CourseMapper,
+  ) {
+  }
+
+  public async add(course: NewCourseDTO): Promise<Course> {
+
+    const courseSameTitle: Course = await this.repository.findByTitle(course.title);
+    if (courseSameTitle) {
+      throw new ConflictException('Course with this title already exists');
     }
 
-    public async add(course: NewCourseDTO): Promise<Course> {
-
-        const courseSameTitle: Course = await this.repository.findByTitle(course.title);
-        if (courseSameTitle) {
-            throw new ConflictException();
-        }
-        
-        return this.repository.save(course);
-    }
+    return this.repository.save(course);
+  }
 
     public async update(id: Course['id'], courseUpdatedInfo: CourseUpdateDTO): Promise<Course> {
         const course: Course = await this.findById(id);

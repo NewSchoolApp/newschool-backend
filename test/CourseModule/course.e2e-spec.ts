@@ -77,6 +77,10 @@ describe('CourseController (e2e)', () => {
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .expect(201)
+          .expect((res) => {
+            expect(res.body.id).not.toBeUndefined();
+            expect(res.body.slug).toBe('teste-e3e')
+          })
           .then(() => done());
       });
   });

@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
+import slugify from 'slugify';
 
 @Entity()
 export class Course extends Audit {
@@ -34,4 +35,12 @@ export class Course extends Audit {
   @Expose()
   authorId: string;
 
+  @Column()
+  @Expose()
+  get slug(): string {
+    return slugify(this.title, { replacement: '-', lower: true });
+  }
+
+  set slug(slug: string) {
+  }
 }
