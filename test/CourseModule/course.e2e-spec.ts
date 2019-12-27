@@ -60,7 +60,6 @@ describe('CourseController (e2e)', () => {
   });
 
   it('should add course', async (done) => {
-
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -126,6 +125,59 @@ describe('CourseController (e2e)', () => {
                 expect(response.body.description).toBe(_res.body.description);
               })
               .expect(200);
+          });
+      });
+  });
+
+  it('should find course by slug', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .then((res) => {
+        return request(app.getHttpServer())
+          .post(courseUrl)
+          .set('Authorization', `Bearer ${res.body.accessToken}`)
+          .send({
+            title: 'Teste E3E3',
+            thumbUrl: 'http://teste.com/thumb.png',
+            authorId: '1',
+            description: 'teste 2',
+          } as NewCourseDTO)
+          .then((_res) => {
+            return request(app.getHttpServer())
+              .get(`${courseUrl}/slug/${_res.body.slug}`)
+              .set('Authorization', `Bearer ${res.body.accessToken}`)
+              .expect((response) => {
+                expect(response.body.slug).toBe(_res.body.slug);
+              })
+              .expect(200);
+          });
+      });
+  });
+
+  it('should return 404 if slug doesnt exist', async () => {
+    return request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
+      .then((res) => {
+        return request(app.getHttpServer())
+          .post(courseUrl)
+          .set('Authorization', `Bearer ${res.body.accessToken}`)
+          .send({
+            title: 'Teste E3E4',
+            thumbUrl: 'http://teste.com/thumb.png',
+            authorId: '1',
+            description: 'teste 2',
+          } as NewCourseDTO)
+          .then(() => {
+            return request(app.getHttpServer())
+              .get(`${courseUrl}/slug/randomSlug`)
+              .set('Authorization', `Bearer ${res.body.accessToken}`)
+              .expect(404);
           });
       });
   });
