@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { User } from '../../UserModule/entity';
@@ -20,12 +20,24 @@ export class RoleGuard implements CanActivate {
 
     const request = context.switchToHttp()
       .getRequest();
+<<<<<<< HEAD
+=======
+
+    const authorizationHeader = request.headers.authorization;
+>>>>>>> Retornando erro de jwt expirado no guarda
 
     if (!request.headers.authorization)
       return false;
-      
-    const [, token] = request.headers.authorization.split(' ');
-    const user: User = this.jwtService.verify(token);
+
+    const [, token] = authorizationHeader.split(' ');
+    let user: User;
+    try {
+      user = this.jwtService.verify<User>(token);
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new UnauthorizedException(e.message)
+      }
+    }
     const hasPermission: boolean = roles
       .some((role) => role === user.role.name);
     return user?.role && hasPermission;
