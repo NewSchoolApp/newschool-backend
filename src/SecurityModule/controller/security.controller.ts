@@ -1,4 +1,5 @@
 import { Body, Controller, Headers, HttpCode, Logger, Post, UseInterceptors, UnauthorizedException} from '@nestjs/common';
+import { Transactional } from '@nest-kr/transaction';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -20,6 +21,7 @@ export class SecurityController {
   @UseInterceptors(FileInterceptor(''))
   @Post('/token')
   @HttpCode(200)
+  @Transactional()
   async authenticateUser(
     // eslint-disable-next-line @typescript-eslint/camelcase
     @Body() { grant_type, username, password, refresh_token }: AuthDTO,

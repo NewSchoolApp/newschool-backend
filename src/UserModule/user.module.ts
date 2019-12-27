@@ -1,7 +1,9 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Module, MiddlewareConsumer } from '@nestjs/common';
 import { ChangePasswordService, UserService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { TransactionMiddleware } from '@nest-kr/transaction';
+import { getConnection } from 'typeorm';
 import { ChangePasswordRepository, UserRepository } from './repository';
 import { ChangePassword, User } from './entity';
 import { UserMapper } from './mapper';
@@ -33,4 +35,9 @@ import { CertificateModule } from '../CertificateModule';
   exports: [UserService],
 })
 export class UserModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TransactionMiddleware(getConnection))
+      .forRoutes(UserController);
+  }
 }
