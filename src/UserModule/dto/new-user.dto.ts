@@ -3,6 +3,7 @@ import { User } from '../entity';
 import { IsNotEmpty } from 'class-validator';
 import { Role } from '../../SecurityModule/entity';
 import { Expose } from 'class-transformer';
+import { RoleEnum } from '../../SecurityModule/enum';
 
 export class NewUserDTO {
   @ApiModelProperty({ type: String })
@@ -28,8 +29,8 @@ export class NewUserDTO {
   @Expose()
   urlInstagram: User['urlInstagram'];
 
-  @ApiModelProperty({ type: Role })
+  @ApiModelProperty({ enum: RoleEnum })
   @IsNotEmpty()
   @Expose()
-  role: Role;
+  role: RoleEnum;
 }

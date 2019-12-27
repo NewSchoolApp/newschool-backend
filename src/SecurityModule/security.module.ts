@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TransactionMiddleware } from '@nest-kr/transaction';
 import { SecurityController } from './controller';
-import { SecurityService } from './service';
+import { RoleService, SecurityService } from './service';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection } from 'typeorm';
@@ -28,9 +28,10 @@ import { UserModule } from '../UserModule';
     UserModule,
   ],
   controllers: [SecurityController],
-  providers: [SecurityService],
+  providers: [SecurityService, RoleService],
   exports: [
     SecurityService,
+    RoleService
   ],
 })
 export class SecurityModule {
