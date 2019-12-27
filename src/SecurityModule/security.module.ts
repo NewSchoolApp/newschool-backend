@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SecurityController } from './controller';
-import { SecurityService } from './service';
+import { RoleService, SecurityService } from './service';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientCredentials, Role } from './entity';
@@ -26,9 +26,10 @@ import { UserModule } from '../UserModule';
     UserModule,
   ],
   controllers: [SecurityController],
-  providers: [SecurityService],
+  providers: [SecurityService, RoleService],
   exports: [
     SecurityService,
+    RoleService
   ],
 })
 export class SecurityModule {

@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 import {
   BadRequestException,
-  ConflictException,
-  GoneException,
+  ConflictException, forwardRef,
+  GoneException, Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -17,6 +17,8 @@ import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
+import { RoleService } from '../../SecurityModule/service';
+import { Role } from '../../SecurityModule/entity';
 
 @Injectable()
 export class UserService {
@@ -26,6 +28,8 @@ export class UserService {
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
   ) {
   }
 
@@ -46,12 +50,14 @@ export class UserService {
     if (userWithSameEmail) {
       throw new ConflictException();
     }
+    const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
     return this.repository.save({
       ...user,
       salt,
       password: hashPassword,
+      role,
     });
   }
 

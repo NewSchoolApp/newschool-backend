@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { classToPlain } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
