@@ -5,7 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Audit } from 'src/CommonsModule';
+import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
 
