@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Audit } from 'src/CommonsModule';
+import { Audit } from '../../CommonsModule';
 import { Test } from './test.entity';
 
 @Entity()
