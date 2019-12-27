@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EntityManager } from 'typeorm';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
@@ -13,10 +14,10 @@ import { User } from '../../UserModule/entity';
 @Injectable()
 export class SecurityService {
   constructor(
-    private readonly clientCredentialsRepository: ClientCredentialsRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly entityManager: EntityManager,
   ) {
   }
 
@@ -86,7 +87,9 @@ export class SecurityService {
     if (!name) {
       throw new InvalidClientCredentialsError();
     }
-    const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(name, secret);
+    const clientCredentials: ClientCredentials = await this.entityManager
+      .getCustomRepository(ClientCredentialsRepository)
+      .findByNameAndSecret(name, secret);
     if (!clientCredentials) {
       throw new InvalidClientCredentialsError();
     }
