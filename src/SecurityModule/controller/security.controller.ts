@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, HttpCode, Logger, LoggerService, Post, UseInterceptors, UnauthorizedException, UploadedFiles } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, Logger, Post, UseInterceptors, UnauthorizedException} from '@nestjs/common';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -11,6 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller(`/${Constants.OAUTH_ENDPOINT}`)
 export class SecurityController {
   private readonly logger = new Logger(SecurityController.name);
+
   constructor(
     private readonly service: SecurityService,
   ) {
