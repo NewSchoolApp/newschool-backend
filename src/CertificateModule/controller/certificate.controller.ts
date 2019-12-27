@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Transactional } from '@nest-kr/transaction';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   ApiBearerAuth,
@@ -15,7 +16,6 @@ import { CertificateService } from '../service';
 import { CertificateMapper } from '../mapper';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
 import { RoleEnum } from '../../SecurityModule/enum';
-import { NewUserDTO } from '../../UserModule/dto';
 
 @ApiUseTags('Certificate')
 @ApiBearerAuth()
@@ -35,6 +35,7 @@ export class CertificateController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async findAll(): Promise<CertificateDTO[]> {
     return this.mapper.toDtoList(await this.service.findAll());
   }
@@ -47,6 +48,7 @@ export class CertificateController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async save(@Body() newCertificate: NewCertificateDTO) {
     return this.mapper.toDto(await this.service.save(
       newCertificate,
@@ -62,6 +64,7 @@ export class CertificateController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async update(
     @Param('id') id: string,
     @Body() certificate: CertificateDTO,
@@ -79,6 +82,7 @@ export class CertificateController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async findById(
     @Param('id') id: string,
   ): Promise<CertificateDTO> {
@@ -94,6 +98,7 @@ export class CertificateController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async delete(
     @Param('id') id: string,
   ): Promise<void> {
