@@ -45,6 +45,17 @@ export class CourseController {
     return this.mapper.toDto(await this.service.findById(id));
   }
 
+  @Get('/slug/:slug')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CourseDTO })
+  @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
+  @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.findBySlug(slug));
+  }
+
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })

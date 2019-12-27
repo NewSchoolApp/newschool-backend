@@ -2,8 +2,8 @@ import {
   Body,
   Controller,
   Headers,
-  HttpCode, Logger,
-  LoggerService,
+  HttpCode,
+  Logger,
   Post,
   UnauthorizedException,
   UseInterceptors,
@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller(`/${Constants.OAUTH_ENDPOINT}`)
 export class SecurityController {
   private readonly logger = new Logger(SecurityController.name);
+
   constructor(
     private readonly service: SecurityService,
   ) {
