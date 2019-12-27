@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
@@ -10,30 +11,35 @@ export class CourseService {
   constructor(
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
+    private readonly entityManager: EntityManager,
   ) {
   }
 
-  public async add(course: NewCourseDTO): Promise<Course> {
+    public async add(course: NewCourseDTO): Promise<Course> {
 
-    const courseSameTitle: Course = await this.repository.findByTitle(course.title);
-    if (courseSameTitle) {
-      throw new ConflictException('Course with this title already exists');
+        const courseSameTitle: Course = await this.entityManager
+          .getCustomRepository(CourseRepository)
+          .findByTitle(course.title);
+        if (courseSameTitle) {
+            throw new ConflictException('Course with this title already exists');
+        }
+
+        return this.entityManager.getCustomRepository(CourseRepository).save(course);
     }
 
-    return this.repository.save(course);
-  }
-
-    public async update(id: Course['id'], courseUpdatedInfo: CourseUpdateDTO): Promise<Course> {
+    public async update(id: Course['id'], userUpdatedInfo: CourseUpdateDTO): Promise<Course> {
         const course: Course = await this.findById(id);
-        return this.repository.save({ ...course, ...courseUpdatedInfo });
+        return this.entityManager
+          .getCustomRepository(CourseRepository)
+          .save(this.mapper.toEntity({ ...course, ...userUpdatedInfo } as unknown as CourseDTO));
     }
 
     public async getAll(): Promise<Course[]> {
-        return this.repository.find();
+        return this.entityManager.getCustomRepository(CourseRepository).find();
     }
 
     public async findById(id: Course['id']): Promise<Course> {
-        const course: Course = await this.repository.findOne(id);
+        const course: Course = await this.entityManager.getCustomRepository(CourseRepository).findOne(id);
         if (!course) {
             throw new NotFoundException('Course not found');
         }
@@ -41,19 +47,23 @@ export class CourseService {
     }
 
     public async findBySlug(slug: string): Promise<Course> {
-        const course: Course = await this.repository.findBySlug(slug);
+        const course: Course = await this.entityManager
+        .getCustomRepository(CourseRepository)
+        .findBySlug(slug);
         if (!course) {
             throw new NotFoundException('Course not found');
         }
-        return course;
+            return course;
     }
 
     public async delete(id: Course['id']): Promise<void> {
-        await this.repository.delete(id);
+        await this.entityManager.getCustomRepository(CourseRepository).delete(id);
     }
 
     public async findByTitle(title: string): Promise<Course> {
-        const course = await this.repository.findByTitle(title);
+        const course = await this.entityManager
+        .getCustomRepository(CourseRepository)
+        .findByTitle(title);
         if (!course) {
             throw new NotFoundException();
         }

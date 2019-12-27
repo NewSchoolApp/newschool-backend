@@ -1,4 +1,3 @@
-import { Module } from '@nestjs/common';
 import { CourseController, LessonController, PartController } from './controllers';
 import { CourseService, LessonService, PartService } from './service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseRepository, LessonRepository, PartRepository } from './repository';
 import { Course, Lesson, Part } from './entity';
 import { CourseMapper, LessonMapper, PartMapper } from './mapper';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { TransactionMiddleware } from '@nest-kr/transaction';
+import { getConnection } from 'typeorm';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -24,4 +26,9 @@ import { JwtModule } from '@nestjs/jwt';
   exports: [CourseService, LessonService, PartMapper],
 })
 export class CourseModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TransactionMiddleware(getConnection))
+      .forRoutes(CourseController);
+  }
 }
