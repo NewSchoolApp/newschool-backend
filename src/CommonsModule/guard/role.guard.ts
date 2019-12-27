@@ -26,11 +26,8 @@ export class RoleGuard implements CanActivate {
 
     const request = context.switchToHttp()
       .getRequest();
-<<<<<<< HEAD
-=======
 
     const authorizationHeader = request.headers.authorization;
->>>>>>> Retornando erro de jwt expirado no guarda
 
     if (!request.headers.authorization)
       return false;
