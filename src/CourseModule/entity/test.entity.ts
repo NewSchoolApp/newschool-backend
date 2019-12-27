@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Audit } from 'src/CommonsModule';
 import { Part } from './part.entity';
+import { Alternative } from './alternative.entity';
 
 @Entity()
 export class Test extends Audit {
@@ -18,4 +25,10 @@ export class Test extends Audit {
     part => part.tests,
   )
   part: Part;
+
+  @OneToMany(
+    () => Alternative,
+    alternative => alternative.test,
+  )
+  alternatives: Alternative[];
 }
