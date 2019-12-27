@@ -13,6 +13,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { Transactional } from '@nest-kr/transaction';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
@@ -56,6 +57,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async getAll(): Promise<UserDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll());
   }
@@ -69,6 +71,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async findUserByJwtId(
     @Headers('authorization') authorization: string,
   ): Promise<UserDTO> {
@@ -86,6 +89,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async findById(
     @Param('id') id: UserDTO['id'],
   ): Promise<UserDTO> {
@@ -101,6 +105,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
     return this.mapper.toDto(await this.service.add(this.mapper.toEntity(user as unknown as UserDTO)));
@@ -115,6 +120,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async update(
     @Param('id') id: UserDTO['id'],
     @Body() userUpdatedInfo: UserUpdateDTO,
@@ -131,6 +137,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
   @NeedRole(RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async forgotPassword(@Body() forgotPasswordDTO: ForgotPasswordDTO): Promise<ChangePasswordRequestIdDTO> {
     this.logger.log(`forgot password: ${forgotPasswordDTO}`);
     const forgotPasswordRequestId = await this.service.forgotPassword(forgotPasswordDTO);
@@ -150,6 +157,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
   @NeedRole(RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
@@ -164,6 +172,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
   @NeedRole(RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async changePassword(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
     @Body() changePasswordDTO: ChangePasswordDTO,
@@ -173,6 +182,7 @@ export class UserController {
   }
 
   @Post('/:userId/certificate/:certificateId')
+  @Transactional()
   public async addCertificateToUser(
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
@@ -190,6 +200,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @Transactional()
   public async delete(@Param('id') id: UserDTO['id']): Promise<void> {
     this.logger.log(`user id: ${id}`);
     await this.service.delete(id);

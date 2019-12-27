@@ -7,11 +7,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -21,20 +22,22 @@ import { CertificateService } from '../../CertificateModule/service';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly repository: UserRepository,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
+    private readonly entityManager: EntityManager,
   ) {
   }
 
   public async getAll(): Promise<User[]> {
-    return this.repository.find();
+    return this.entityManager.getCustomRepository(UserRepository).find();
   }
 
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id);
+    const user: User | undefined = await this.entityManager
+      .getCustomRepository(UserRepository)
+      .findOne(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -42,13 +45,15 @@ export class UserService {
   }
 
   public async add(user: NewUserDTO): Promise<User> {
-    const userWithSameEmail: User = await this.repository.findByEmail(user.email);
+    const userWithSameEmail: User = await this.entityManager
+      .getCustomRepository(UserRepository)
+      .findByEmail(user.email);
     if (userWithSameEmail) {
       throw new ConflictException();
     }
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
-    return this.repository.save({
+    return this.entityManager.getCustomRepository(UserRepository).save({
       ...user,
       salt,
       password: hashPassword,
@@ -57,12 +62,12 @@ export class UserService {
 
   public async delete(id: User['id']): Promise<void> {
     await this.findById(id);
-    await this.repository.delete(id);
+    await this.entityManager.getCustomRepository(UserRepository).delete(id);
   }
 
   public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
     const user: User = await this.findById(id);
-    return this.repository.save({ ...user, ...userUpdatedInfo });
+    return this.entityManager.getCustomRepository(UserRepository).save({ ...user, ...userUpdatedInfo });
   }
 
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
@@ -73,7 +78,7 @@ export class UserService {
   }
 
   public async findByEmail(email: string): Promise<User> {
-    const user: User = await this.repository.findByEmail(email);
+    const user: User = await this.entityManager.getCustomRepository(UserRepository).findByEmail(email);
     if (!user) {
       throw new UserNotFoundError();
     }
@@ -102,15 +107,17 @@ export class UserService {
     const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
-    await this.repository.save(user);
+    await this.entityManager.getCustomRepository(UserRepository).save(user);
   }
 
   public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
     const [user, certificate]: [User, Certificate] = await Promise.all([
-      this.repository.findByIdWithCertificates(userId),
+      this.entityManager.getCustomRepository(UserRepository).findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),
     ]);
-    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate] });
+    return await this.entityManager
+      .getCustomRepository(UserRepository)
+      .save({ ...user, certificates: [...user.certificates, certificate] });
   }
 
   private createSalt(): string {

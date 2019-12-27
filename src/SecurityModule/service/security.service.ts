@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { classToPlain } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
-import { ClientCredentialsRepository, RoleRepository } from '../repository';
+import { ClientCredentialsRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../UserModule/entity';
 
@@ -14,7 +14,6 @@ import { User } from '../../UserModule/entity';
 export class SecurityService {
   constructor(
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
-    private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
