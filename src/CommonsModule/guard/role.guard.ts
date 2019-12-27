@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { User } from '../../UserModule/entity';
@@ -20,14 +26,22 @@ export class RoleGuard implements CanActivate {
 
     const request = context.switchToHttp()
       .getRequest();
-    
+
     const authorizationHeader = request.headers.authorization;
 
     if (!authorizationHeader)
       return false;
-      
+
     const [, token] = authorizationHeader.split(' ');
-    const user: User = this.jwtService.verify(token);
+    let user: User;
+    try {
+      user = this.jwtService.verify<User>(token);
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new UnauthorizedException(e.message)
+      }
+      throw new InternalServerErrorException(e);
+    }
     const hasPermission: boolean = roles
       .some((role) => role === user.role.name);
     return user?.role && hasPermission;
