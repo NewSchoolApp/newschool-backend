@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 import { CertificateRepository } from '../repository';
 import { Certificate } from '../entity';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
@@ -7,21 +8,20 @@ import { CertificateDTO, NewCertificateDTO } from '../dto';
 export class CertificateService {
 
   constructor(
-    private readonly repository: CertificateRepository,
+    private readonly entityManager: EntityManager,
   ) {
   }
 
   public async findAll(): Promise<Certificate[]> {
-    return this.repository.find();
+    return this.entityManager.getCustomRepository(CertificateRepository).find();
   }
 
   async save(certificate: NewCertificateDTO): Promise<Certificate> {
-    console.log(certificate);
-    return await this.repository.save(certificate);
+    return await this.entityManager.getCustomRepository(CertificateRepository).save(certificate);
   }
 
   public async findById(id: Certificate['id']): Promise<Certificate> {
-    const foundCertificate: Certificate | undefined = await this.repository.findById(id);
+    const foundCertificate: Certificate | undefined = await this.entityManager.getCustomRepository(CertificateRepository).findById(id);
     if (!foundCertificate) {
       throw new NotFoundException('Certificate not found');
     }
@@ -35,6 +35,6 @@ export class CertificateService {
 
   public async delete(id: Certificate['id']) {
     await this.findById(id);
-    await this.repository.delete({ id });
+    await this.entityManager.getCustomRepository(CertificateRepository).delete({ id });
   }
 }

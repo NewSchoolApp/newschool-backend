@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { TransactionMiddleware } from '@nest-kr/transaction';
 import { CertificateController } from './controller';
 import { CertificateService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { getConnection } from 'typeorm';
 import { Certificate } from './entity';
 import { CertificateRepository } from './repository';
 import { CertificateMapper } from './mapper';
@@ -32,4 +34,9 @@ import { CertificateMapper } from './mapper';
   ],
 })
 export class CertificateModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TransactionMiddleware(getConnection))
+      .forRoutes(CertificateController);
+  }
 }
