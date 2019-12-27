@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { User } from '../../UserModule/entity';
@@ -37,6 +43,7 @@ export class RoleGuard implements CanActivate {
       if (e.name === 'TokenExpiredError') {
         throw new UnauthorizedException(e.message)
       }
+      throw new InternalServerErrorException(e);
     }
     const hasPermission: boolean = roles
       .some((role) => role === user.role.name);
