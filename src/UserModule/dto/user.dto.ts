@@ -25,10 +25,6 @@ export class UserDTO {
   @Expose()
   urlInstagram: User['urlInstagram'];
 
-  @ApiModelProperty({ type: String })
-  @Expose()
-  password: User['password'];
-
   @ApiModelProperty({ enum: RoleEnum })
   @IsEnum(RoleEnum)
   @IsNotEmpty()

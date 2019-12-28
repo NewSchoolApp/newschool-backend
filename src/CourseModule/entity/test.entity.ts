@@ -6,29 +6,29 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { Course } from './course.entity';
 import { Part } from './part.entity';
+import { Alternative } from './alternative.entity';
 
 @Entity()
-export class Lesson extends Audit {
+export class Test extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column()
   title: string;
 
-  @Column({ nullable: false })
-  description: string;
+  @Column()
+  available: boolean;
 
   @ManyToOne(
-    type => Course,
-    course => course.lessons,
+    type => Part,
+    part => part.tests,
   )
-  course: Course;
+  part: Part;
 
   @OneToMany(
-    () => Part,
-    part => part.lesson,
+    () => Alternative,
+    alternative => alternative.test,
   )
-  parts: Part[];
+  alternatives: Alternative[];
 }

@@ -1,5 +1,13 @@
 import * as crypto from 'crypto';
-import { BadRequestException, ConflictException, GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException, forwardRef,
+  GoneException, Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
@@ -9,6 +17,8 @@ import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
+import { RoleService } from '../../SecurityModule/service';
+import { Role } from '../../SecurityModule/entity';
 
 @Injectable()
 export class UserService {
@@ -17,6 +27,9 @@ export class UserService {
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
+    private readonly configService: ConfigService,
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
   ) {
   }
 
@@ -37,12 +50,14 @@ export class UserService {
     if (userWithSameEmail) {
       throw new ConflictException();
     }
+    const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
     return this.repository.save({
       ...user,
       salt,
       password: hashPassword,
+      role,
     });
   }
 
@@ -51,7 +66,7 @@ export class UserService {
     await this.repository.delete(id);
   }
 
-  public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
+  public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
     const user: User = await this.findById(id);
     return this.repository.save({ ...user, ...userUpdatedInfo });
   }
@@ -97,11 +112,11 @@ export class UserService {
   }
 
   public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
-    const [ user, certificate ]: [User, Certificate] = await Promise.all([
+    const [user, certificate]: [User, Certificate] = await Promise.all([
       this.repository.findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),
     ]);
-    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate ] })
+    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate] });
   }
 
   private createSalt(): string {
@@ -121,7 +136,7 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${process.env.FRONT_URL}/${process.env.CHANGE_PASSWORD_URL}?changePasswordRequestId=${changePasswordRequestId}`,
+          urlTrocaSenha: `${this.configService.get<string>('FRONT_URL')}/${this.configService.get<string>('CHANGE_PASSWORD_URL')}?changePasswordRequestId=${changePasswordRequestId}`,
         },
       });
     } catch (e) {
