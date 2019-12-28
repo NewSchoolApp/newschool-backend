@@ -108,7 +108,7 @@ export class UserController {
   @Transactional()
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
-    return this.mapper.toDto(await this.service.add(this.mapper.toEntity(user as unknown as UserDTO)));
+    return this.mapper.toDto(await this.service.add(user));
   }
 
   @Put(':id')
