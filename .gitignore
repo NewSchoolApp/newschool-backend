@@ -36,5 +36,8 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# IDE - Theia
+.theia
+
 # env file
 .env
