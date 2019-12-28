@@ -1,18 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { Transactional } from '@nest-kr/transaction';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitQuery,
-  ApiOkResponse,
-  ApiOperation,
-  ApiUseTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('Course')
@@ -47,31 +39,31 @@ export class CourseController {
     }
 
 
-  @Get('/slug/:slug')
-  @HttpCode(200)
-  @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
-  @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
-  @UseGuards(RoleGuard)
-  @Transactional()
-  public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
-    return this.mapper.toDto(await this.service.findBySlug(slug));
-  }
+    @Get('/slug/:slug')
+    @HttpCode(200)
+    @Transactional()
+    @ApiOkResponse({ type: CourseDTO })
+    @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
+    @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
+    @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+    @UseGuards(RoleGuard)
+    @Transactional()
+    public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
+        return this.mapper.toDto(await this.service.findBySlug(slug));
+    }
 
-  @Post()
-  @HttpCode(201)
-  @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
-  @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
-  @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
-  @Transactional()
-  public async add(@Body() course: NewCourseDTO): Promise<CourseDTO> {
-    return this.mapper.toDto(
-      await this.service.add(this.mapper.toEntity(course as CourseDTO))
-    );
-  }
+    @Post()
+    @HttpCode(201)
+    @Transactional()
+    @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
+    @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
+    @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
+    @NeedRole(RoleEnum.ADMIN)
+    @UseGuards(RoleGuard)
+    @Transactional()
+    public async add(@Body() course: NewCourseDTO): Promise<CourseDTO> {
+        return this.mapper.toDto(await this.service.add(this.mapper.toEntity(course as CourseDTO)));
+    }
 
     @Put('/:id')
     @HttpCode(200)

@@ -1,5 +1,5 @@
 import { Body, Controller, Headers, HttpCode, Logger, Post, UseInterceptors, UnauthorizedException} from '@nestjs/common';
-import { Transactional } from '@nest-kr/transaction';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -27,8 +27,9 @@ export class SecurityController {
     @Body() { grant_type, username, password, refresh_token }: AuthDTO,
     @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
-    if (!authorization)
+    if (!authorization) {
       throw new UnauthorizedException();
+    }
 
     // eslint-disable-next-line @typescript-eslint/camelcase
     this.logger.log(`grant_type: ${grant_type}`);
