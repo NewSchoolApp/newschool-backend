@@ -16,7 +16,6 @@ export class CertificateService {
   }
 
   async save(certificate: NewCertificateDTO): Promise<Certificate> {
-    console.log(certificate);
     return await this.repository.save(certificate);
   }
 
