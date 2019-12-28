@@ -13,6 +13,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
@@ -51,6 +52,7 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
+  @Transactional()
   @ApiOperation({ title: 'Get Users', description: 'Get all users' })
   @ApiOkResponse({ type: NewUserDTO, isArray: true, description: 'All users' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
@@ -62,6 +64,7 @@ export class UserController {
 
   @Get('/me')
   @HttpCode(200)
+  @Transactional()
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by jwt id', description: 'Decodes de jwt and finds the user by the jwt id' })
@@ -79,6 +82,7 @@ export class UserController {
 
   @Get('/:id')
   @HttpCode(200)
+  @Transactional()
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
@@ -95,6 +99,7 @@ export class UserController {
 
   @Post()
   @HttpCode(201)
+  @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
   @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
   @ApiImplicitBody({ name: 'User', type: NewUserSwagger })
@@ -108,6 +113,7 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(200)
+  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
   @ApiOkResponse({ type: UserDTO })
@@ -125,6 +131,7 @@ export class UserController {
 
   @Post('/forgot-password')
   @HttpCode(200)
+  @Transactional()
   @ApiOkResponse({ type: ChangePasswordRequestIdDTO })
   @ApiOperation({ title: 'Create change password request', description: 'Create change password request' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -141,6 +148,7 @@ export class UserController {
 
   @Get('/forgot-password/:changePasswordRequestId/validate')
   @HttpCode(200)
+  @Transactional()
   @ApiOperation({
     title: 'Validate change password request',
     description: 'validate change password expiration time. If time is not expired, 200 is returned',
@@ -157,6 +165,7 @@ export class UserController {
 
   @Post('/forgot-password/:changePasswordRequestId')
   @HttpCode(200)
+  @Transactional()
   @ApiOperation({
     title: 'change password',
   })
@@ -173,6 +182,7 @@ export class UserController {
   }
 
   @Post('/:userId/certificate/:certificateId')
+  @Transactional()
   public async addCertificateToUser(
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
@@ -183,6 +193,7 @@ export class UserController {
 
   @Delete('/:id')
   @HttpCode(200)
+  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Delete user', description: 'Delete user by id' })
   @ApiOkResponse({ type: null })
