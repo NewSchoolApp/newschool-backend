@@ -1,6 +1,7 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
@@ -27,6 +28,7 @@ describe('SecurityController (e2e)', () => {
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -67,6 +69,8 @@ describe('SecurityController (e2e)', () => {
   });
 
   it('should validate client credentials', async (done) => {
+    configService = app.get<ConfigService>(ConfigService);
+
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -77,7 +81,7 @@ describe('SecurityController (e2e)', () => {
         expect(res.body.accessToken).not.toBeNull();
         expect(res.body.refreshToken).not.toBeNull();
         expect(res.body.tokenType).toBe('bearer');
-        expect(res.body.expiresIn).toBe(Number(process.env.EXPIRES_IN_ACCESS_TOKEN));
+        expect(res.body.expiresIn).toBe(configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'));
       })
       .then(() => done());
   });

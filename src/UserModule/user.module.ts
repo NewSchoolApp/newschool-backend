@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ChangePasswordService, UserService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { ChangePasswordRepository, UserRepository } from './repository';
 import { ChangePassword, User } from './entity';
 import { UserMapper } from './mapper';
@@ -17,9 +18,12 @@ import { CertificateModule } from '../CertificateModule';
       ChangePassword,
       ChangePasswordRepository,
     ]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN },
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+      }),
+      inject: [ConfigService],
     }),
     forwardRef(() => SecurityModule),
     CertificateModule,

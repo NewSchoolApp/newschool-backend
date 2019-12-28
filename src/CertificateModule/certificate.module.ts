@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { CertificateController } from './controller';
 import { CertificateService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,9 +14,12 @@ import { CertificateMapper } from './mapper';
       Certificate,
       CertificateRepository,
     ]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN },
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [CertificateController],
@@ -25,7 +29,7 @@ import { CertificateMapper } from './mapper';
   ],
   exports: [
     CertificateService,
-  ]
+  ],
 })
 export class CertificateModule {
 }

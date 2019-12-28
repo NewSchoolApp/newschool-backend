@@ -3,7 +3,15 @@ import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
-import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiImplicitBody,
+  ApiImplicitQuery,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUseTags,
+} from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('Course')
@@ -37,6 +45,17 @@ export class CourseController {
     return this.mapper.toDto(await this.service.findById(id));
   }
 
+  @Get('/slug/:slug')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CourseDTO })
+  @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
+  @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.findBySlug(slug));
+  }
+
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
@@ -44,8 +63,10 @@ export class CourseController {
   @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() course): Promise<CourseDTO> {
-    return this.mapper.toDto(await this.service.add(course));
+  public async add(@Body() course: NewCourseDTO): Promise<CourseDTO> {
+    return this.mapper.toDto(
+      await this.service.add(this.mapper.toEntity(course as CourseDTO))
+    );
   }
 
   @Put('/:id')

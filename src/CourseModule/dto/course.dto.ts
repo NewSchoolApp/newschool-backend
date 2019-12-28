@@ -22,4 +22,8 @@ export class CourseDTO {
   @ApiModelProperty({ type: Number })
   @Expose()
   authorId: Course['authorId'];
+
+  @ApiModelProperty({ type: Number })
+  @Expose()
+  slug: string;
 }
