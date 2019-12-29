@@ -51,23 +51,19 @@ export class UserService {
     return user;
   }
 
-  public async add(user: NewUserDTO): Promise<User> {
-    const userWithSameEmail: User = await this.entityManager
-      .getCustomRepository(UserRepository)
-      .findByEmail(user.email);
-    if (userWithSameEmail) {
-      throw new ConflictException();
+    @Transactional()
+    public async add(user: NewUserDTO): Promise<User> {
+        const userWithSameEmail: User = await this.entityManager
+          .getCustomRepository(UserRepository)
+          .findByEmail(user.email);
+        if (userWithSameEmail) {
+            throw new ConflictException();
+        }
+        const role: Role = await this.roleService.findByRoleName(user.role);
+        const salt: string = this.createSalt();
+        const hashPassword: string = this.createHashedPassword(user.password, salt);
+        return this.entityManager.getCustomRepository(UserRepository).save({ ...user, salt, password: hashPassword, role });
     }
-    const role: Role = await this.roleService.findByRoleName(user.role);
-    const salt: string = this.createSalt();
-    const hashPassword: string = this.createHashedPassword(user.password, salt);
-    return this.entityManager.getCustomRepository(UserRepository).save({
-      ...user,
-      salt,
-      password: hashPassword,
-      role,
-    });
-  }
 
   @Transactional()
   public async delete(id: User['id']): Promise<void> {
@@ -76,9 +72,10 @@ export class UserService {
   }
 
   @Transactional()
-  public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
+  public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
-    return this.entityManager.getCustomRepository(UserRepository).save({ ...user, ...userUpdatedInfo });
+    const role: Role = await this.roleService.findByRoleName(userUpdatedInfo.role);
+    return this.getCustomRepository(UserRepository).save({ ...user, ...userUpdatedInfo, role });
   }
 
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {

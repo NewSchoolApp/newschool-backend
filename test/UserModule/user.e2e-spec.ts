@@ -19,6 +19,7 @@ describe('UserController (e2e)', () => {
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  const adminRoleEnum: RoleEnum = RoleEnum.ADMIN;
   const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
   beforeAll(async () => {
@@ -76,7 +77,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .expect(201)
           .then(() => done());
@@ -98,7 +99,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .expect(400)
           .then(() => done());
@@ -121,7 +122,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -152,13 +153,13 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
             const updateBody: UserUpdateDTO = {
+              id: _res.body.id,
               email: _res.body.email,
-              password: 'mypass',
-              role: adminRole,
+              role: adminRoleEnum,
               name: 'updated name',
               urlFacebook: _res.body.urlFacebook,
               urlInstagram: _res.body.urlInstagram,
@@ -197,7 +198,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
