@@ -8,4 +8,5 @@ export class Constants {
     static COURSE_ENDPOINT = 'course';
     static LESSON_ENDPOINT = 'lesson';
     static PART_ENDPOINT = 'part';
+    static MESSAGE_ENDPOINT = 'message';
 }
