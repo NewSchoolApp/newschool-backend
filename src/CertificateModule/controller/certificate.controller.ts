@@ -11,7 +11,6 @@ import {
   ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CertificateService } from '../service';
 import { CertificateMapper } from '../mapper';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
@@ -31,7 +30,6 @@ export class CertificateController {
 
   @Get()
   @HttpCode(200)
-  @Transactional()
   @ApiOperation({ title: 'Get Certificates', description: 'Get all certificates' })
   @ApiOkResponse({ type: CertificateDTO, isArray: true, description: 'All certificates' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
@@ -43,7 +41,6 @@ export class CertificateController {
 
   @Post()
   @HttpCode(201)
-  @Transactional()
   @ApiCreatedResponse({ type: CertificateDTO, description: 'Created certificate' })
   @ApiOperation({ title: 'Add certificate', description: 'Creates a new certificate' })
   @ApiImplicitBody({ name: 'certificate', type: NewCertificateDTO })
@@ -58,7 +55,6 @@ export class CertificateController {
 
   @Put('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Certificate id' })
   @ApiOperation({ title: 'Update certificate', description: 'Update certificate by id' })
   @ApiOkResponse({ type: NewCertificateDTO })
@@ -77,7 +73,6 @@ export class CertificateController {
 
   @Get('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Certificate Id' })
   @ApiOperation({ title: 'Find certificate by id', description: 'Find certificate by id' })
   @ApiNotFoundResponse({ description: 'thrown if certificate is not found' })
@@ -92,7 +87,6 @@ export class CertificateController {
 
   @Delete('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Certificate id' })
   @ApiOperation({ title: 'Delete certificate', description: 'Delete certificate by id' })
   @ApiOkResponse({ type: null })

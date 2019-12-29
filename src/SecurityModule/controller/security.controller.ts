@@ -8,7 +8,6 @@ import {
   UnauthorizedException,
   UseInterceptors,
 } from '@nestjs/common';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
 import { AuthDTO, GeneratedTokenDTO } from '../dto';
@@ -30,7 +29,6 @@ export class SecurityController {
   @UseInterceptors(FileInterceptor(''))
   @Post('/token')
   @HttpCode(200)
-  @Transactional()
   async authenticateUser(
     // eslint-disable-next-line @typescript-eslint/camelcase
     @Body() { grant_type, username, password, refresh_token }: AuthDTO,

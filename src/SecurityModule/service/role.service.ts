@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RoleEnum } from '../enum';
 import { RoleRepository } from '../repository';
 import { Role } from '../entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class RoleService {
@@ -10,6 +11,7 @@ export class RoleService {
   ) {
   }
 
+  @Transactional()
   public async findByRoleName(name: RoleEnum): Promise<Role> {
     const role: Role = await this.repository.findByRoleName(name);
     if (!role) {

@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
@@ -27,7 +26,6 @@ export class CourseController {
 
   @Get()
   @HttpCode(200)
-  @Transactional()
   @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
   @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -38,7 +36,6 @@ export class CourseController {
 
   @Get('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: CourseDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find Course by id', description: 'Find Course by id' })
@@ -50,7 +47,6 @@ export class CourseController {
 
   @Get('/slug/:slug')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: CourseDTO })
   @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
   @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
@@ -62,7 +58,6 @@ export class CourseController {
 
   @Post()
   @HttpCode(201)
-  @Transactional()
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
   @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
   @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
@@ -76,7 +71,6 @@ export class CourseController {
 
   @Put('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: CourseDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Update course', description: 'Update course by id' })
@@ -88,7 +82,6 @@ export class CourseController {
 
   @Delete('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: null })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })

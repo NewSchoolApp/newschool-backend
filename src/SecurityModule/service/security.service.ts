@@ -9,6 +9,7 @@ import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../UserModule/entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class SecurityService {
@@ -21,6 +22,7 @@ export class SecurityService {
   ) {
   }
 
+  @Transactional()
   public async validateClientCredentials(base64Login: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
@@ -32,6 +34,7 @@ export class SecurityService {
     return this.generateLoginObject(clientCredentials);
   }
 
+  @Transactional()
   public decodeToken(jwt: string): ClientCredentials | User {
     return this.jwtService.verify<ClientCredentials | User>(jwt);
   }
@@ -45,6 +48,7 @@ export class SecurityService {
       .toString('ascii');
   }
 
+  @Transactional()
   public async validateUserCredentials(base64Login: string, username: string, password: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
@@ -57,6 +61,7 @@ export class SecurityService {
     return this.generateLoginObject(user);
   }
 
+  @Transactional()
   public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),

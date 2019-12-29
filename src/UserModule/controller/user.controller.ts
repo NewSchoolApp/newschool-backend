@@ -52,7 +52,6 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  @Transactional()
   @ApiOperation({ title: 'Get Users', description: 'Get all users' })
   @ApiOkResponse({ type: NewUserDTO, isArray: true, description: 'All users' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
@@ -64,7 +63,6 @@ export class UserController {
 
   @Get('/me')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by jwt id', description: 'Decodes de jwt and finds the user by the jwt id' })
@@ -82,7 +80,6 @@ export class UserController {
 
   @Get('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
@@ -113,7 +110,6 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(200)
-  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
   @ApiOkResponse({ type: UserDTO })
@@ -148,7 +144,6 @@ export class UserController {
 
   @Get('/forgot-password/:changePasswordRequestId/validate')
   @HttpCode(200)
-  @Transactional()
   @ApiOperation({
     title: 'Validate change password request',
     description: 'validate change password expiration time. If time is not expired, 200 is returned',
@@ -165,7 +160,6 @@ export class UserController {
 
   @Post('/forgot-password/:changePasswordRequestId')
   @HttpCode(200)
-  @Transactional()
   @ApiOperation({
     title: 'change password',
   })
@@ -182,7 +176,6 @@ export class UserController {
   }
 
   @Post('/:userId/certificate/:certificateId')
-  @Transactional()
   public async addCertificateToUser(
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
@@ -193,7 +186,6 @@ export class UserController {
 
   @Delete('/:id')
   @HttpCode(200)
-  @Transactional()
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Delete user', description: 'Delete user by id' })
   @ApiOkResponse({ type: null })
