@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO } from '../dto';
@@ -13,6 +14,7 @@ export class CourseService {
   ) {
   }
 
+  @Transactional()
   public async add(course: Course): Promise<Course> {
 
     const courseSameTitle: Course = await this.repository.findByTitle(course.title);
@@ -23,16 +25,18 @@ export class CourseService {
     return this.repository.save(course);
   }
 
+  @Transactional()
   public async update(id: Course['id'], userUpdatedInfo: CourseUpdateDTO): Promise<Course> {
     const course: Course = await this.findById(id);
     return this.repository.save(this.mapper.toEntity({ ...course, ...userUpdatedInfo } as unknown as CourseDTO));
   }
 
-
+  @Transactional()
   public async getAll(): Promise<Course[]> {
     return this.repository.find();
   }
 
+  @Transactional()
   public async findById(id: Course['id']): Promise<Course> {
     const course: Course = await this.repository.findOne(id);
     if (!course) {
@@ -41,6 +45,7 @@ export class CourseService {
     return course;
   }
 
+  @Transactional()
   public async findBySlug(slug: string): Promise<Course> {
     const course: Course = await this.repository.findBySlug(slug);
     if (!course) {
@@ -49,10 +54,12 @@ export class CourseService {
     return course;
   }
 
+  @Transactional()
   public async delete(id: Course['id']): Promise<void> {
     await this.repository.delete(id);
   }
 
+  @Transactional()
   public async findByTitle(title: string): Promise<Course> {
     const course = await this.repository.findByTitle(title);
     if (!course) {

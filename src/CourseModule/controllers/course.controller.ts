@@ -90,6 +90,4 @@ export class CourseController {
   public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
     await this.service.delete(id);
   }
-
-
 }
