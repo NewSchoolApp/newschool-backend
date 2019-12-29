@@ -11,24 +11,30 @@ Você pode rodar o projeto direto da sua máquina.
 
 2 - Faça uma cópia do arquivo **.env.example** para **.env**
 
+<<<<<<< HEAD
 3- Instale as depedências do projeto
 >**npm install**
+=======
+2- Instale as depedências do projeto
+
+> **npm install**
+>>>>>>> b956eb12909e9782bcd81a794b19aebb32746991
 
 4- Inicie a aplicação
 
->**npm run start:dev**
+> **npm run start:dev**
 
 5- Veja o swagger pelo navegador
 
->**http://localhost:3000/api/**
+> **http://localhost:8080/swagger**
 
 ## Docker
 
-Ou, você pode optar por rodar o projeto via Docker. Para isso precisamos 
+Ou, você pode optar por rodar o projeto via Docker. Para isso precisamos
 que você tenha instalado o Docker na sua máquina.
 Após isso basta rodar o seguinte comando:
 
->**docker-compose up**
+> **docker-compose up**
 
 E o ambiente de desenvolvimento estará rodando localmente para você. Lembrando
 que estamos com o hot reloading no Docker também, ou seja, você não precisará
@@ -36,13 +42,12 @@ ficar parando o container e subindo ele novamente a cada mudança que você fize
 Isso acontecerá automaticamente.
 
 5- Para executar os teste E2E execute o script abaixo
->**npm run test:e2e**
+
+> **npm run test:e2e**
 
 # Guidelines
 
-
 # Como contribuir passo-a-passo
-
 
 1 - CONHEÇA O PROJETO **New School**
 

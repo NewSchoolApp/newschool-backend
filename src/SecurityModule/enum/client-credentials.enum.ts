@@ -1,3 +1,4 @@
 export enum ClientCredentialsEnum {
-  FRONT = 'FRONT'
+  'NEWSCHOOL@EXTERNAL' = 'NEWSCHOOL@EXTERNAL',
+  'NEWSCHOOL@FRONT' = 'NEWSCHOOL@FRONT'
 }

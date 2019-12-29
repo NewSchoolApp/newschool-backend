@@ -8,5 +8,5 @@ export class GeneratedTokenDTO {
   @ApiModelProperty()
   tokenType: string;
   @ApiModelProperty()
-  expiresIn: number;
+  expiresIn: string;
 }

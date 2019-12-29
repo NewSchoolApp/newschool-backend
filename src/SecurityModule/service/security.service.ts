@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
 import { classToPlain } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
-import { ClientCredentialsRepository } from '../repository';
+import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../UserModule/entity';
 
 @Injectable()
 export class SecurityService {
-
   constructor(
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {
   }
 
@@ -39,7 +41,7 @@ export class SecurityService {
   }
 
   private base64ToString(base64Login: string): string {
-    return new Buffer(base64Login, 'base64')
+    return Buffer.from(base64Login, 'base64')
       .toString('ascii');
   }
 
@@ -47,7 +49,7 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    this.findClientCredentialsByNameAndSecret(
+    await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
     );
@@ -55,12 +57,29 @@ export class SecurityService {
     return this.generateLoginObject(user);
   }
 
+  public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
+    const [name, secret]: string[] = this.splitClientCredentials(
+      this.base64ToString(base64Login),
+    );
+    await this.findClientCredentialsByNameAndSecret(
+      ClientCredentialsEnum[name],
+      secret,
+    );
+    const { email, password }: User = this.getUserFromToken(refreshToken.split(' ')[1]);
+    const user: User = await this.userService.findByEmailAndPassword(email, password);
+    return this.generateLoginObject(user);
+  }
+
+  public getUserFromToken(jwt: string): User {
+    return this.jwtService.verify<User>(jwt);
+  }
+
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
     return {
-      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN }),
-      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: process.env.EXPIRES_IN_REFRESH_TOKEN }),
+      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN') }),
+      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
       tokenType: 'bearer',
-      expiresIn: Number(process.env.EXPIRES_IN_ACCESS_TOKEN),
+      expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
     };
   }
 

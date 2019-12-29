@@ -7,7 +7,7 @@ import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { NewUserDTO } from '../../src/UserModule/dto';
+import { NewUserDTO, UserUpdateDTO } from '../../src/UserModule/dto';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -45,7 +45,7 @@ describe('UserController (e2e)', () => {
 
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum.FRONT;
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
@@ -155,13 +155,19 @@ describe('UserController (e2e)', () => {
             role: adminRole,
           } as NewUserDTO)
           .then((_res) => {
+            const updateBody: UserUpdateDTO = {
+              email: _res.body.email,
+              password: 'mypass',
+              role: adminRole,
+              name: 'updated name',
+              urlFacebook: _res.body.urlFacebook,
+              urlInstagram: _res.body.urlInstagram,
+            };
             return request(app.getHttpServer())
               .put(`${userUrl}/${_res.body.id}`)
+              .type('form')
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .send({
-                ..._res.body,
-                name: 'updated name',
-              } as NewUserDTO)
+              .send(updateBody)
               .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
