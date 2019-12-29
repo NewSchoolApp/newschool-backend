@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
@@ -41,7 +40,6 @@ export class CourseController {
 
     @Get('/slug/:slug')
     @HttpCode(200)
-    @Transactional()
     @ApiOkResponse({ type: CourseDTO })
     @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
     @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
@@ -54,7 +52,6 @@ export class CourseController {
 
     @Post()
     @HttpCode(201)
-    @Transactional()
     @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
     @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
     @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })

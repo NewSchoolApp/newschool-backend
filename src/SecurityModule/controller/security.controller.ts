@@ -21,7 +21,6 @@ export class SecurityController {
   @UseInterceptors(FileInterceptor(''))
   @Post('/token')
   @HttpCode(200)
-  @Transactional()
   async authenticateUser(
     // eslint-disable-next-line @typescript-eslint/camelcase
     @Body() { grant_type, username, password, refresh_token }: AuthDTO,

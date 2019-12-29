@@ -20,6 +20,7 @@ import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class UserService {
@@ -34,10 +35,12 @@ export class UserService {
   ) {
   }
 
+  @Transactional()
   public async getAll(): Promise<User[]> {
     return this.entityManager.getCustomRepository(UserRepository).find();
   }
 
+  @Transactional()
   public async findById(id: User['id']): Promise<User> {
     const user: User | undefined = await this.entityManager
       .getCustomRepository(UserRepository)
@@ -66,11 +69,13 @@ export class UserService {
     });
   }
 
+  @Transactional()
   public async delete(id: User['id']): Promise<void> {
     await this.findById(id);
     await this.entityManager.getCustomRepository(UserRepository).delete(id);
   }
 
+  @Transactional()
   public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
     const user: User = await this.findById(id);
     return this.entityManager.getCustomRepository(UserRepository).save({ ...user, ...userUpdatedInfo });
@@ -83,6 +88,7 @@ export class UserService {
     return changePassword.id;
   }
 
+  @Transactional()
   public async findByEmail(email: string): Promise<User> {
     const user: User = await this.entityManager.getCustomRepository(UserRepository).findByEmail(email);
     if (!user) {
@@ -91,6 +97,7 @@ export class UserService {
     return user;
   }
 
+  @Transactional()
   public async findByEmailAndPassword(email: string, password: string): Promise<User> {
     const user: User = await this.findByEmail(email);
     if (!user.validPassword(password)) {
@@ -99,6 +106,7 @@ export class UserService {
     return user;
   }
 
+  @Transactional()
   public async validateChangePassword(changePasswordRequestId: string) {
     const changePassword: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
     if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
@@ -106,6 +114,7 @@ export class UserService {
     }
   }
 
+  @Transactional()
   public async changePassword(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO) {
     if (changePasswordDTO.password !== changePasswordDTO.validatePassword) {
       throw new BadRequestException();
@@ -116,6 +125,7 @@ export class UserService {
     await this.entityManager.getCustomRepository(UserRepository).save(user);
   }
 
+  @Transactional()
   public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
     const [user, certificate]: [User, Certificate] = await Promise.all([
       this.entityManager.getCustomRepository(UserRepository).findByIdWithCertificates(userId),
