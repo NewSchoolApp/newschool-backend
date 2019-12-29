@@ -1,10 +1,6 @@
-import {
-  BadRequestException,
-  ConflictException, forwardRef,
-  GoneException, Inject,
+import {  
   Injectable,
-  InternalServerErrorException,
-  NotFoundException,
+  InternalServerErrorException  
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nest-modules/mailer';
