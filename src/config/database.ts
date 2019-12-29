@@ -11,7 +11,6 @@ export const database = (configService: ConfigService): MysqlConnectionOptions =
     username: configService.get<string>('DATABASE_USERNAME'),
     password: configService.get<string>('DATABASE_PASSWORD'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    dropSchema: configService.get<string>('NODE_ENV') === 'TEST',
     synchronize: configService.get<string>('NODE_ENV') !== 'PROD',
     logging: configService.get<string>('NODE_ENV') !== 'TEST',
   };

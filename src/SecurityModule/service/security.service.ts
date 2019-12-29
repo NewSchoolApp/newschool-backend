@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { classToPlain } from 'class-transformer';
 import { GeneratedTokenDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
@@ -76,10 +76,10 @@ export class SecurityService {
 
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
     return {
-      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') }),
-      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<number>('EXPIRES_IN_REFRESH_TOKEN') }),
+      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN') }),
+      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
       tokenType: 'bearer',
-      expiresIn: this.configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+      expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
     };
   }
 

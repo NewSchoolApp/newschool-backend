@@ -99,11 +99,11 @@ export class UserController {
   @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
   @ApiImplicitBody({ name: 'User', type: NewUserSwagger })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
-    return this.mapper.toDto(await this.service.add(this.mapper.toEntity(user as unknown as UserDTO)));
+    return this.mapper.toDto(await this.service.add(user));
   }
 
   @Put(':id')
