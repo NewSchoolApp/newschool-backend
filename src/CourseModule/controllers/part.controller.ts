@@ -8,7 +8,7 @@ import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('Part')
 @ApiBearerAuth()
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.LESSON_ENDPOINT}`)
+@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.PART_ENDPOINT}`)
 export class PartController {
     constructor(
         private readonly service: PartService,
