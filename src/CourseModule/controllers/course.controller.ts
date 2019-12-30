@@ -22,6 +22,7 @@ export class CourseController {
     @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
     @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
     @UseGuards(RoleGuard)
+    @Transactional()
     public async getAll(): Promise<CourseDTO[]> {
         return this.mapper.toDtoList(await this.service.getAll());
     }
@@ -33,6 +34,7 @@ export class CourseController {
     @ApiOperation({ title: 'Find Course by id', description: 'Find Course by id' })
     @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
     @UseGuards(RoleGuard)
+    @Transactional()
     public async findById(@Param('id') id: CourseDTO['id']): Promise<CourseDTO> {
         return this.mapper.toDto(await this.service.findById(id));
     }
@@ -69,6 +71,7 @@ export class CourseController {
     @ApiOperation({ title: 'Update course', description: 'Update course by id' })
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
+    @Transactional()
     public async update(@Param('id') id: CourseDTO['id'], @Body() courseUpdatedInfo: CourseUpdateDTO): Promise<CourseDTO> {
         return await this.service.update(id, this.mapper.toEntity(courseUpdatedInfo as CourseDTO));
     }
@@ -80,6 +83,7 @@ export class CourseController {
     @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
+    @Transactional()
     public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
         await this.service.delete(id);
     }

@@ -1,5 +1,9 @@
 import { Audit } from "src/CommonsModule";
+<<<<<<< HEAD
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Unique } from "typeorm";
+=======
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from "typeorm";
+>>>>>>> Subindo alterações do CRUD Cursos/aulas/partes
 import { Course, Lesson } from '.';
 import { tsNamespaceExportDeclaration } from "@babel/types";
 

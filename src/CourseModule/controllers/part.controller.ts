@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { PartService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { PartDTO, PartUpdateDTO, NewPartDTO, LessonDTO } from '../dto';
+import { PartDTO, PartUpdateDTO, NewPartDTO } from '../dto';
 import { PartMapper } from '../mapper';
 import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
