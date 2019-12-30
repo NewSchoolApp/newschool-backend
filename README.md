@@ -7,17 +7,24 @@
 
 Você pode rodar o projeto direto da sua máquina.
 
-1 - Faça uma cópia do arquivo **.env.example** para **.env**
+1 - Tenha a versão 12 do Node.js instalada em sua máquina.
 
+2 - Faça uma cópia do arquivo **.env.example** para **.env**
+
+<<<<<<< HEAD
+3- Instale as depedências do projeto
+>**npm install**
+=======
 2- Instale as depedências do projeto
 
 > **npm install**
+>>>>>>> b956eb12909e9782bcd81a794b19aebb32746991
 
-3- Inicie a aplicação
+4- Inicie a aplicação
 
 > **npm run start:dev**
 
-4- Veja o swagger pelo navegador
+5- Veja o swagger pelo navegador
 
 > **http://localhost:8080/swagger**
 

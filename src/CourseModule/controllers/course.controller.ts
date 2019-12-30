@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
@@ -13,6 +13,7 @@ import {
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiUseTags('Course')
 @ApiBearerAuth()
@@ -57,15 +58,16 @@ export class CourseController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('photo'))
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
   @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
   @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() course: NewCourseDTO): Promise<CourseDTO> {
+  public async add(@Body() course: NewCourseDTO, @UploadedFile() file): Promise<CourseDTO> {
     return this.mapper.toDto(
-      await this.service.add(this.mapper.toEntity(course as CourseDTO))
+      await this.service.add(this.mapper.toEntity(course as CourseDTO), file)
     );
   }
 

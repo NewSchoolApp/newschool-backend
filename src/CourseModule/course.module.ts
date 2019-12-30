@@ -7,6 +7,7 @@ import { CourseRepository } from './repository';
 import { Course } from './entity';
 import { CourseMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { JwtModule } from '@nestjs/jwt';
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
       }),
       inject: [ConfigService],
-    }),
+    }), 
+    MulterModule.register({   dest: './upload', }),
   ],
   controllers: [CourseController],
   providers: [CourseService, CourseMapper],

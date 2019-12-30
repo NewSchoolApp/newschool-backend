@@ -15,12 +15,16 @@ export class CourseService {
   }
 
   @Transactional()
-  public async add(course: Course): Promise<Course> {
+  public async add(course: Course, file): Promise<Course> {
 
     const courseSameTitle: Course = await this.repository.findByTitle(course.title);
     if (courseSameTitle) {
       throw new ConflictException('Course with this title already exists');
     }
+
+  
+    // eslint-disable-next-line require-atomic-updates
+    course.photoName = file.filename;
 
     return this.repository.save(course);
   }
