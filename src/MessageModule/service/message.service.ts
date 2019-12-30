@@ -18,7 +18,7 @@ export class MessageService {
   public async sendEmail(email: EmailDTO):Promise<void> {
     try {
       await this.mailerService.sendMail({
-        to: 'Newschoolcontato@gmail.com',
+        to: this.configService.get<string>('EMAIL_CONTACTUS'),
         from: email.email,
         subject: email.title,
         html: email.message        
@@ -31,7 +31,7 @@ export class MessageService {
   public async sendContactUsEmail(contactUs: ContactUsDTO):Promise<void> {
     try {
       await this.mailerService.sendMail({
-        to: 'newschoolcontato@gmail.com',
+        to: this.configService.get<string>('EMAIL_CONTACTUS'),
         from: contactUs.email,
         subject: 'Fale conosco',
         template: 'contact-us',
