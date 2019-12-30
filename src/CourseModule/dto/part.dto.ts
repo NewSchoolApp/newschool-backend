@@ -6,20 +6,20 @@ export class PartDTO {
     id: Part['id'];
 
     @ApiModelProperty({ type: String })
-    title: string;
+    title: Part['title'];
 
     @ApiModelProperty({ type: String })
-    description: string;
+    description: Part['description'];
 
     @ApiModelProperty({ type: String })
-    vimeoUrl: string;
+    vimeoUrl: Part['vimeoUrl'];
 
     @ApiModelProperty({ type: String })
-    youtubeUrl: string;
+    youtubeUrl: Part['youtubeUrl'];
 
     @ApiModelProperty({ type: String })
-    lessonId: string;
+    lessonId: Part['lessonId'];
 
     @ApiModelProperty({ type: String })
-    nextPartId: string;
+    nextPartId: Part['nextPartId'];
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { PartService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { PartDTO, PartUpdateDTO, NewPartDTO } from '../dto';
+import { PartDTO, PartUpdateDTO, NewPartDTO, LessonDTO } from '../dto';
 import { PartMapper } from '../mapper';
 import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
@@ -19,9 +19,10 @@ export class PartController {
     @Get()
     @HttpCode(200)
     @ApiOperation({ title:'Get Parts', description: 'Get all Parts' })
-    @NeedRole( RoleEnum.ADMIN, RoleEnum.STUDENT )
-    @UseGuards( RoleGuard )
-    public async getAll( lessonId: string ): Promise<PartDTO> {
+    @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
+    @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+    @UseGuards(RoleGuard)
+    public async getAll( @Param('lessonId') lessonId: PartDTO['lessonId'] ): Promise<PartDTO> {
         return this.mapper.toDtoList( await this.service.getAll(lessonId));
     }
 
