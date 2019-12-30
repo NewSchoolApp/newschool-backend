@@ -15,8 +15,8 @@ export class PartUpdatedInfoSwagger {
     youtubeURL: Part['youtubeUrl'];
 
     @ApiModelProperty({ type: String })
-    lessonId: Part['lesson'];
+    lesson: Part['lesson'];
 
     @ApiModelProperty({ type: String })
-    nextPartId: Part['nextPart'];
+    nextPart: Part['nextPart'];
 }
