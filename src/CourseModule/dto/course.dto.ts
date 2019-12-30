@@ -2,7 +2,7 @@ import { Course } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CourseDTO {
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   id: Course['id'];
 
   @ApiModelProperty({ type: String })
@@ -16,6 +16,4 @@ export class CourseDTO {
 
   @ApiModelProperty({ type: Number })
   authorId: Course['authorId'];
-
-
 }

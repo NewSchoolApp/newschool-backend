@@ -1,5 +1,5 @@
 import { Audit } from "src/CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from "typeorm";
 import { Course, Lesson } from '.';
 
 
@@ -24,11 +24,25 @@ export class Part extends Audit{
         nullable: true,
         name: 'vimeo_url'
     })
-    vimeo_url: string;
+    vimeoUrl: string;
 
     @Column({
         nullable: true,
         name: 'youtube_url'
     })
-    youtube_url: string;
+    youtubeUrl: string;
+
+    @OneToOne(type=>Lesson)
+    @Column({
+        nullable: true,
+        name: 'lesson_id'
+    })
+    lessonId: Lesson;
+
+    @OneToOne(type=>Part)
+    @Column({
+        nullable: true,
+        name: 'nxt_prt_id'
+    })
+    nextPartId: Part;
 }

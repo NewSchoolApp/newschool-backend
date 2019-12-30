@@ -2,7 +2,6 @@ import { Audit } from "src/CommonsModule";
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from "typeorm";
 import { Course } from '.';
 
-
 @Entity()
 export class Lesson extends Audit{
     @PrimaryGeneratedColumn('uuid')
@@ -32,5 +31,5 @@ export class Lesson extends Audit{
         nullable: true,
         name: 'nxt_lsn_id'
     })
-    next_lesson_id: Lesson;
+    nextLessonId: Lesson;
 }
