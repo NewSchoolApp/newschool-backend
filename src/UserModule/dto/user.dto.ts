@@ -1,8 +1,7 @@
 import { User } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { RoleDTO } from '../../SecurityModule/dto';
 
 export class UserDTO {
   @ApiModelProperty({ type: Number })
@@ -25,9 +24,7 @@ export class UserDTO {
   @Expose()
   urlInstagram: User['urlInstagram'];
 
-  @ApiModelProperty({ enum: RoleEnum })
-  @IsEnum(RoleEnum)
-  @IsNotEmpty()
+  @ApiModelProperty({ type: RoleDTO })
   @Expose()
-  role: User['role'];
+  role: RoleDTO;
 }

@@ -63,7 +63,7 @@ export class UserController {
 
   @Get('/me')
   @HttpCode(200)
-  @ApiOkResponse({ type: NewUserDTO })
+  @ApiOkResponse({ type: UserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
   @ApiOperation({ title: 'Find user by jwt id', description: 'Decodes de jwt and finds the user by the jwt id' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -122,7 +122,7 @@ export class UserController {
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
-    return await this.service.update(id, this.mapper.toEntity(userUpdatedInfo));
+    return this.mapper.toDto(await this.service.update(id, userUpdatedInfo));
   }
 
   @Post('/forgot-password')
