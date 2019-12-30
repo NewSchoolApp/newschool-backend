@@ -34,6 +34,9 @@ export class Course extends Audit {
   })
   @Expose()
   authorId: string;
+  
+  @Column()
+  photoName: string;
 
   @Column()
   @Expose()
@@ -50,4 +53,6 @@ export class Course extends Audit {
     lesson => lesson.course,
   )
   lessons: Lesson[];
+
+
 }

@@ -13,6 +13,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
@@ -95,6 +96,7 @@ export class UserController {
 
   @Post()
   @HttpCode(201)
+  @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
   @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
   @ApiImplicitBody({ name: 'User', type: NewUserSwagger })
@@ -125,6 +127,7 @@ export class UserController {
 
   @Post('/forgot-password')
   @HttpCode(200)
+  @Transactional()
   @ApiOkResponse({ type: ChangePasswordRequestIdDTO })
   @ApiOperation({ title: 'Create change password request', description: 'Create change password request' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
