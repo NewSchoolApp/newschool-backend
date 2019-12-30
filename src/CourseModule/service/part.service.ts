@@ -13,7 +13,7 @@ export class PartService {
 
     public async add(part: NewPartDTO): Promise<Part> {
 
-        const partSameTitle: Part = await this.findByTitle( part.title, part.lessonId );
+        const partSameTitle: Part = await this.findByTitle( part.title, part.lesson );
         if (partSameTitle) {
             throw new ConflictException();
         }
@@ -26,8 +26,8 @@ export class PartService {
         return this.repository.save({ ...part, ...partUpdatedInfo });
     }
 
-    public async getAll(lessonId: Part['lessonId']): Promise<Part[]> {
-        return this.repository.find({ lessonId });
+    public async getAll(lesson: Part['lesson']): Promise<Part[]> {
+        return this.repository.find({ lesson });
     }
 
     public async findById(id: Part['id']): Promise<Part> {
@@ -42,8 +42,8 @@ export class PartService {
         await this.repository.delete(id);
     }
 
-    public async findByTitle( title: Part['title'], lessonId: Part['lessonId'] ): Promise<Part> {
-        const part = await this.repository.findByTitleAndLessonId({ title, lessonId });
+    public async findByTitle( title: Part['title'], lesson: Part['lesson'] ): Promise<Part> {
+        const part = await this.repository.findByTitleAndLessonId({ title, lesson });
         if (!part) {
             throw new NotFoundException();
         }

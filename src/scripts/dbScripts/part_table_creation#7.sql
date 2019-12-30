@@ -10,5 +10,6 @@ CREATE TABLE `part` (
     `nxt_prt_id` varchar(36) NOT NULL,
     CONSTRAINT PK_PRT PRIMARY KEY (`id`),
     CONSTRAINT FK_PRT_LSN FOREIGN KEY (`lesson_id`) REFERENCES lesson (`id`),
-    CONSTRAINT CHK_NXT_PRT_ID CHECK ((nxt_prt_id IN (SELECT id FROM part)) OR (nxt_prt_id IS NULL))
+    CONSTRAINT CHK_NXT_PRT_ID CHECK ((nxt_prt_id IN (SELECT id FROM part)) OR (nxt_prt_id IS NULL)),
+    CONSTRAINT UNQ_NXT_PRT_ID UNIQUE (`nxt_prt_id`)
 );

@@ -1,7 +1,8 @@
 import { Audit } from "src/CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Unique } from "typeorm";
 import { Course } from '.';
 
+@Unique(['nextLesson', 'course'])
 @Entity()
 export class Lesson extends Audit{
     @PrimaryGeneratedColumn('uuid')
@@ -19,17 +20,15 @@ export class Lesson extends Audit{
     })
     description: string;
 
-    @ManyToOne(type=>Course)
-    @Column({
-        nullable: false,
+    @ManyToOne(() => Course, (course: Course) => course.id)
+    @JoinColumn({
         name: 'course_id'
     })
-    courseId: Course;
+    course: Course;
 
-    @OneToOne(type=>Lesson)
     @Column({
         nullable: true,
         name: 'nxt_lsn_id'
     })
-    nextLessonId: Lesson;
+    nextLesson: string;
 }

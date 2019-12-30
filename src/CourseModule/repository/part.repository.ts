@@ -12,7 +12,7 @@ export class PartRepository extends Repository<Part> {
         return this.findOne({ id });
     }
 
-    async findByTitleAndLessonId({ title, lessonId }): Promise<Part | undefined> {
-        return this.findOne({ title, lessonId });
+    async findByTitleAndLessonId({ title, lesson }): Promise<Part | undefined> {
+        return this.findOne({ title, lesson });
     }
 }

@@ -13,9 +13,9 @@ export class LessonUpdateDTO {
 
     @ApiModelProperty({ type: String })
     @IsNotEmpty()
-    courseId: Lesson['courseId'];
+    course: Lesson['course'];
 
     @ApiModelProperty({ type: String })
     @IsNotEmpty()
-    nextLessonId: Lesson['nextLessonId'];
+    nextLesson: Lesson['nextLesson'];
 }

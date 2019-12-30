@@ -16,8 +16,8 @@ export class NewPartDTO {
     youtubeUrl: Part['youtubeUrl'];
 
     @ApiModelProperty({ type: String })
-    lessonId: Part['lessonId'];
+    lesson: Part['lesson'];
 
     @ApiModelProperty({ type: String })
-    nextPartId: Part['nextPartId'];
+    nextPart: Part['nextPart'];
 }

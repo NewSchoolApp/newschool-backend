@@ -22,7 +22,7 @@ export class PartController {
     @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
     @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
     @UseGuards(RoleGuard)
-    public async getAll( @Param('lessonId') lessonId: PartDTO['lessonId'] ): Promise<PartDTO> {
+    public async getAll( @Param('lesson') lessonId: PartDTO['lesson'] ): Promise<PartDTO[]> {
         return this.mapper.toDtoList( await this.service.getAll(lessonId));
     }
 

@@ -1,8 +1,9 @@
 import { Audit } from "src/CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Unique } from "typeorm";
 import { Course, Lesson } from '.';
+import { tsNamespaceExportDeclaration } from "@babel/types";
 
-
+@Unique(['nextPart', 'lesson'])
 @Entity()
 export class Part extends Audit{
     @PrimaryGeneratedColumn('uuid')
@@ -32,17 +33,15 @@ export class Part extends Audit{
     })
     youtubeUrl: string;
 
-    @OneToOne(type=>Lesson)
-    @Column({
-        nullable: true,
+    @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.id)
+    @JoinColumn({
         name: 'lesson_id'
     })
-    lessonId: Lesson;
+    lesson: Lesson;
 
-    @OneToOne(type=>Part)
     @Column({
         nullable: true,
         name: 'nxt_prt_id'
     })
-    nextPartId: Part;
+    nextPart: string;
 }

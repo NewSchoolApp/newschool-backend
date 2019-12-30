@@ -15,8 +15,8 @@ export class NewPartSwagger {
     youtubeURL: Part['youtubeUrl'];
 
     @ApiModelProperty({ type: String })
-    lessonId: Part['lessonId'];
+    lessonId: Part['lesson'];
 
     @ApiModelProperty({ type: String })
-    nextPartId: Part['nextPartId'];
+    nextPartId: Part['nextPart'];
 }

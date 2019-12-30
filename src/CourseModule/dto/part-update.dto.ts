@@ -21,9 +21,9 @@ export class PartUpdateDTO {
 
     @ApiModelProperty({ type: String })
     @IsNotEmpty()
-    lessonId: Part['lessonId'];
+    lesson: Part['lesson'];
 
     @ApiModelProperty({ type: String })
     @IsNotEmpty()
-    nextPartId: Part['nextPartId'];
+    nextPart: Part['nextPart'];
 }

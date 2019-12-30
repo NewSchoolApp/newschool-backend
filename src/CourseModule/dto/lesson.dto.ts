@@ -12,8 +12,8 @@ export class LessonDTO {
     description: Lesson['description'];
 
     @ApiModelProperty({ type: String })
-    courseId: Lesson['courseId'];
+    course: Lesson['course'];
 
     @ApiModelProperty({ type: String })
-    nextLessonId: Lesson['nextLessonId'];
+    nextLesson: Lesson['nextLesson'];
 }

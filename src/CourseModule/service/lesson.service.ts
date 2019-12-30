@@ -13,7 +13,7 @@ export class LessonService {
 
     public async add(lesson: NewLessonDTO): Promise<Lesson> {
 
-        const lessonSameTitle: Lesson = await this.findByTitle( lesson.title, lesson.courseId );
+        const lessonSameTitle: Lesson = await this.findByTitle( lesson.title, lesson.course );
         if (lessonSameTitle) {
             throw new ConflictException();
         }
@@ -26,8 +26,8 @@ export class LessonService {
         return this.repository.save({ ...lesson, ...lessonUpdatedInfo });
     }
 
-    public async getAll(courseId: Lesson['courseId']): Promise<Lesson[]> {
-        return this.repository.find({ courseId });
+    public async getAll(course: Lesson['course']): Promise<Lesson[]> {
+        return this.repository.find({ course });
     }
 
     public async findById(id: Lesson['id']): Promise<Lesson> {
@@ -42,8 +42,8 @@ export class LessonService {
         await this.repository.delete({ id });
     }
 
-    public async findByTitle(title: Lesson['title'], courseId: Lesson['courseId']): Promise<Lesson> {
-        const lesson = await this.repository.findByTitleAndCourseId({ title, courseId });
+    public async findByTitle(title: Lesson['title'], course: Lesson['course']): Promise<Lesson> {
+        const lesson = await this.repository.findByTitleAndCourseId({ title, course });
         if (!lesson) {
             throw new NotFoundException();
         }
