@@ -1,0 +1,78 @@
+{
+  "name": "New School API",
+  "env": {
+    "DATABASE_HOST": {
+      "description": "DATABASE_HOST",
+      "value": "marketingextranet.com.br"
+    },
+    "DATABASE_NAME": {
+      "description": "DATABASE_NAME",
+      "value": "marketin_newschool"
+    },
+    "DATABASE_PASSWORD": {
+      "description": "DATABASE_PASSWORD",
+      "value": "mP1O1&XjBZ&E"
+    },
+    "DATABASE_PORT": {
+      "description": "DATABASE_PORT",
+      "value": "3306"
+    },
+    "DATABASE_USERNAME": {
+      "description": "DATABASE_USERNAME",
+      "value": "marketin_devuser"
+    },
+    "EMAIL_CONTACTUS": {
+      "description": "EMAIL_CONTACTUS",
+      "value": "newschoolcontato@gmail.com"
+    },
+    "EXPIRES_IN_ACCESS_TOKEN": {
+      "description": "EXPIRES_IN_ACCESS_TOKEN",
+      "value": "1h"
+    },
+    "EXPIRES_IN_REFRESH_TOKEN": {
+      "description": "EXPIRES_IN_REFRESH_TOKEN",
+      "value": "2h"
+    },
+    "HOST": {
+      "description": "HOST",
+      "value": "0.0.0.0"
+    },
+    "JWT_SECRET": {
+      "description": "JWT_SECRET",
+      "value": "secret"
+    },
+    "NODE_ENV": {
+      "description": "NODE_ENV",
+      "value": "production"
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "NPM_CONFIG_PRODUCTION",
+      "value": "false"
+    },
+    "ROLLBAR_TOKEN": {
+      "description": "ROLLBAR_TOKEN",
+      "value": "ff41b1b749f34eb189a40feb56242f70"
+    },
+    "SMTP_HOST": {
+      "description": "SMTP_HOST",
+      "value": "vps.jhonatansouza.com.br"
+    },
+    "SMTP_PASSWORD": {
+      "description": "SMTP_PASSWORD",
+      "value": "dsnr1biP"
+    },
+    "SMTP_PORT": {
+      "description": "SMTP_PORT",
+      "value": "26"
+    },
+    "SMTP_USER": {
+      "description": "SMTP_USER",
+      "value": "newschool-dev-stg@marketingextranet.com.br"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
