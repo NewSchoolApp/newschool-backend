@@ -1,6 +1,6 @@
 import { Audit } from "src/CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Unique } from "typeorm";
-import { Course, Lesson } from '.';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique } from "typeorm";
+import { Lesson } from '.';
 import { tsNamespaceExportDeclaration } from "@babel/types";
 
 @Unique(['nextPart', 'lesson'])
