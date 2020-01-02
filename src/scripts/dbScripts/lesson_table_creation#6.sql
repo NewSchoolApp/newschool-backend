@@ -9,5 +9,5 @@ CREATE TABLE `lesson` (
     CONSTRAINT PK_LSN PRIMARY KEY (`id`),
     CONSTRAINT FK_LSN_CRS FOREIGN KEY (`course_id`) REFERENCES course (`id`),
     CONSTRAINT CHK_NXT_LSN_ID CHECK ((`nxt_lsn_id` IN (SELECT id FROM lesson)) OR (nxt_lsn_id IS NULL)),
-    CONSTRAINT UNQ_NXT_LSN_ID UNIQUE (`nxt_lsn_id`)
+    CONSTRAINT UNQ_NXT_LSN_ID UNIQUE (`nxt_lsn_id`, `course_id`)
 );

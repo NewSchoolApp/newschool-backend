@@ -1,5 +1,5 @@
 import { Audit } from "src/CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique } from "typeorm";
 import { Course } from '.';
 
 @Unique(['nextLesson', 'course'])
