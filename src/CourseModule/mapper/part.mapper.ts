@@ -22,7 +22,7 @@ export class PartMapper extends Mapper<Part, PartDTO> {
         return super.toEntity(dtoObject);
     }
 
-    toEntityList(dtoArray: PartDTO): Part[] {
+    toEntityList(dtoArray: PartDTO[]): Part[] {
         return super.toEntityList(dtoArray);
     }
 }

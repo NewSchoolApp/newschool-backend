@@ -22,7 +22,7 @@ export class CourseMapper extends Mapper<Course, CourseDTO> {
         return super.toEntity(dtoObject);
     }
 
-    toEntityList(dtoArray: CourseDTO): Course[] {
+    toEntityList(dtoArray: CourseDTO[]): Course[] {
         return super.toEntityList(dtoArray);
     }
 }
