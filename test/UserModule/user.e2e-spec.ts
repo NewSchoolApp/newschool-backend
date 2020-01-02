@@ -7,7 +7,7 @@ import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { NewUserDTO } from '../../src/UserModule/dto';
+import { NewUserDTO, UserUpdateDTO } from '../../src/UserModule/dto';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -19,6 +19,7 @@ describe('UserController (e2e)', () => {
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  const adminRoleEnum: RoleEnum = RoleEnum.ADMIN;
   const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
   beforeAll(async () => {
@@ -45,7 +46,7 @@ describe('UserController (e2e)', () => {
 
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum.FRONT;
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
@@ -76,7 +77,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .expect(201)
           .then(() => done());
@@ -98,7 +99,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .expect(400)
           .then(() => done());
@@ -121,7 +122,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())
@@ -152,16 +153,22 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
+            const updateBody: UserUpdateDTO = {
+              id: _res.body.id,
+              email: _res.body.email,
+              role: adminRoleEnum,
+              name: 'updated name',
+              urlFacebook: _res.body.urlFacebook,
+              urlInstagram: _res.body.urlInstagram,
+            };
             return request(app.getHttpServer())
               .put(`${userUrl}/${_res.body.id}`)
+              .type('form')
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .send({
-                ..._res.body,
-                name: 'updated name',
-              } as NewUserDTO)
+              .send(updateBody)
               .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
@@ -191,7 +198,7 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
-            role: adminRole,
+            role: adminRoleEnum,
           } as NewUserDTO)
           .then((_res) => {
             return request(app.getHttpServer())

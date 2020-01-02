@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { initializeTransactionalContext, patchTypeORMRepositoryWithBaseRepository } from 'typeorm-transactional-cls-hooked';
+import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
+import 'reflect-metadata';
 
 async function bootstrap() {
-
   require('dotenv-flow').config();
+
+  initializeTransactionalContext();
+  patchTypeORMRepositoryWithBaseRepository();
 
   const appOptions = { cors: true };
   const app = await NestFactory.create(AppModule, appOptions);
@@ -18,12 +24,18 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger', app, document);
 
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
 
-  await app.listen(process.env.PORT || 3000);
+  const configService = app.get<ConfigService>(ConfigService);
+
+  app.useGlobalFilters(new HttpExceptionFilter(configService));
+
+  await app.listen(configService.get<number>('PORT') || 8080);
 }
 
 bootstrap();
