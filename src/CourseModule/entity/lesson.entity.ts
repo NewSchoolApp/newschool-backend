@@ -1,34 +1,34 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-import { Audit } from '../../CommonsModule';
-import { Course } from './course.entity';
-import { Part } from './part.entity';
+import { Audit } from "src/CommonsModule";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique } from "typeorm";
+import { Course } from '.';
 
+@Unique(['nextLesson', 'course'])
 @Entity()
-export class Lesson extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Lesson extends Audit{
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column({ nullable: false })
-  title: string;
+    @Column({
+        nullable: false,
+        name: 'title'
+    })
+    title: string;
 
-  @Column({ nullable: false })
-  description: string;
+    @Column({
+        nullable: false,
+        name: 'description'
+    })
+    description: string;
 
-  @ManyToOne(
-    type => Course,
-    course => course.lessons,
-  )
-  course: Course;
+    @ManyToOne(() => Course, (course: Course) => course.id)
+    @JoinColumn({
+        name: 'course_id'
+    })
+    course: Course;
 
-  @OneToMany(
-    () => Part,
-    part => part.lesson,
-  )
-  parts: Part[];
+    @Column({
+        nullable: true,
+        name: 'nxt_lsn_id'
+    })
+    nextLesson: string;
 }

@@ -48,11 +48,4 @@ export class Course extends Audit {
   set slug(slug: string) {
   }
 
-  @OneToMany(
-    () => Lesson,
-    lesson => lesson.course,
-  )
-  lessons: Lesson[];
-
-
 }

@@ -1,40 +1,47 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-import { Audit } from '../../CommonsModule';
-import { Lesson } from './lesson.entity';
-import { Test } from './test.entity';
+import { Audit } from "src/CommonsModule";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique } from "typeorm";
+import { Lesson } from '.';
+import { tsNamespaceExportDeclaration } from "@babel/types";
 
+@Unique(['nextPart', 'lesson'])
 @Entity()
-export class Part extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class Part extends Audit{
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  title: string;
+    @Column({
+        nullable: false,
+        name: 'title'
+    })
+    title: string;
 
-  @Column()
-  description: string;
+    @Column({
+        nullable: false,
+        name: 'description'
+    })
+    description: string;
 
-  @Column()
-  vimeo_link: string;
+    @Column({
+        nullable: true,
+        name: 'vimeo_url'
+    })
+    vimeoUrl: string;
 
-  @Column()
-  youtube_link: string;
+    @Column({
+        nullable: true,
+        name: 'youtube_url'
+    })
+    youtubeUrl: string;
 
-  @ManyToOne(
-    type => Lesson,
-    lesson => lesson.parts,
-  )
-  lesson: Lesson;
+    @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.id)
+    @JoinColumn({
+        name: 'lesson_id'
+    })
+    lesson: Lesson;
 
-  @OneToMany(
-    () => Test,
-    test => test.part,
-  )
-  tests: Test[];
+    @Column({
+        nullable: true,
+        name: 'nxt_prt_id'
+    })
+    nextPart: string;
 }

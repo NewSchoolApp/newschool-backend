@@ -32,5 +32,8 @@ lerna-debug.log*
 # IDE - VSCode
 .vscode
 
+# IDE - Theia
+.theia
+
 # env file
 .env

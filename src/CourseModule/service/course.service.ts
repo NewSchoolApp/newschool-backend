@@ -49,26 +49,26 @@ export class CourseService {
     return course;
   }
 
-  @Transactional()
-  public async findBySlug(slug: string): Promise<Course> {
-    const course: Course = await this.repository.findBySlug(slug);
-    if (!course) {
-      throw new NotFoundException('Course not found');
+    @Transactional()
+    public async findBySlug(slug: string): Promise<Course> {
+        const course: Course = await this.repository.findBySlug(slug);
+        if (!course) {
+            throw new NotFoundException('Course not found');
+        }
+        return course;
     }
-    return course;
-  }
 
-  @Transactional()
-  public async delete(id: Course['id']): Promise<void> {
-    await this.repository.delete(id);
-  }
-
-  @Transactional()
-  public async findByTitle(title: string): Promise<Course> {
-    const course = await this.repository.findByTitle(title);
-    if (!course) {
-      throw new NotFoundException();
+    @Transactional()
+    public async delete(id: Course['id']): Promise<void> {
+        await this.repository.delete(id);
     }
-    return course;
-  }
+
+    @Transactional()
+    public async findByTitle(title: string): Promise<Course> {
+        const course = await this.repository.findByTitle(title);
+        if (!course) {
+            throw new NotFoundException();
+        }
+        return course;
+    }
 }
