@@ -76,9 +76,9 @@ export class UserService {
     const user: User = await this.findById(id);
     if (userUpdatedInfo.role) {
       const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-      return this.repository.save({ ...user, ...userUpdatedInfo, role });
+      return this.repository.save({ ...user, ...userUpdatedInfo, role, id: user.id });
     }
-    return await this.repository.save({ ...user, ...userUpdatedInfo, role: user.role });
+    return await this.repository.save({ ...user, ...userUpdatedInfo, role: user.role, id: user.id });
   }
 
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
