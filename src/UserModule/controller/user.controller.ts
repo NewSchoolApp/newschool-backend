@@ -146,26 +146,13 @@ export class UserController {
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
   @ApiOkResponse({ type: UserDTO })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
-    @Headers('authorization') authorization: string,
     @Param('id') id: UserDTO['id'],
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
-    const user: User = this.securityService.getUserFromToken<User>(authorization.split(' ')[1]);
-    if (!user?.role?.name || user.role.name === RoleEnum.EXTERNAL) {
-      throw new UnauthorizedException('EXTERNAL users cannot change their or others information');
-    }
-    if (user.role.name === RoleEnum.STUDENT) {
-      if (id !== user.id) {
-        throw new UnauthorizedException('Only ADMIN user can update other users information');
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { role, ...otherInformations } = userUpdatedInfo;
-      return this.mapper.toDto(await this.service.update(user.id, otherInformations as UserUpdateDTO));
-    }
     this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
     return this.mapper.toDto(await this.service.update(id, userUpdatedInfo));
   }
