@@ -1,6 +1,6 @@
 import { User } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto';
 
 export class UserDTO {
@@ -26,5 +26,6 @@ export class UserDTO {
 
   @ApiModelProperty({ type: RoleDTO })
   @Expose()
+  @Type(() => RoleDTO)
   role: RoleDTO;
 }

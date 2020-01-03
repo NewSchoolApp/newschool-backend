@@ -41,10 +41,11 @@ export class UserService {
 
   @Transactional()
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id);
+    const user: User | undefined = await this.repository.findOne(id, { relations: ['role'] });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    console.log(user);
     return user;
   }
 
