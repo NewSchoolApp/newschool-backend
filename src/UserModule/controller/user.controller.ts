@@ -12,11 +12,12 @@ import {
   Post,
   Put,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO } from '../dto';
+import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO } from '../dto';
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -78,6 +79,23 @@ export class UserController {
     return this.mapper.toDto(await this.service.findById(id));
   }
 
+  @Put('/me')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({ title: 'Update user by jwt id', description: 'Decodes de jwt and updates the user by the jwt id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async updateUserByJwtId(
+    @Headers('authorization') authorization: string,
+    @Body() selfUpdatedInfo: SelfUpdateDTO,
+  ): Promise<UserDTO> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    this.logger.log(`user id: ${id}`);
+    return this.mapper.toDto(await this.service.update(id, selfUpdatedInfo as UserUpdateDTO));
+  }
+
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
@@ -99,13 +117,27 @@ export class UserController {
   @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
   @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
-  @ApiImplicitBody({ name: 'User', type: NewUserSwagger })
+  @ApiImplicitBody({ name: 'User', type: NewUserDTO })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
     return this.mapper.toDto(await this.service.add(user));
+  }
+
+  @Post('/student')
+  @HttpCode(201)
+  @Transactional()
+  @ApiCreatedResponse({ type: NewUserDTO, description: 'User student created' })
+  @ApiOperation({ title: 'Add student user', description: 'Creates a new student' })
+  @ApiImplicitBody({ name: 'User', type: NewStudentDTO })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @NeedRole(RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
+  public async addStudent(@Body() user: NewStudentDTO): Promise<UserDTO> {
+    this.logger.log(`user: ${user}`);
+    return this.mapper.toDto(await this.service.add({ ...user, role: RoleEnum.STUDENT }));
   }
 
   @Put(':id')
@@ -118,9 +150,22 @@ export class UserController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async update(
+    @Headers('authorization') authorization: string,
     @Param('id') id: UserDTO['id'],
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
+    const user: User = this.securityService.getUserFromToken<User>(authorization.split(' ')[1]);
+    if (!user?.role?.name || user.role.name === RoleEnum.EXTERNAL) {
+      throw new UnauthorizedException('EXTERNAL users cannot change their or others information');
+    }
+    if (user.role.name === RoleEnum.STUDENT) {
+      if (id !== user.id) {
+        throw new UnauthorizedException('Only ADMIN user can update other users information');
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { role, ...otherInformations } = userUpdatedInfo;
+      return this.mapper.toDto(await this.service.update(user.id, otherInformations as UserUpdateDTO));
+    }
     this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
     return this.mapper.toDto(await this.service.update(id, userUpdatedInfo));
   }

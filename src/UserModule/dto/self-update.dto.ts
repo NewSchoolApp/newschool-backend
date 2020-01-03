@@ -2,11 +2,11 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { User } from '../entity';
 import { IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { RoleEnum } from '../../SecurityModule/enum';
 
-export class UserUpdateDTO {
+export class SelfUpdateDTO {
   @ApiModelProperty({ type: String })
   @IsString()
+  @IsOptional()
   @Expose()
   id: User['id'];
 
@@ -29,9 +29,4 @@ export class UserUpdateDTO {
   @IsString()
   @Expose()
   urlInstagram: User['urlInstagram'];
-
-  @ApiModelProperty({ type: RoleEnum })
-  @IsOptional()
-  @Expose()
-  role: RoleEnum;
 }
