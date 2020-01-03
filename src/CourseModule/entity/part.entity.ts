@@ -33,7 +33,7 @@ export class Part extends Audit{
     })
     youtubeUrl: string;
 
-    @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.id)
+    @ManyToOne<Lesson>(() => Lesson, (lesson: Lesson) => lesson.parts)
     @JoinColumn({
         name: 'lesson_id'
     })
