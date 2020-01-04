@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -20,6 +20,7 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { RoleEnum } from 'src/SecurityModule/enum';
 
 @Injectable()
 export class UserService {
@@ -73,8 +74,11 @@ export class UserService {
   @Transactional()
   public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
-    const role: Role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-    return this.repository.save({ ...user, ...userUpdatedInfo, role });
+    if (userUpdatedInfo.role) {
+      const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
+      return this.repository.save({ ...user, ...userUpdatedInfo, role, id: user.id });
+    }
+    return await this.repository.save({ ...user, ...userUpdatedInfo, role: user.role, id: user.id });
   }
 
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
