@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO, AdminChangePasswordDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -115,14 +115,42 @@ export class UserService {
   }
 
   @Transactional()
-  public async changePassword(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO) {
-    if (changePasswordDTO.password !== changePasswordDTO.validatePassword) {
-      throw new BadRequestException();
+  public async adminChangePassword(id: string, changePasswordDTO: AdminChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
     }
-    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    const user: User = await this.findById(id);
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
-    await this.repository.save(user);
+    return await this.repository.save(user);
+  }
+
+  @Transactional()
+  public async changePassword(id: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
+    }
+    const user: User = await this.findById(id);
+    if (!user.validPassword(changePasswordDTO.password)) {
+      throw new BadRequestException('Old password does not match with given password')
+    }
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    return await this.repository.save(user);
+  }
+
+  @Transactional()
+  public async changePasswordForgotPasswordFlow(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
+    }
+    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    if (!user.validPassword(changePasswordDTO.password)) {
+      throw new BadRequestException('Old password does not match with given password')
+    }
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    return await this.repository.save(user);
   }
 
   @Transactional()

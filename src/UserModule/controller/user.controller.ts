@@ -17,7 +17,7 @@ import {
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO } from '../dto';
+import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, SelfChangePasswordDTO, AdminChangePasswordDTO } from '../dto';
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -31,7 +31,6 @@ import {
   ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
-import { NewUserSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { SecurityService } from '../../SecurityModule';
@@ -96,6 +95,23 @@ export class UserController {
     return this.mapper.toDto(await this.service.update(id, selfUpdatedInfo as UserUpdateDTO));
   }
 
+  @Put('/me/change-password')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({ title: 'Update user by jwt id', description: 'Decodes de jwt and updates the user password by the jwt id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async changeUserPasswordByJwtId(
+    @Headers('authorization') authorization: string,
+    @Body() changePassword: ChangePasswordDTO,
+  ): Promise<UserDTO> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    this.logger.log(`user id: ${id}`);
+    return this.mapper.toDto(await this.service.changePassword(id, changePassword));
+  }
+
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
@@ -157,6 +173,22 @@ export class UserController {
     return this.mapper.toDto(await this.service.update(id, userUpdatedInfo));
   }
 
+  @Put(':id/change-password')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({ title: 'change-password', description: 'Changes password from an authenticated user' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async changeUserPassword(
+    @Param('id') id: string,
+    @Body() changePassword: AdminChangePasswordDTO,
+  ): Promise<UserDTO> {
+    this.logger.log(`user id: ${id}`);
+    return this.mapper.toDto(await this.service.adminChangePassword(id, changePassword));
+  }
+
   @Post('/forgot-password')
   @HttpCode(200)
   @Transactional()
@@ -193,7 +225,7 @@ export class UserController {
   @Post('/forgot-password/:changePasswordRequestId')
   @HttpCode(200)
   @ApiOperation({
-    title: 'change password',
+    title: 'change password on forgot password flow',
   })
   @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
@@ -204,7 +236,7 @@ export class UserController {
     @Body() changePasswordDTO: ChangePasswordDTO,
   ): Promise<void> {
     this.logger.log(`change password request id: ${changePasswordRequestId}, change password information: ${changePasswordDTO}`);
-    await this.service.changePassword(changePasswordRequestId, changePasswordDTO);
+    await this.service.changePasswordForgotPasswordFlow(changePasswordRequestId, changePasswordDTO);
   }
 
   @Post('/:userId/certificate/:certificateId')
