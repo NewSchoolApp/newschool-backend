@@ -38,6 +38,9 @@ export class Course extends Audit {
   @Column()
   photoName: string;
 
+  @OneToMany<Lesson>(() => Lesson, (lesson: Lesson) => lesson.course)
+  lessons: Lesson[];
+
   @Column()
   @Expose()
   get slug(): string {
@@ -47,12 +50,5 @@ export class Course extends Audit {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   set slug(slug: string) {
   }
-
-  @OneToMany(
-    () => Lesson,
-    lesson => lesson.course,
-  )
-  lessons: Lesson[];
-
 
 }

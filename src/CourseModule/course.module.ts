@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
+import { CourseController, LessonController, PartController } from './controllers';
+import { CourseService, LessonService, PartService } from './service';
 import { ConfigService } from '@nestjs/config';
-import { CourseController } from './controllers';
-import { CourseService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseRepository } from './repository';
-import { Course } from './entity';
-import { CourseMapper } from './mapper';
+import { CourseRepository, LessonRepository, PartRepository } from './repository';
+import { Course, Lesson, Part } from './entity';
+import { CourseMapper, LessonMapper, PartMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Course, CourseRepository]),
+    TypeOrmModule.forFeature([Course, CourseRepository, Lesson, LessonRepository, Part, PartRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -21,9 +21,9 @@ import { MulterModule } from '@nestjs/platform-express';
     }), 
     MulterModule.register({   dest: './upload', }),
   ],
-  controllers: [CourseController],
-  providers: [CourseService, CourseMapper],
-  exports: [CourseService],
+  controllers: [CourseController, LessonController, PartController],
+  providers: [CourseService, CourseMapper, LessonService, LessonMapper, PartService, PartMapper],
+  exports: [CourseService, LessonService, PartMapper],
 })
 export class CourseModule {
 }
