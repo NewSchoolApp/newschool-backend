@@ -12,12 +12,11 @@ import {
   Post,
   Put,
   UseGuards,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, SelfChangePasswordDTO, AdminChangePasswordDTO } from '../dto';
+import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, AdminChangePasswordDTO } from '../dto';
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,

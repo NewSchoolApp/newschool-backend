@@ -1,6 +1,6 @@
-import { Audit } from "src/CommonsModule";
+import { Audit } from "../../CommonsModule";
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique, OneToMany } from "typeorm";
-import { Course } from '.';
+import { Course } from './course.entity';
 import { Part } from "./part.entity";
 
 @Unique(['nextLesson', 'course'])
