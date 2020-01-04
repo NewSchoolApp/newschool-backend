@@ -4,21 +4,26 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityModule } from '../SecurityModule';
 import { MessageController } from './controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmailRepository } from './repository/email.repository';
+import { EmailMapper } from './mapper/email.mapper';
 
 @Module({
-  imports: [    
+  imports: [
+    TypeOrmModule.forFeature([EmailRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
-    forwardRef(() => SecurityModule)    
+    forwardRef(() => SecurityModule),
   ],
   controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessageService, EmailMapper],
   exports: [MessageService],
 })
-export class MessageModule {
-}
+export class MessageModule {}
