@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO, AdminChangePasswordDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -112,6 +112,17 @@ export class UserService {
     if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
       throw new GoneException();
     }
+  }
+
+  @Transactional()
+  public async adminChangePassword(id: string, changePasswordDTO: AdminChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
+    }
+    const user: User = await this.findById(id);
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    return await this.repository.save(user);
   }
 
   @Transactional()

@@ -17,7 +17,7 @@ import {
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, SelfChangePasswordDTO } from '../dto';
+import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, SelfChangePasswordDTO, AdminChangePasswordDTO } from '../dto';
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -173,7 +173,7 @@ export class UserController {
     return this.mapper.toDto(await this.service.update(id, userUpdatedInfo));
   }
 
-  @Put('/change-password/:id')
+  @Put(':id/change-password')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({ title: 'change-password', description: 'Changes password from an authenticated user' })
@@ -183,10 +183,10 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async changeUserPassword(
     @Param('id') id: string,
-    @Body() changePassword: ChangePasswordDTO,
+    @Body() changePassword: AdminChangePasswordDTO,
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.changePassword(id, changePassword));
+    return this.mapper.toDto(await this.service.adminChangePassword(id, changePassword));
   }
 
   @Post('/forgot-password')
