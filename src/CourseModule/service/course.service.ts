@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO } from '../dto';
@@ -13,26 +14,33 @@ export class CourseService {
   ) {
   }
 
-  public async add(course: Course): Promise<Course> {
+  @Transactional()
+  public async add(course: Course, file): Promise<Course> {
 
     const courseSameTitle: Course = await this.repository.findByTitle(course.title);
     if (courseSameTitle) {
       throw new ConflictException('Course with this title already exists');
     }
 
+  
+    // eslint-disable-next-line require-atomic-updates
+    course.photoName = file.filename;
+
     return this.repository.save(course);
   }
 
+  @Transactional()
   public async update(id: Course['id'], userUpdatedInfo: CourseUpdateDTO): Promise<Course> {
     const course: Course = await this.findById(id);
     return this.repository.save(this.mapper.toEntity({ ...course, ...userUpdatedInfo } as unknown as CourseDTO));
   }
 
-
+  @Transactional()
   public async getAll(): Promise<Course[]> {
     return this.repository.find();
   }
 
+  @Transactional()
   public async findById(id: Course['id']): Promise<Course> {
     const course: Course = await this.repository.findOne(id);
     if (!course) {
@@ -41,23 +49,26 @@ export class CourseService {
     return course;
   }
 
-  public async findBySlug(slug: string): Promise<Course> {
-    const course: Course = await this.repository.findBySlug(slug);
-    if (!course) {
-      throw new NotFoundException('Course not found');
+    @Transactional()
+    public async findBySlug(slug: string): Promise<Course> {
+        const course: Course = await this.repository.findBySlug(slug);
+        if (!course) {
+            throw new NotFoundException('Course not found');
+        }
+        return course;
     }
-    return course;
-  }
 
-  public async delete(id: Course['id']): Promise<void> {
-    await this.repository.delete(id);
-  }
-
-  public async findByTitle(title: string): Promise<Course> {
-    const course = await this.repository.findByTitle(title);
-    if (!course) {
-      throw new NotFoundException();
+    @Transactional()
+    public async delete(id: Course['id']): Promise<void> {
+        await this.repository.delete(id);
     }
-    return course;
-  }
+
+    @Transactional()
+    public async findByTitle(title: string): Promise<Course> {
+        const course = await this.repository.findByTitle(title);
+        if (!course) {
+            throw new NotFoundException();
+        }
+        return course;
+    }
 }

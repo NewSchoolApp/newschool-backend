@@ -3,7 +3,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class CourseDTO {
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   @Expose()
   id: Course['id'];
 

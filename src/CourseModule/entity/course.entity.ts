@@ -34,6 +34,12 @@ export class Course extends Audit {
   })
   @Expose()
   authorId: string;
+  
+  @Column()
+  photoName: string;
+
+  @OneToMany<Lesson>(() => Lesson, (lesson: Lesson) => lesson.course)
+  lessons: Lesson[];
 
   @Column()
   @Expose()
@@ -45,9 +51,4 @@ export class Course extends Audit {
   set slug(slug: string) {
   }
 
-  @OneToMany(
-    () => Lesson,
-    lesson => lesson.course,
-  )
-  lessons: Lesson[];
 }

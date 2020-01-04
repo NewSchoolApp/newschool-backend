@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
 import { classToPlain } from 'class-transformer';
-import { GeneratedTokenDTO } from '../dto';
+import { GeneratedTokenDTO, RefreshTokenUserDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../UserModule/entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class SecurityService {
@@ -21,6 +22,7 @@ export class SecurityService {
   ) {
   }
 
+  @Transactional()
   public async validateClientCredentials(base64Login: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
@@ -32,6 +34,7 @@ export class SecurityService {
     return this.generateLoginObject(clientCredentials);
   }
 
+  @Transactional()
   public decodeToken(jwt: string): ClientCredentials | User {
     return this.jwtService.verify<ClientCredentials | User>(jwt);
   }
@@ -45,6 +48,7 @@ export class SecurityService {
       .toString('ascii');
   }
 
+  @Transactional()
   public async validateUserCredentials(base64Login: string, username: string, password: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
@@ -57,6 +61,7 @@ export class SecurityService {
     return this.generateLoginObject(user);
   }
 
+  @Transactional()
   public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
@@ -65,19 +70,22 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
-    const { email, password }: User = this.getUserFromToken(refreshToken.split(' ')[1]);
-    const user: User = await this.userService.findByEmailAndPassword(email, password);
+    const { email, isRefreshToken }: RefreshTokenUserDTO = this.getUserFromToken(refreshToken);
+    if (!isRefreshToken) {
+      throw new UnauthorizedException('The given token is not a Refresh Token');
+    }
+    const user: User = await this.userService.findByEmail(email);
     return this.generateLoginObject(user);
   }
 
-  public getUserFromToken(jwt: string): User {
-    return this.jwtService.verify<User>(jwt);
+  public getUserFromToken<T extends User>(jwt: string): T {
+    return this.jwtService.verify<T>(jwt);
   }
 
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
     return {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN') }),
-      refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
+      refreshToken: this.jwtService.sign(classToPlain({ ...authenticatedUser, isRefreshToken: true }), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
       tokenType: 'bearer',
       expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
     };

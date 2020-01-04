@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, AdminChangePasswordDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -19,6 +19,7 @@ import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class UserService {
@@ -33,12 +34,14 @@ export class UserService {
   ) {
   }
 
+  @Transactional()
   public async getAll(): Promise<User[]> {
     return this.repository.find();
   }
 
+  @Transactional()
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id);
+    const user: User | undefined = await this.repository.findOne(id, { relations: ['role'] });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -61,14 +64,20 @@ export class UserService {
     });
   }
 
+  @Transactional()
   public async delete(id: User['id']): Promise<void> {
     await this.findById(id);
     await this.repository.delete(id);
   }
 
-  public async update(id: User['id'], userUpdatedInfo: User): Promise<User> {
+  @Transactional()
+  public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
     const user: User = await this.findById(id);
-    return this.repository.save({ ...user, ...userUpdatedInfo });
+    if (userUpdatedInfo.role) {
+      const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
+      return this.repository.save({ ...user, ...userUpdatedInfo, role, id: user.id });
+    }
+    return await this.repository.save({ ...user, ...userUpdatedInfo, role: user.role, id: user.id });
   }
 
   public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
@@ -78,6 +87,7 @@ export class UserService {
     return changePassword.id;
   }
 
+  @Transactional()
   public async findByEmail(email: string): Promise<User> {
     const user: User = await this.repository.findByEmail(email);
     if (!user) {
@@ -86,6 +96,7 @@ export class UserService {
     return user;
   }
 
+  @Transactional()
   public async findByEmailAndPassword(email: string, password: string): Promise<User> {
     const user: User = await this.findByEmail(email);
     if (!user.validPassword(password)) {
@@ -94,6 +105,7 @@ export class UserService {
     return user;
   }
 
+  @Transactional()
   public async validateChangePassword(changePasswordRequestId: string) {
     const changePassword: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
     if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
@@ -101,16 +113,46 @@ export class UserService {
     }
   }
 
-  public async changePassword(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO) {
-    if (changePasswordDTO.password !== changePasswordDTO.validatePassword) {
-      throw new BadRequestException();
+  @Transactional()
+  public async adminChangePassword(id: string, changePasswordDTO: AdminChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
     }
-    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    const user: User = await this.findById(id);
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
-    await this.repository.save(user);
+    return await this.repository.save(user);
   }
 
+  @Transactional()
+  public async changePassword(id: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
+    }
+    const user: User = await this.findById(id);
+    if (!user.validPassword(changePasswordDTO.password)) {
+      throw new BadRequestException('Old password does not match with given password')
+    }
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    return await this.repository.save(user);
+  }
+
+  @Transactional()
+  public async changePasswordForgotPasswordFlow(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+      throw new BadRequestException('New passwords does not match');
+    }
+    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    if (!user.validPassword(changePasswordDTO.password)) {
+      throw new BadRequestException('Old password does not match with given password')
+    }
+    user.salt = this.createSalt();
+    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    return await this.repository.save(user);
+  }
+
+  @Transactional()
   public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
     const [user, certificate]: [User, Certificate] = await Promise.all([
       this.repository.findByIdWithCertificates(userId),

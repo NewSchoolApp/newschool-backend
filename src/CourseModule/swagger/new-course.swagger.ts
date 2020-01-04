@@ -8,7 +8,7 @@ export class NewCourseSwagger {
   @ApiModelProperty({ type: String })
   thumbUrl: Course['thumbUrl'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   authorId: Course['authorId'];
 
 }
