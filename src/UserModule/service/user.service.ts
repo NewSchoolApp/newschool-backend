@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, NewStudentDTO, AdminChangePasswordDTO } from '../dto';
+import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, AdminChangePasswordDTO } from '../dto';
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -20,7 +20,6 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { RoleEnum } from 'src/SecurityModule/enum';
 
 @Injectable()
 export class UserService {
