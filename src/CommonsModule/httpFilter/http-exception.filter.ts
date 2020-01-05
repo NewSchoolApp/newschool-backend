@@ -24,9 +24,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             });        
 
             rollbar.warning(JSON.stringify(error));
-        }
-
-        console.error(error);
+        }        
 
         response.status(status).json(error);
     }
