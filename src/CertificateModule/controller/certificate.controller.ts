@@ -39,6 +39,18 @@ export class CertificateController {
     return this.mapper.toDtoList(await this.service.findAll());
   }
 
+  @Get('users/:userId')
+  @HttpCode(200)
+  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
+  @ApiOkResponse({ type: CertificateDTO, isArray: true, description: 'All Certificates'})
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role'})
+  //@NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findAllCertificatesByUser( @Param('userId') userId: string): Promise<CertificateDTO[]> {
+    const certificatesUser = this.service.getCertificateByUser(userId)
+    return certificatesUser;
+  } 
+
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: CertificateDTO, description: 'Created certificate' })
