@@ -56,7 +56,7 @@ export class UserController {
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async getAll(): Promise<UserDTO[]> {
+  public async getAll(): Promise<UserDTO[]> {    
     return this.mapper.toDtoList(await this.service.getAll());
   }
 
