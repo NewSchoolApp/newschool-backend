@@ -11,19 +11,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const status = exception.getStatus();
+        const error = exception.getResponse();
 
-        const rollbar = new Rollbar({
-            accessToken: this.configService.get<string>('ROLLBAR_TOKEN'),
-            captureUncaught: true,
-            captureUnhandledRejections: true,
-        });
+        let env = this.configService.get<string>('NODE_ENV');        
 
-        const objResponse = exception.getResponse();
+        if (env === 'TEST' || env === 'PROD')
+        {
+            const rollbar = new Rollbar({
+                accessToken: this.configService.get<string>('ROLLBAR_TOKEN'),
+                captureUncaught: true,
+                captureUnhandledRejections: true,
+            });        
 
-        console.error(objResponse);
+            rollbar.warning(JSON.stringify(error));
+        }        
 
-        rollbar.warning(JSON.stringify(objResponse));
-
-        response.status(status).json(objResponse);
+        response.status(status).json(error);
     }
 }
