@@ -2,6 +2,7 @@ import { User } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto';
+import { CourseDTO } from 'src/CourseModule/dto';
 
 export class UserDTO {
   @ApiModelProperty({ type: Number })
@@ -28,4 +29,9 @@ export class UserDTO {
   @Expose()
   @Type(() => RoleDTO)
   role: RoleDTO;
+
+  @ApiModelProperty({ type: CourseDTO, isArray: true })
+  @Expose()
+  @Type(() => CourseDTO)
+  createdCourses: CourseDTO[];
 }
