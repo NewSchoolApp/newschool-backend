@@ -6,6 +6,8 @@ CREATE TABLE `course` (
   `title` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `thumbUrl` varchar(255) DEFAULT NULL,
-  `authorId` varchar(36) NOT NULL,
+  `userId` varchar(36) NOT NULL,
   CONSTRAINT PK_CRS PRIMARY KEY (`id`)
 );
+
+ALTER TABLE 'course' ADD CONSTRAINT 'fk_userId' FOREIGN KEY ('userId') REFERENCES 'user'('id');

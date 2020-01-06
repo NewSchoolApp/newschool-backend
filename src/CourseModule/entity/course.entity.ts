@@ -30,7 +30,7 @@ export class Course extends Audit {
   thumbUrl: string;
 
   @ManyToOne<User>('User', (user: User) => user.createdCourses)
-  @JoinColumn({ name: 'fk_userId' })
+  @JoinColumn({ name: 'userId' })
   @Expose()
   author: User;
   
