@@ -24,7 +24,7 @@ export class CourseService {
       throw new ConflictException('Course with this title already exists');
     }
 
-    const course = this.mapper.toEntity(newCourse as CourseDTO);
+    const course = this.mapper.toEntity(newCourse);
     const user: User = await this.userService.findById(newCourse.authorId);
     course.author = user;
 

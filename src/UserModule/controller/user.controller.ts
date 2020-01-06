@@ -111,6 +111,22 @@ export class UserController {
     return this.mapper.toDto(await this.service.changePassword(id, changePassword));
   }
 
+  @Get('me/courses')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async findUserCoursesByJwtId(
+    @Param('id') id: UserDTO['id'],
+  ): Promise<UserDTO> {
+    this.logger.log(`user id: ${id}`);
+    return this.mapper.toDto(await this.service.findById(id));
+  }
+
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
