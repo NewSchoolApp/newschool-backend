@@ -10,15 +10,28 @@ import { ApiUseTags } from '@nestjs/swagger';
 export class UploadController {
   @Get(':fileName')
   async serveAvatar(@Param('fileName') fileName, @Res() res): Promise<void> {
-    await ensureFileExists(`${__dirname}/../../../upload/${fileName}`).catch(
-      () => {
-        res.status(HttpStatus.NOT_FOUND).json({
+    const exists = await ensureFileExists(
+      `${__dirname}/../../../upload/${fileName}`,
+    )
+      .then(() => true)
+      .catch(() => {
+        res.status(HttpStatus.NOT_FOUND).send({
           statusCode: 404,
           error: 'Not Found',
           message: `File '${fileName}' not found`,
         });
-      },
-    );
-    res.sendFile(fileName, { root: 'upload' });
+      });
+    if (!exists) {
+      return;
+    }
+    res.sendFile(fileName, { root: 'upload' }, (error: Error) => {
+      if (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+          statusCode: 500,
+          error: 'Internal Server Error',
+          message: error.message,
+        });
+      }
+    });
   }
 }
