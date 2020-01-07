@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { CourseService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
