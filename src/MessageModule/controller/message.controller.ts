@@ -21,12 +21,14 @@ import {
   ApiUseTags,
   ApiOkResponse,
   ApiNotFoundResponse,
+  ApiConflictResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { EmailSwagger } from '../swagger';
 import { ContactUsSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
-import { EmailMessage } from '../entity/email.message.entity';
-import { EmailMessageDTO } from '../dto/email.message.dto';
+import { TemplateDTO } from '../dto/templates.dto';
+import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
 
 @ApiUseTags('Message')
 @ApiBearerAuth()
@@ -81,40 +83,99 @@ export class MessageController {
     await this.service.sendContactUsEmail(contactUs);
   }
 
-  @Get()
+  @Get('listTemplates')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Emails', description: 'Get all Emails' })
+  @ApiOperation({ title: 'Get all templates', description: 'Get all templates' })
   @ApiOkResponse({
-    type: EmailMessageDTO,
+    type: TemplateDTO,
     isArray: true,
-    description: 'All emails',
+    description: 'All Templates',
   })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
+  @ApiForbiddenResponse({
+    description: 'You dont have permission',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async listAllEmails(): Promise<EmailMessage[]> {
-    return this.service.getAllEmails();
+  public async listAllTemplates(): Promise<TemplateDTO[]> {
+    return this.service.getAllTemplates();
   }
 
-  @Put(':id')
+  @Put('editTemplate')
   @HttpCode(200)
-  @ApiImplicitBody({ name: 'Email', type: EmailMessageDTO })
-  @ApiOperation({ title: 'Edit Email', description: 'Edit one email by id' })
-  @ApiNotFoundResponse({ description: 'thrown if email is not found' })
-  @ApiOkResponse({ type: EmailMessageDTO, description: 'Edit email successful' })
+  @ApiImplicitBody({ name: 'TemplateDTO', type: TemplateDTO })
+  @ApiOperation({ title: 'Edit one template', description: 'Edit one template by name' })
+  @ApiNotFoundResponse({ description: 'thrown if template is not found' })
+  @ApiOkResponse({ type: TemplateDTO, description: 'Template successfully edited' })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
+  @ApiForbiddenResponse({
+    description: 'You dont have permission',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async editEmail(
-    @Param('id') emailId: string,
-    @Body() updatedEmail: EmailMessageDTO,
-  ): Promise<EmailMessageDTO> {
-    return await this.service.editEmail(emailId, updatedEmail);
+  public async editTemplate(
+    @Body() updatedTemplate: TemplateDTO,
+  ): Promise<TemplateDTO> {
+    return await this.service.editTemplate(updatedTemplate);
+  }
+
+  @Post('createTemplate')
+  @HttpCode(200)
+  @ApiImplicitBody({
+    name: 'TemplateDTO',
+    type: TemplateDTO,
+    description: 'Rules for template creation: <br />' +
+      'Create as an html template. <br />' +
+      'Place fields that will be replaced must be placed with sequential numbers. <br />',
+  })
+  @ApiOperation({ title: 'Create template', description: 'Create template' })
+  @ApiCreatedResponse({ type: TemplateDTO, description: 'Template successfully created' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
+  @ApiConflictResponse({
+    description: 'Templates cannot have duplicate names, please rename and try again.',
+  })
+  @ApiForbiddenResponse({
+    description: 'You dont have permission',
+  })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async createTemplate(@Body() template: TemplateDTO): Promise<TemplateDTO> {
+    return await this.service.createTemplate(template);
+  }
+
+  @Post('sendMessage')
+  @HttpCode(200)
+  @ApiImplicitBody({
+    name: 'SendMessage',
+    type: SendMessageSwagger,
+    description: 'The template has the free body property, that is you can enter the ' +
+      'values you need for sending the message.',
+    required: true,
+  })
+  @ApiOperation({ title: 'Send Message', description: 'Send a message' })
+  @ApiOkResponse({ description: 'Message successfully sended' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
+  @ApiNotFoundResponse({
+    description: 'Template not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'You dont have permission',
+  })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async sendMessage(@Body() model: any): Promise<void> {
+    await this.service.sendMessage(model.data, model.templateName, model.contactEmail);
   }
 }

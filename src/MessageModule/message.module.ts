@@ -5,12 +5,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { SecurityModule } from '../SecurityModule';
 import { MessageController } from './controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailRepository } from './repository/email.repository';
-import { EmailMapper } from './mapper/email.mapper';
+import { TemplateRepository } from './repository/template.repository';
+import { TemplateMapper } from './mapper/template.mapper';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([EmailRepository]),
+    TypeOrmModule.forFeature([TemplateRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -23,7 +23,7 @@ import { EmailMapper } from './mapper/email.mapper';
     forwardRef(() => SecurityModule),
   ],
   controllers: [MessageController],
-  providers: [MessageService, EmailMapper],
+  providers: [MessageService, TemplateMapper],
   exports: [MessageService],
 })
-export class MessageModule {}
+export class MessageModule { }
