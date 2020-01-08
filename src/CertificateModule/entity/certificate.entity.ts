@@ -20,7 +20,7 @@ export class Certificate {
   // field created to have in assets different images being passed for each course created
   @Column()
   @Expose()
-  styleName: string;
+  courseBackgroundName: string;
 
   @ManyToMany(() => User, (user: User) => user.certificates)
   @JoinTable()
