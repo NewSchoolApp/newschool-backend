@@ -19,9 +19,7 @@ export class LessonService {
         if (lessonSameTitle) {
             throw new ConflictException();
         }
-        else {
-                return this.repository.save(lesson);       
-        }
+            return this.repository.save(lesson);       
     }
 
     @Transactional()
