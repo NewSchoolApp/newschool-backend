@@ -11,14 +11,9 @@ Você pode rodar o projeto direto da sua máquina.
 
 2 - Faça uma cópia do arquivo **.env.example** para **.env**
 
-<<<<<<< HEAD
 3- Instale as depedências do projeto
->**npm install**
-=======
-2- Instale as depedências do projeto
 
 > **npm install**
->>>>>>> b956eb12909e9782bcd81a794b19aebb32746991
 
 4- Inicie a aplicação
 

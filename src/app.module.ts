@@ -45,10 +45,9 @@ import { MessageModule } from './MessageModule';
     UserModule,
     CourseModule,
     CertificateModule,
-    MessageModule
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

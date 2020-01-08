@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
 
-export class ContactUsDTO {  
+export class ContactUsDTO {
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @Expose()
@@ -11,7 +11,7 @@ export class ContactUsDTO {
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @Expose()
-  email: string;  
+  email: string;
 
   @ApiModelProperty({ type: String })
   @Expose()
