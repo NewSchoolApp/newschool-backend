@@ -15,18 +15,12 @@ export class LessonService {
     @Transactional()
     public async add(lesson: Lesson): Promise<Lesson> {
 
-        try {
-            const lessonSameTitle: Lesson = await this.findByTitle( lesson.title, lesson.course );
-            if (lessonSameTitle) {
-                throw new ConflictException();
-            }
-        } catch(err) {
-            if(err.status === 404){
+        const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId({ title: lesson.title, course: lesson.course });
+        if (lessonSameTitle) {
+            throw new ConflictException();
+        }
+        else {
                 return this.repository.save(lesson);       
-            }
-            else if(err.status === 409){
-                throw new ConflictException(err);
-            }
         }
     }
 
