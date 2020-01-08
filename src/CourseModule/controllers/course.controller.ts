@@ -67,7 +67,7 @@ export class CourseController {
   @UseGuards(RoleGuard)
   public async add(@Body() course: NewCourseDTO, @UploadedFile() file): Promise<CourseDTO> {
     return this.mapper.toDto(
-      await this.service.add(this.mapper.toEntity(course as CourseDTO), file)
+      await this.service.add(course, file)
     );
   }
 
@@ -78,8 +78,8 @@ export class CourseController {
     @ApiOperation({ title: 'Update course', description: 'Update course by id' })
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
-    public async update(@Param('id') id: CourseDTO['id'], @Body() courseUpdatedInfo: CourseUpdateDTO): Promise<CourseDTO> {
-        return await this.service.update(id, this.mapper.toEntity(courseUpdatedInfo as CourseDTO));
+    public async update(@Param('id') id: CourseDTO['id'], @Body() courseUpdatedInfo: CourseUpdateDTO) {
+        return await this.service.update(id, courseUpdatedInfo);
     }
 
     @Delete('/:id')

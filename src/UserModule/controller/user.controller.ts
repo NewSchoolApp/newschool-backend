@@ -34,6 +34,7 @@ import { RoleEnum } from '../../SecurityModule/enum';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
+import { CourseDTO } from 'src/CourseModule/dto';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
@@ -111,7 +112,24 @@ export class UserController {
     return this.mapper.toDto(await this.service.changePassword(id, changePassword));
   }
 
-  @Get('/:id')
+  @Get('me/course')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find courses by id', description: 'Find courses by id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findUserCoursesByJwtId(
+    @Headers('authorization') authorization: string,
+  ): Promise<CourseDTO[]> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findCoursesByUserId(id);
+  }
+
+  @Get(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
@@ -125,6 +143,22 @@ export class UserController {
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
+  }
+
+  @Get(':id/course')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find courses by id', description: 'Find courses by id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN, STUDENT or EXTERNAL role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
+  public async findUserCoursesById(
+    @Param('id') id: UserDTO['id'],
+  ): Promise<CourseDTO[]> {
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findCoursesByUserId(id);
   }
 
   @Post()

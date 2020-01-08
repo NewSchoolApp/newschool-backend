@@ -2,8 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
-import { CourseDTO, CourseUpdateDTO } from '../dto';
+import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
+import { UserService, User } from '../../UserModule';
 
 @Injectable()
 export class CourseService {
@@ -11,20 +12,27 @@ export class CourseService {
   constructor(
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
+    private readonly userService: UserService,
   ) {
   }
 
   @Transactional()
-  public async add(course: Course, file): Promise<Course> {
+  public async add(newCourse: NewCourseDTO, file): Promise<Course> {
 
-    const courseSameTitle: Course = await this.repository.findByTitle(course.title);
+    const courseSameTitle: Course = await this.repository.findByTitle(newCourse.title);
     if (courseSameTitle) {
       throw new ConflictException('Course with this title already exists');
     }
 
+    const course = this.mapper.toEntity(newCourse);
+    const user: User = await this.userService.findById(newCourse.authorId);
+    course.author = user;
+
   
     // eslint-disable-next-line require-atomic-updates
     course.photoName = file.filename;
+
+    console.log(course);
 
     return this.repository.save(course);
   }
