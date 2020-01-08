@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from 'supertest';
+import * as fs from 'fs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
@@ -7,10 +9,10 @@ import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import ensureFileExistsOriginal from '../../src/UploadModule/utils/ensureFileExists';
+import { exists as existsOriginal } from '../../src/CommonsModule/file';
 
-jest.mock('../../src/UploadModule/utils/ensureFileExists')
-const ensureFileExists = ensureFileExistsOriginal as jest.Mock;
+jest.mock('../../src/CommonsModule/file');
+const exists = existsOriginal as jest.Mock;
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
@@ -50,6 +52,7 @@ describe('UploadController (e2e)', () => {
 
   beforeEach(async () => {
     await queryRunner.startTransaction();
+    exists.mockClear();
   });
 
   afterEach(async () => {
@@ -58,7 +61,7 @@ describe('UploadController (e2e)', () => {
 
   it('should not get a not found file', async done => {
 
-    ensureFileExists.mockImplementation(() => Promise.reject(new Error('Not Found')));
+    exists.mockImplementation(() => Promise.reject(new Error('Not Found')));
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-not-found')
       .expect(404)
@@ -73,18 +76,35 @@ describe('UploadController (e2e)', () => {
   });
 
   it('should return 500 when fail to get the file', async done => {
-    ensureFileExists.mockImplementation(() => Promise.resolve());
+    exists.mockImplementation(() => Promise.resolve());
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
       .expect(500)
       .expect(res => {
-        expect(res.body).toEqual({
-          statusCode: 500,
+        expect(res.body).toStrictEqual({
           error: 'Internal Server Error',
           message: expect.any(String),
+          statusCode: 500,
         });
       })
       .then(() => done());
+  });
+
+  it('should return 200 when get the file with success', async done => {
+    exists.mockImplementation(() => Promise.resolve());
+    const fileName = 'file-created-to-test';
+    const filePath = `${__dirname}/../../upload/${fileName}`;
+    fs.writeFileSync(filePath, '1');
+    return request(app.getHttpServer())
+      .get(uploadUrl + '/' + fileName)
+      .expect(200)
+      .expect(res => {
+        expect(res.body).toBeTruthy();
+      })
+      .then(() => {
+        fs.unlinkSync(filePath);
+        done();
+      });
   });
 
   afterAll(async () => {
