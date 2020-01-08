@@ -23,10 +23,10 @@ export class Course extends Audit {
   description: string;
 
   @Column({
-    name: 'thumbUrl',
     nullable: true,
   })
-  thumbUrlFromDatabase: string;
+  @Expose()
+  thumbUrl: string;
 
   @Column({
     type: 'varchar',
@@ -40,24 +40,6 @@ export class Course extends Audit {
 
   @OneToMany<Lesson>(() => Lesson, (lesson: Lesson) => lesson.course)
   lessons: Lesson[];
-
-
-  @Expose()
-  get thumbUrl(): string {
-    if (this.thumbUrlFromDatabase && /^http(s?):\/\//.test(this.thumbUrlFromDatabase)) {
-      return this.thumbUrlFromDatabase;
-    }
-    const fileName = this.photoName || this.thumbUrlFromDatabase;
-    if (fileName) {
-      return 'https://newschoolbrapi-dev.herokuapp.com/api/v1/upload/' + fileName;
-    }
-    return null;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  set thumbUrl(thumbUrl: string) {
-    this.thumbUrlFromDatabase = thumbUrl;
-  }
 
   @Column()
   @Expose()
