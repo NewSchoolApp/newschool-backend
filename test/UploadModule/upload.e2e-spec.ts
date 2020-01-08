@@ -9,10 +9,6 @@ import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { exists as existsOriginal } from '../../src/CommonsModule/file';
-
-jest.mock('../../src/CommonsModule/file');
-const exists = existsOriginal as jest.Mock;
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
@@ -52,7 +48,6 @@ describe('UploadController (e2e)', () => {
 
   beforeEach(async () => {
     await queryRunner.startTransaction();
-    exists.mockClear();
   });
 
   afterEach(async () => {
@@ -60,8 +55,12 @@ describe('UploadController (e2e)', () => {
   });
 
   it('should not get a not found file', async done => {
-
-    exists.mockImplementation(() => Promise.reject(new Error('Not Found')));
+    const mockAccess = jest.spyOn(fs, 'access');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+      callback(new Error('Not Found'));
+    });
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-not-found')
       .expect(404)
@@ -76,7 +75,12 @@ describe('UploadController (e2e)', () => {
   });
 
   it('should return 500 when fail to get the file', async done => {
-    exists.mockImplementation(() => Promise.resolve());
+    const mockAccess = jest.spyOn(fs, 'access');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+      callback();
+    });
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
       .expect(500)
@@ -91,7 +95,12 @@ describe('UploadController (e2e)', () => {
   });
 
   it('should return 200 when get the file with success', async done => {
-    exists.mockImplementation(() => Promise.resolve());
+    const mockAccess = jest.spyOn(fs, 'access');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+      callback();
+    });
     const fileName = 'file-created-to-test';
     const filePath = `${__dirname}/../../upload/${fileName}`;
     fs.writeFileSync(filePath, '1');

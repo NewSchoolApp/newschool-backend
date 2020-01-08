@@ -1,6 +1,6 @@
+import * as fs from 'fs';
 import { Response } from 'express';
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import * as file from '../../CommonsModule/file';
 
 @Injectable()
 export class UploadService {
@@ -12,9 +12,9 @@ export class UploadService {
         await this.sendFileToResponse(fileName, response);
     }
 
-    public async ensureFileExists(fileName: string): Promise<void> {
+    private async ensureFileExists(fileName: string): Promise<void> {
       try {
-          await file.exists(
+          await this.fileExists(
               `${__dirname}/../../../upload/${fileName}`,
           );
       } catch (error) {
@@ -22,7 +22,7 @@ export class UploadService {
       }
     }
 
-    public async sendFileToResponse(
+    private async sendFileToResponse(
             fileName: string,
             response: Response,
         ): Promise<void> {
@@ -37,6 +37,17 @@ export class UploadService {
                     resolve();
                 },
             );
+        });
+    }
+    private fileExists(path: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.access(path, fs.constants.F_OK, (error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve();
+            });
         });
     }
 }
