@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Unique, 
 import { Course } from './course.entity';
 import { Part } from "./part.entity";
 
-@Unique(['nextLesson', 'course'])
+@Unique(['sequenceNumber', 'course'])
 @Entity()
 export class Lesson extends Audit{
     @PrimaryGeneratedColumn('uuid')
@@ -22,16 +22,10 @@ export class Lesson extends Audit{
     description: string;
 
     @Column({
-        nullable: true,
-        name: 'nxt_lsn_id'
-    })
-    nextLesson: string;
-
-    @Column({
         nullable: false,
         name: 'seq_num'
     })
-    sequencyNumber: number;
+    sequenceNumber: number;
 
     @ManyToOne<Course>(() => Course, (course: Course) => course.lessons)
     @JoinColumn({

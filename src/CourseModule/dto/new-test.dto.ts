@@ -42,11 +42,6 @@ export class NewTestDTO {
 
     @IsString()
     @Expose()
-    @ApiModelProperty({ type: String })
-    nextTest: Test['nextTest'];
-
-    @IsString()
-    @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
     part: Test['part'];

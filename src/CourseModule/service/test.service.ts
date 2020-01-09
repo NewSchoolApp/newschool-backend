@@ -20,9 +20,7 @@ export class TestService {
             throw new ConflictException('There is already a test with this title for this part');
         }
 
-        if (test.nextTest.length === 0){
-            test.nextTest = null;
-        }
+        test.sequenceNumber = 1+await this.repository.count({ part: test.part });
 
         return this.repository.save(test);
     }

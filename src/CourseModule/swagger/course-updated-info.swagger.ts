@@ -9,9 +9,6 @@ export class CourseUpdatedInfoSwagger {
   @ApiModelProperty({ type: String })
   thumbUrl: Course['thumbUrl'];
 
-    @ApiModelProperty({ type: String })
-    firstLesson: Course['firstLesson'];
-
   @ApiModelProperty({ type: String })
   authorId: User['id'];
 }

@@ -18,11 +18,4 @@ export class NewLessonDTO {
     @Expose()
     @ApiModelProperty({ type: String })
     course: Lesson['course'];
-
-    @IsString()
-    @Expose()
-    @ApiModelProperty({ type: String })
-    nextLesson: Lesson['nextLesson'];
-
-    
 }

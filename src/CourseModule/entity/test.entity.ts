@@ -4,7 +4,7 @@ import { Lesson } from './lesson.entity';
 import { Part } from './part.entity';
 import { Expose } from 'class-transformer';
 
-@Unique(['nextTest', 'part'])
+@Unique(['sequenceNumber', 'part'])
 @Entity()
 export class Test extends Audit{
     @Expose()
@@ -53,12 +53,11 @@ export class Test extends Audit{
     })
     fourthAlternative: string;
 
-    @Expose()
     @Column({
-        nullable: true,
-        name: 'nxt_tst_id'
+        nullable: false,
+        name: 'seq_num'
     })
-    nextTest: string;
+    sequenceNumber: number;
 
     @Expose()
     @ManyToOne<Part>(() => Part, (part: Part) => part.tests)

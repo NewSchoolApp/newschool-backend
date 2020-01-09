@@ -1,6 +1,6 @@
 import { Lesson } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class LessonDTO {
@@ -24,13 +24,8 @@ export class LessonDTO {
     @ApiModelProperty({ type: String })
     course: Lesson['course'];
 
-    @IsString()
-    @Expose()
-    @ApiModelProperty({ type: String })
-    nextLesson: Lesson['nextLesson'];
-
-    @IsString()
+    @IsNumber()
     @Expose()
     @ApiModelProperty({ type: Number })
-    sequencyNumber: Lesson['sequencyNumber'];
+    sequenceNumber: Lesson['sequenceNumber'];
 }

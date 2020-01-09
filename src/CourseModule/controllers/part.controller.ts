@@ -57,7 +57,7 @@ export class PartController {
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
     public async update(@Param('id') id: PartDTO['id'], @Body() partUpdatedInfo: PartUpdateDTO): Promise<PartDTO> {
-        return await this.service.update(id, this.mapper.toEntity(partUpdatedInfo as PartDTO));
+        return await this.service.update(id, partUpdatedInfo);
     }
 
     @Delete('/:id')

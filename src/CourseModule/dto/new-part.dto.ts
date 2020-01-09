@@ -28,9 +28,4 @@ export class NewPartDTO {
     @Expose()
     @ApiModelProperty({ type: String })
     lesson: Part['lesson'];
-
-    @IsString()
-    @Expose()
-    @ApiModelProperty({ type: String })
-    nextPart: Part['nextPart'];
 }
