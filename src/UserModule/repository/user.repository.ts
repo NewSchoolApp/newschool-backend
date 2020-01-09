@@ -12,6 +12,7 @@ export class UserRepository extends Repository<User> {
     return this.findOneOrFail(id, { relations: ['certificates'] });
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async getCertificateByUser(userId): Promise<any[]> {
     
     return createQueryBuilder("user", "user")
