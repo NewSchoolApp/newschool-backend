@@ -9,8 +9,9 @@ export class LessonUpdatedInfoSwagger {
     description: Lesson['description'];
 
     @ApiModelProperty({ type: String })
-    courseId: Lesson['course'];
+    course: Lesson['course'];
 
-    @ApiModelProperty({ type: String })
-    nextLessonId: Lesson['nextLesson'];
+    @ApiModelProperty({ type: Number })
+    sequenceNumber: Lesson['sequenceNumber'];
+
 }

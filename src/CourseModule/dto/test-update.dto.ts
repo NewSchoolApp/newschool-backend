@@ -1,42 +1,53 @@
+import { Test } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Part } from '../entity';
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
 
-export class PartUpdateDTO {
+export class TestUpdateDTO {
     @IsString()
     @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
-    title: Part['title'];
+    title: Test['title'];
 
     @IsString()
     @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
-    description: Part['description'];
+    correctAlternative: Test['correctAlternative'];
 
     @IsString()
     @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
-    vimeoUrl: Part['vimeoUrl'];
+    firstAlternative: Test['firstAlternative'];
 
     @IsString()
     @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
-    youtubeUrl: Part['youtubeUrl'];
+    secondAlternative: Test['secondAlternative'];
 
     @IsString()
     @Expose()
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
-    lesson: Part['lesson'];
+    thirdAlternative: Test['thirdAlternative'];
+
+    @IsString()
+    @Expose()
+    @IsNotEmpty()
+    @ApiModelProperty({ type: String })
+    fourthAlternative: Test['fourthAlternative'];
 
     @IsNumber()
     @Expose()
-    @IsNotEmpty()
     @ApiModelProperty({ type: Number })
-    sequenceNumber: Part['sequenceNumber'];
+    sequenceNumber: Test['sequenceNumber'];
+
+    @IsString()
+    @Expose()
+    @IsNotEmpty()
+    @ApiModelProperty({ type: String })
+    part: Test['part'];
 }

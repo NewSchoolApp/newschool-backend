@@ -20,9 +20,7 @@ export class LessonService {
             throw new ConflictException();
         }
 
-        if (lesson.nextLesson.length === 0){
-            lesson.nextLesson = null;
-        }
+        lesson.sequenceNumber = 1+await this.repository.count({ course: lesson.course });
 
         return this.repository.save(lesson);
     }

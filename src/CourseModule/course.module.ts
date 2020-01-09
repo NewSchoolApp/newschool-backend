@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
-import { CourseController, LessonController, PartController } from './controllers';
-import { CourseService, LessonService, PartService } from './service';
+import { CourseController, LessonController, PartController, TestController } from './controllers';
+import { CourseService, LessonService, PartService, TestService } from './service';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseRepository, LessonRepository, PartRepository } from './repository';
-import { Course, Lesson, Part } from './entity';
-import { CourseMapper, LessonMapper, PartMapper } from './mapper';
+import { CourseRepository, LessonRepository, PartRepository, TestRepository } from './repository';
+import { Course, Lesson, Part, Test } from './entity';
+import { CourseMapper, LessonMapper, PartMapper, TestMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserModule } from '../UserModule';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Course, CourseRepository, Lesson, LessonRepository, Part, PartRepository]),
+    TypeOrmModule.forFeature([Course, CourseRepository, Lesson, LessonRepository, Part, PartRepository, Test, TestRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -23,9 +23,9 @@ import { UserModule } from '../UserModule';
     MulterModule.register({ dest: './upload' }),
     UserModule,
   ],
-  controllers: [CourseController, LessonController, PartController],
-  providers: [CourseService, CourseMapper, LessonService, LessonMapper, PartService, PartMapper],
-  exports: [CourseService, LessonService, PartMapper],
+  controllers: [CourseController, LessonController, PartController, TestController],
+  providers: [CourseService, CourseMapper, LessonService, LessonMapper, PartService, PartMapper, TestService, TestMapper],
+  exports: [CourseService, LessonService, PartService, TestService],
 })
 export class CourseModule {
 }
