@@ -16,5 +16,5 @@ export class CertificateDTO {
   userName: string;
   @ApiModelProperty({type: String})
   @Expose()
-  courseBackgroundName: string;
+  certificateBackgroundName: string;
 }
