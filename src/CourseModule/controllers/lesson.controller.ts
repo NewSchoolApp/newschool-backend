@@ -53,7 +53,7 @@ export class LessonController {
     @HttpCode(200)
     @ApiOkResponse({ type: LessonDTO })
     @ApiImplicitBody({ name: 'id', type: String, required: true, description: 'Lesson id' })
-    @ApiOperation({ title: 'Update course', description: 'Update lesson by id' })
+    @ApiOperation({ title: 'Update lesson', description: 'Update lesson by id' })
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
     public async update(@Param('id') id: LessonDTO['id'], @Body() lessonUpdatedInfo: LessonUpdateDTO): Promise<LessonDTO> {
