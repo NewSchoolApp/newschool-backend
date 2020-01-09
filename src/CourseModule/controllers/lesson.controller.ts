@@ -21,8 +21,10 @@ export class LessonController {
     @ApiOperation({ title:'Get Lessons', description: 'Get all Lessons' })
     @NeedRole( RoleEnum.ADMIN, RoleEnum.STUDENT )
     @UseGuards( RoleGuard )
-    public async getAll(@Param('course') courseId: LessonDTO['course']): Promise<LessonDTO[]> {
-        return this.mapper.toDtoList(await this.service.getAll(courseId));
+    public async getAll(@Param('course') course: LessonDTO['course']): Promise<LessonDTO[]> {
+        console.log(1);
+        console.log(course);
+        return this.mapper.toDtoList(await this.service.getAll(course));
     }
 
     @Get('/:id')

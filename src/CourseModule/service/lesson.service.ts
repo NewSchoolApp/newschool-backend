@@ -18,6 +18,10 @@ export class LessonService {
             throw new ConflictException();
         }
 
+        if (lesson.nextLesson.length === 0){
+            lesson.nextLesson = null;
+        }
+
         return this.repository.save(lesson);
     }
 

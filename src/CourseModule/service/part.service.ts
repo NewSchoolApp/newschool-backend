@@ -13,7 +13,7 @@ export class PartService {
 
     public async add(part: NewPartDTO): Promise<Part> {
 
-        const partSameTitle: Part = await this.findByTitle( part.title, part.lesson );
+        const partSameTitle: Part = await this.repository.findByTitleAndLessonId({ title: part.title, lesson: part.lesson });
         if (partSameTitle) {
             throw new ConflictException();
         }
@@ -23,6 +23,10 @@ export class PartService {
 
     public async update(id: Part['id'], partUpdatedInfo: PartUpdateDTO): Promise<Part> {
         const part: Part = await this.findById(id);
+
+        if (part.nextPart.length === 0){
+            part.nextPart = null;
+        }
         return this.repository.save({ ...part, ...partUpdatedInfo });
     }
 
