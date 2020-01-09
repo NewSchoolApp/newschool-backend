@@ -19,7 +19,12 @@ export class LessonService {
         if (lessonSameTitle) {
             throw new ConflictException();
         }
-            return this.repository.save(lesson);       
+
+        if (lesson.nextLesson.length === 0){
+            lesson.nextLesson = null;
+        }
+
+        return this.repository.save(lesson);
     }
 
     @Transactional()
