@@ -60,7 +60,7 @@ export class UserService {
       c.title = certificate.certificate_title;
       c.userName = certificate.user_name;
       c.text = certificate.certificate_text;
-      c.courseBackgroundName = certificate.certificate_courseBackgroundName
+      c.certificateBackgroundName = certificate.certificate_certificateBackgroundName
       return c;
     })
 

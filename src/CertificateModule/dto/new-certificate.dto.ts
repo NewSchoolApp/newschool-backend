@@ -12,5 +12,5 @@ export class NewCertificateDTO {
 
   @ApiModelProperty({ type: String })
   @IsString()
-  courseBackgroundName: string;
+  certificateBackgroundName: string;
 }
