@@ -1,29 +1,42 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Part } from '../entity';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class PartUpdateDTO {
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     title: Part['title'];
 
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     description: Part['description'];
 
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     vimeoUrl: Part['vimeoUrl'];
 
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     youtubeUrl: Part['youtubeUrl'];
 
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     lesson: Part['lesson'];
 
-    @ApiModelProperty({ type: String })
+    @IsString()
+    @Expose()
     @IsNotEmpty()
+    @ApiModelProperty({ type: String })
     nextPart: Part['nextPart'];
 }

@@ -2,6 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Course } from '../entity';
 import { IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { User } from '../../UserModule';
 
 export class CourseUpdateDTO {
   @ApiModelProperty({ type: String })
@@ -21,5 +22,5 @@ export class CourseUpdateDTO {
   @ApiModelProperty({ type: Number })
   @IsNotEmpty()
   @Expose()
-  authorId: Course['authorId'];
+  authorId: User['id'];
 }

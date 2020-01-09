@@ -16,10 +16,11 @@ export class PartController {
     ) {
     }
 
-    @Get()
+    @Get('/lesson/:lesson')
     @HttpCode(200)
     @ApiOperation({ title:'Get Parts', description: 'Get all Parts' })
     @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
+    @ApiImplicitQuery({ name: 'lesson', type: String, required: true, description: 'Lesson id' })
     @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
     @UseGuards(RoleGuard)
     public async getAll( @Param('lesson') lessonId: PartDTO['lesson'] ): Promise<PartDTO[]> {

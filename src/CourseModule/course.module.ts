@@ -8,6 +8,7 @@ import { Course, Lesson, Part } from './entity';
 import { CourseMapper, LessonMapper, PartMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
+import { UserModule } from '../UserModule';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { MulterModule } from '@nestjs/platform-express';
       }),
       inject: [ConfigService],
     }), 
-    MulterModule.register({   dest: './upload', }),
+    MulterModule.register({ dest: './upload' }),
+    UserModule,
   ],
   controllers: [CourseController, LessonController, PartController],
   providers: [CourseService, CourseMapper, LessonService, LessonMapper, PartService, PartMapper],

@@ -7,8 +7,8 @@ import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { Course } from '../../src/CourseModule';
 import { NewCourseDTO, CourseUpdateDTO } from 'src/CourseModule/dto';
+import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -26,6 +26,7 @@ describe('CourseController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
+    initializeTransactionalContext();
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
@@ -49,14 +50,6 @@ describe('CourseController (e2e)', () => {
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
-  });
-
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
   });
 
   it('should add course', async (done) => {

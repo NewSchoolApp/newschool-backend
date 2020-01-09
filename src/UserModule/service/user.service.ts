@@ -20,6 +20,7 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { Course } from '../../CourseModule';
 
 @Injectable()
 export class UserService {
@@ -94,6 +95,14 @@ export class UserService {
       throw new UserNotFoundError();
     }
     return user;
+  }
+
+  public async findCoursesByUserId(id: string): Promise<Course[]> {
+    const userWithCourses: User = await this.repository.findByIdWithCourses(id);
+    if (!userWithCourses) {
+      throw new UserNotFoundError();
+    }
+    return userWithCourses.createdCourses;
   }
 
   @Transactional()
