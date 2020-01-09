@@ -23,4 +23,6 @@ export class NewLessonDTO {
     @Expose()
     @ApiModelProperty({ type: String })
     nextLesson: Lesson['nextLesson'];
+
+    
 }

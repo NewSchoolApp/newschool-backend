@@ -19,4 +19,5 @@ export class NewPartSwagger {
 
     @ApiModelProperty({ type: String })
     nextPartId: Part['nextPart'];
+    
 }

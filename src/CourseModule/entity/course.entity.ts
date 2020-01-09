@@ -37,6 +37,12 @@ export class Course extends Audit {
   @Column()
   photoName: string;
 
+    @Column({
+        nullable: true,
+        name: 'first_part_id'
+    })
+    firstLesson: String;
+
   @OneToMany<Lesson>(() => Lesson, (lesson: Lesson) => lesson.course)
   lessons: Lesson[];
 

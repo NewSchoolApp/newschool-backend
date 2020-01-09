@@ -29,9 +29,6 @@ export class TestService {
 
     @Transactional()
     public async update(id: Test['id'], testUpdatedInfo: TestUpdateDTO): Promise<Test> {
-        console.log(1);
-        console.log(id);
-        console.log(JSON.stringify(testUpdatedInfo));
         const test: Test = await this.findById(id);
         return this.repository.save({ ...test, ...testUpdatedInfo });
     }

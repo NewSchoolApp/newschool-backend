@@ -1,5 +1,5 @@
 import { Audit } from "../../CommonsModule";
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, ManyToOne, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, ManyToOne, Unique, OneToOne } from "typeorm";
 import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
 
@@ -44,6 +44,12 @@ export class Part extends Audit{
         name: 'nxt_prt_id'
     })
     nextPart: string;
+
+    @Column({
+        nullable: false,
+        name: 'seq_num'
+    })
+    sequencyNumber: number;
 
     @OneToMany<Test>(() => Test, (test: Test) => test.part)
     tests: Test[];

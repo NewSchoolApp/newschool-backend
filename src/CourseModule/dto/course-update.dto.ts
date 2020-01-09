@@ -19,6 +19,10 @@ export class CourseUpdateDTO {
   @Expose()
   description: Course['description'];
 
+  @ApiModelProperty({ type: String })
+  @Expose()
+  firstLesson: Course['firstLesson'];
+
   @ApiModelProperty({ type: Number })
   @IsNotEmpty()
   @Expose()

@@ -28,4 +28,9 @@ export class LessonDTO {
     @Expose()
     @ApiModelProperty({ type: String })
     nextLesson: Lesson['nextLesson'];
+
+    @IsString()
+    @Expose()
+    @ApiModelProperty({ type: Number })
+    sequencyNumber: Lesson['sequencyNumber'];
 }

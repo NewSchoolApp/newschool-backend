@@ -27,4 +27,10 @@ export class LessonUpdateDTO {
     @IsNotEmpty()
     @ApiModelProperty({ type: String })
     nextLesson: Lesson['nextLesson'];
+
+    @IsString()
+    @Expose()
+    @IsNotEmpty()
+    @ApiModelProperty({ type: Number })
+    sequencyNumber: Lesson['sequencyNumber'];
 }
