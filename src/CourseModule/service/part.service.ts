@@ -18,6 +18,10 @@ export class PartService {
             throw new ConflictException();
         }
 
+        if (part.nextPart.length === 0)
+            part.nextPart = null;
+        
+
         return this.repository.save(part);
     }
 

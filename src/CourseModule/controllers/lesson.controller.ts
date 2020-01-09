@@ -16,14 +16,14 @@ export class LessonController {
     ) {
     }
 
-    @Get()
+    @Get('/course/:course')
     @HttpCode(200)
-    @ApiOperation({ title:'Get Lessons', description: 'Get all Lessons' })
+    @ApiOperation({ title:'Get Lessons', description: 'Get all Lessons by Course' })
+    @ApiOkResponse({ type: LessonDTO, isArray: true, description: 'All Lessons by Course' })
+    @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
     @NeedRole( RoleEnum.ADMIN, RoleEnum.STUDENT )
     @UseGuards( RoleGuard )
     public async getAll(@Param('course') course: LessonDTO['course']): Promise<LessonDTO[]> {
-        console.log(1);
-        console.log(course);
         return this.mapper.toDtoList(await this.service.getAll(course));
     }
 
