@@ -4,7 +4,7 @@ CREATE TABLE `user` (
   `version` int(11) NOT NULL,
   `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `email` varchar(255) UNIQUE NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `url_facebook` varchar(255) NOT NULL,
   `url_instagram` varchar(255) NOT NULL,
@@ -12,5 +12,6 @@ CREATE TABLE `user` (
   `roleId` varchar(36) DEFAULT NULL,
   CONSTRAINT PK_USER PRIMARY KEY (`id`),
   KEY `FK_USR_ROLE` (`roleId`),
-  CONSTRAINT `FK_USR_ROLE` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `FK_USR_ROLE` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  constraint IDX_ae45785eved5adex96756e3166 unique (email)
 );
