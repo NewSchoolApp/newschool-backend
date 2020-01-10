@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseModule } from './CourseModule';
 import { CertificateModule } from './CertificateModule';
 import { MessageModule } from './MessageModule';
+import { UploadModule } from './UploadModule';
 
 @Module({
   imports: [
@@ -45,10 +46,10 @@ import { MessageModule } from './MessageModule';
     UserModule,
     CourseModule,
     CertificateModule,
-    MessageModule
+    MessageModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

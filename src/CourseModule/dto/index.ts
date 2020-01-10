@@ -9,3 +9,7 @@ export { NewLessonDTO } from './new-lesson.dto';
 export { PartDTO } from './part.dto';
 export { PartUpdateDTO } from './part-update.dto';
 export { NewPartDTO } from './new-part.dto';
+
+export { TestDTO } from './test.dto';
+export { TestUpdateDTO } from './test-update.dto';
+export { NewTestDTO } from './new-test.dto';

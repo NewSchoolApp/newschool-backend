@@ -8,16 +8,16 @@ export class Mapper<E, D> {
   ) {
   }
 
-  toDto(entityObject: E): D {
-    return plainToClass<D, E>(this.dtoClass, entityObject, { excludeExtraneousValues: true });
+  toDto(entityObject: Partial<E>): D {
+    return plainToClass<D, Partial<E>>(this.dtoClass, entityObject, { excludeExtraneousValues: true });
   }
 
   toDtoList(entityArray: E[]): D[] {
     return plainToClass<D, E>(this.dtoClass, entityArray, { excludeExtraneousValues: true });
   }
 
-  toEntity(dtoObject: D): E {
-    return plainToClass<E, D>(this.entityClass, dtoObject, { excludeExtraneousValues: true });
+  toEntity(dtoObject: Partial<D>): E {
+    return plainToClass<E, Partial<D>>(this.entityClass, dtoObject, { excludeExtraneousValues: true });
   }
 
   toEntityList(dtoArray: D[]): E[] {

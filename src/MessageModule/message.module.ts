@@ -4,21 +4,26 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityModule } from '../SecurityModule';
 import { MessageController } from './controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TemplateRepository } from './repository/template.repository';
+import { TemplateMapper } from './mapper/template.mapper';
 
 @Module({
-  imports: [    
+  imports: [
+    TypeOrmModule.forFeature([TemplateRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
-    forwardRef(() => SecurityModule)    
+    forwardRef(() => SecurityModule),
   ],
   controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessageService, TemplateMapper],
   exports: [MessageService],
 })
-export class MessageModule {
-}
+export class MessageModule { }

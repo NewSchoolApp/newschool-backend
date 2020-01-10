@@ -10,7 +10,7 @@ export class CourseMapper extends Mapper<Course, CourseDTO> {
         super(Course, CourseDTO);
     }
 
-    toDto(entityObject: Course): CourseDTO {
+    toDto(entityObject: Partial<Course>): CourseDTO {
         return super.toDto(entityObject);
     }
 
@@ -18,7 +18,7 @@ export class CourseMapper extends Mapper<Course, CourseDTO> {
         return super.toDtoList(entityArray);
     }
 
-    toEntity(dtoObject: CourseDTO): Course {
+    toEntity(dtoObject: Partial<CourseDTO>): Course {
         return super.toEntity(dtoObject);
     }
 

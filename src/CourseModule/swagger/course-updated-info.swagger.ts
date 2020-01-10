@@ -1,5 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Course } from '../entity';
+import { User } from '../../UserModule';
 
 export class CourseUpdatedInfoSwagger {
   @ApiModelProperty({ type: String })
@@ -9,5 +10,5 @@ export class CourseUpdatedInfoSwagger {
   thumbUrl: Course['thumbUrl'];
 
   @ApiModelProperty({ type: String })
-  authorId: Course['authorId'];
+  authorId: User['id'];
 }

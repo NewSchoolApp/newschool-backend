@@ -8,7 +8,7 @@ export class UserRepository extends Repository<User> {
     return this.findOne({ email }, { relations: ['role'] });
   }
 
-  async findByIdWithCertificates(id: string) {
+  async findByIdWithCertificates(id: string): Promise<User | undefined> {
     return this.findOneOrFail(id, { relations: ['certificates'] });
   }
   
@@ -20,5 +20,9 @@ export class UserRepository extends Repository<User> {
     .innerJoinAndSelect("certificate", "certificate", "certificate.id = certificate_user.certificateId")
     .where("user.id = :userId", {userId})
     .getRawMany();
+  }
+
+  async findByIdWithCourses(id: string): Promise<User | undefined> {    
+    return this.findOneOrFail(id, { relations: ['createdCourses'] });
   }
 }

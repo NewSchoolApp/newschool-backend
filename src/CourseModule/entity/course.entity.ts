@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
+import { User } from '../../UserModule';
 
 @Entity()
 export class Course extends Audit {
@@ -28,12 +29,10 @@ export class Course extends Audit {
   @Expose()
   thumbUrl: string;
 
-  @Column({
-    type: 'varchar',
-    nullable: false,
-  })
+  @ManyToOne<User>('User', (user: User) => user.createdCourses)
+  @JoinColumn({ name: 'userId' })
   @Expose()
-  authorId: string;
+  author: User;
   
   @Column()
   photoName: string;

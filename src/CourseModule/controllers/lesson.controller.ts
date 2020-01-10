@@ -16,13 +16,15 @@ export class LessonController {
     ) {
     }
 
-    @Get()
+    @Get('/course/:course')
     @HttpCode(200)
-    @ApiOperation({ title:'Get Lessons', description: 'Get all Lessons' })
+    @ApiOperation({ title:'Get Lessons', description: 'Get all Lessons by Course' })
+    @ApiOkResponse({ type: LessonDTO, isArray: true, description: 'All Lessons by Course' })
+    @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
     @NeedRole( RoleEnum.ADMIN, RoleEnum.STUDENT )
     @UseGuards( RoleGuard )
-    public async getAll(@Param('course') courseId: LessonDTO['course']): Promise<LessonDTO[]> {
-        return this.mapper.toDtoList(await this.service.getAll(courseId));
+    public async getAll(@Param('course') course: LessonDTO['course']): Promise<LessonDTO[]> {
+        return this.mapper.toDtoList(await this.service.getAll(course));
     }
 
     @Get('/:id')
@@ -51,7 +53,7 @@ export class LessonController {
     @HttpCode(200)
     @ApiOkResponse({ type: LessonDTO })
     @ApiImplicitBody({ name: 'id', type: String, required: true, description: 'Lesson id' })
-    @ApiOperation({ title: 'Update course', description: 'Update lesson by id' })
+    @ApiOperation({ title: 'Update lesson', description: 'Update lesson by id' })
     @NeedRole(RoleEnum.ADMIN)
     @UseGuards(RoleGuard)
     public async update(@Param('id') id: LessonDTO['id'], @Body() lessonUpdatedInfo: LessonUpdateDTO): Promise<LessonDTO> {
