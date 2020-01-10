@@ -1,7 +1,7 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class CertificateDTO {
+export class CertificateUserDTO {
   @ApiModelProperty({ type: String })
   @Expose()
   id: string;
