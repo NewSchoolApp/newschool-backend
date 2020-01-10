@@ -1,4 +1,4 @@
 export { Audit } from './entity';
 export { Constants } from './constants';
 export { RoleGuard, NeedRole } from './guard';
-export { DuplicateEntryExceptionFilter } from './exceptionFilter';
+export { QueryFailedErrorExceptionFilter } from './exceptionFilter';

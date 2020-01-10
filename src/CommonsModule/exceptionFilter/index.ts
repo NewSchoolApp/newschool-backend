@@ -1,1 +1,1 @@
-export { DuplicateEntryExceptionFilter } from './duplicate-entry.exceptionfilter';
+export { QueryFailedErrorExceptionFilter } from './query-failed-error-exception.filter';
