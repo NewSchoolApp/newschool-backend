@@ -19,7 +19,7 @@ export class User extends Audit {
   @Expose()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   @Expose()
   email: string;
 

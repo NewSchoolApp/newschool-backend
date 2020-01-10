@@ -13,6 +13,7 @@ export class Course extends Audit {
 
   @Column({
     nullable: false,
+    unique: true,
   })
   @Expose()
   title: string;

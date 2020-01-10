@@ -4,7 +4,7 @@ CREATE TABLE `user` (
   `version` int(11) NOT NULL,
   `id` varchar(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `email` varchar(255) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
   `url_facebook` varchar(255) NOT NULL,
   `url_instagram` varchar(255) NOT NULL,
