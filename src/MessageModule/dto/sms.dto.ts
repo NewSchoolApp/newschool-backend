@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
 
-export class SMSDTO {  
+export class SMSDTO {
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @Expose()

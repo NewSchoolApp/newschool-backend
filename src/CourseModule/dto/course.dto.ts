@@ -1,7 +1,7 @@
 import { Course } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { UserDTO } from 'src/UserModule/dto';
+import { UserDTO } from '../../UserModule/dto';
 
 export class CourseDTO {
   @ApiModelProperty({ type: String })

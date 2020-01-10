@@ -7,7 +7,7 @@ export class AdminChangePasswordDTO {
   @IsString()
   @Expose()
   newPassword: string;
-  
+
   @ApiModelProperty({ type: String })
   @IsString()
   @Expose()

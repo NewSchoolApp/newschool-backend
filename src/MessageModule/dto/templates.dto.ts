@@ -4,36 +4,36 @@ import { Expose } from 'class-transformer';
 
 export class TemplateDTO {
 
-    @ApiModelProperty({
-        type: String,
-        description: 'Template Name, <strong>this name is unique</strong>.',
-        required: true,
-        example: 'template-name',
-    })
-    @IsNotEmpty()
-    @Expose()
-    name: string;
+  @ApiModelProperty({
+    type: String,
+    description: 'Template Name, <strong>this name is unique</strong>.',
+    required: true,
+    example: 'template-name',
+  })
+  @IsNotEmpty()
+  @Expose()
+  name: string;
 
-    @ApiModelProperty({
-        type: String,
-        description: 'Value that will be placed in the message subject.',
-        required: true,
-        example: 'Example subject',
-    })
-    @IsNotEmpty()
-    @Expose()
-    title: string;
+  @ApiModelProperty({
+    type: String,
+    description: 'Value that will be placed in the message subject.',
+    required: true,
+    example: 'Example subject',
+  })
+  @IsNotEmpty()
+  @Expose()
+  title: string;
 
-    @ApiModelProperty({
-        type: String,
-        description: 'Template to be saved',
-        required: true,
-        example: '<p> Lorem Ipsum - <strong>{0}</strong> ' +
-            'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard <strong>{1}</strong> ' +
-            'ever since the 1500s, when an unknown <strong>{2}</strong> took a galley of type and scrambled it to make a type specimen <strong>{3}</strong>. </p>',
-    })
-    @IsNotEmpty()
-    @Expose()
-    template: string;
+  @ApiModelProperty({
+    type: String,
+    description: 'Template to be saved',
+    required: true,
+    example: '<p> Lorem Ipsum - <strong>{0}</strong> ' +
+      'is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard <strong>{1}</strong> ' +
+      'ever since the 1500s, when an unknown <strong>{2}</strong> took a galley of type and scrambled it to make a type specimen <strong>{3}</strong>. </p>',
+  })
+  @IsNotEmpty()
+  @Expose()
+  template: string;
 
 }

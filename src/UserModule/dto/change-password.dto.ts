@@ -12,7 +12,7 @@ export class ChangePasswordDTO {
   @IsString()
   @Expose()
   newPassword: string;
-  
+
   @ApiModelProperty({ type: String })
   @IsString()
   @Expose()

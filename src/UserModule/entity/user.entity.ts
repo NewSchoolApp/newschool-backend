@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Role } from '../../SecurityModule';
 import { ChangePassword } from './change-password.entity';
@@ -54,7 +54,7 @@ export class User extends Audit {
   certificates: Certificate[];
 
   @OneToMany<Course>('Course', (course: Course) => course.author)
-  createdCourses: Course[]
+  createdCourses: Course[];
 
   validPassword(password: string) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);

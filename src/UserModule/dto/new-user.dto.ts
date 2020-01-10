@@ -1,7 +1,6 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { User } from '../entity';
 import { IsNotEmpty } from 'class-validator';
-import { Role } from '../../SecurityModule/entity';
 import { Expose } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum';
 
