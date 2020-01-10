@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Constants } from '../../CommonsModule';
 import { ApiUseTags } from '@nestjs/swagger';
 import { UploadService } from '../service';

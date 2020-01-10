@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
@@ -33,7 +33,7 @@ export class Course extends Audit {
   @JoinColumn({ name: 'userId' })
   @Expose()
   author: User;
-  
+
   @Column()
   photoName: string;
 

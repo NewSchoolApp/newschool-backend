@@ -5,24 +5,24 @@ import { Part } from '../entity';
 
 @Injectable()
 export class PartMapper extends Mapper<Part, PartDTO> {
-    
-    constructor() {
-        super(Part, PartDTO);
-    }
 
-    toDto(entityObject: Part): PartDTO {
-        return super.toDto(entityObject);
-    }
+  constructor() {
+    super(Part, PartDTO);
+  }
 
-    toDtoList(entityArray: Part[]): PartDTO[] {
-        return super.toDtoList(entityArray);
-    }
+  toDto(entityObject: Part): PartDTO {
+    return super.toDto(entityObject);
+  }
 
-    toEntity(dtoObject: PartDTO): Part {
-        return super.toEntity(dtoObject);
-    }
+  toDtoList(entityArray: Part[]): PartDTO[] {
+    return super.toDtoList(entityArray);
+  }
 
-    toEntityList(dtoArray: PartDTO[]): Part[] {
-        return super.toEntityList(dtoArray);
-    }
+  toEntity(dtoObject: PartDTO): Part {
+    return super.toEntity(dtoObject);
+  }
+
+  toEntityList(dtoArray: PartDTO[]): Part[] {
+    return super.toEntityList(dtoArray);
+  }
 }

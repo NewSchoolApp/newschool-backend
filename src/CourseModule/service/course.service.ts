@@ -4,7 +4,7 @@ import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
-import { UserService, User } from '../../UserModule';
+import { User, UserService } from '../../UserModule';
 
 @Injectable()
 export class CourseService {
@@ -28,7 +28,7 @@ export class CourseService {
     const user: User = await this.userService.findById(newCourse.authorId);
     course.author = user;
 
-  
+
     // eslint-disable-next-line require-atomic-updates
     course.photoName = file.filename;
 
@@ -57,26 +57,26 @@ export class CourseService {
     return course;
   }
 
-    @Transactional()
-    public async findBySlug(slug: string): Promise<Course> {
-        const course: Course = await this.repository.findBySlug(slug);
-        if (!course) {
-            throw new NotFoundException('Course not found');
-        }
-        return course;
+  @Transactional()
+  public async findBySlug(slug: string): Promise<Course> {
+    const course: Course = await this.repository.findBySlug(slug);
+    if (!course) {
+      throw new NotFoundException('Course not found');
     }
+    return course;
+  }
 
-    @Transactional()
-    public async delete(id: Course['id']): Promise<void> {
-        await this.repository.delete(id);
-    }
+  @Transactional()
+  public async delete(id: Course['id']): Promise<void> {
+    await this.repository.delete(id);
+  }
 
-    @Transactional()
-    public async findByTitle(title: string): Promise<Course> {
-        const course = await this.repository.findByTitle(title);
-        if (!course) {
-            throw new NotFoundException();
-        }
-        return course;
+  @Transactional()
+  public async findByTitle(title: string): Promise<Course> {
+    const course = await this.repository.findByTitle(title);
+    if (!course) {
+      throw new NotFoundException();
     }
+    return course;
+  }
 }

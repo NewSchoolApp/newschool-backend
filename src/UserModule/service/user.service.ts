@@ -1,8 +1,10 @@
 import * as crypto from 'crypto';
 import {
   BadRequestException,
-  ConflictException, forwardRef,
-  GoneException, Inject,
+  ConflictException,
+  forwardRef,
+  GoneException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -11,8 +13,9 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { ForgotPasswordDTO, NewUserDTO, UserUpdateDTO, AdminChangePasswordDTO } from '../dto';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
+import { AdminChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
@@ -159,7 +162,7 @@ export class UserService {
     }
     const user: User = await this.findById(id);
     if (!user.validPassword(changePasswordDTO.password)) {
-      throw new BadRequestException('Old password does not match with given password')
+      throw new BadRequestException('Old password does not match with given password');
     }
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
@@ -173,7 +176,7 @@ export class UserService {
     }
     const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
     if (!user.validPassword(changePasswordDTO.password)) {
-      throw new BadRequestException('Old password does not match with given password')
+      throw new BadRequestException('Old password does not match with given password');
     }
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);

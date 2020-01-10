@@ -1,31 +1,20 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Logger,
-  Post,
-  UseGuards,
-  Get,
-  Put,
-  Param,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Logger, Post, Put, UseGuards } from '@nestjs/common';
 import { MessageService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { EmailDTO, ContactUsDTO } from '../dto';
+import { ContactUsDTO, EmailDTO } from '../dto';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiImplicitBody,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
   ApiUseTags,
-  ApiOkResponse,
-  ApiNotFoundResponse,
-  ApiConflictResponse,
-  ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { EmailSwagger } from '../swagger';
-import { ContactUsSwagger } from '../swagger';
+import { ContactUsSwagger, EmailSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { TemplateDTO } from '../dto/templates.dto';
 import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
@@ -38,7 +27,8 @@ import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
 export class MessageController {
   private readonly logger = new Logger(MessageController.name);
 
-  constructor(private readonly service: MessageService) { }
+  constructor(private readonly service: MessageService) {
+  }
 
   @Post('/email')
   @HttpCode(201)

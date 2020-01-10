@@ -29,7 +29,7 @@ import { UserModule } from '../UserModule';
   providers: [SecurityService, RoleService],
   exports: [
     SecurityService,
-    RoleService
+    RoleService,
   ],
 })
 export class SecurityModule {
