@@ -57,7 +57,7 @@ export class UserService {
 
     const certificates = await this.repository.getCertificateByUser(userId);
 
-    const userCertificates = certificates.map<CertificateUserDTO>(certificate => {
+    return certificates.map<CertificateUserDTO>(certificate => {
       const c = new CertificateUserDTO();
       c.id = certificate.certificate_id;
       c.title = certificate.certificate_title;
@@ -66,8 +66,6 @@ export class UserService {
       c.certificateBackgroundName = certificate.certificate_certificateBackgroundName;
       return c;
     });
-
-    return userCertificates;
   }
 
   public async add(user: NewUserDTO): Promise<User> {
