@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  NotAcceptableException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nest-modules/mailer';
 import { ContactUsDTO, EmailDTO } from '../dto';
@@ -19,7 +14,8 @@ export class MessageService {
     private readonly configService: ConfigService,
     private readonly templateRepository: TemplateRepository,
     private readonly mapperTemplate: TemplateMapper,
-  ) { }
+  ) {
+  }
 
   public async sendEmail(email: EmailDTO): Promise<void> {
     try {

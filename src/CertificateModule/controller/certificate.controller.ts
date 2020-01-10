@@ -15,7 +15,6 @@ import { CertificateService } from '../service';
 import { CertificateMapper } from '../mapper';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
 import { RoleEnum } from '../../SecurityModule/enum';
-import { NewUserDTO } from '../../UserModule/dto';
 
 @ApiUseTags('Certificate')
 @ApiBearerAuth()

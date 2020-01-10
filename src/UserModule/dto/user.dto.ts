@@ -2,7 +2,7 @@ import { User } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto';
-import { CourseDTO } from 'src/CourseModule/dto';
+import { CourseDTO } from '../../CourseModule/dto';
 
 export class UserDTO {
   @ApiModelProperty({ type: Number })

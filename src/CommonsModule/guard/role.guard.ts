@@ -38,7 +38,7 @@ export class RoleGuard implements CanActivate {
       user = this.jwtService.verify<User>(token);
     } catch (e) {
       if (e.name === 'TokenExpiredError') {
-        throw new UnauthorizedException(e.message)
+        throw new UnauthorizedException(e.message);
       }
       throw new InternalServerErrorException(e);
     }

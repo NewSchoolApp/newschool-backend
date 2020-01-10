@@ -19,7 +19,7 @@ import { UserModule } from '../UserModule';
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
       }),
       inject: [ConfigService],
-    }), 
+    }),
     MulterModule.register({ dest: './upload' }),
     UserModule,
   ],

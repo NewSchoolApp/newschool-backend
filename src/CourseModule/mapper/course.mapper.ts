@@ -6,23 +6,23 @@ import { Course } from '../entity';
 @Injectable()
 export class CourseMapper extends Mapper<Course, CourseDTO> {
 
-    constructor() {
-        super(Course, CourseDTO);
-    }
+  constructor() {
+    super(Course, CourseDTO);
+  }
 
-    toDto(entityObject: Partial<Course>): CourseDTO {
-        return super.toDto(entityObject);
-    }
+  toDto(entityObject: Partial<Course>): CourseDTO {
+    return super.toDto(entityObject);
+  }
 
-    toDtoList(entityArray: Course[]): CourseDTO[] {
-        return super.toDtoList(entityArray);
-    }
+  toDtoList(entityArray: Course[]): CourseDTO[] {
+    return super.toDtoList(entityArray);
+  }
 
-    toEntity(dtoObject: Partial<CourseDTO>): Course {
-        return super.toEntity(dtoObject);
-    }
+  toEntity(dtoObject: Partial<CourseDTO>): Course {
+    return super.toEntity(dtoObject);
+  }
 
-    toEntityList(dtoArray: CourseDTO[]): Course[] {
-        return super.toEntityList(dtoArray);
-    }
+  toEntityList(dtoArray: CourseDTO[]): Course[] {
+    return super.toEntityList(dtoArray);
+  }
 }

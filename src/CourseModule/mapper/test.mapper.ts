@@ -5,24 +5,24 @@ import { Test } from '../entity';
 
 @Injectable()
 export class TestMapper extends Mapper<Test, TestDTO> {
-    
-    constructor() {
-        super(Test, TestDTO);
-    }
 
-    toDto(entityObject: Test): TestDTO {
-        return super.toDto(entityObject);
-    }
+  constructor() {
+    super(Test, TestDTO);
+  }
 
-    toDtoList(entityArray: Test[]): TestDTO[] {
-        return super.toDtoList(entityArray);
-    }
+  toDto(entityObject: Test): TestDTO {
+    return super.toDto(entityObject);
+  }
 
-    toEntity(dtoObject: TestDTO): Test {
-        return super.toEntity(dtoObject);
-    }
+  toDtoList(entityArray: Test[]): TestDTO[] {
+    return super.toDtoList(entityArray);
+  }
 
-    toEntityList(dtoArray: TestDTO[]): Test[] {
-        return super.toEntityList(dtoArray);
-    }
+  toEntity(dtoObject: TestDTO): Test {
+    return super.toEntity(dtoObject);
+  }
+
+  toEntityList(dtoArray: TestDTO[]): Test[] {
+    return super.toEntityList(dtoArray);
+  }
 }
