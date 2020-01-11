@@ -9,6 +9,7 @@ import {
 } from 'typeorm-transactional-cls-hooked';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
+import { QueryFailedErrorExceptionFilter } from './CommonsModule/exceptionFilter';
 
 async function bootstrap() {
   require('dotenv-flow').config();
@@ -33,6 +34,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  app.useGlobalFilters(new QueryFailedErrorExceptionFilter());
 
   const configService = app.get<ConfigService>(ConfigService);
 

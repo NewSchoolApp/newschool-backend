@@ -18,12 +18,6 @@ export class CourseService {
 
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
-
-    const courseSameTitle: Course = await this.repository.findByTitle(newCourse.title);
-    if (courseSameTitle) {
-      throw new ConflictException('Course with this title already exists');
-    }
-
     const course = this.mapper.toEntity(newCourse);
     const user: User = await this.userService.findById(newCourse.authorId);
     course.author = user;
@@ -31,8 +25,6 @@ export class CourseService {
 
     // eslint-disable-next-line require-atomic-updates
     course.photoName = file.filename;
-
-    console.log(course);
 
     return this.repository.save(course);
   }
