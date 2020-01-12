@@ -33,7 +33,7 @@ export class Part extends Audit {
   })
   youtubeUrl: string;
 
-  @ManyToOne<Lesson>(() => Lesson, (lesson: Lesson) => lesson.parts)
+  @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.parts)
   @JoinColumn({
     name: 'lesson_id',
   })
@@ -45,6 +45,6 @@ export class Part extends Audit {
   })
   sequenceNumber: number;
 
-  @OneToMany<Test>(() => Test, (test: Test) => test.part)
+  @OneToMany<Test>('Test', (test: Test) => test.part)
   tests: Test[];
 }

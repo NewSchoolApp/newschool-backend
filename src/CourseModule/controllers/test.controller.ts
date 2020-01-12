@@ -78,4 +78,16 @@ export class TestController {
   public async delete(@Param('id') id: TestDTO['id']): Promise<void> {
     await this.service.delete(id);
   }
+
+  @Get('/checkTest/:id/:chosenAlternative')
+  @HttpCode(200)
+  @ApiOkResponse({ type: Boolean })
+  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Test id' })
+  @ApiImplicitQuery({ name: 'chosenAlternative', type: String, required: true, description: 'chosenAlternative' })
+  @ApiOperation({ title: 'Check test answer', description: 'Check test by test id and chosen alternative' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async checkTest(@Param('id') id: TestDTO['id'], @Param('chosenAlternative') chosenAlternative: string): Promise<Boolean> {
+      return await this.service.checkTest(id, chosenAlternative);
+  }
 }

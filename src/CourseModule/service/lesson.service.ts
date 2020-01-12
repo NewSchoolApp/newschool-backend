@@ -61,4 +61,16 @@ export class LessonService {
     }
     return lesson;
   }
+
+  @Transactional()
+  public async getMaxValueForLesson(course: Lesson['course']): Promise<Number> {
+      return await this.repository.count({ course });
+  }
+
+  @Transactional()
+  public async getLessonByCourseIdAndSeqNum(course: string, sequenceNumber: number): Promise<Lesson['id']> {
+    const lesson = await this.repository.findOne({ course: Lesson['course'], sequenceNumber: Lesson['sequenceNumber'] });
+    return lesson.id;
+  }
+
 }
