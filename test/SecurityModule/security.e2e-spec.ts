@@ -9,6 +9,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { User } from '../../src/UserModule/entity';
 import * as crypto from 'crypto';
+import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -35,6 +36,7 @@ describe('SecurityController (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
+    initializeTransactionalContext();
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
@@ -58,14 +60,6 @@ describe('SecurityController (e2e)', () => {
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
-  });
-
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
   });
 
   it('should validate client credentials', async (done) => {

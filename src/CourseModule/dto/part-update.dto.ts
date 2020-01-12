@@ -1,29 +1,42 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Part } from '../entity';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class PartUpdateDTO {
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    title: Part['title'];
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: String })
+  title: Part['title'];
 
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    description: Part['description'];
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: String })
+  description: Part['description'];
 
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    vimeoUrl: Part['vimeoUrl'];
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: String })
+  vimeoUrl: Part['vimeoUrl'];
 
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    youtubeUrl: Part['youtubeUrl'];
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: String })
+  youtubeUrl: Part['youtubeUrl'];
 
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    lesson: Part['lesson'];
+  @IsString()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: String })
+  lesson: Part['lesson'];
 
-    @ApiModelProperty({ type: String })
-    @IsNotEmpty()
-    nextPart: Part['nextPart'];
+  @IsNumber()
+  @Expose()
+  @IsNotEmpty()
+  @ApiModelProperty({ type: Number })
+  sequenceNumber: Part['sequenceNumber'];
 }

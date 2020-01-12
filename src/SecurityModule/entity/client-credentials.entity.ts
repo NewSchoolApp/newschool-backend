@@ -1,7 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ClientCredentialsEnum } from '../enum';
 import { Audit } from '../../CommonsModule';
-import { IsEnum } from 'class-validator';
 import { Role } from './role.entity';
 
 @Entity({ name: 'client-credentials' })
@@ -9,10 +8,11 @@ export class ClientCredentials extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @IsEnum(ClientCredentialsEnum)
   @Column({
-    type: 'varchar',
+    type: 'enum',
+    enum: ClientCredentialsEnum,
     nullable: false,
+    unique: true,
   })
   name: ClientCredentialsEnum;
 

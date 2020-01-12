@@ -9,4 +9,8 @@ export class NewCertificateDTO {
   @ApiModelProperty({ type: String })
   @IsString()
   text: string;
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  certificateBackgroundName: string;
 }

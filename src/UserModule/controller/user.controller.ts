@@ -16,7 +16,17 @@ import {
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ChangePasswordRequestIdDTO, ForgotPasswordDTO, NewUserDTO, UserDTO, UserUpdateDTO, NewStudentDTO, SelfUpdateDTO, AdminChangePasswordDTO } from '../dto';
+import {
+  AdminChangePasswordDTO,
+  ChangePasswordDTO,
+  ChangePasswordRequestIdDTO,
+  ForgotPasswordDTO,
+  NewStudentDTO,
+  NewUserDTO,
+  SelfUpdateDTO,
+  UserDTO,
+  UserUpdateDTO,
+} from '../dto';
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -31,9 +41,10 @@ import {
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
-import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
+import { CertificateUserDTO } from '../dto/CertificateUserDTO';
+import { CourseDTO } from '../../CourseModule/dto';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
@@ -97,7 +108,10 @@ export class UserController {
   @Put('/me/change-password')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
-  @ApiOperation({ title: 'Update user by jwt id', description: 'Decodes de jwt and updates the user password by the jwt id' })
+  @ApiOperation({
+    title: 'Update user by jwt id',
+    description: 'Decodes de jwt and updates the user password by the jwt id',
+  })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -111,7 +125,24 @@ export class UserController {
     return this.mapper.toDto(await this.service.changePassword(id, changePassword));
   }
 
-  @Get('/:id')
+  @Get('me/course')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find courses by id', description: 'Find courses by id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findUserCoursesByJwtId(
+    @Headers('authorization') authorization: string,
+  ): Promise<CourseDTO[]> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findCoursesByUserId(id);
+  }
+
+  @Get(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
   @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
@@ -125,6 +156,22 @@ export class UserController {
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
+  }
+
+  @Get(':id/course')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiOperation({ title: 'Find courses by id', description: 'Find courses by id' })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN, STUDENT or EXTERNAL role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
+  public async findUserCoursesById(
+    @Param('id') id: UserDTO['id'],
+  ): Promise<CourseDTO[]> {
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findCoursesByUserId(id);
   }
 
   @Post()
@@ -148,7 +195,7 @@ export class UserController {
   @ApiOperation({ title: 'Add student user', description: 'Creates a new student' })
   @ApiImplicitBody({ name: 'User', type: NewStudentDTO })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  @NeedRole(RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async addStudent(@Body() user: NewStudentDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
@@ -245,6 +292,30 @@ export class UserController {
   ) {
     this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
     await this.service.addCertificateToUser(userId, certificateId);
+  }
+
+  @Get('me/certificate')
+  @HttpCode(200)
+  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
+  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role'})
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+    public async findUserCertificates( @Headers('authorization') authorization: string): Promise<CertificateUserDTO[]> {
+      const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+      return await this.service.getCertificateByUser(id);
+  }
+
+  @Get(':id/certificate')
+
+  @HttpCode(200)
+  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
+  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role'})
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+    public async findCertificatesByUser( @Param('id') id: string): Promise<CertificateUserDTO[]> {
+      return await this.service.getCertificateByUser(id);
   }
 
   @Delete('/:id')

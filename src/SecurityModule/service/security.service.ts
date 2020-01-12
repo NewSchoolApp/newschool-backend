@@ -85,7 +85,10 @@ export class SecurityService {
   private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
     return {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN') }),
-      refreshToken: this.jwtService.sign(classToPlain({ ...authenticatedUser, isRefreshToken: true }), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
+      refreshToken: this.jwtService.sign(classToPlain({
+        ...authenticatedUser,
+        isRefreshToken: true,
+      }), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
       tokenType: 'bearer',
       expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
     };
