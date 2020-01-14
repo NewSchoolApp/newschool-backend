@@ -88,6 +88,6 @@ export class TestController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async checkTest(@Param('id') id: TestDTO['id'], @Param('chosenAlternative') chosenAlternative: string): Promise<Boolean> {
-      return await this.service.checkTest(id, chosenAlternative);
+    return await this.service.checkTest(id, chosenAlternative);
   }
 }
