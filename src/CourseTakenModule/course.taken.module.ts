@@ -7,8 +7,7 @@ import { CourseTakenRepository } from './repository';
 import { CourseTaken } from './entity';
 import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { MulterModule } from '@nestjs/platform-express';
-import { UserModule } from '../UserModule';
+import { CourseModule, LessonService, PartService, TestService } from '../CourseModule';
 
 @Module({
   imports: [
@@ -19,7 +18,8 @@ import { UserModule } from '../UserModule';
         signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
       }),
       inject: [ConfigService],
-    })
+    }),
+    CourseModule,
   ],
   controllers: [CourseTakenController],
   providers: [CourseTakenService, CourseTakenMapper],
