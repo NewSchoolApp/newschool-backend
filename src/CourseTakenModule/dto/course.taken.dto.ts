@@ -1,6 +1,6 @@
 import { CourseTaken } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class CourseTakenDTO {
   @ApiModelProperty({ type: String })

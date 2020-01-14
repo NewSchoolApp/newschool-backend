@@ -1,5 +1,5 @@
 
-import { PrimaryColumn, Column, Entity, JoinColumn, Index, Check, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, Index, Check, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { User } from '../../UserModule/entity/user.entity';
 import { Course } from '../../CourseModule/entity/course.entity';

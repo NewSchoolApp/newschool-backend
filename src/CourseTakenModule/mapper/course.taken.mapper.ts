@@ -27,7 +27,7 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
   }
 
   toUpdateDto(entityObject: CourseTaken): CourseTakenUpdateDTO {
-    var updateDtoObject = new CourseTakenDTO();
+    const updateDtoObject = new CourseTakenDTO();
 
     updateDtoObject.user = entityObject.user;
     updateDtoObject.course = entityObject.course;

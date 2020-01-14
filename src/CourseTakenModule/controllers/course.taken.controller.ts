@@ -1,12 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Course } from 'src/CourseModule';
 
 @ApiUseTags('CourseTaken')
 @ApiBearerAuth()

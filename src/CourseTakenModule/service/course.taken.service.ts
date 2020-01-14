@@ -2,10 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
-import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
+import { CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import { Course, Lesson, Part, Test, CourseService, LessonService, PartService, TestService } from '../../CourseModule';
-import { UserService, User } from '../../UserModule';
+import { Lesson, LessonService, PartService, TestService } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
 
 @Injectable()
@@ -14,8 +13,6 @@ export class CourseTakenService {
   constructor(
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
-    private readonly userService: UserService,
-    private readonly courseService: CourseService,
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
@@ -29,13 +26,11 @@ export class CourseTakenService {
         throw new ConflictException('Course already taken by user');
     }
 
-    var newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
+    const newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
 
     newCourseTakenEntity.currentLesson = 1;
     newCourseTakenEntity.currentPart = 1;
     newCourseTakenEntity.currentTest = 1;
-
-    'TAKEN';
 
     return this.repository.save(newCourseTakenEntity);
   }
@@ -75,7 +70,7 @@ export class CourseTakenService {
 
 @Transactional()
 public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
-  var courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
+  const courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
 
   const currentLessonId: Lesson['id'] = await this.lessonService.getLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson);
   const currentPartId = await this.partService.getPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
@@ -94,26 +89,22 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
 
     if (nextTest){
       courseTaken.currentTest++;
-    }
-    else if (nextPart){
+    } else if (nextPart){
         courseTaken.currentTest = 1;
         courseTaken.currentPart++;
-    }
-    else if (nextLesson) {
+    } else if (nextLesson) {
             courseTaken.currentTest = 1;
             courseTaken.currentPart = 1;
             courseTaken.currentLesson++;
-    }
-    else {
+    } else {
           courseTaken.status = CourseTakenStatusEnum.COMPLETED;
           courseTaken.courseCompleteDate = new Date(Date.now());
     }
-    return await this.mapper.toUpdateDto(courseTaken)
-
+    return await this.mapper.toUpdateDto(courseTaken);
   }
 
   @Transactional()
   public async delete(user: CourseTaken['user'], course: CourseTaken['course']): Promise<void> {
-      await this.repository.delete({ user, course });
+    await this.repository.delete({ user, course });
   }
 }
