@@ -7,8 +7,6 @@ import { CourseTakenRepository } from './repository';
 import { CourseTaken } from './entity';
 import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { MulterModule } from '@nestjs/platform-express';
-import { UserModule } from '../UserModule';
 
 @Module({
   imports: [
