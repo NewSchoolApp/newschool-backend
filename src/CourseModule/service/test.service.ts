@@ -68,15 +68,14 @@ export class TestService {
 
     if (test.correctAlternative === chosenAlternative){
       return true;
-    }
-    else{
-        return false;
+    } else {
+      return false;
     }
   }
 
   @Transactional()
   public async getMaxValueForTest(part: Test['part']): Promise<Number> {
-      return await this.repository.count({ part });
+    return await this.repository.count({ part });
   }
 
   @Transactional()
