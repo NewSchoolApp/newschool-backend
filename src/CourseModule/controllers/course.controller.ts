@@ -66,7 +66,7 @@ export class CourseController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
-      return this.mapper.toDto(await this.service.findBySlug(slug));
+    return this.mapper.toDto(await this.service.findBySlug(slug));
   }
 
   @Post()
