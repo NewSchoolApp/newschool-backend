@@ -18,7 +18,16 @@ export class CourseTakenUpdatedInfoSwagger {
     @ApiModelProperty({ type: String })
     status: CourseTaken['status'];
 
-    @ApiModelProperty({ type: String })
+    @ApiModelProperty({ type: Number })
     completition: CourseTaken['completition'];
 
+    @ApiModelProperty({ type: Number })
+    currentLesson: CourseTaken['currentLesson'];
+
+    @ApiModelProperty({ type: Number })
+    currentPart: CourseTaken['currentPart'];
+
+    @ApiModelProperty({ type: Number })
+    currentTest: CourseTaken['currentTest'];
+    
 }

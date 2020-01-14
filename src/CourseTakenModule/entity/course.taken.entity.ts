@@ -7,7 +7,7 @@ import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum';
 
 @Entity()
-@Check('CHECK `status` IN (`TAKEN`, `COMPLETED`)')
+@Check('CHECK `status` IN (`' + CourseTakenStatusEnum.TAKEN + '`, `'+ CourseTakenStatusEnum.COMPLETED + '`)')
 @Index((relation: CourseTaken) => [relation.user, relation.course], { unique: true })
 export class CourseTaken extends Audit {
 

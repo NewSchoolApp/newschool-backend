@@ -15,10 +15,4 @@ export class NewCourseTakenDTO {
     @IsNotEmpty()
     @Expose()
     course: CourseTaken['course'];
-
-    @ApiModelProperty({ type: String })
-    @IsString()
-    @IsNotEmpty()
-    @Expose()
-    status: CourseTaken['status'];
 }

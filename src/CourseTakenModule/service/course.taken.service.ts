@@ -34,8 +34,7 @@ export class CourseTakenService {
         newCourseTakenEntity.currentLesson = 1;
         newCourseTakenEntity.currentPart = 1;
         newCourseTakenEntity.currentTest = 1;
-
-        'TAKEN';
+        newCourseTakenEntity.status = CourseTakenStatusEnum.TAKEN;
 
         return this.repository.save(newCourseTakenEntity);
     }
