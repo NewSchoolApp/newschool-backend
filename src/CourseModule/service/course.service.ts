@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
@@ -19,14 +19,18 @@ export class CourseService {
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
     const course = this.mapper.toEntity(newCourse);
-    const user: User = await this.userService.findById(newCourse.authorId);
-    course.author = user;
-
-
-    // eslint-disable-next-line require-atomic-updates
+    course.author = await this.userService.findById(newCourse.authorId);
     course.photoName = file.filename;
-
-    return this.repository.save(course);
+    let savedCourse: Course;
+    try {
+      savedCourse = await this.repository.save(course);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('Course with same title already exists');
+      }
+      throw new InternalServerErrorException(e.message);
+    }
+    return savedCourse
   }
 
   @Transactional()
