@@ -32,6 +32,7 @@ export class CourseTakenService {
     newCourseTakenEntity.currentPart = 1;
     newCourseTakenEntity.currentTest = 1;
     newCourseTakenEntity.status = CourseTakenStatusEnum.TAKEN;
+    newCourseTakenEntity.courseStartDate = new Date(Date.now());
 
     return this.repository.save(newCourseTakenEntity);
   }
@@ -43,7 +44,7 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getAllCoursesByUserId(user: CourseTaken['user']): Promise<CourseTaken[]> {
+  public async getAllByUserId(user: CourseTaken['user']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByUserId(user);
     if (!courseTaken){
       throw new NotFoundException('This user did not started any course');
@@ -52,7 +53,7 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getAllUsersByCourseId(course: CourseTaken['course']): Promise<CourseTaken[]> {
+  public async getAllByCourseId(course: CourseTaken['course']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByCourseId(course);
     if (!courseTaken){
         throw new NotFoundException('No users have started this course');
@@ -80,6 +81,8 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
   const nextPart = await this.partService.getPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart+1);
   const nextLesson = await this.lessonService.getLessonByCourseIdAndSeqNum(course, courseTaken.currentPart+1);
 
+  courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
+
   const courseTakenUpdatedInfo = await this.prepareCourseTakenUpdatedInfo(courseTaken, nextTest, nextPart, nextLesson);
 
   return this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
@@ -101,7 +104,26 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
           courseTaken.status = CourseTakenStatusEnum.COMPLETED;
           courseTaken.courseCompleteDate = new Date(Date.now());
     }
+
     return await this.mapper.toUpdateDto(courseTaken);
+  }
+
+  private async calculateCompletition(courseTaken: CourseTaken, currentLesson: string, currentPart: string): Promise<number> {
+
+    const lessonsAmount: number = await this.lessonService.getMaxValueForLesson(courseTaken.course);
+    const partsAmount = await this.partService.getMaxValueForPart(currentLesson);
+    const testsAmount = await this.testService.getMaxValueForTest(currentPart);
+
+    const percentualPerLesson = 100/lessonsAmount;
+    const percentualPerPart = percentualPerLesson/partsAmount;
+    const percentualPerTest = percentualPerPart/testsAmount;
+
+    let completition = percentualPerLesson*courseTaken.currentLesson;
+    completition += percentualPerPart*courseTaken.currentPart;
+    completition += percentualPerTest*courseTaken.currentTest;
+
+
+    return completition>100 ?  100 : completition;
   }
 
   @Transactional()

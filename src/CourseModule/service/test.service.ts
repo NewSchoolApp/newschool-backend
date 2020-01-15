@@ -74,8 +74,8 @@ export class TestService {
   }
 
   @Transactional()
-  public async getMaxValueForTest(part: Test['part']): Promise<Number> {
-    return await this.repository.count({ part });
+  public async getMaxValueForTest(part: string): Promise<number> {
+    return await this.repository.count({ part: Test['part'] });
   }
 
   @Transactional()

@@ -32,7 +32,7 @@ export class CourseTaken extends Audit {
   @Expose()
   @Column({
     nullable: false,
-    name: 'course_start_date',
+    name: 'course_start_date'
   })
   courseStartDate: Date;
 
@@ -55,6 +55,7 @@ export class CourseTaken extends Audit {
   @Column({
     nullable: false,
     name: 'completition',
+    default: 0
   })
   completition: number;
 

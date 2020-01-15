@@ -23,8 +23,8 @@ export class CourseTakenController {
   @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All courses by User id'})
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAllCoursesByUserId(@Param('user') user: CourseTakenDTO['user']): Promise<CourseTakenDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAllCoursesByUserId(user));
+  public async getAllByUserId(@Param('user') user: CourseTakenDTO['user']): Promise<CourseTakenDTO[]> {
+    return this.mapper.toDtoList(await this.service.getAllByUserId(user));
   }
 
   @Get('/course/:course')
@@ -34,8 +34,8 @@ export class CourseTakenController {
   @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All users by Course id'})
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async getAllUsersByCourseId(@Param('course') course: CourseTakenDTO['course']): Promise<CourseTakenDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAllUsersByCourseId(course));
+  public async getAllCourseId(@Param('course') course: CourseTakenDTO['course']): Promise<CourseTakenDTO[]> {
+    return this.mapper.toDtoList(await this.service.getAllByCourseId(course));
   }
 
   //Conferir
