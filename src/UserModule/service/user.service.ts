@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import {
   BadRequestException,
+  ConflictException,
   forwardRef,
   GoneException,
   Inject,
@@ -13,11 +14,10 @@ import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
-import { AdminChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { AdminChangePasswordDTO, ChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
-import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
@@ -72,12 +72,19 @@ export class UserService {
     const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
-    return this.repository.save({
-      ...user,
-      salt,
-      password: hashPassword,
-      role,
-    });
+    try {
+      return await this.repository.save({
+        ...user,
+        salt,
+        password: hashPassword,
+        role,
+      });
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('User with same email already exists');
+      }
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
   @Transactional()
