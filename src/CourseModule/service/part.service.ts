@@ -70,7 +70,8 @@ export class PartService {
 
   @Transactional()
   public async findPartByLessonIdAndSeqNum(lesson: string, sequenceNumber: number): Promise<Part> {
-    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber: Part['sequenceNumber'] });
+    lesson: Part['lesson'] = lesson;
+    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber });
     return part;
   }
 }

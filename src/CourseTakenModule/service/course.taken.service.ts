@@ -67,16 +67,21 @@ export class CourseTakenService {
     let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, courseId);
     const attendAClass = new AttendAClassDTO;
 
+    console.log(1)
+    console.log(2)
     console.log('user: ' + user + ' course: ' + courseId);
 
     const course: Course = await this.courseService.findById(courseId);
     console.log('course: ' + JSON.stringify(course));
     const currentLesson: Lesson = await this.lessonService.findLessonByCourseIdAndSeqNum(courseId, courseTaken.currentLesson);
     console.log('currentLesson: ' + JSON.stringify(currentLesson));
-    const currentPart: Part = await this.partService.findPartByLessonIdAndSeqNum(attendAClass.currentLesson.id, courseTaken.currentPart);
+    const currentPart: Part = await this.partService.findPartByLessonIdAndSeqNum(currentLesson.id, courseTaken.currentPart);
     console.log('currentPart: ' + JSON.stringify(currentPart));
-    const currentTest: Test = await this.testService.findTestByPartIdAndSeqNum(attendAClass.currentPart.id, courseTaken.currentTest);
+    const currentTest: Test = await this.testService.findTestByPartIdAndSeqNum(currentPart.id, courseTaken.currentTest);
     console.log('currentTest: ' + JSON.stringify(currentTest));
+
+    console.log(3)
+    console.log(4)
 
     if (!(currentLesson && currentPart && currentTest)){
       this.updateCourseStatus(user, courseId);

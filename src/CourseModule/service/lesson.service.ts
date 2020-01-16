@@ -75,7 +75,8 @@ export class LessonService {
 
   @Transactional()
   public async findLessonByCourseIdAndSeqNum(course: string, sequenceNumber: number): Promise<Lesson> {
-    const lesson = await this.repository.findOne({ course: Lesson['course'], sequenceNumber: Lesson['sequenceNumber'] });
+    course: Lesson['course'] = course;
+    const lesson = await this.repository.findOne({ course: Lesson['course'], sequenceNumber });
     return lesson;
   }
 }
