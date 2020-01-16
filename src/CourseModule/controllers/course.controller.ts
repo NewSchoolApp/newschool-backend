@@ -2,11 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, Headers,
   HttpCode,
   Param,
   Post,
-  Put,
+  Put, Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,7 +18,7 @@ import { CourseMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiImplicitBody,
+  ApiImplicitBody, ApiImplicitParam,
   ApiImplicitQuery,
   ApiOkResponse,
   ApiOperation,
@@ -26,6 +26,8 @@ import {
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { User } from '../../UserModule/entity';
+import { SecurityService } from '../../SecurityModule/service';
 
 @ApiUseTags('Course')
 @ApiBearerAuth()
@@ -34,23 +36,30 @@ export class CourseController {
   constructor(
     private readonly service: CourseService,
     private readonly mapper: CourseMapper,
+    private readonly securityService: SecurityService,
   ) {
   }
 
   @Get()
   @HttpCode(200)
   @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
+  @ApiImplicitQuery({ name: 'enabled', type: Boolean, required: false, description: 'If not passed, get all courses. If passed, get courses that are enabled or disabled depending on the boolean' })
   @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(): Promise<CourseDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAll());
+  public async getAll(
+    @Query('enabled') enabled: boolean,
+    @Headers('authorization') authorization: string,
+  ): Promise<CourseDTO[]> {
+    const { role }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    if (role.name === RoleEnum.STUDENT) enabled = true;
+    return this.mapper.toDtoList(await this.service.getAll(enabled));
   }
 
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find Course by id', description: 'Find Course by id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -61,7 +70,7 @@ export class CourseController {
   @Get('/slug/:slug')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitQuery({ name: 'slug', type: String, required: true, description: 'Course slug' })
+  @ApiImplicitParam({ name: 'slug', type: String, required: true, description: 'Course slug' })
   @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -86,7 +95,7 @@ export class CourseController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Update course', description: 'Update course by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -97,13 +106,11 @@ export class CourseController {
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
     await this.service.delete(id);
   }
-
-
 }

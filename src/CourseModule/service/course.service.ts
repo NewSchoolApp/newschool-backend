@@ -38,8 +38,9 @@ export class CourseService {
   }
 
   @Transactional()
-  public async getAll(): Promise<Course[]> {
-    return this.repository.find();
+  public async getAll(enabled?: boolean): Promise<Course[]> {
+    if (enabled == null) return this.repository.find();
+    return this.repository.find({ enabled: enabled });
   }
 
   @Transactional()
@@ -62,7 +63,8 @@ export class CourseService {
 
   @Transactional()
   public async delete(id: Course['id']): Promise<void> {
-    await this.repository.delete(id);
+    const course: Course = await this.findById(id);
+    await this.repository.save({ ...course, enabled: false });
   }
 
   @Transactional()
