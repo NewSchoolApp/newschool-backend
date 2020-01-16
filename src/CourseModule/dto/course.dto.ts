@@ -18,7 +18,7 @@ export class CourseDTO {
 
   @ApiModelProperty({ type: String })
   @Expose()
-  workload: Course['description'];
+  workload: Course['workload'];
 
   @ApiModelProperty({ type: String })
   @Expose()
