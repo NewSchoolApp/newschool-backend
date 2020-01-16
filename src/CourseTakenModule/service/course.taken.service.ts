@@ -77,7 +77,7 @@ export class CourseTakenService {
     let currentPart: Part;
     let currentTest: Test;
 
-    let invalidOptionFlag = false;
+    let invalidOptionFlag = true;
     if (currentLesson){
       currentPart = await this.partService.findPartByLessonIdAndSeqNum(currentLesson.id, courseTaken.currentPart);
 
@@ -85,18 +85,10 @@ export class CourseTakenService {
         currentTest = await this.testService.findTestByPartIdAndSeqNum(currentPart.id, courseTaken.currentTest);
 
         if(currentTest){
+          invalidOptionFlag = false;
           return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course, currentLesson, currentPart, currentTest);
         }
-        else{
-          invalidOptionFlag = true;
-        }
       }
-      else{
-        invalidOptionFlag = true;
-      }
-    }
-    else{
-      invalidOptionFlag = true;
     }
 
     if(invalidOptionFlag){
@@ -104,10 +96,10 @@ export class CourseTakenService {
       courseTaken = await this.findByUserIdAndCourseId(user, courseId);
     }
   }
-    
+
   //funcionando
   private async prepareAttendAClassDTO(attendAClass: AttendAClassDTO, courseTaken: CourseTaken, course: Course, currentLesson: Lesson, currentPart: Part, currentTest: Test) {
-    
+
     attendAClass.user = courseTaken.user;
     attendAClass.course = course;
     attendAClass.currentLesson = currentLesson;
