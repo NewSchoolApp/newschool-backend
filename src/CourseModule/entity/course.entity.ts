@@ -25,6 +25,12 @@ export class Course extends Audit {
   description: string;
 
   @Column({
+    nullable: false,
+  })
+  @Expose()
+  workload: string;
+
+  @Column({
     nullable: true,
   })
   @Expose()

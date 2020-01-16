@@ -20,6 +20,11 @@ export class NewCourseDTO {
   @Expose()
   description: Course['description'];
 
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @Expose()
+  workload: Course['workload'];
+
   @ApiModelProperty({ type: Number })
   @IsString()
   @Expose()
