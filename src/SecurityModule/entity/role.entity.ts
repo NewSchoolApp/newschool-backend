@@ -13,6 +13,7 @@ export class Role extends Audit {
     type: 'enum',
     enum: RoleEnum,
     nullable: false,
+    unique: true,
   })
   name: RoleEnum;
 

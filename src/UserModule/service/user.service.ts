@@ -14,11 +14,10 @@ import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
-import { AdminChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import { AdminChangePasswordDTO, ChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
-import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
@@ -58,33 +57,34 @@ export class UserService {
 
     const certificates = await this.repository.getCertificateByUser(userId);
 
-    const userCertificates = certificates.map<CertificateUserDTO>(certificate=> {
-      const c = new CertificateUserDTO()
+    return certificates.map<CertificateUserDTO>(certificate => {
+      const c = new CertificateUserDTO();
       c.id = certificate.certificate_id;
       c.title = certificate.certificate_title;
       c.userName = certificate.user_name;
       c.text = certificate.certificate_text;
-      c.certificateBackgroundName = certificate.certificate_certificateBackgroundName
+      c.certificateBackgroundName = certificate.certificate_certificateBackgroundName;
       return c;
-    })
-
-    return userCertificates;
+    });
   }
 
   public async add(user: NewUserDTO): Promise<User> {
-    const userWithSameEmail: User = await this.repository.findByEmail(user.email);
-    if (userWithSameEmail) {
-      throw new ConflictException();
-    }
     const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
-    return this.repository.save({
-      ...user,
-      salt,
-      password: hashPassword,
-      role,
-    });
+    try {
+      return await this.repository.save({
+        ...user,
+        salt,
+        password: hashPassword,
+        role,
+      });
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('User with same email already exists');
+      }
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
   @Transactional()

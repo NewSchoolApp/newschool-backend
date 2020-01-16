@@ -9,6 +9,7 @@ import { CourseMapper, LessonMapper, PartMapper, TestMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserModule } from '../UserModule';
+import { SecurityModule } from '../SecurityModule';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserModule } from '../UserModule';
     }),
     MulterModule.register({ dest: './upload' }),
     UserModule,
+    SecurityModule,
   ],
   controllers: [CourseController, LessonController, PartController, TestController],
   providers: [CourseService, CourseMapper, LessonService, LessonMapper, PartService, PartMapper, TestService, TestMapper],

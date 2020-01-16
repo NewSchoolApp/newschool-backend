@@ -13,6 +13,7 @@ export class Course extends Audit {
 
   @Column({
     nullable: false,
+    unique: true,
   })
   @Expose()
   title: string;
@@ -34,6 +35,13 @@ export class Course extends Audit {
   })
   @Expose()
   thumbUrl: string;
+
+  @Column({
+    type: 'boolean',
+    default: true
+  })
+  @Expose()
+  enabled: boolean;
 
   @ManyToOne<User>('User', (user: User) => user.createdCourses)
   @JoinColumn({ name: 'userId' })

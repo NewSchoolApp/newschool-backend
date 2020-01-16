@@ -1,10 +1,10 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
-import { User, UserService } from '../../UserModule';
+import { UserService } from '../../UserModule';
 
 @Injectable()
 export class CourseService {
@@ -18,23 +18,17 @@ export class CourseService {
 
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
-
-    const courseSameTitle: Course = await this.repository.findByTitle(newCourse.title);
-    if (courseSameTitle) {
-      throw new ConflictException('Course with this title already exists');
-    }
-
     const course = this.mapper.toEntity(newCourse);
-    const user: User = await this.userService.findById(newCourse.authorId);
-    course.author = user;
-
-
-    // eslint-disable-next-line require-atomic-updates
+    course.author = await this.userService.findById(newCourse.authorId);
     course.photoName = file.filename;
-
-    console.log(course);
-
-    return this.repository.save(course);
+    try {
+      return await this.repository.save(course);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('Course with same title already exists');
+      }
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
   @Transactional()
@@ -44,8 +38,9 @@ export class CourseService {
   }
 
   @Transactional()
-  public async getAll(): Promise<Course[]> {
-    return this.repository.find();
+  public async getAll(enabled?: boolean): Promise<Course[]> {
+    if (enabled == null) return this.repository.find();
+    return this.repository.find({ enabled: enabled });
   }
 
   @Transactional()
@@ -68,7 +63,8 @@ export class CourseService {
 
   @Transactional()
   public async delete(id: Course['id']): Promise<void> {
-    await this.repository.delete(id);
+    const course: Course = await this.findById(id);
+    await this.repository.save({ ...course, enabled: false });
   }
 
   @Transactional()
