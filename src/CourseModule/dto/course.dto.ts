@@ -18,6 +18,10 @@ export class CourseDTO {
 
   @ApiModelProperty({ type: String })
   @Expose()
+  workload: Course['description'];
+
+  @ApiModelProperty({ type: String })
+  @Expose()
   thumbUrl: Course['thumbUrl'];
 
   @ApiModelProperty({ type: Number })
