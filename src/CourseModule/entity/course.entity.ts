@@ -4,7 +4,7 @@ import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
 import { User } from '../../UserModule';
-import { CourseTaken } from 'src/CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
 export class Course extends Audit {

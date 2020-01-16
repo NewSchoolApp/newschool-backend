@@ -6,7 +6,7 @@ import { ChangePassword } from './change-password.entity';
 import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
 import { Course } from '../../CourseModule';
-import { CourseTaken } from 'src/CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
 export class User extends Audit {

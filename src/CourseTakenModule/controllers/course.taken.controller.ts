@@ -88,15 +88,16 @@ export class CourseTakenController {
     await this.service.delete(user, course);
   }
 
-  @Get('/attendAClass/:course')
+  @Get('/attendAClass/:user/:course')
   @HttpCode(200)
-  @ApiOkResponse({ type: CourseTakenDTO })
+  @ApiOkResponse({ type: AttendAClassDTO })
   @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
   @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async attendAClass(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<AttendAClassDTO> {
+    console.log('user: ' + user + ' course: ' + course);
     return await this.service.attendAClass(user, course);
   }
 }
