@@ -20,6 +20,7 @@ export class CourseTakenService {
   ){
   }
 
+  //funcionando
   @Transactional()
   public async add(newCourseTaken: NewCourseTakenDTO): Promise<CourseTaken> {
     const courseAlreadyTaken: CourseTaken = await this.repository.findByUserIdAndCourseId(newCourseTaken.user, newCourseTaken.course);
@@ -38,12 +39,14 @@ export class CourseTakenService {
     return this.repository.save(newCourseTakenEntity);
   }
 
+  //funcionando
   @Transactional()
   public async update(user: CourseTaken['user'], course: CourseTaken['course'], courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     return this.repository.save(this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo}))
   }
 
+  //funcionando
   @Transactional()
   public async getAllByUserId(user: CourseTaken['user']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByUserId(user);
@@ -53,6 +56,7 @@ export class CourseTakenService {
     return courseTaken;
   }
 
+  //funcionando
   @Transactional()
   public async getAllByCourseId(course: CourseTaken['course']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByCourseId(course);
@@ -62,32 +66,48 @@ export class CourseTakenService {
     return courseTaken;
   }
 
+  //não concluido
   @Transactional()
   public async attendAClass(user: string, courseId: string): Promise<AttendAClassDTO>{
     let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, courseId);
     const attendAClass = new AttendAClassDTO;
 
-    console.log(1)
-    console.log(2)
-    console.log('user: ' + user + ' course: ' + courseId);
-
     const course: Course = await this.courseService.findById(courseId);
-    console.log('course: ' + JSON.stringify(course));
     const currentLesson: Lesson = await this.lessonService.findLessonByCourseIdAndSeqNum(courseId, courseTaken.currentLesson);
-    console.log('currentLesson: ' + JSON.stringify(currentLesson));
-    const currentPart: Part = await this.partService.findPartByLessonIdAndSeqNum(currentLesson.id, courseTaken.currentPart);
-    console.log('currentPart: ' + JSON.stringify(currentPart));
-    const currentTest: Test = await this.testService.findTestByPartIdAndSeqNum(currentPart.id, courseTaken.currentTest);
-    console.log('currentTest: ' + JSON.stringify(currentTest));
+    let currentPart: Part;
+    let currentTest: Test;
 
-    console.log(3)
-    console.log(4)
+    let invalidOptionFlag = false;
+    if (currentLesson){
+      currentPart = await this.partService.findPartByLessonIdAndSeqNum(currentLesson.id, courseTaken.currentPart);
 
-    if (!(currentLesson && currentPart && currentTest)){
+      if (currentPart){
+        currentTest = await this.testService.findTestByPartIdAndSeqNum(currentPart.id, courseTaken.currentTest);
+
+        if(currentTest){
+          return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course, currentLesson, currentPart, currentTest);
+        }
+        else{
+          invalidOptionFlag = true;
+        }
+      }
+      else{
+        invalidOptionFlag = true;
+      }
+    }
+    else{
+      invalidOptionFlag = true;
+    }
+
+    if(invalidOptionFlag){
       this.updateCourseStatus(user, courseId);
       courseTaken = await this.findByUserIdAndCourseId(user, courseId);
     }
-
+  }
+    
+  //funcionando
+  private async prepareAttendAClassDTO(attendAClass: AttendAClassDTO, courseTaken: CourseTaken, course: Course, currentLesson: Lesson, currentPart: Part, currentTest: Test) {
+    
     attendAClass.user = courseTaken.user;
     attendAClass.course = course;
     attendAClass.currentLesson = currentLesson;
@@ -99,6 +119,7 @@ export class CourseTakenService {
     return attendAClass;
   }
 
+  //funcionando
   @Transactional()
   public async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.repository.findOne({ user, course });
@@ -108,6 +129,7 @@ export class CourseTakenService {
     return courseTaken;
   }
 
+//funcionando
 @Transactional()
 public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
   const courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
@@ -126,6 +148,7 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
   return this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
 }
 
+  //funcionando
   @Transactional()
   private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: string, nextPart: string, nextLesson: string){
 
@@ -146,6 +169,7 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     return await this.mapper.toUpdateDto(courseTaken);
   }
 
+  //conferir
   private async calculateCompletition(courseTaken: CourseTaken, currentLesson: string, currentPart: string): Promise<number> {
 
     const lessonsAmount: number = await this.lessonService.getMaxValueForLesson(courseTaken.course);
@@ -164,6 +188,7 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     return completition>100 ?  100 : completition;
   }
 
+  //conferir
   @Transactional()
   public async delete(user: CourseTaken['user'], course: CourseTaken['course']): Promise<void> {
     await this.repository.delete({ user, course });

@@ -16,6 +16,7 @@ export class CourseTakenController {
   ) {
   }
 
+  //funcionando
   @Get('/user/:user')
   @HttpCode(200)
   @ApiOperation({ title: 'Get Courses', description: 'Get all courses by User id'})
@@ -27,6 +28,7 @@ export class CourseTakenController {
     return this.mapper.toDtoList(await this.service.getAllByUserId(user));
   }
 
+  //funcionando
   @Get('/course/:course')
   @HttpCode(200)
   @ApiOperation({ title: 'Get Users', description: 'Get all users by Course id'})
@@ -51,6 +53,7 @@ export class CourseTakenController {
     return this.mapper.toDto(await this.service.findByUserIdAndCourseId(user, course));
   }
 
+  //funcionando
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseTakenDTO, description: 'Course Taken' })
@@ -88,6 +91,7 @@ export class CourseTakenController {
     await this.service.delete(user, course);
   }
 
+  //funcionando
   @Get('/attendAClass/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: AttendAClassDTO })
