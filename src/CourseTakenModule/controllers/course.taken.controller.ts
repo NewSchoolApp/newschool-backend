@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
+import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
@@ -86,5 +86,17 @@ export class CourseTakenController {
   @UseGuards(RoleGuard)
   public async delete(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<void> {
     await this.service.delete(user, course);
+  }
+
+  @Get('/attendAClass/:course')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CourseTakenDTO })
+  @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
+  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async attendAClass(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<AttendAClassDTO> {
+    return await this.service.attendAClass(user, course);
   }
 }

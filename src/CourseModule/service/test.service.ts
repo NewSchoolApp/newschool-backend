@@ -79,8 +79,14 @@ export class TestService {
   }
 
   @Transactional()
-  public async getTestByPartIdAndSeqNum(part: string, sequenceNumber: number): Promise<Test['id']> {
+  public async getTestIdByPartIdAndSeqNum(part: string, sequenceNumber: number): Promise<Test['id']> {
     const test = await this.repository.findOne({ part: Test['part'], sequenceNumber: Test['sequenceNumber'] });
     return test.id;
+  }
+
+  @Transactional()
+  public async findTestByPartIdAndSeqNum(part: string, sequenceNumber: number): Promise<Test> {
+    const test = await this.repository.findOne({ part: Test['part'], sequenceNumber: Test['sequenceNumber'] });
+    return test;
   }
 }

@@ -2,9 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
-import { CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
+import { CourseTakenUpdateDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import { Lesson, LessonService, PartService, TestService } from '../../CourseModule';
+import { Course, Lesson, Part, Test, LessonService, PartService, TestService, CourseService } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
 
 @Injectable()
@@ -13,6 +13,7 @@ export class CourseTakenService {
   constructor(
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
+    private readonly courseService: CourseService,
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
@@ -62,6 +63,32 @@ export class CourseTakenService {
   }
 
   @Transactional()
+  public async attendAClass(courseId: string, user: string): Promise<AttendAClassDTO>{
+    let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, courseId);
+    const attendAClass = new AttendAClassDTO;
+
+    const course: Course = await this.courseService.findById(courseId);
+    const currentLesson: Lesson = await this.lessonService.findLessonByCourseIdAndSeqNum(courseId, courseTaken.currentLesson);
+    const currentPart: Part = await this.partService.findPartByLessonIdAndSeqNum(attendAClass.currentLesson.id, courseTaken.currentPart);
+    const currentTest: Test = await this.testService.findTestByPartIdAndSeqNum(attendAClass.currentPart.id, courseTaken.currentTest);
+
+    if (!(currentLesson && currentPart && currentTest)){
+      this.updateCourseStatus(user, courseId);
+      courseTaken = await this.findByUserIdAndCourseId(user, courseId);
+    }
+
+    attendAClass.user = courseTaken.user;
+    attendAClass.course = course;
+    attendAClass.currentLesson = currentLesson;
+    attendAClass.currentPart = currentPart;
+    attendAClass.currentTest = currentTest;
+    attendAClass.completition = courseTaken.completition;
+    attendAClass.status = courseTaken.status;
+
+    return attendAClass;
+  }
+
+  @Transactional()
   public async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.repository.findOne({ user, course });
     if (!courseTaken){
@@ -74,12 +101,12 @@ export class CourseTakenService {
 public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
   const courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
 
-  const currentLessonId: Lesson['id'] = await this.lessonService.getLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson);
-  const currentPartId = await this.partService.getPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
+  const currentLessonId: Lesson['id'] = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentLesson);
+  const currentPartId = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
 
-  const nextTest = await this.testService.getTestByPartIdAndSeqNum(currentPartId, courseTaken.currentTest+1);
-  const nextPart = await this.partService.getPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart+1);
-  const nextLesson = await this.lessonService.getLessonByCourseIdAndSeqNum(course, courseTaken.currentPart+1);
+  const nextTest = await this.testService.getTestIdByPartIdAndSeqNum(currentPartId, courseTaken.currentTest+1);
+  const nextPart = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart+1);
+  const nextLesson = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentPart+1);
 
   courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
 
