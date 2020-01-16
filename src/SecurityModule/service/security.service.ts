@@ -8,6 +8,7 @@ import { GeneratedTokenDTO, RefreshTokenUserDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
+import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../../UserModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
@@ -70,7 +71,16 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
-    const { email, isRefreshToken }: RefreshTokenUserDTO = this.getUserFromToken(refreshToken);
+    let refreshTokenUser: RefreshTokenUserDTO;
+    try {
+      refreshTokenUser = this.getUserFromToken(refreshToken);
+    } catch (error) {
+      if (error instanceof TokenExpiredError){
+        throw new UnauthorizedException('Refresh Token expired');
+      }
+      throw error;
+    }
+    const { email, isRefreshToken } = refreshTokenUser;
     if (!isRefreshToken) {
       throw new UnauthorizedException('The given token is not a Refresh Token');
     }
