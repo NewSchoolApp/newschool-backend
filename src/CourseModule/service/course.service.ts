@@ -4,7 +4,7 @@ import { CourseRepository } from '../repository';
 import { Course } from '../entity';
 import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
-import { User, UserService } from '../../UserModule';
+import { UserService } from '../../UserModule';
 
 @Injectable()
 export class CourseService {
