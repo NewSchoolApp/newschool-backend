@@ -19,7 +19,6 @@ export class CourseService {
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
     const course = this.mapper.toEntity(newCourse);
-    course.author = await this.userService.findById(newCourse.authorId);
     course.photoName = file.filename;
     try {
       return await this.repository.save(course);
@@ -29,6 +28,14 @@ export class CourseService {
       }
       throw new InternalServerErrorException(e.message);
     }
+  }
+
+  public async findByAuthorName(authorName: string): Promise<Course[]> {
+    const courses: Course[] = await this.repository.findByAuthorName(authorName);
+    if (!courses.length) {
+      throw new NotFoundException('No courses found for this author');
+    }
+    return courses;
   }
 
   @Transactional()

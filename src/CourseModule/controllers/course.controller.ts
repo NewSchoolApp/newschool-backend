@@ -19,15 +19,17 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiImplicitBody, ApiImplicitParam,
-  ApiImplicitQuery,
+  ApiImplicitQuery, ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation,
+  ApiOperation, ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../../UserModule/entity';
 import { SecurityService } from '../../SecurityModule/service';
+import { NewUserDTO, UserDTO } from '../../UserModule/dto';
+import { Course } from '../entity';
 
 @ApiUseTags('Course')
 @ApiBearerAuth()
@@ -112,5 +114,20 @@ export class CourseController {
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
     await this.service.delete(id);
+  }
+
+  @Get('author/:name')
+  @HttpCode(200)
+  @ApiOkResponse({ type: NewUserDTO })
+  @ApiImplicitQuery({ name: 'name', type: Number, required: true, description: 'Author name' })
+  @ApiOperation({ title: 'Find courses by author name', description: 'Find courses by author name' })
+  @ApiNotFoundResponse({ description: 'thrown if courses are not found' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN, STUDENT or EXTERNAL role' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
+  public async findByAuthorName(
+    @Param('name') authorName: Course['authorName'],
+  ): Promise<CourseDTO[]> {
+    return this.mapper.toDtoList(await this.service.findByAuthorName(authorName));
   }
 }

@@ -15,4 +15,8 @@ export class CourseRepository extends Repository<Course> {
   async findBySlug(slug: string): Promise<Course | undefined> {
     return this.findOne({ slug });
   }
+
+  async findByAuthorName(authorName: string): Promise<Course[]> {
+    return this.find({ authorName });
+  }
 }
