@@ -20,6 +20,10 @@ export class CourseDTO {
   @Expose()
   thumbUrl: Course['thumbUrl'];
 
+  @ApiModelProperty({ type: String })
+  @Expose()
+  enabled: Course['enabled'];
+
   @ApiModelProperty({ type: Number })
   @Expose()
   @Type(() => UserDTO)
