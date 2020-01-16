@@ -21,16 +21,14 @@ export class CourseService {
     const course = this.mapper.toEntity(newCourse);
     course.author = await this.userService.findById(newCourse.authorId);
     course.photoName = file.filename;
-    let savedCourse: Course;
     try {
-      savedCourse = await this.repository.save(course);
+      return await this.repository.save(course);
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Course with same title already exists');
       }
       throw new InternalServerErrorException(e.message);
     }
-    return savedCourse
   }
 
   @Transactional()

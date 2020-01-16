@@ -72,9 +72,8 @@ export class UserService {
     const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
     const hashPassword: string = this.createHashedPassword(user.password, salt);
-    let savedUser: User;
     try {
-      savedUser = await this.repository.save({
+      return await this.repository.save({
         ...user,
         salt,
         password: hashPassword,
@@ -86,7 +85,6 @@ export class UserService {
       }
       throw new InternalServerErrorException(e.message);
     }
-    return savedUser;
   }
 
   @Transactional()
