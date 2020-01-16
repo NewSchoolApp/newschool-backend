@@ -60,17 +60,13 @@ export class TestService {
   }
 
   @Transactional()
-  public async checkTest(id: Test['id'], chosenAlternative: string): Promise<Boolean> {
+  public async checkTest(id: Test['id'], chosenAlternative: string): Promise<boolean> {
     const test = await this.repository.findById({ id });
     if (!test) {
       throw new NotFoundException('No test found');
     }
 
-    if (test.correctAlternative === chosenAlternative){
-      return true;
-    } else {
-      return false;
-    }
+    return (test.correctAlternative === chosenAlternative) ? true : false;
   }
 
   @Transactional()

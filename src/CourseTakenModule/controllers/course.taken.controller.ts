@@ -3,7 +3,7 @@ import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('CourseTaken')
@@ -44,8 +44,8 @@ export class CourseTakenController {
   @Get('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
-  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
+  @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -69,8 +69,8 @@ export class CourseTakenController {
   @Put('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
-  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
+  @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Update course taken', description: 'Update course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -82,8 +82,8 @@ export class CourseTakenController {
   @Delete('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
-  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
+  @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Delete course taken', description: 'Delete course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -95,8 +95,8 @@ export class CourseTakenController {
   @Get('/attendAClass/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: AttendAClassDTO })
-  @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
-  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
+  @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
   @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
