@@ -242,7 +242,7 @@ export class UserController {
   @ApiOperation({ title: 'Create change password request', description: 'Create change password request' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  @NeedRole(RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async forgotPassword(@Body() forgotPasswordDTO: ForgotPasswordDTO): Promise<ChangePasswordRequestIdDTO> {
     this.logger.log(`forgot password: ${forgotPasswordDTO}`);
@@ -261,7 +261,7 @@ export class UserController {
   @ApiGoneResponse({ description: 'thrown if change password request time is up' })
   @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  @NeedRole(RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
@@ -275,7 +275,7 @@ export class UserController {
   })
   @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
-  @NeedRole(RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async changePassword(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
@@ -299,7 +299,7 @@ export class UserController {
   @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
   @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
   @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role'})
-  @NeedRole(RoleEnum.STUDENT)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
     public async findUserCertificates( @Headers('authorization') authorization: string): Promise<CertificateUserDTO[]> {
       const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
