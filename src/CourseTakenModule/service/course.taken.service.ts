@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
-import { CourseTakenUpdateDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
+import { CourseTakenUpdateDTO, CourseTakenDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import { Course, Lesson, Part, Test, LessonService, PartService, TestService, CourseService } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
@@ -66,7 +66,7 @@ export class CourseTakenService {
     return courseTaken;
   }
 
-  //não concluido
+  //Testar
   @Transactional()
   public async attendAClass(user: string, courseId: string): Promise<AttendAClassDTO>{
     let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, courseId);
@@ -91,14 +91,21 @@ export class CourseTakenService {
       }
     }
 
-    if(invalidOptionFlag){
-      this.updateCourseStatus(user, courseId);
-      courseTaken = await this.findByUserIdAndCourseId(user, courseId);
+    if (invalidOptionFlag){
+      courseTaken = await this.updateCourseStatus(user, courseId);
+    }
+
+    if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
+      return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course);
+    }
+    else {
+      return await this.attendAClass(user, courseId);
     }
   }
 
-  //funcionando
-  private async prepareAttendAClassDTO(attendAClass: AttendAClassDTO, courseTaken: CourseTaken, course: Course, currentLesson: Lesson, currentPart: Part, currentTest: Test) {
+  private async prepareAttendAClassDTO(attendAClass: AttendAClassDTO, courseTaken: CourseTaken, course: Course, currentLesson?: Lesson, currentPart?: Part, currentTest?: Test
+    
+    ) {
 
     attendAClass.user = courseTaken.user;
     attendAClass.course = course;
@@ -111,7 +118,6 @@ export class CourseTakenService {
     return attendAClass;
   }
 
-  //funcionando
   @Transactional()
   public async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.repository.findOne({ user, course });
@@ -121,7 +127,6 @@ export class CourseTakenService {
     return courseTaken;
   }
 
-//funcionando
 @Transactional()
 public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
   const courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
@@ -140,7 +145,6 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
   return this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
 }
 
-  //funcionando
   @Transactional()
   private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: string, nextPart: string, nextLesson: string){
 
