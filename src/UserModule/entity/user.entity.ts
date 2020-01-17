@@ -53,9 +53,6 @@ export class User extends Audit {
   @Expose()
   certificates: Certificate[];
 
-  @OneToMany<Course>('Course', (course: Course) => course.author)
-  createdCourses: Course[];
-
   validPassword(password: string) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
     return this.password === hash;
