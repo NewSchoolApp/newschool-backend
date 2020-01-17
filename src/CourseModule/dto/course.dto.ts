@@ -1,7 +1,6 @@
 import { Course } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
-import { UserDTO } from '../../UserModule/dto';
+import { Expose } from 'class-transformer';
 
 export class CourseDTO {
   @ApiModelProperty({ type: String })
@@ -28,10 +27,13 @@ export class CourseDTO {
   @Expose()
   enabled: Course['enabled'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   @Expose()
-  @Type(() => UserDTO)
-  author: UserDTO;
+  authorName: string;
+
+  @ApiModelProperty({ type: String })
+  @Expose()
+  authorDescription: string;
 
   @ApiModelProperty({ type: Number })
   @Expose()

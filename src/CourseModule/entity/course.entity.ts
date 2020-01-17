@@ -29,6 +29,18 @@ export class Course extends Audit {
     nullable: false,
   })
   @Expose()
+  authorName: string;
+
+  @Column({
+    nullable: false,
+  })
+  @Expose()
+  authorDescription: string;
+
+  @Column({
+    nullable: false,
+  })
+  @Expose()
   workload: string;
 
   @Column({
@@ -43,11 +55,6 @@ export class Course extends Audit {
   })
   @Expose()
   enabled: boolean;
-
-  @ManyToOne<User>('User', (user: User) => user.createdCourses)
-  @JoinColumn({ name: 'userId' })
-  @Expose()
-  author: User;
 
   @Column()
   photoName: string;

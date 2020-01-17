@@ -119,14 +119,6 @@ export class UserService {
     return user;
   }
 
-  public async findCoursesByUserId(id: string): Promise<Course[]> {
-    const userWithCourses: User = await this.repository.findByIdWithCourses(id);
-    if (!userWithCourses) {
-      throw new UserNotFoundError();
-    }
-    return userWithCourses.createdCourses;
-  }
-
   @Transactional()
   public async findByEmailAndPassword(email: string, password: string): Promise<User> {
     const user: User = await this.findByEmail(email);

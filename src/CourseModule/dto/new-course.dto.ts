@@ -25,8 +25,13 @@ export class NewCourseDTO {
   @Expose()
   workload: Course['workload'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   @IsString()
   @Expose()
-  authorId: User['id'];
+  authorName: Course['authorName'];
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @Expose()
+  authorDescription: Course['authorDescription'];
 }

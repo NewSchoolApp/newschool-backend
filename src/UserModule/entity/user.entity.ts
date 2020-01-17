@@ -54,9 +54,6 @@ export class User extends Audit {
   @Expose()
   certificates: Certificate[];
 
-  @OneToMany<Course>('Course', (course: Course) => course.author)
-  createdCourses: Course[];
-
   @OneToMany<CourseTaken>('CourseTaken', (courseTaken: CourseTaken) => courseTaken.user)
   coursesTaken: CourseTaken[];
 
