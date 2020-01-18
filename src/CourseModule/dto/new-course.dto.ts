@@ -20,8 +20,18 @@ export class NewCourseDTO {
   @Expose()
   description: Course['description'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiModelProperty({ type: String })
   @IsString()
   @Expose()
-  authorId: User['id'];
+  workload: Course['workload'];
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @Expose()
+  authorName: Course['authorName'];
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @Expose()
+  authorDescription: Course['authorDescription'];
 }
