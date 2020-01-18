@@ -2,6 +2,7 @@ import { CourseTaken } from '../entity';
 import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { CourseDTO, LessonDTO, PartDTO, TestWithoutCorrectAlternativeDTO } from '../../CourseModule/dto';
 
 export class AttendAClassDTO {
   @ApiModelProperty({ type: String })
@@ -10,7 +11,7 @@ export class AttendAClassDTO {
 
   @ApiModelProperty({ type: String })
   @Expose()
-  course: Course;
+  course: CourseDTO;
 
   @ApiModelProperty({ type: String })
   @Expose()
@@ -22,13 +23,13 @@ export class AttendAClassDTO {
 
   @ApiModelProperty({ type: String })
   @Expose()
-  currentLesson: Lesson;
+  currentLesson: LessonDTO;
 
   @ApiModelProperty({ type: String })
   @Expose()
-  currentPart: Part;
+  currentPart: PartDTO;
 
   @ApiModelProperty({ type: String })
   @Expose()
-  currentTest: Test;
+  currentTest: TestWithoutCorrectAlternativeDTO;
 }

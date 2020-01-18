@@ -64,7 +64,8 @@ export class PartService {
 
   @Transactional()
   public async getPartIdByLessonIdAndSeqNum(lesson: string, sequenceNumber: number): Promise<Part['id']> {
-    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber: Part['sequenceNumber'] });
+    lesson: Part['lesson'] = lesson;
+    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber });
     return part.id;
   }
 
