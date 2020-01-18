@@ -122,7 +122,7 @@ export class CourseTakenService {
 
   @Transactional()
   public async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
-    const courseTaken: CourseTaken = await this.repository.findOne({ user, course });
+    const courseTaken: CourseTaken = await this.repository.findOne({ user, course}, { relations: ['user', 'course'] });
     if (!courseTaken){
         throw new NotFoundException('Course not taken by user');
     }
