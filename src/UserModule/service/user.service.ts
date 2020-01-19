@@ -14,7 +14,14 @@ import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
-import { AdminChangePasswordDTO, ChangePasswordDTO, ForgotPasswordDTO, NewUserDTO, UserUpdateDTO } from '../dto';
+import {
+  AdminChangePasswordDTO,
+  ChangePasswordDTO,
+  ChangePasswordForgotFlowDTO,
+  ForgotPasswordDTO,
+  NewUserDTO,
+  UserUpdateDTO,
+} from '../dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
@@ -23,7 +30,6 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { Course } from '../../CourseModule';
 
 @Injectable()
 export class UserService {
@@ -162,14 +168,11 @@ export class UserService {
   }
 
   @Transactional()
-  public async changePasswordForgotPasswordFlow(changePasswordRequestId: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
+  public async changePasswordForgotPasswordFlow(changePasswordRequestId: string, changePasswordDTO: ChangePasswordForgotFlowDTO): Promise<User> {
     if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
-      throw new BadRequestException('New passwords does not match');
+      throw new BadRequestException('passwords does not match');
     }
     const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
-    if (!user.validPassword(changePasswordDTO.password)) {
-      throw new BadRequestException('Old password does not match with given password');
-    }
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
     return await this.repository.save(user);
@@ -201,7 +204,7 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${this.configService.get<string>('FRONT_URL')}/${this.configService.get<string>('CHANGE_PASSWORD_URL')}?changePasswordRequestId=${changePasswordRequestId}`,
+          urlTrocaSenha: `${this.configService.get<string>('FRONT_URL')}/${this.configService.get<string>('CHANGE_PASSWORD_URL')}/${changePasswordRequestId}`,
         },
       });
     } catch (e) {
