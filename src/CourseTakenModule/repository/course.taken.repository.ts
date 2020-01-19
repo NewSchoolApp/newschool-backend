@@ -13,6 +13,6 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken | undefined> {
-    return this.findOne({ user, course });
+    return this.findOne({ user, course }, { relations: ['user', 'course']});
   }
 }

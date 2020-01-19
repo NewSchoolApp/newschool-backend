@@ -182,15 +182,20 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     const lessonsAmount: number = await this.lessonService.getMaxValueForLesson(courseTaken.course);
     const partsAmount = await this.partService.getMaxValueForPart(currentLesson);
     const testsAmount = await this.testService.getMaxValueForTest(currentPart);
+    let completition: number;
 
-    const percentualPerLesson = 100/lessonsAmount;
-    const percentualPerPart = percentualPerLesson/partsAmount;
-    const percentualPerTest = percentualPerPart/testsAmount;
+    if (courseTaken.status === CourseTakenStatusEnum.TAKEN) {
+      const percentualPerLesson = 100/lessonsAmount;
+      const percentualPerPart = percentualPerLesson/partsAmount;
+      const percentualPerTest = percentualPerPart/testsAmount;
 
-    let completition = percentualPerLesson*courseTaken.currentLesson;
-    completition += percentualPerPart*courseTaken.currentPart;
-    completition += percentualPerTest*courseTaken.currentTest;
-
+      completition = percentualPerLesson*courseTaken.currentLesson;
+      completition += percentualPerPart*courseTaken.currentPart;
+      completition += percentualPerTest*courseTaken.currentTest;
+    }
+    else{
+      completition = 100;
+    }
 
     return completition>100 ?  100 : completition;
   }
