@@ -72,12 +72,12 @@ export class CourseTakenService {
 
   //Testar
   @Transactional()
-  public async attendAClass(user: string, courseId: string): Promise<AttendAClassDTO>{
-    let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, courseId);
+  public async attendAClass(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO>{
+    let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     const attendAClass = new AttendAClassDTO;
 
-    const course: CourseDTO = await this.courseService.findById(courseId);
-    const currentLesson: LessonDTO = await this.lessonService.findLessonByCourseIdAndSeqNum(courseId, courseTaken.currentLesson);
+    //const course: CourseDTO = await this.courseService.findById(courseId);
+    const currentLesson: LessonDTO = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson);
     let currentPart: PartDTO;
     let currentTest: TestWithoutCorrectAlternativeDTO;
 
@@ -96,14 +96,14 @@ export class CourseTakenService {
     }
 
     if (invalidOptionFlag){
-      courseTaken = await this.updateCourseStatus(user, courseId);
+      courseTaken = await this.updateCourseStatus(user, course);
     }
 
     if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
       return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course);
     }
     else {
-      return await this.attendAClass(user, courseId);
+      return await this.attendAClass(user, course);
     }
   }
 

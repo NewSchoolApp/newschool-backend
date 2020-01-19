@@ -2,9 +2,11 @@ import { CourseTaken } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsString, IsNotEmpty } from 'class-validator';
+import { User } from '../../UserModule';
+import { Course } from '../../CourseModule';
 
 export class CourseTakenUpdateDTO {
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: User })
   @IsString()
   @IsNotEmpty()
   @Expose()
@@ -33,7 +35,7 @@ export class CourseTakenUpdateDTO {
   @Expose()
   status: CourseTaken['status'];
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: Number })
   @IsString()
   @IsNotEmpty()
   @Expose()

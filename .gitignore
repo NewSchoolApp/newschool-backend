@@ -29,6 +29,9 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
+# IDE - VSCode
+.vscode
+
 # IDE - Theia
 .theia
 

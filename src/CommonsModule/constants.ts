@@ -6,7 +6,7 @@ export class Constants {
   static USER_ENDPOINT = 'user';
   static CERTIFICATE_ENDPOINT = 'certificate';
 
-  static COURSE_TAKEN_ENDPOINT = 'courseTaken';
+  static COURSE_TAKEN_ENDPOINT = 'course-taken';
 
   static COURSE_ENDPOINT = 'course';
   static LESSON_ENDPOINT = 'lesson';

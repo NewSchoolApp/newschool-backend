@@ -8,11 +8,11 @@ export class MyCoursesDTO {
 
   @ApiModelProperty({ type: Course })
   @Expose()
-  course: Course;
+  course: CourseTaken['course'];
 
   @ApiModelProperty({ type: User })
   @Expose()
-  user: User;
+  user: CourseTaken['user'];
 
   @ApiModelProperty({ type: String })
   @Expose()

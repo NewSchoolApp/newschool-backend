@@ -20,14 +20,14 @@ export class CourseTaken extends Audit {
   @JoinColumn({
     name: 'user_id',
   })
-  user: string;
+  user: User;
 
   @Expose()
   @ManyToOne<Course>('Course', (course: Course) => course.takenCourses)
   @JoinColumn({
     name: 'course_id',
   })
-  course: string;
+  course: Course;
 
   @Expose()
   @Column({
@@ -47,9 +47,11 @@ export class CourseTaken extends Audit {
   @Column({
     nullable: false,
     name: 'status',
+    type: 'enum',
+    enum: CourseTakenStatusEnum,
     default: CourseTakenStatusEnum.TAKEN,
   })
-  status: string;
+  status: CourseTakenStatusEnum;
 
   @Expose()
   @Column({
