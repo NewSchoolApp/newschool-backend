@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
 import { Lesson } from '../entity';
@@ -6,19 +10,16 @@ import { LessonUpdateDTO } from '../dto';
 
 @Injectable()
 export class LessonService {
-
-  constructor(
-    private readonly repository: LessonRepository,
-  ) {
-  }
+  constructor(private readonly repository: LessonRepository) {}
 
   @Transactional()
   public async add(lesson: Lesson): Promise<Lesson> {
-
-    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId({
-      title: lesson.title,
-      course: lesson.course,
-    });
+    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId(
+      {
+        title: lesson.title,
+        course: lesson.course,
+      },
+    );
     if (lessonSameTitle) {
       throw new ConflictException();
     }
@@ -31,7 +32,10 @@ export class LessonService {
   }
 
   @Transactional()
-  public async update(id: Lesson['id'], lessonUpdatedInfo: LessonUpdateDTO): Promise<Lesson> {
+  public async update(
+    id: Lesson['id'],
+    lessonUpdatedInfo: LessonUpdateDTO,
+  ): Promise<Lesson> {
     const lesson: Lesson = await this.findById(id);
     return this.repository.save({ ...lesson, ...lessonUpdatedInfo });
   }
@@ -56,8 +60,14 @@ export class LessonService {
   }
 
   @Transactional()
-  public async findByTitle(title: Lesson['title'], course: Lesson['course']): Promise<Lesson> {
-    const lesson = await this.repository.findByTitleAndCourseId({ title, course });
+  public async findByTitle(
+    title: Lesson['title'],
+    course: Lesson['course'],
+  ): Promise<Lesson> {
+    const lesson = await this.repository.findByTitleAndCourseId({
+      title,
+      course,
+    });
     if (!lesson) {
       throw new NotFoundException();
     }
@@ -70,13 +80,19 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getLessonIdByCourseIdAndSeqNum(course: Lesson['course'], sequenceNumber: number): Promise<Lesson['id']> {
+  public async getLessonIdByCourseIdAndSeqNum(
+    course: Lesson['course'],
+    sequenceNumber: number,
+  ): Promise<Lesson['id']> {
     const lesson = await this.repository.findOne({ course, sequenceNumber });
     return lesson.id;
   }
 
   @Transactional()
-  public async findLessonByCourseIdAndSeqNum(course: Lesson['course'], sequenceNumber: number): Promise<Lesson> {
+  public async findLessonByCourseIdAndSeqNum(
+    course: Lesson['course'],
+    sequenceNumber: number,
+  ): Promise<Lesson> {
     const lesson = await this.repository.findOne({ course, sequenceNumber });
     return lesson;
   }

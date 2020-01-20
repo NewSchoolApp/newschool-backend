@@ -61,7 +61,10 @@ export class Course extends Audit {
   @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.course)
   lessons: Lesson[];
 
-  @OneToMany<CourseTaken>('CourseTaken', (takenCourses: CourseTaken) => takenCourses.course)
+  @OneToMany<CourseTaken>(
+    'CourseTaken',
+    (takenCourses: CourseTaken) => takenCourses.course,
+  )
   takenCourses: CourseTaken[];
 
   @Column()
@@ -71,7 +74,5 @@ export class Course extends Audit {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  set slug(slug: string) {
-  }
-
+  set slug(slug: string) {}
 }

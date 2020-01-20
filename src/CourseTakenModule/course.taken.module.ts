@@ -15,7 +15,9 @@ import { CourseModule } from '../CourseModule';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
@@ -25,5 +27,4 @@ import { CourseModule } from '../CourseModule';
   providers: [CourseTakenService, CourseTakenMapper],
   exports: [CourseTakenService],
 })
-export class CourseTakenModule {
-}
+export class CourseTakenModule {}

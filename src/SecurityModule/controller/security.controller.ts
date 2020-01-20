@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
-import { AuthDTO, FacebookAuthUserDTO, GeneratedTokenDTO, GoogleAuthUserDTO } from '../dto';
+import {
+  AuthDTO,
+  FacebookAuthUserDTO,
+  GeneratedTokenDTO,
+  GoogleAuthUserDTO,
+} from '../dto';
 import { GrantTypeEnum } from '../enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ClientCredentials } from '../entity';
@@ -21,10 +26,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class SecurityController {
   private readonly logger = new Logger(SecurityController.name);
 
-  constructor(
-    private readonly service: SecurityService,
-  ) {
-  }
+  constructor(private readonly service: SecurityService) {}
 
   @UseInterceptors(FileInterceptor(''))
   @Post('/token')
@@ -58,10 +60,7 @@ export class SecurityController {
     }
     // eslint-disable-next-line @typescript-eslint/camelcase
     if (grant_type === GrantTypeEnum.REFRESH_TOKEN) {
-      return this.service.refreshToken(
-        base64Login,
-        refresh_token,
-      );
+      return this.service.refreshToken(base64Login, refresh_token);
     }
   }
 
@@ -83,7 +82,9 @@ export class SecurityController {
 
   @Post('/token/details')
   @ApiBearerAuth()
-  getTokenDetails(@Headers('authorization') authorizationHeader: string): ClientCredentials | User {
+  getTokenDetails(
+    @Headers('authorization') authorizationHeader: string,
+  ): ClientCredentials | User {
     const [, jwt] = authorizationHeader.split(' ');
     this.logger.log(`jwt: ${jwt}`);
     return this.service.decodeToken(jwt);

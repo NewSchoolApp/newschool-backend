@@ -6,11 +6,7 @@ import { CertificateDTO, NewCertificateDTO } from '../dto';
 
 @Injectable()
 export class CertificateService {
-
-  constructor(
-    private readonly repository: CertificateRepository,
-  ) {
-  }
+  constructor(private readonly repository: CertificateRepository) {}
 
   @Transactional()
   public async findAll(): Promise<Certificate[]> {
@@ -24,7 +20,9 @@ export class CertificateService {
 
   @Transactional()
   public async findById(id: Certificate['id']): Promise<Certificate> {
-    const foundCertificate: Certificate | undefined = await this.repository.findById(id);
+    const foundCertificate:
+      | Certificate
+      | undefined = await this.repository.findById(id);
     if (!foundCertificate) {
       throw new NotFoundException('Certificate not found');
     }
@@ -32,7 +30,10 @@ export class CertificateService {
   }
 
   @Transactional()
-  public async update(id: Certificate['id'], certificate: CertificateDTO): Promise<Certificate> {
+  public async update(
+    id: Certificate['id'],
+    certificate: CertificateDTO,
+  ): Promise<Certificate> {
     const foundCertificate: Certificate = await this.findById(id);
     return this.save({ ...foundCertificate, ...certificate });
   }

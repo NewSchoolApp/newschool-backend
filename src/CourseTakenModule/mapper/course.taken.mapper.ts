@@ -7,7 +7,6 @@ import { User } from '../../UserModule/entity';
 
 @Injectable()
 export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
-
   constructor() {
     super(CourseTaken, CourseTakenDTO);
   }
@@ -44,7 +43,11 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
     return updateDtoObject;
   }
 
-  toMyCourseDto(courseTakenArray: CourseTaken[], courseArray: Course[], user: User): MyCoursesDTO[] {
+  toMyCourseDto(
+    courseTakenArray: CourseTaken[],
+    courseArray: Course[],
+    user: User,
+  ): MyCoursesDTO[] {
     let myCourseDtoArray: MyCoursesDTO[];
 
     courseTakenArray.forEach((courseTaken, index) => {
@@ -52,7 +55,8 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
       myCourseDtoArray[index].user = user;
       myCourseDtoArray[index].completition = courseTaken.completition;
       myCourseDtoArray[index].courseStartDate = courseTaken.courseStartDate;
-      myCourseDtoArray[index].courseCompleteDate = courseTaken.courseCompleteDate;
+      myCourseDtoArray[index].courseCompleteDate =
+        courseTaken.courseCompleteDate;
       myCourseDtoArray[index].currentLesson = courseTaken.currentLesson;
       myCourseDtoArray[index].currentPart = courseTaken.currentPart;
       myCourseDtoArray[index].currentTest = courseTaken.currentTest;

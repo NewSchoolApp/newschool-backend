@@ -15,22 +15,22 @@ export class RoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly jwtService: JwtService,
-  ) {
-  }
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles: RoleEnum[] = this.reflector.get<RoleEnum[]>('roles', context.getHandler());
+    const roles: RoleEnum[] = this.reflector.get<RoleEnum[]>(
+      'roles',
+      context.getHandler(),
+    );
     if (!roles) {
       return true;
     }
 
-    const request = context.switchToHttp()
-      .getRequest();
+    const request = context.switchToHttp().getRequest();
 
     const authorizationHeader = request.headers.authorization;
 
-    if (!authorizationHeader)
-      return false;
+    if (!authorizationHeader) return false;
 
     const [, token] = authorizationHeader.split(' ');
     let user: User;
@@ -42,8 +42,7 @@ export class RoleGuard implements CanActivate {
       }
       throw new InternalServerErrorException(e);
     }
-    const hasPermission: boolean = roles
-      .some((role) => role === user.role.name);
+    const hasPermission: boolean = roles.some(role => role === user.role.name);
     return user?.role && hasPermission;
   }
 }

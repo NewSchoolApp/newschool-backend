@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { LessonService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { LessonDTO, LessonUpdateDTO, NewLessonDTO } from '../dto';
@@ -16,30 +26,53 @@ import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('Lesson')
 @ApiBearerAuth()
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.LESSON_ENDPOINT}`)
+@Controller(
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.LESSON_ENDPOINT}`,
+)
 export class LessonController {
   constructor(
     private readonly service: LessonService,
     private readonly mapper: LessonMapper,
-  ) {
-  }
+  ) {}
 
   @Get('/course/:course')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Lessons', description: 'Get all Lessons by Course' })
-  @ApiOkResponse({ type: LessonDTO, isArray: true, description: 'All Lessons by Course' })
-  @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
+  @ApiOperation({
+    title: 'Get Lessons',
+    description: 'Get all Lessons by Course',
+  })
+  @ApiOkResponse({
+    type: LessonDTO,
+    isArray: true,
+    description: 'All Lessons by Course',
+  })
+  @ApiImplicitQuery({
+    name: 'course',
+    type: String,
+    required: true,
+    description: 'Course id',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(@Param('course') course: LessonDTO['course']): Promise<LessonDTO[]> {
+  public async getAll(
+    @Param('course') course: LessonDTO['course'],
+  ): Promise<LessonDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll(course));
   }
 
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: LessonDTO })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Lesson id' })
-  @ApiOperation({ title: 'Find Lesson by id', description: 'Find Lesson by id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Lesson id',
+  })
+  @ApiOperation({
+    title: 'Find Lesson by id',
+    description: 'Find Lesson by id',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: LessonDTO['id']): Promise<LessonDTO> {
@@ -60,18 +93,34 @@ export class LessonController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: LessonDTO })
-  @ApiImplicitBody({ name: 'id', type: String, required: true, description: 'Lesson id' })
+  @ApiImplicitBody({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Lesson id',
+  })
   @ApiOperation({ title: 'Update lesson', description: 'Update lesson by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async update(@Param('id') id: LessonDTO['id'], @Body() lessonUpdatedInfo: LessonUpdateDTO): Promise<LessonDTO> {
-    return await this.service.update(id, this.mapper.toEntity(lessonUpdatedInfo as LessonDTO));
+  public async update(
+    @Param('id') id: LessonDTO['id'],
+    @Body() lessonUpdatedInfo: LessonUpdateDTO,
+  ): Promise<LessonDTO> {
+    return await this.service.update(
+      id,
+      this.mapper.toEntity(lessonUpdatedInfo as LessonDTO),
+    );
   }
 
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Lesson id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Lesson id',
+  })
   @ApiOperation({ title: 'Delete lesson', description: 'Delete lesson by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)

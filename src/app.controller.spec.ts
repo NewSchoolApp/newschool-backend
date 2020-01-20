@@ -16,7 +16,9 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Bem vindo ao backend da NewSchool!"', () => {
-      expect(appController.getHello()).toBe('Bem vindo ao backend da NewSchool!');
+      expect(appController.getHello()).toBe(
+        'Bem vindo ao backend da NewSchool!',
+      );
     });
   });
 });

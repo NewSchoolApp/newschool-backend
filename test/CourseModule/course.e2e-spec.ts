@@ -5,7 +5,11 @@ import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
+import {
+  ClientCredentialsEnum,
+  GrantTypeEnum,
+  RoleEnum,
+} from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
 import { NewCourseDTO, CourseUpdateDTO } from 'src/CourseModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
@@ -36,29 +40,37 @@ describe('CourseController (e2e)', () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner('master');
+    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
+      'master',
+    );
 
-    const roleRepository: Repository<Role> = moduleFixture.get<Repository<Role>>(getRepositoryToken(Role));
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
     const role: Role = new Role();
     role.name = RoleEnum.ADMIN;
     const savedRole = await roleRepository.save(role);
 
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
-    authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
+    authorization = stringToBase64(
+      `${clientCredentials.name}:${clientCredentials.secret}`,
+    );
   });
 
-  it('should add course', async (done) => {
+  it('should add course', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -69,21 +81,21 @@ describe('CourseController (e2e)', () => {
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .expect(201)
-          .expect((res) => {
+          .expect(res => {
             expect(res.body.id).not.toBeUndefined();
-            expect(res.body.slug).toBe('teste-e3e')
+            expect(res.body.slug).toBe('teste-e3e');
           })
           .then(() => done());
       });
   });
 
-  it('should find all courses', async (done) => {
+  it('should find all courses', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .get(`${courseUrl}/`)
           .set('Accept', 'application/json')
@@ -100,7 +112,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -110,11 +122,11 @@ describe('CourseController (e2e)', () => {
             authorId: '1',
             description: 'teste 2',
           } as NewCourseDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect((response) => {
+              .expect(response => {
                 expect(response.body.description).toBe(_res.body.description);
               })
               .expect(200);
@@ -128,7 +140,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -138,11 +150,11 @@ describe('CourseController (e2e)', () => {
             authorId: '1',
             description: 'teste 2',
           } as NewCourseDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/slug/${_res.body.slug}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect((response) => {
+              .expect(response => {
                 expect(response.body.slug).toBe(_res.body.slug);
               })
               .expect(200);
@@ -156,7 +168,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -175,13 +187,13 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-  it('should return 404 if ID doesnt exist', async (done) => {
+  it('should return 404 if ID doesnt exist', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .get(`${courseUrl}/0`)
           .set('Accept', 'application/json')
@@ -198,7 +210,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -208,7 +220,7 @@ describe('CourseController (e2e)', () => {
             authorId: '1',
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .delete(`${courseUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -217,13 +229,13 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-  it('should update course', async (done) => {
+  it('should update course', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -233,7 +245,7 @@ describe('CourseController (e2e)', () => {
             authorId: '1',
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .put(`${courseUrl}/${_res.body.id}`)
               .send({
@@ -243,11 +255,11 @@ describe('CourseController (e2e)', () => {
                 description: _res.body.description,
               } as CourseUpdateDTO)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .then((__res) => {
+              .then(__res => {
                 return request(app.getHttpServer())
                   .get(`${courseUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
-                  .expect((response) => {
+                  .expect(response => {
                     expect(response.body.title).toBe('Test Update');
                   })
                   .then(() => done());

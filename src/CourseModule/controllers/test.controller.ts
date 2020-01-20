@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { TestService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { NewTestDTO, TestDTO, TestUpdateDTO } from '../dto';
@@ -17,29 +27,46 @@ import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('Test')
 @ApiBearerAuth()
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.TEST_ENDPOINT}`)
+@Controller(
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.TEST_ENDPOINT}`,
+)
 export class TestController {
   constructor(
     private readonly service: TestService,
     private readonly mapper: TestMapper,
-  ) {
-  }
+  ) {}
 
   @Get('/part/:part')
   @HttpCode(200)
   @ApiOperation({ title: 'Get Tests', description: 'Get all Tests by Part' })
-  @ApiOkResponse({ type: TestDTO, isArray: true, description: 'All Tests by Part' })
-  @ApiImplicitQuery({ name: 'part', type: String, required: true, description: 'Part id' })
+  @ApiOkResponse({
+    type: TestDTO,
+    isArray: true,
+    description: 'All Tests by Part',
+  })
+  @ApiImplicitQuery({
+    name: 'part',
+    type: String,
+    required: true,
+    description: 'Part id',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(@Param('part') part: TestDTO['part']): Promise<TestDTO[]> {
+  public async getAll(
+    @Param('part') part: TestDTO['part'],
+  ): Promise<TestDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll(part));
   }
 
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: TestDTO })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Part id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Part id',
+  })
   @ApiOperation({ title: 'Find Test by id', description: 'Find test by id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -61,18 +88,31 @@ export class TestController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: TestDTO })
-  @ApiImplicitBody({ name: 'id', type: String, required: true, description: 'Test id' })
+  @ApiImplicitBody({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Test id',
+  })
   @ApiOperation({ title: 'Update test', description: 'Update test by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async update(@Param('id') id: TestDTO['id'], @Body() testUpdatedInfo: TestUpdateDTO): Promise<TestDTO> {
+  public async update(
+    @Param('id') id: TestDTO['id'],
+    @Body() testUpdatedInfo: TestUpdateDTO,
+  ): Promise<TestDTO> {
     return await this.service.update(id, testUpdatedInfo);
   }
 
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({ name: 'id', type: String, required: true, description: 'Test id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Test id',
+  })
   @ApiOperation({ title: 'Delete test', description: 'Delete test by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -83,12 +123,28 @@ export class TestController {
   @Get('/checkTest/:id/:chosenAlternative')
   @HttpCode(200)
   @ApiOkResponse({ type: Boolean })
-  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Test id' })
-  @ApiImplicitParam({ name: 'chosenAlternative', type: String, required: true, description: 'chosenAlternative' })
-  @ApiOperation({ title: 'Check test answer', description: 'Check test by test id and chosen alternative' })
+  @ApiImplicitParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Test id',
+  })
+  @ApiImplicitParam({
+    name: 'chosenAlternative',
+    type: String,
+    required: true,
+    description: 'chosenAlternative',
+  })
+  @ApiOperation({
+    title: 'Check test answer',
+    description: 'Check test by test id and chosen alternative',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async checkTest(@Param('id') id: TestDTO['id'], @Param('chosenAlternative') chosenAlternative: string): Promise<boolean> {
+  public async checkTest(
+    @Param('id') id: TestDTO['id'],
+    @Param('chosenAlternative') chosenAlternative: string,
+  ): Promise<boolean> {
     return await this.service.checkTest(id, chosenAlternative);
   }
 }

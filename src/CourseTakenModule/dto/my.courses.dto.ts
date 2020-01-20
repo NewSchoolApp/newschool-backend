@@ -5,7 +5,6 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class MyCoursesDTO {
-
   @ApiModelProperty({ type: Course })
   @Expose()
   course: CourseTaken['course'];

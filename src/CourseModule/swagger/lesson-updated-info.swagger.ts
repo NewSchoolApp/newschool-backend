@@ -13,5 +13,4 @@ export class LessonUpdatedInfoSwagger {
 
   @ApiModelProperty({ type: Number })
   sequenceNumber: Lesson['sequenceNumber'];
-
 }

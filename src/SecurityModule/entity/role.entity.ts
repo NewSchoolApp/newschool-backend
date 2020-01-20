@@ -17,9 +17,15 @@ export class Role extends Audit {
   })
   name: RoleEnum;
 
-  @OneToMany<ClientCredentials>(() => ClientCredentials, (clientCredentials: ClientCredentials) => clientCredentials.role)
+  @OneToMany<ClientCredentials>(
+    () => ClientCredentials,
+    (clientCredentials: ClientCredentials) => clientCredentials.role,
+  )
   clientCredentials: ClientCredentials[];
 
-  @OneToMany<User>(() => User, (user: User) => user.role)
+  @OneToMany<User>(
+    () => User,
+    (user: User) => user.role,
+  )
   users: User[];
 }

@@ -10,6 +10,9 @@ export class ChangePassword extends Audit {
   @Column()
   expirationTime: number;
 
-  @ManyToOne<User>(() => User, (user: User) => user.changePasswordRequests)
+  @ManyToOne<User>(
+    () => User,
+    (user: User) => user.changePasswordRequests,
+  )
   user: User;
 }

@@ -1,10 +1,15 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../../UserModule/entity';
 import { Expose } from 'class-transformer';
 
 @Entity()
 export class Certificate {
-
   @PrimaryGeneratedColumn('uuid')
   @Expose()
   id: string;
@@ -22,7 +27,10 @@ export class Certificate {
   @Expose()
   certificateBackgroundName: string;
 
-  @ManyToMany(() => User, (user: User) => user.certificates)
+  @ManyToMany(
+    () => User,
+    (user: User) => user.certificates,
+  )
   @JoinTable()
   @Expose()
   users: User[];

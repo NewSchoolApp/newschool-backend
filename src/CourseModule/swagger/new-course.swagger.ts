@@ -11,5 +11,4 @@ export class NewCourseSwagger {
 
   @ApiModelProperty({ type: String })
   authorId: User['id'];
-
 }
