@@ -27,12 +27,12 @@ export class Lesson extends Audit {
   })
   sequenceNumber: number;
 
-  @ManyToOne<Course>(() => Course, (course: Course) => course.lessons)
+  @ManyToOne<Course>('Course', (course: Course) => course.lessons)
   @JoinColumn({
-    name: 'course_id',
+    name: 'course_id'
   })
   course: Course;
 
-  @OneToMany<Part>(() => Part, (part: Part) => part.lesson)
+  @OneToMany<Part>('Part', (part: Part) => part.lesson)
   parts: Part[];
 }

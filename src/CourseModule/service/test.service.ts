@@ -8,7 +8,7 @@ import { TestUpdateDTO } from '../dto';
 export class TestService {
 
   constructor(
-    private readonly repository: TestRepository,
+    private readonly repository: TestRepository
   ) {
   }
 
@@ -56,6 +56,35 @@ export class TestService {
     if (!test) {
       throw new NotFoundException('No test found');
     }
+    return test;
+  }
+
+  @Transactional()
+  public async checkTest(id: Test['id'], chosenAlternative: string): Promise<boolean> {
+    const test = await this.repository.findById({ id });
+    if (!test) {
+      throw new NotFoundException('No test found');
+    }
+
+    return (test.correctAlternative === chosenAlternative) ? true : false;
+  }
+
+  @Transactional()
+  public async getMaxValueForTest(part: string): Promise<number> {
+    return await this.repository.count({ part: Test['part'] });
+  }
+
+  @Transactional()
+  public async getTestIdByPartIdAndSeqNum(part: string, sequenceNumber: number): Promise<Test['id']> {
+    part: Test['part'] = part;
+    const test = await this.repository.findOne({ part: Test['part'], sequenceNumber });
+    return test.id;
+  }
+
+  @Transactional()
+  public async findTestByPartIdAndSeqNum(part: string, sequenceNumber: number): Promise<Test> {
+    part: Test['part'] = part;
+    const test = await this.repository.findOne({ part: Test['part'], sequenceNumber });
     return test;
   }
 }

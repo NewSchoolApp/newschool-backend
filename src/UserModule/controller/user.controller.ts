@@ -274,7 +274,6 @@ export class UserController {
   }
 
   @Get(':id/certificate')
-
   @HttpCode(200)
   @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
   @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})

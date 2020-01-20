@@ -56,4 +56,23 @@ export class PartService {
     }
     return part;
   }
+
+  @Transactional()
+  public async getMaxValueForPart(lesson: string): Promise<number> {
+      return await this.repository.count({ lesson: Part['lesson'] });
+  }
+
+  @Transactional()
+  public async getPartIdByLessonIdAndSeqNum(lesson: string, sequenceNumber: number): Promise<Part['id']> {
+    lesson: Part['lesson'] = lesson;
+    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber });
+    return part.id;
+  }
+
+  @Transactional()
+  public async findPartByLessonIdAndSeqNum(lesson: string, sequenceNumber: number): Promise<Part> {
+    lesson: Part['lesson'] = lesson;
+    const part = await this.repository.findOne({ lesson: Part['lesson'], sequenceNumber });
+    return part;
+  }
 }
