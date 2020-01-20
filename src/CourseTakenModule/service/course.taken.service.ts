@@ -21,7 +21,6 @@ export class CourseTakenService {
   ){
   }
 
-  //funcionando
   @Transactional()
   public async add(newCourseTaken: NewCourseTakenDTO): Promise<AttendAClassDTO> {
     const courseAlreadyTaken: CourseTaken = await this.repository.findByUserIdAndCourseId(newCourseTaken.user, newCourseTaken.course);
@@ -42,14 +41,12 @@ export class CourseTakenService {
     return await this.attendAClass(newCourseTaken.user, newCourseTaken.course);
   }
 
-  //funcionando
   @Transactional()
   public async update(user: CourseTaken['user'], course: CourseTaken['course'], courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     return this.repository.save(this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo}))
   }
 
-  //funcionando
   @Transactional()
   public async getAllByUserId(user: CourseTaken['user']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByUserId(user);
@@ -59,7 +56,6 @@ export class CourseTakenService {
     return courseTaken;
   }
 
-  //funcionando
   @Transactional()
   public async getAllByCourseId(course: CourseTaken['course']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByCourseId(course);
@@ -69,7 +65,6 @@ export class CourseTakenService {
     return courseTaken;
   }
 
-  //Testar
   @Transactional()
   public async attendAClass(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO>{
     let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
@@ -162,7 +157,6 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     return courseTaken;
   }
 
-  //conferir
   private async calculateCompletition(courseTaken: CourseTaken, currentLesson: string, currentPart: string): Promise<number> {
 
     const lessonsAmount: number = await this.lessonService.getMaxValueForLesson(courseTaken.course);
@@ -186,7 +180,6 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     return completition>100 ?  100 : completition;
   }
 
-  //conferir
   @Transactional()
   public async delete(user: CourseTaken['user'], course: CourseTaken['course']): Promise<void> {
     await this.repository.delete({ user, course });
