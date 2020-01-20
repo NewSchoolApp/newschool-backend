@@ -10,26 +10,19 @@ import { CertificateMapper } from './mapper';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Certificate,
-      CertificateRepository,
-    ]),
+    TypeOrmModule.forFeature([Certificate, CertificateRepository]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
   ],
   controllers: [CertificateController],
-  providers: [
-    CertificateService,
-    CertificateMapper,
-  ],
-  exports: [
-    CertificateService,
-  ],
+  providers: [CertificateService, CertificateMapper],
+  exports: [CertificateService],
 })
-export class CertificateModule {
-}
+export class CertificateModule {}

@@ -2,7 +2,6 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { CourseTaken } from '../entity';
 
 export class CourseTakenUpdatedInfoSwagger {
-
   @ApiModelProperty({ type: String })
   user: CourseTaken['user'];
 
@@ -26,5 +25,4 @@ export class CourseTakenUpdatedInfoSwagger {
 
   @ApiModelProperty({ type: Number })
   currentTest: CourseTaken['currentTest'];
-
 }

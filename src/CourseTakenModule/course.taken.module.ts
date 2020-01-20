@@ -7,7 +7,7 @@ import { CourseTakenRepository } from './repository';
 import { CourseTaken } from './entity';
 import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { CourseModule, LessonService, PartService, TestService } from '../CourseModule';
+import { CourseModule } from '../CourseModule';
 
 @Module({
   imports: [
@@ -15,7 +15,9 @@ import { CourseModule, LessonService, PartService, TestService } from '../Course
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
@@ -25,5 +27,4 @@ import { CourseModule, LessonService, PartService, TestService } from '../Course
   providers: [CourseTakenService, CourseTakenMapper],
   exports: [CourseTakenService],
 })
-export class CourseTakenModule {
-}
+export class CourseTakenModule {}

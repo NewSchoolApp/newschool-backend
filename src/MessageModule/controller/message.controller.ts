@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, Logger, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Logger,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { MessageService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ContactUsDTO, EmailDTO } from '../dto';
@@ -27,8 +36,7 @@ import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
 export class MessageController {
   private readonly logger = new Logger(MessageController.name);
 
-  constructor(private readonly service: MessageService) {
-  }
+  constructor(private readonly service: MessageService) {}
 
   @Post('/email')
   @HttpCode(201)
@@ -75,7 +83,10 @@ export class MessageController {
 
   @Get('listTemplates')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get all templates', description: 'Get all templates' })
+  @ApiOperation({
+    title: 'Get all templates',
+    description: 'Get all templates',
+  })
   @ApiOkResponse({
     type: TemplateDTO,
     isArray: true,
@@ -97,9 +108,15 @@ export class MessageController {
   @Put('editTemplate')
   @HttpCode(200)
   @ApiImplicitBody({ name: 'TemplateDTO', type: TemplateDTO })
-  @ApiOperation({ title: 'Edit one template', description: 'Edit one template by name' })
+  @ApiOperation({
+    title: 'Edit one template',
+    description: 'Edit one template by name',
+  })
   @ApiNotFoundResponse({ description: 'thrown if template is not found' })
-  @ApiOkResponse({ type: TemplateDTO, description: 'Template successfully edited' })
+  @ApiOkResponse({
+    type: TemplateDTO,
+    description: 'Template successfully edited',
+  })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
@@ -120,25 +137,32 @@ export class MessageController {
   @ApiImplicitBody({
     name: 'TemplateDTO',
     type: TemplateDTO,
-    description: 'Rules for template creation: <br />' +
+    description:
+      'Rules for template creation: <br />' +
       'Create as an html template. <br />' +
       'Place fields that will be replaced must be placed with sequential numbers. <br />',
   })
   @ApiOperation({ title: 'Create template', description: 'Create template' })
-  @ApiCreatedResponse({ type: TemplateDTO, description: 'Template successfully created' })
+  @ApiCreatedResponse({
+    type: TemplateDTO,
+    description: 'Template successfully created',
+  })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
   @ApiConflictResponse({
-    description: 'Templates cannot have duplicate names, please rename and try again.',
+    description:
+      'Templates cannot have duplicate names, please rename and try again.',
   })
   @ApiForbiddenResponse({
     description: 'You dont have permission',
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async createTemplate(@Body() template: TemplateDTO): Promise<TemplateDTO> {
+  public async createTemplate(
+    @Body() template: TemplateDTO,
+  ): Promise<TemplateDTO> {
     return await this.service.createTemplate(template);
   }
 
@@ -147,7 +171,8 @@ export class MessageController {
   @ApiImplicitBody({
     name: 'SendMessage',
     type: SendMessageSwagger,
-    description: 'The template has the free body property, that is you can enter the ' +
+    description:
+      'The template has the free body property, that is you can enter the ' +
       'values you need for sending the message.',
     required: true,
   })
@@ -166,6 +191,10 @@ export class MessageController {
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async sendMessage(@Body() model: any): Promise<void> {
-    await this.service.sendMessage(model.data, model.templateName, model.contactEmail);
+    await this.service.sendMessage(
+      model.data,
+      model.templateName,
+      model.contactEmail,
+    );
   }
 }

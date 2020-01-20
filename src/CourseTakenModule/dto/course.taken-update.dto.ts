@@ -1,7 +1,7 @@
 import { CourseTaken } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { User } from '../../UserModule';
 import { Course } from '../../CourseModule';
 import { UserDTO } from '../../UserModule/dto';

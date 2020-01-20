@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Delete,
-  Get, Headers,
+  Get,
+  Headers,
   HttpCode,
   Param,
   Post,
-  Put, Query,
+  Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,34 +20,44 @@ import { CourseMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiImplicitBody, ApiImplicitParam,
-  ApiImplicitQuery, ApiNotFoundResponse,
+  ApiImplicitBody,
+  ApiImplicitParam,
+  ApiImplicitQuery,
+  ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation, ApiUnauthorizedResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../../UserModule/entity';
 import { SecurityService } from '../../SecurityModule/service';
-import { NewUserDTO, UserDTO } from '../../UserModule/dto';
+import { NewUserDTO } from '../../UserModule/dto';
 import { Course } from '../entity';
 
 @ApiUseTags('Course')
 @ApiBearerAuth()
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`)
+@Controller(
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`,
+)
 export class CourseController {
   constructor(
     private readonly service: CourseService,
     private readonly mapper: CourseMapper,
     private readonly securityService: SecurityService,
-  ) {
-  }
+  ) {}
 
   @Get()
   @HttpCode(200)
   @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
-  @ApiImplicitQuery({ name: 'enabled', type: Boolean, required: false, description: 'If not passed, get all courses. If passed, get courses that are enabled or disabled depending on the boolean' })
+  @ApiImplicitQuery({
+    name: 'enabled',
+    type: Boolean,
+    required: false,
+    description:
+      'If not passed, get all courses. If passed, get courses that are enabled or disabled depending on the boolean',
+  })
   @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -53,7 +65,9 @@ export class CourseController {
     @Query('enabled') enabled: boolean,
     @Headers('authorization') authorization: string,
   ): Promise<CourseDTO[]> {
-    const { role }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    const { role }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
     if (role.name === RoleEnum.STUDENT) enabled = true;
     return this.mapper.toDtoList(await this.service.getAll(enabled));
   }
@@ -61,8 +75,16 @@ export class CourseController {
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
-  @ApiOperation({ title: 'Find Course by id', description: 'Find Course by id' })
+  @ApiImplicitParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Course id',
+  })
+  @ApiOperation({
+    title: 'Find Course by id',
+    description: 'Find Course by id',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: CourseDTO['id']): Promise<CourseDTO> {
@@ -72,11 +94,21 @@ export class CourseController {
   @Get('/slug/:slug')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({ name: 'slug', type: String, required: true, description: 'Course slug' })
-  @ApiOperation({ title: 'Find Course by slug', description: 'Find Course by slug' })
+  @ApiImplicitParam({
+    name: 'slug',
+    type: String,
+    required: true,
+    description: 'Course slug',
+  })
+  @ApiOperation({
+    title: 'Find Course by slug',
+    description: 'Find Course by slug',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async findBySlug(@Param('slug') slug: CourseDTO['slug']): Promise<CourseDTO> {
+  public async findBySlug(
+    @Param('slug') slug: CourseDTO['slug'],
+  ): Promise<CourseDTO> {
     return this.mapper.toDto(await this.service.findBySlug(slug));
   }
 
@@ -88,27 +120,41 @@ export class CourseController {
   @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() course: NewCourseDTO, @UploadedFile() file): Promise<CourseDTO> {
-    return this.mapper.toDto(
-      await this.service.add(course, file),
-    );
+  public async add(
+    @Body() course: NewCourseDTO,
+    @UploadedFile() file,
+  ): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.add(course, file));
   }
 
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Course id',
+  })
   @ApiOperation({ title: 'Update course', description: 'Update course by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async update(@Param('id') id: CourseDTO['id'], @Body() courseUpdatedInfo: CourseUpdateDTO) {
+  public async update(
+    @Param('id') id: CourseDTO['id'],
+    @Body() courseUpdatedInfo: CourseUpdateDTO,
+  ) {
     return await this.service.update(id, courseUpdatedInfo);
   }
 
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Course id' })
+  @ApiImplicitParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Course id',
+  })
   @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -119,15 +165,28 @@ export class CourseController {
   @Get('author/:name')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
-  @ApiImplicitQuery({ name: 'name', type: Number, required: true, description: 'Author name' })
-  @ApiOperation({ title: 'Find courses by author name', description: 'Find courses by author name' })
+  @ApiImplicitQuery({
+    name: 'name',
+    type: Number,
+    required: true,
+    description: 'Author name',
+  })
+  @ApiOperation({
+    title: 'Find courses by author name',
+    description: 'Find courses by author name',
+  })
   @ApiNotFoundResponse({ description: 'thrown if courses are not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN, STUDENT or EXTERNAL role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN, STUDENT or EXTERNAL role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async findByAuthorName(
     @Param('name') authorName: Course['authorName'],
   ): Promise<CourseDTO[]> {
-    return this.mapper.toDtoList(await this.service.findByAuthorName(authorName));
+    return this.mapper.toDtoList(
+      await this.service.findByAuthorName(authorName),
+    );
   }
 }

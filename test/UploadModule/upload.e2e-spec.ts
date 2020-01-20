@@ -30,15 +30,20 @@ describe('UploadController (e2e)', () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner('master');
+    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
+      'master',
+    );
 
-    const roleRepository: Repository<Role> = moduleFixture.get<Repository<Role>>(getRepositoryToken(Role));
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
     const role: Role = new Role();
     role.name = RoleEnum.ADMIN;
     const savedRole = await roleRepository.save(role);
 
-    const clientCredentialRepository: Repository<ClientCredentials> =
-      moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
@@ -58,7 +63,7 @@ describe('UploadController (e2e)', () => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+    mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback(new Error('Not Found'));
     });
     return request(app.getHttpServer())
@@ -78,7 +83,7 @@ describe('UploadController (e2e)', () => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+    mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
     });
     return request(app.getHttpServer())
@@ -98,7 +103,7 @@ describe('UploadController (e2e)', () => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    mockAccess.mockImplementationOnce((path, mode, callback) =>{
+    mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
     });
     const fileName = 'file-created-to-test';

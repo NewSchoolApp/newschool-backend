@@ -1,5 +1,13 @@
 import { Audit } from '../../CommonsModule';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
 

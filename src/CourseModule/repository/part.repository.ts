@@ -3,7 +3,6 @@ import { Part } from '../entity';
 
 @EntityRepository(Part)
 export class PartRepository extends Repository<Part> {
-
   async findByTitle({ title }): Promise<Part | undefined> {
     return this.findOne({ title });
   }

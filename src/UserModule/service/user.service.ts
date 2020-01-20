@@ -41,8 +41,7 @@ export class UserService {
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
-  ) {
-  }
+  ) {}
 
   @Transactional()
   public async getAll(): Promise<User[]> {
@@ -51,7 +50,9 @@ export class UserService {
 
   @Transactional()
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id, { relations: ['role'] });
+    const user: User | undefined = await this.repository.findOne(id, {
+      relations: ['role'],
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -60,7 +61,6 @@ export class UserService {
 
   @Transactional()
   public async getCertificateByUser(userId): Promise<CertificateUserDTO[]> {
-
     const certificates = await this.repository.getCertificateByUser(userId);
 
     return certificates.map<CertificateUserDTO>(certificate => {
@@ -69,7 +69,8 @@ export class UserService {
       c.title = certificate.certificate_title;
       c.userName = certificate.user_name;
       c.text = certificate.certificate_text;
-      c.certificateBackgroundName = certificate.certificate_certificateBackgroundName;
+      c.certificateBackgroundName =
+        certificate.certificate_certificateBackgroundName;
       return c;
     });
   }
@@ -100,18 +101,35 @@ export class UserService {
   }
 
   @Transactional()
-  public async update(id: User['id'], userUpdatedInfo: UserUpdateDTO): Promise<User> {
+  public async update(
+    id: User['id'],
+    userUpdatedInfo: UserUpdateDTO,
+  ): Promise<User> {
     const user: User = await this.findById(id);
     if (userUpdatedInfo.role) {
       const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-      return this.repository.save({ ...user, ...userUpdatedInfo, role, id: user.id });
+      return this.repository.save({
+        ...user,
+        ...userUpdatedInfo,
+        role,
+        id: user.id,
+      });
     }
-    return await this.repository.save({ ...user, ...userUpdatedInfo, role: user.role, id: user.id });
+    return await this.repository.save({
+      ...user,
+      ...userUpdatedInfo,
+      role: user.role,
+      id: user.id,
+    });
   }
 
-  public async forgotPassword(forgotPasswordDTO: ForgotPasswordDTO): Promise<string> {
+  public async forgotPassword(
+    forgotPasswordDTO: ForgotPasswordDTO,
+  ): Promise<string> {
     const user: User = await this.findByEmail(forgotPasswordDTO.email);
-    const changePassword: ChangePassword = await this.changePasswordService.createChangePasswordRequest(user);
+    const changePassword: ChangePassword = await this.changePasswordService.createChangePasswordRequest(
+      user,
+    );
     await this.sendChangePasswordEmail(user, changePassword.id);
     return changePassword.id;
   }
@@ -126,7 +144,10 @@ export class UserService {
   }
 
   @Transactional()
-  public async findByEmailAndPassword(email: string, password: string): Promise<User> {
+  public async findByEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<User> {
     const user: User = await this.findByEmail(email);
     if (!user.validPassword(password)) {
       throw new UserNotFoundError();
@@ -135,56 +156,111 @@ export class UserService {
   }
 
   @Transactional()
+  public async findByEmailAndFacebookId(
+    email: string,
+    facebookId: string,
+  ): Promise<User> {
+    const user: User = await this.repository.findByEmailAndFacebookId(
+      email,
+      facebookId,
+    );
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    return user;
+  }
+
+  @Transactional()
   public async validateChangePassword(changePasswordRequestId: string) {
-    const changePassword: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
-    if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {
+    const changePassword: ChangePassword = await this.changePasswordService.findById(
+      changePasswordRequestId,
+    );
+    if (
+      Date.now() >
+      new Date(changePassword.createdAt).getTime() +
+        changePassword.expirationTime
+    ) {
       throw new GoneException();
     }
   }
 
   @Transactional()
-  public async adminChangePassword(id: string, changePasswordDTO: AdminChangePasswordDTO): Promise<User> {
-    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+  public async adminChangePassword(
+    id: string,
+    changePasswordDTO: AdminChangePasswordDTO,
+  ): Promise<User> {
+    if (
+      changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword
+    ) {
       throw new BadRequestException('New passwords does not match');
     }
     const user: User = await this.findById(id);
     user.salt = this.createSalt();
-    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    user.password = this.createHashedPassword(
+      changePasswordDTO.newPassword,
+      user.salt,
+    );
     return await this.repository.save(user);
   }
 
   @Transactional()
-  public async changePassword(id: string, changePasswordDTO: ChangePasswordDTO): Promise<User> {
-    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+  public async changePassword(
+    id: string,
+    changePasswordDTO: ChangePasswordDTO,
+  ): Promise<User> {
+    if (
+      changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword
+    ) {
       throw new BadRequestException('New passwords does not match');
     }
     const user: User = await this.findById(id);
     if (!user.validPassword(changePasswordDTO.password)) {
-      throw new BadRequestException('Old password does not match with given password');
+      throw new BadRequestException(
+        'Old password does not match with given password',
+      );
     }
     user.salt = this.createSalt();
-    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    user.password = this.createHashedPassword(
+      changePasswordDTO.newPassword,
+      user.salt,
+    );
     return await this.repository.save(user);
   }
 
   @Transactional()
-  public async changePasswordForgotPasswordFlow(changePasswordRequestId: string, changePasswordDTO: ChangePasswordForgotFlowDTO): Promise<User> {
-    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword) {
+  public async changePasswordForgotPasswordFlow(
+    changePasswordRequestId: string,
+    changePasswordDTO: ChangePasswordForgotFlowDTO,
+  ): Promise<User> {
+    if (
+      changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword
+    ) {
       throw new BadRequestException('passwords does not match');
     }
-    const { user }: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
+    const { user }: ChangePassword = await this.changePasswordService.findById(
+      changePasswordRequestId,
+    );
     user.salt = this.createSalt();
-    user.password = this.createHashedPassword(changePasswordDTO.newPassword, user.salt);
+    user.password = this.createHashedPassword(
+      changePasswordDTO.newPassword,
+      user.salt,
+    );
     return await this.repository.save(user);
   }
 
   @Transactional()
-  public async addCertificateToUser(userId: User['id'], certificateId: Certificate['id']) {
+  public async addCertificateToUser(
+    userId: User['id'],
+    certificateId: Certificate['id'],
+  ) {
     const [user, certificate]: [User, Certificate] = await Promise.all([
       this.repository.findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),
     ]);
-    return await this.repository.save({ ...user, certificates: [...user.certificates, certificate] });
+    return await this.repository.save({
+      ...user,
+      certificates: [...user.certificates, certificate],
+    });
   }
 
   private createSalt(): string {
@@ -192,10 +268,15 @@ export class UserService {
   }
 
   private createHashedPassword(password: string, salt: string): string {
-    return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+    return crypto
+      .pbkdf2Sync(password, salt, 1000, 64, `sha512`)
+      .toString(`hex`);
   }
 
-  private async sendChangePasswordEmail(user: User, changePasswordRequestId: string): Promise<void> {
+  private async sendChangePasswordEmail(
+    user: User,
+    changePasswordRequestId: string,
+  ): Promise<void> {
     try {
       await this.mailerService.sendMail({
         to: user.email,
@@ -204,7 +285,11 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${this.configService.get<string>('FRONT_URL')}/${this.configService.get<string>('CHANGE_PASSWORD_URL')}/${changePasswordRequestId}`,
+          urlTrocaSenha: `${this.configService.get<string>(
+            'FRONT_URL',
+          )}/${this.configService.get<string>(
+            'CHANGE_PASSWORD_URL',
+          )}/${changePasswordRequestId}`,
         },
       });
     } catch (e) {

@@ -21,7 +21,9 @@ import { CertificateModule } from '../CertificateModule';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN') },
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
       }),
       inject: [ConfigService],
     }),
@@ -32,5 +34,4 @@ import { CertificateModule } from '../CertificateModule';
   providers: [UserService, UserMapper, ChangePasswordService],
   exports: [UserService],
 })
-export class UserModule {
-}
+export class UserModule {}

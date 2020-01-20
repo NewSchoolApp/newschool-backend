@@ -2,7 +2,12 @@ import { CourseTaken } from '../entity';
 import { Course } from '../../CourseModule/entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { CourseDTO, LessonDTO, PartDTO, TestWithoutCorrectAlternativeDTO } from '../../CourseModule/dto';
+import {
+  CourseDTO,
+  LessonDTO,
+  PartDTO,
+  TestWithoutCorrectAlternativeDTO,
+} from '../../CourseModule/dto';
 import { User } from '../../UserModule';
 import { UserDTO } from '../../UserModule/dto';
 

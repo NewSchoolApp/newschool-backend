@@ -10,5 +10,4 @@ export class NewUserSwagger {
 
   @ApiModelProperty({ type: String })
   password: User['password'];
-
 }

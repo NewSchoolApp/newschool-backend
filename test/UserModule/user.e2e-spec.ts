@@ -5,7 +5,11 @@ import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
+import {
+  ClientCredentialsEnum,
+  GrantTypeEnum,
+  RoleEnum,
+} from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
 import { NewUserDTO, UserUpdateDTO } from '../../src/UserModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
@@ -38,30 +42,38 @@ describe('UserController (e2e)', () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner('master');
+    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
+      'master',
+    );
 
-    const roleRepository: Repository<Role> = moduleFixture.get<Repository<Role>>(getRepositoryToken(Role));
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
     const role: Role = new Role();
     role.name = RoleEnum.ADMIN;
     const savedRole = await roleRepository.save(role);
     adminRole = savedRole;
 
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
-    authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
+    authorization = stringToBase64(
+      `${clientCredentials.name}:${clientCredentials.secret}`,
+    );
   });
 
-  it.only('should add user', async (done) => {
+  it.only('should add user', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -78,13 +90,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should throw if user is missing a required property', async (done) => {
+  it('should throw if user is missing a required property', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -100,13 +112,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should find user by id', async (done) => {
+  it('should find user by id', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -118,11 +130,11 @@ describe('UserController (e2e)', () => {
             name: 'name',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .get(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect((response) => {
+              .expect(response => {
                 expect(response.body.email).toBe('my-user2@email.com');
               })
               .expect(200)
@@ -131,13 +143,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should update user', async (done) => {
+  it('should update user', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -149,7 +161,7 @@ describe('UserController (e2e)', () => {
             name: 'name',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then((_res) => {
+          .then(_res => {
             const updateBody: UserUpdateDTO = {
               id: _res.body.id,
               email: _res.body.email,
@@ -163,11 +175,11 @@ describe('UserController (e2e)', () => {
               .type('form')
               .set('Authorization', `Bearer ${res.body.accessToken}`)
               .send(updateBody)
-              .then((__res) => {
+              .then(__res => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
-                  .expect((response) => {
+                  .expect(response => {
                     expect(response.body.name).toBe('updated name');
                   })
                   .then(() => done());
@@ -176,13 +188,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should delete user', async (done) => {
+  it('should delete user', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -194,11 +206,11 @@ describe('UserController (e2e)', () => {
             name: 'name',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .delete(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .then((__res) => {
+              .then(__res => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)

@@ -26,5 +26,4 @@ export class Templates {
   @IsNotEmpty()
   @IsString()
   template: string;
-
 }

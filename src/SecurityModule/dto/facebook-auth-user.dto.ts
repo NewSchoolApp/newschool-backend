@@ -1,13 +1,12 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { User } from '../entity';
 
-export class UserUpdatedInfoSwagger {
+export class FacebookAuthUserDTO {
   @ApiModelProperty({ type: String })
-  name: User['name'];
-
+  birthday: string;
   @ApiModelProperty({ type: String })
-  email: User['email'];
-
+  email: string;
   @ApiModelProperty({ type: String })
-  password: User['password'];
+  id: string;
+  @ApiModelProperty({ type: String })
+  name: string;
 }

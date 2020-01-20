@@ -5,7 +5,6 @@ import { Part } from '../entity';
 
 @Injectable()
 export class PartMapper extends Mapper<Part, PartDTO> {
-
   constructor() {
     super(Part, PartDTO);
   }

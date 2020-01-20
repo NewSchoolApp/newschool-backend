@@ -1,5 +1,13 @@
 import { Audit } from '../../CommonsModule';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Course } from './course.entity';
 import { Part } from './part.entity';
 
@@ -29,7 +37,7 @@ export class Lesson extends Audit {
 
   @ManyToOne<Course>('Course', (course: Course) => course.lessons)
   @JoinColumn({
-    name: 'course_id'
+    name: 'course_id',
   })
   course: Course;
 
