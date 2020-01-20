@@ -89,7 +89,7 @@ export class CourseTakenController {
   }
 
 
-  @Post('/advanceOnCourse')
+  @Post('/advance-on-course')
   @HttpCode(201)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiImplicitBody({ name: 'CourseTaken', type: CourseTakenDTO })
@@ -97,11 +97,10 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateCourseStatus(@Body() courseTaken: CourseTakenDTO): Promise<CourseTakenDTO>{
-    console.log('courseTaken: ', JSON.stringify(courseTaken));
     return await this.service.updateCourseStatus(courseTaken.user, courseTaken.course);
   }
 
-  @Get('/attendAClass/:user/:course')
+  @Get('/attend-a-class/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: AttendAClassDTO })
   @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })

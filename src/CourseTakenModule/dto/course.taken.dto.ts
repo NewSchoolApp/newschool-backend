@@ -1,15 +1,19 @@
 import { CourseTaken } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { IsString } from 'class-validator';
+import { User } from '../../UserModule';
+import { Course } from '../../CourseModule';
+import { UserDTO } from '../../UserModule/dto';
 
 export class CourseTakenDTO {
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: User })
+  @Type(() => UserDTO)
   @IsString()
   @Expose()
   user: CourseTaken['user'];
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: Course })
   @IsString()
   @Expose()
   course: CourseTaken['course'];

@@ -1,15 +1,18 @@
 import { CourseTaken } from '../entity';
-import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
+import { Course } from '../../CourseModule/entity';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { CourseDTO, LessonDTO, PartDTO, TestWithoutCorrectAlternativeDTO } from '../../CourseModule/dto';
+import { User } from '../../UserModule';
+import { UserDTO } from '../../UserModule/dto';
 
 export class AttendAClassDTO {
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: User })
+  @Type(() => UserDTO)
   @Expose()
   user: CourseTaken['user'];
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: Course })
   @Expose()
   course: CourseDTO;
 

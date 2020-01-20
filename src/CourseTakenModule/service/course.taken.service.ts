@@ -45,7 +45,6 @@ export class CourseTakenService {
   //funcionando
   @Transactional()
   public async update(user: CourseTaken['user'], course: CourseTaken['course'], courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTaken> {
-    console.log('on method update: user')
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     return this.repository.save(this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo}))
   }
@@ -76,7 +75,6 @@ export class CourseTakenService {
     let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     const attendAClass = new AttendAClassDTO;
 
-    //const course: CourseDTO = await this.courseService.findById(courseId);
     const currentLesson: LessonDTO = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson);
     let currentPart: PartDTO;
     let currentTest: TestWithoutCorrectAlternativeDTO;
@@ -131,35 +129,24 @@ export class CourseTakenService {
 
 @Transactional()
 public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
-  const courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
-  console.log(1);
+  let courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
   const currentLessonId: Lesson['id'] = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentLesson);
-  console.log('currentLessonId: ' + currentLessonId);
   const currentPartId = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
 
-  console.log(2);
   const nextTest = await this.testService.findTestByPartIdAndSeqNum(currentPartId, courseTaken.currentTest+1);
   const nextPart = await this.partService.findPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart+1);
-  console.log('currentLessonId: ' + currentLessonId);
   const nextLesson = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson+1);
-  console.log(3);
+  courseTaken = await this.prepareCourseTakenUpdatedInfo(courseTaken, nextTest, nextPart, nextLesson);
   courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
-  console.log(courseTaken.completition);
-  console.log(4);
-  const courseTakenUpdatedInfo = await this.prepareCourseTakenUpdatedInfo(courseTaken, nextTest, nextPart, nextLesson);
-  console.log(5);
-  console.log(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
+  const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken)
+
   return this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
 }
 
   @Transactional()
-  private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: Test, nextPart: Part, nextLesson: Lesson){
+  private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: Test, nextPart: Part, nextLesson: Lesson): Promise<CourseTaken>{
 
-    console.log('courseTaken: ' + JSON.stringify(courseTaken));
-
-    console.log('nextLesson: ' + nextLesson + ' nextPart: ' + nextPart + ' nextTest: ' + nextTest)
     if (nextTest){
-      console.log('opa');
       courseTaken.currentTest++;
     } else if (nextPart){
         courseTaken.currentTest = 1;
@@ -172,8 +159,7 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
           courseTaken.status = CourseTakenStatusEnum.COMPLETED;
           courseTaken.courseCompleteDate = new Date(Date.now());
     }
-    console.log('courseTaken: ' + JSON.stringify(courseTaken));
-    return await this.mapper.toUpdateDto(courseTaken);
+    return courseTaken;
   }
 
   //conferir
@@ -189,9 +175,9 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
       const percentualPerPart = percentualPerLesson/partsAmount;
       const percentualPerTest = percentualPerPart/testsAmount;
 
-      completition = percentualPerLesson*courseTaken.currentLesson;
-      completition += percentualPerPart*courseTaken.currentPart;
-      completition += percentualPerTest*courseTaken.currentTest;
+      completition = percentualPerLesson*(courseTaken.currentLesson-1);
+      completition += percentualPerPart*(courseTaken.currentPart-1);
+      completition += percentualPerTest*(courseTaken.currentTest-1);
     }
     else{
       completition = 100;

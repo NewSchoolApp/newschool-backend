@@ -37,6 +37,9 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
     updateDtoObject.courseStartDate = entityObject.courseStartDate;
     updateDtoObject.courseCompleteDate = entityObject.courseCompleteDate;
     updateDtoObject.status = entityObject.status;
+    updateDtoObject.currentLesson = entityObject.currentLesson;
+    updateDtoObject.currentPart = entityObject.currentPart;
+    updateDtoObject.currentTest = entityObject.currentTest;
 
     return updateDtoObject;
   }
