@@ -32,6 +32,6 @@ import { CertificateModule } from '../CertificateModule';
   ],
   controllers: [UserController],
   providers: [UserService, UserMapper, ChangePasswordService],
-  exports: [UserService],
+  exports: [UserService, UserMapper],
 })
 export class UserModule {}

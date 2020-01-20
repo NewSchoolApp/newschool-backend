@@ -8,14 +8,13 @@ import {
   PartDTO,
   TestWithoutCorrectAlternativeDTO,
 } from '../../CourseModule/dto';
-import { User } from '../../UserModule';
 import { UserDTO } from '../../UserModule/dto';
 
 export class AttendAClassDTO {
-  @ApiModelProperty({ type: User })
+  @ApiModelProperty({ type: UserDTO })
   @Type(() => UserDTO)
   @Expose()
-  user: CourseTaken['user'];
+  user: UserDTO;
 
   @ApiModelProperty({ type: Course })
   @Expose()

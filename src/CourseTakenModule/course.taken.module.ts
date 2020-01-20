@@ -8,6 +8,7 @@ import { CourseTaken } from './entity';
 import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
 import { CourseModule } from '../CourseModule';
+import { UserModule } from '../UserModule';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CourseModule } from '../CourseModule';
       inject: [ConfigService],
     }),
     CourseModule,
+    UserModule,
   ],
   controllers: [CourseTakenController],
   providers: [CourseTakenService, CourseTakenMapper],
