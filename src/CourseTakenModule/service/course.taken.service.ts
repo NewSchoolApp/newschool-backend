@@ -28,12 +28,15 @@ import {
   PartDTO,
   TestWithoutCorrectAlternativeDTO,
 } from '../../CourseModule/dto';
+import { UserDTO } from '../../UserModule/dto';
+import { UserMapper } from '../../UserModule/mapper';
 
 @Injectable()
 export class CourseTakenService {
   constructor(
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
+    private readonly userMapper: UserMapper,
     private readonly courseService: CourseService,
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
@@ -168,7 +171,7 @@ export class CourseTakenService {
     currentPart?: PartDTO,
     currentTest?: TestWithoutCorrectAlternativeDTO,
   ) {
-    attendAClass.user = courseTaken.user;
+    attendAClass.user = this.userMapper.toDto(courseTaken.user);
     attendAClass.course = course;
     attendAClass.currentLesson = currentLesson;
     attendAClass.currentPart = currentPart;
