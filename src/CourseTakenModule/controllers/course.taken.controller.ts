@@ -96,7 +96,7 @@ export class CourseTakenController {
   @ApiOperation({ title: 'Update course taken', description: 'Update course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async updateCourseStatus(@Body() courseTaken: CourseTakenDTO): Promise<CourseTakenDTO>{
+  public async updateCourseStatus(@Body() courseTaken: CourseTakenDTO): Promise<AttendAClassDTO>{
     return await this.service.updateCourseStatus(courseTaken.user, courseTaken.course);
   }
 

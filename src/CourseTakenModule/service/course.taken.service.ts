@@ -67,7 +67,7 @@ export class CourseTakenService {
 
   @Transactional()
   public async attendAClass(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO>{
-    let courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     const attendAClass = new AttendAClassDTO;
 
     const currentLesson: LessonDTO = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson);
@@ -88,11 +88,13 @@ export class CourseTakenService {
       }
     }
 
+    let updatedCourseTaken: AttendAClassDTO;
+    
     if (invalidOptionFlag){
-      courseTaken = await this.updateCourseStatus(user, course);
+      updatedCourseTaken = await this.updateCourseStatus(user, course);
     }
 
-    if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
+    if (updatedCourseTaken.status === CourseTakenStatusEnum.COMPLETED) {
       return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course);
     }
     else {
@@ -123,7 +125,7 @@ export class CourseTakenService {
   }
 
 @Transactional()
-public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
+public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO> {
   let courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
   const currentLessonId: Lesson['id'] = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentLesson);
   const currentPartId = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
@@ -135,7 +137,8 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
   courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
   const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken)
 
-  return this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
+  await this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo)
+  return await this.attendAClass(user, course);
 }
 
   @Transactional()
