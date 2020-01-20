@@ -29,7 +29,7 @@ export class Lesson extends Audit {
 
   @ManyToOne<Course>('Course', (course: Course) => course.lessons)
   @JoinColumn({
-    name: 'course_id'
+    name: 'course_id',
   })
   course: Course;
 

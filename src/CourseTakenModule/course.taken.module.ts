@@ -7,7 +7,7 @@ import { CourseTakenRepository } from './repository';
 import { CourseTaken } from './entity';
 import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { CourseModule, LessonService, PartService, TestService } from '../CourseModule';
+import { CourseModule } from '../CourseModule';
 
 @Module({
   imports: [

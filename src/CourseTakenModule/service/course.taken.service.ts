@@ -2,9 +2,9 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
-import { CourseTakenUpdateDTO, CourseTakenDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
+import { AttendAClassDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import { Course, Lesson, Part, Test, LessonService, PartService, TestService, CourseService } from '../../CourseModule';
+import { CourseService, Lesson, LessonService, Part, PartService, Test, TestService } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
 import { CourseDTO, LessonDTO, PartDTO, TestWithoutCorrectAlternativeDTO } from '../../CourseModule/dto';
 
@@ -18,14 +18,14 @@ export class CourseTakenService {
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
-  ){
+  ) {
   }
 
   @Transactional()
   public async add(newCourseTaken: NewCourseTakenDTO): Promise<AttendAClassDTO> {
     const courseAlreadyTaken: CourseTaken = await this.repository.findByUserIdAndCourseId(newCourseTaken.user, newCourseTaken.course);
-    if (courseAlreadyTaken){
-        throw new ConflictException('Course already taken by user');
+    if (courseAlreadyTaken) {
+      throw new ConflictException('Course already taken by user');
     }
 
     const newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
@@ -44,13 +44,13 @@ export class CourseTakenService {
   @Transactional()
   public async update(user: CourseTaken['user'], course: CourseTaken['course'], courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
-    return this.repository.save(this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo}))
+    return this.repository.save(this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo }));
   }
 
   @Transactional()
   public async getAllByUserId(user: CourseTaken['user']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByUserId(user);
-    if (!courseTaken){
+    if (!courseTaken) {
       throw new NotFoundException('This user did not started any course');
     }
     return courseTaken;
@@ -59,14 +59,14 @@ export class CourseTakenService {
   @Transactional()
   public async getAllByCourseId(course: CourseTaken['course']): Promise<CourseTaken[]> {
     const courseTaken: CourseTaken[] = await this.repository.findByCourseId(course);
-    if (!courseTaken){
-        throw new NotFoundException('No users have started this course');
+    if (!courseTaken) {
+      throw new NotFoundException('No users have started this course');
     }
     return courseTaken;
   }
 
   @Transactional()
-  public async attendAClass(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO>{
+  public async attendAClass(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(user, course);
     const attendAClass = new AttendAClassDTO;
 
@@ -74,30 +74,20 @@ export class CourseTakenService {
     let currentPart: PartDTO;
     let currentTest: TestWithoutCorrectAlternativeDTO;
 
-    let invalidOptionFlag = true;
-    if (currentLesson){
+    if (currentLesson) {
       currentPart = await this.partService.findPartByLessonIdAndSeqNum(currentLesson.id, courseTaken.currentPart);
-
-      if (currentPart){
+      if (currentPart) {
         currentTest = await this.testService.findTestByPartIdAndSeqNum(currentPart.id, courseTaken.currentTest);
-
-        if(currentTest){
-          invalidOptionFlag = false;
+        if (currentTest) {
           return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course, currentLesson, currentPart, currentTest);
         }
       }
     }
 
-    let updatedCourseTaken: AttendAClassDTO;
-    
-    if (invalidOptionFlag){
-      updatedCourseTaken = await this.updateCourseStatus(user, course);
-    }
-
+    const updatedCourseTaken: AttendAClassDTO = await this.updateCourseStatus(user, course);
     if (updatedCourseTaken.status === CourseTakenStatusEnum.COMPLETED) {
       return await this.prepareAttendAClassDTO(attendAClass, courseTaken, course);
-    }
-    else {
+    } else {
       return await this.attendAClass(user, course);
     }
   }
@@ -117,45 +107,45 @@ export class CourseTakenService {
 
   @Transactional()
   public async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken> {
-    const courseTaken: CourseTaken = await this.repository.findOne({ user, course}, { relations: ['user', 'course'] });
-    if (!courseTaken){
-        throw new NotFoundException('Course not taken by user');
+    const courseTaken: CourseTaken = await this.repository.findOne({ user, course }, { relations: ['user', 'course'] });
+    if (!courseTaken) {
+      throw new NotFoundException('Course not taken by user');
     }
     return courseTaken;
   }
 
-@Transactional()
-public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO> {
-  let courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
-  const currentLessonId: Lesson['id'] = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentLesson);
-  const currentPartId = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
+  @Transactional()
+  public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['course']): Promise<AttendAClassDTO> {
+    let courseTaken = await this.repository.findByUserIdAndCourseId(user, course);
+    const currentLessonId: Lesson['id'] = await this.lessonService.getLessonIdByCourseIdAndSeqNum(course, courseTaken.currentLesson);
+    const currentPartId = await this.partService.getPartIdByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart);
 
-  const nextTest = await this.testService.findTestByPartIdAndSeqNum(currentPartId, courseTaken.currentTest+1);
-  const nextPart = await this.partService.findPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart+1);
-  const nextLesson = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson+1);
-  courseTaken = await this.prepareCourseTakenUpdatedInfo(courseTaken, nextTest, nextPart, nextLesson);
-  courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
-  const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken)
+    const nextTest = await this.testService.findTestByPartIdAndSeqNum(currentPartId, courseTaken.currentTest + 1);
+    const nextPart = await this.partService.findPartByLessonIdAndSeqNum(currentLessonId, courseTaken.currentPart + 1);
+    const nextLesson = await this.lessonService.findLessonByCourseIdAndSeqNum(course, courseTaken.currentLesson + 1);
+    courseTaken = await this.prepareCourseTakenUpdatedInfo(courseTaken, nextTest, nextPart, nextLesson);
+    courseTaken.completition = await this.calculateCompletition(courseTaken, currentLessonId, currentPartId);
+    const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken);
 
-  await this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo)
-  return await this.attendAClass(user, course);
-}
+    await this.update(courseTaken.user, courseTaken.course, courseTakenUpdatedInfo);
+    return await this.attendAClass(user, course);
+  }
 
   @Transactional()
-  private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: Test, nextPart: Part, nextLesson: Lesson): Promise<CourseTaken>{
+  private async prepareCourseTakenUpdatedInfo(courseTaken: CourseTaken, nextTest: Test, nextPart: Part, nextLesson: Lesson): Promise<CourseTaken> {
 
-    if (nextTest){
+    if (nextTest) {
       courseTaken.currentTest++;
-    } else if (nextPart){
-        courseTaken.currentTest = 1;
-        courseTaken.currentPart++;
+    } else if (nextPart) {
+      courseTaken.currentTest = 1;
+      courseTaken.currentPart++;
     } else if (nextLesson) {
-            courseTaken.currentTest = 1;
-            courseTaken.currentPart = 1;
-            courseTaken.currentLesson++;
+      courseTaken.currentTest = 1;
+      courseTaken.currentPart = 1;
+      courseTaken.currentLesson++;
     } else {
-          courseTaken.status = CourseTakenStatusEnum.COMPLETED;
-          courseTaken.courseCompleteDate = new Date(Date.now());
+      courseTaken.status = CourseTakenStatusEnum.COMPLETED;
+      courseTaken.courseCompleteDate = new Date(Date.now());
     }
     return courseTaken;
   }
@@ -168,19 +158,18 @@ public async updateCourseStatus(user: CourseTaken['user'], course: CourseTaken['
     let completition: number;
 
     if (courseTaken.status === CourseTakenStatusEnum.TAKEN) {
-      const percentualPerLesson = 100/lessonsAmount;
-      const percentualPerPart = percentualPerLesson/partsAmount;
-      const percentualPerTest = percentualPerPart/testsAmount;
+      const percentualPerLesson = 100 / lessonsAmount;
+      const percentualPerPart = percentualPerLesson / partsAmount;
+      const percentualPerTest = percentualPerPart / testsAmount;
 
-      completition = percentualPerLesson*(courseTaken.currentLesson-1);
-      completition += percentualPerPart*(courseTaken.currentPart-1);
-      completition += percentualPerTest*(courseTaken.currentTest-1);
-    }
-    else{
+      completition = percentualPerLesson * (courseTaken.currentLesson - 1);
+      completition += percentualPerPart * (courseTaken.currentPart - 1);
+      completition += percentualPerTest * (courseTaken.currentTest - 1);
+    } else {
       completition = 100;
     }
 
-    return completition>100 ?  100 : completition;
+    return completition > 100 ? 100 : completition;
   }
 
   @Transactional()

@@ -33,5 +33,5 @@ export class UserUpdateDTO {
   @ApiModelProperty({ type: RoleEnum })
   @IsOptional()
   @Expose()
-  role: RoleEnum;
+  role?: RoleEnum;
 }

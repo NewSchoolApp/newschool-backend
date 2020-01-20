@@ -1,5 +1,4 @@
-
-import { Column, Entity, JoinColumn, Index, Check, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Check, Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { User } from '../../UserModule/entity/user.entity';
 import { Course } from '../../CourseModule/entity/course.entity';
@@ -7,7 +6,7 @@ import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum';
 
 @Entity()
-@Check('CHECK `status` IN (`' + CourseTakenStatusEnum.TAKEN + '`, `'+ CourseTakenStatusEnum.COMPLETED + '`)')
+@Check('CHECK `status` IN (`' + CourseTakenStatusEnum.TAKEN + '`, `' + CourseTakenStatusEnum.COMPLETED + '`)')
 @Index((relation: CourseTaken) => [relation.user, relation.course], { unique: true })
 export class CourseTaken extends Audit {
 
@@ -32,7 +31,7 @@ export class CourseTaken extends Audit {
   @Expose()
   @Column({
     nullable: false,
-    name: 'course_start_date'
+    name: 'course_start_date',
   })
   courseStartDate: Date;
 
@@ -57,7 +56,7 @@ export class CourseTaken extends Audit {
   @Column({
     nullable: false,
     name: 'completition',
-    default: 0
+    default: 0,
   })
   completition: number;
 

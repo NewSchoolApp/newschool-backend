@@ -8,7 +8,7 @@ import { TestUpdateDTO } from '../dto';
 export class TestService {
 
   constructor(
-    private readonly repository: TestRepository
+    private readonly repository: TestRepository,
   ) {
   }
 

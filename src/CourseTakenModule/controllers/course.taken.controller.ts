@@ -1,9 +1,18 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO, AttendAClassDTO } from '../dto';
+import { AttendAClassDTO, CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import { ApiBearerAuth, ApiCreatedResponse, ApiImplicitBody, ApiImplicitQuery, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiImplicitBody,
+  ApiImplicitParam,
+  ApiImplicitQuery,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUseTags,
+} from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
 @ApiUseTags('CourseTaken')
@@ -18,9 +27,9 @@ export class CourseTakenController {
 
   @Get('/user/:user')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Courses', description: 'Get all courses by User id'})
+  @ApiOperation({ title: 'Get Courses', description: 'Get all courses by User id' })
   @ApiImplicitQuery({ name: 'user', type: String, required: true, description: 'User id' })
-  @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All courses by User id'})
+  @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All courses by User id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAllByUserId(@Param('user') user: CourseTakenDTO['user']): Promise<CourseTakenDTO[]> {
@@ -29,22 +38,21 @@ export class CourseTakenController {
 
   @Get('/course/:course')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Users', description: 'Get all users by Course id'})
+  @ApiOperation({ title: 'Get Users', description: 'Get all users by Course id' })
   @ApiImplicitQuery({ name: 'course', type: String, required: true, description: 'Course id' })
-  @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All users by Course id'})
+  @ApiOkResponse({ type: CourseTakenDTO, isArray: true, description: 'All users by Course id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async getAllCourseId(@Param('course') course: CourseTakenDTO['course']): Promise<CourseTakenDTO[]> {
     return this.mapper.toDtoList(await this.service.getAllByCourseId(course));
   }
 
-  //Conferir
   @Get('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
   @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
-  @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
+  @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findByUserIdAndCourseId(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<CourseTakenDTO> {
@@ -62,7 +70,6 @@ export class CourseTakenController {
     return await this.service.add(courseTaken);
   }
 
-  //Conferir
   @Put('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
@@ -71,7 +78,7 @@ export class CourseTakenController {
   @ApiOperation({ title: 'Update course taken', description: 'Update course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async update(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course'], @Body() courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTakenDTO>{
+  public async update(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course'], @Body() courseTakenUpdatedInfo: CourseTakenUpdateDTO): Promise<CourseTakenDTO> {
     return await this.service.update(user, course, courseTakenUpdatedInfo);
   }
 
@@ -96,7 +103,7 @@ export class CourseTakenController {
   @ApiOperation({ title: 'Update course taken', description: 'Update course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async updateCourseStatus(@Body() courseTaken: CourseTakenDTO): Promise<AttendAClassDTO>{
+  public async updateCourseStatus(@Body() courseTaken: CourseTakenDTO): Promise<AttendAClassDTO> {
     return await this.service.updateCourseStatus(courseTaken.user, courseTaken.course);
   }
 
@@ -105,7 +112,7 @@ export class CourseTakenController {
   @ApiOkResponse({ type: AttendAClassDTO })
   @ApiImplicitParam({ name: 'user', type: String, required: true, description: 'User id' })
   @ApiImplicitParam({ name: 'course', type: String, required: true, description: 'Course id' })
-  @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id'})
+  @ApiOperation({ title: 'Find course taken', description: 'Find course taken by user id and course id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async attendAClass(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<AttendAClassDTO> {

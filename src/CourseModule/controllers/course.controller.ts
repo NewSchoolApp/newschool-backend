@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Delete,
-  Get, Headers,
+  Get,
+  Headers,
   HttpCode,
   Param,
   Post,
-  Put, Query,
+  Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -18,17 +20,20 @@ import { CourseMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiImplicitBody, ApiImplicitParam,
-  ApiImplicitQuery, ApiNotFoundResponse,
+  ApiImplicitBody,
+  ApiImplicitParam,
+  ApiImplicitQuery,
+  ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation, ApiUnauthorizedResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../../UserModule/entity';
 import { SecurityService } from '../../SecurityModule/service';
-import { NewUserDTO, UserDTO } from '../../UserModule/dto';
+import { NewUserDTO } from '../../UserModule/dto';
 import { Course } from '../entity';
 
 @ApiUseTags('Course')
@@ -45,7 +50,12 @@ export class CourseController {
   @Get()
   @HttpCode(200)
   @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
-  @ApiImplicitQuery({ name: 'enabled', type: Boolean, required: false, description: 'If not passed, get all courses. If passed, get courses that are enabled or disabled depending on the boolean' })
+  @ApiImplicitQuery({
+    name: 'enabled',
+    type: Boolean,
+    required: false,
+    description: 'If not passed, get all courses. If passed, get courses that are enabled or disabled depending on the boolean',
+  })
   @ApiOkResponse({ type: CourseDTO, isArray: true, description: 'All Courses' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)

@@ -135,6 +135,15 @@ export class UserService {
   }
 
   @Transactional()
+  public async findByEmailAndFacebookId(email: string, facebookId: string): Promise<User> {
+    const user: User = await this.repository.findByEmailAndFacebookId(email, facebookId);
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    return user;
+  }
+
+  @Transactional()
   public async validateChangePassword(changePasswordRequestId: string) {
     const changePassword: ChangePassword = await this.changePasswordService.findById(changePasswordRequestId);
     if (Date.now() > new Date(changePassword.createdAt).getTime() + changePassword.expirationTime) {

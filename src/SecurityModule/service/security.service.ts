@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
 import { classToPlain } from 'class-transformer';
-import { GeneratedTokenDTO, RefreshTokenUserDTO } from '../dto';
+import { FacebookAuthUserDTO, GeneratedTokenDTO, GoogleAuthUserDTO, RefreshTokenUserDTO } from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
@@ -62,6 +62,38 @@ export class SecurityService {
     return this.generateLoginObject(user);
   }
 
+  public async validateFacebookUser(facebookAuthUser: FacebookAuthUserDTO): Promise<GeneratedTokenDTO> {
+    const user: User = await this.userService.findByEmail(
+      facebookAuthUser.email,
+    );
+    if (!user.facebookId) {
+      user.facebookId = facebookAuthUser.id;
+      const { role, ...userInfo } = user;
+      const userWithFacebookId: User = await this.userService.update(user.id, userInfo);
+      return this.generateLoginObject(userWithFacebookId);
+    }
+    if (user.facebookId !== facebookAuthUser.id) {
+      throw new NotFoundException('User not found');
+    }
+    return this.generateLoginObject(user);
+  }
+
+  public async validateGoogleUser(googleAuthUser: GoogleAuthUserDTO): Promise<GeneratedTokenDTO> {
+    const user: User = await this.userService.findByEmail(
+      googleAuthUser.email,
+    );
+    if (!user.facebookId) {
+      user.googleSub = googleAuthUser.sub;
+      const { role, ...userInfo } = user;
+      const userWithGoogleSub: User = await this.userService.update(user.id, userInfo);
+      return this.generateLoginObject(userWithGoogleSub);
+    }
+    if (user.googleSub !== googleAuthUser.sub) {
+      throw new NotFoundException('User not found');
+    }
+    return this.generateLoginObject(user);
+  }
+
   @Transactional()
   public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
@@ -75,7 +107,7 @@ export class SecurityService {
     try {
       refreshTokenUser = this.getUserFromToken(refreshToken);
     } catch (error) {
-      if (error instanceof TokenExpiredError){
+      if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Refresh Token expired');
       }
       throw error;

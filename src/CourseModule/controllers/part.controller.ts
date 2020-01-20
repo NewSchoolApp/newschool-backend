@@ -4,13 +4,13 @@ import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { NewPartDTO, PartDTO, PartUpdateDTO } from '../dto';
 import { PartMapper } from '../mapper';
 import {
-    ApiBearerAuth,
-    ApiCreatedResponse,
-    ApiImplicitBody,
-    ApiImplicitQuery,
-    ApiOkResponse,
-    ApiOperation,
-    ApiUseTags,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiImplicitBody,
+  ApiImplicitQuery,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 

@@ -1,9 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
-import { User } from '../../UserModule';
 import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
@@ -51,7 +50,7 @@ export class Course extends Audit {
 
   @Column({
     type: 'boolean',
-    default: true
+    default: true,
   })
   @Expose()
   enabled: boolean;

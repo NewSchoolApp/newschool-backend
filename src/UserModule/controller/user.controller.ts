@@ -18,7 +18,8 @@ import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   AdminChangePasswordDTO,
-  ChangePasswordDTO, ChangePasswordForgotFlowDTO,
+  ChangePasswordDTO,
+  ChangePasswordForgotFlowDTO,
   ChangePasswordRequestIdDTO,
   ForgotPasswordDTO,
   NewStudentDTO,
@@ -44,7 +45,6 @@ import { RoleEnum } from '../../SecurityModule/enum';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
-import { CourseDTO } from '../../CourseModule/dto';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
@@ -263,25 +263,25 @@ export class UserController {
 
   @Get('me/certificate')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
-  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role'})
+  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates' })
+  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-    public async findUserCertificates( @Headers('authorization') authorization: string): Promise<CertificateUserDTO[]> {
-      const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
-      return await this.service.getCertificateByUser(id);
+  public async findUserCertificates(@Headers('authorization') authorization: string): Promise<CertificateUserDTO[]> {
+    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    return await this.service.getCertificateByUser(id);
   }
 
   @Get(':id/certificate')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
-  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role'})
+  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates' })
+  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates' })
+  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-    public async findCertificatesByUser( @Param('id') id: string): Promise<CertificateUserDTO[]> {
-      return await this.service.getCertificateByUser(id);
+  public async findCertificatesByUser(@Param('id') id: string): Promise<CertificateUserDTO[]> {
+    return await this.service.getCertificateByUser(id);
   }
 
   @Delete('/:id')

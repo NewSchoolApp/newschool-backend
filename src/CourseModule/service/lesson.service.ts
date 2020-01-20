@@ -25,7 +25,7 @@ export class LessonService {
 
     const lessonCount = await this.repository.count({ course: lesson.course });
     // eslint-disable-next-line require-atomic-updates
-    lesson.sequenceNumber = lessonCount+1;
+    lesson.sequenceNumber = lessonCount + 1;
 
     return this.repository.save(lesson);
   }

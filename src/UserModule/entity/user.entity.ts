@@ -5,7 +5,6 @@ import { Role } from '../../SecurityModule';
 import { ChangePassword } from './change-password.entity';
 import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
-import { Course } from '../../CourseModule';
 import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
@@ -41,6 +40,14 @@ export class User extends Audit {
   })
   @Expose()
   salt: string;
+
+  @Column({ name: 'facebook_id', nullable: true })
+  @Expose()
+  facebookId: string;
+
+  @Column({ name: 'google_sub', nullable: true })
+  @Expose()
+  googleSub: string;
 
   @ManyToOne(() => Role, (role: Role) => role.users)
   @Expose()

@@ -44,21 +44,21 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
     return updateDtoObject;
   }
 
-  toMyCourseDto(courseTakenArray: CourseTaken[], courseArray: Course[], user: User): MyCoursesDTO[]{
-    let myCourseDtoArray:MyCoursesDTO[];
+  toMyCourseDto(courseTakenArray: CourseTaken[], courseArray: Course[], user: User): MyCoursesDTO[] {
+    let myCourseDtoArray: MyCoursesDTO[];
 
-      courseTakenArray.forEach((courseTaken, index) => {
-        myCourseDtoArray[index].course = courseArray[index];
-        myCourseDtoArray[index].user = user;
-        myCourseDtoArray[index].completition = courseTaken.completition;
-        myCourseDtoArray[index].courseStartDate = courseTaken.courseStartDate;
-        myCourseDtoArray[index].courseCompleteDate = courseTaken.courseCompleteDate;
-        myCourseDtoArray[index].currentLesson = courseTaken.currentLesson;
-        myCourseDtoArray[index].currentPart = courseTaken.currentPart;
-        myCourseDtoArray[index].currentTest = courseTaken.currentTest;
-        myCourseDtoArray[index].status = courseTaken.status;
-      });
+    courseTakenArray.forEach((courseTaken, index) => {
+      myCourseDtoArray[index].course = courseArray[index];
+      myCourseDtoArray[index].user = user;
+      myCourseDtoArray[index].completition = courseTaken.completition;
+      myCourseDtoArray[index].courseStartDate = courseTaken.courseStartDate;
+      myCourseDtoArray[index].courseCompleteDate = courseTaken.courseCompleteDate;
+      myCourseDtoArray[index].currentLesson = courseTaken.currentLesson;
+      myCourseDtoArray[index].currentPart = courseTaken.currentPart;
+      myCourseDtoArray[index].currentTest = courseTaken.currentTest;
+      myCourseDtoArray[index].status = courseTaken.status;
+    });
 
-      return myCourseDtoArray;
+    return myCourseDtoArray;
   }
 }

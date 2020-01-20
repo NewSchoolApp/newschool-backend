@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { SecurityService } from '../service';
 import { Constants } from '../../CommonsModule';
-import { AuthDTO, GeneratedTokenDTO } from '../dto';
+import { AuthDTO, FacebookAuthUserDTO, GeneratedTokenDTO, GoogleAuthUserDTO } from '../dto';
 import { GrantTypeEnum } from '../enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ClientCredentials } from '../entity';
@@ -63,6 +63,22 @@ export class SecurityController {
         refresh_token,
       );
     }
+  }
+
+  @Post('/facebook/token')
+  @HttpCode(200)
+  async authenticateFacebookUser(
+    @Body() facebookAuthUser: FacebookAuthUserDTO,
+  ): Promise<GeneratedTokenDTO> {
+    return this.service.validateFacebookUser(facebookAuthUser);
+  }
+
+  @Post('/google/token')
+  @HttpCode(200)
+  async authenticateGoogleUser(
+    @Body() googleAuthUser: GoogleAuthUserDTO,
+  ): Promise<GeneratedTokenDTO> {
+    return this.service.validateGoogleUser(googleAuthUser);
   }
 
   @Post('/token/details')

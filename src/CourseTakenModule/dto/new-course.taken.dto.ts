@@ -1,7 +1,7 @@
 import { CourseTaken } from '../entity';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class NewCourseTakenDTO {
   @ApiModelProperty({ type: String })
