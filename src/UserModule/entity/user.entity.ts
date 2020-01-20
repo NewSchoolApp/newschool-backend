@@ -6,6 +6,7 @@ import { ChangePassword } from './change-password.entity';
 import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
 import { Course } from '../../CourseModule';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
 export class User extends Audit {
@@ -45,13 +46,16 @@ export class User extends Audit {
   @Expose()
   role: Role;
 
-  @OneToMany<ChangePassword>(() => ChangePassword, (changePassword: ChangePassword) => changePassword.user)
+  @OneToMany<ChangePassword>('ChangePassword', (changePassword: ChangePassword) => changePassword.user)
   @Expose()
   changePasswordRequests: ChangePassword[];
 
-  @ManyToMany(() => Certificate, (certficate: Certificate) => certficate.users)
+  @ManyToMany('Certificate', (certficate: Certificate) => certficate.users)
   @Expose()
   certificates: Certificate[];
+
+  @OneToMany<CourseTaken>('CourseTaken', (courseTaken: CourseTaken) => courseTaken.user)
+  coursesTaken: CourseTaken[];
 
   validPassword(password: string) {
     const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);

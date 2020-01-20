@@ -8,6 +8,7 @@ import {
   ApiCreatedResponse,
   ApiImplicitBody,
   ApiImplicitQuery,
+  ApiImplicitParam,
   ApiOkResponse,
   ApiOperation,
   ApiUseTags,
@@ -77,5 +78,17 @@ export class TestController {
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: TestDTO['id']): Promise<void> {
     await this.service.delete(id);
+  }
+
+  @Get('/checkTest/:id/:chosenAlternative')
+  @HttpCode(200)
+  @ApiOkResponse({ type: Boolean })
+  @ApiImplicitParam({ name: 'id', type: String, required: true, description: 'Test id' })
+  @ApiImplicitParam({ name: 'chosenAlternative', type: String, required: true, description: 'chosenAlternative' })
+  @ApiOperation({ title: 'Check test answer', description: 'Check test by test id and chosen alternative' })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async checkTest(@Param('id') id: TestDTO['id'], @Param('chosenAlternative') chosenAlternative: string): Promise<boolean> {
+    return await this.service.checkTest(id, chosenAlternative);
   }
 }

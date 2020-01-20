@@ -4,6 +4,7 @@ import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
 import { User } from '../../UserModule';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
 export class Course extends Audit {
@@ -58,8 +59,11 @@ export class Course extends Audit {
   @Column()
   photoName: string;
 
-  @OneToMany<Lesson>(() => Lesson, (lesson: Lesson) => lesson.course)
+  @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.course)
   lessons: Lesson[];
+
+  @OneToMany<CourseTaken>('CourseTaken', (takenCourses: CourseTaken) => takenCourses.course)
+  takenCourses: CourseTaken[];
 
   @Column()
   @Expose()

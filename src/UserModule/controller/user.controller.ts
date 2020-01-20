@@ -18,7 +18,7 @@ import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   AdminChangePasswordDTO,
-  ChangePasswordDTO,
+  ChangePasswordDTO, ChangePasswordForgotFlowDTO,
   ChangePasswordRequestIdDTO,
   ForgotPasswordDTO,
   NewStudentDTO,
@@ -246,7 +246,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async changePassword(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
-    @Body() changePasswordDTO: ChangePasswordDTO,
+    @Body() changePasswordDTO: ChangePasswordForgotFlowDTO,
   ): Promise<void> {
     this.logger.log(`change password request id: ${changePasswordRequestId}, change password information: ${changePasswordDTO}`);
     await this.service.changePasswordForgotPasswordFlow(changePasswordRequestId, changePasswordDTO);
@@ -274,7 +274,6 @@ export class UserController {
   }
 
   @Get(':id/certificate')
-
   @HttpCode(200)
   @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
   @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})

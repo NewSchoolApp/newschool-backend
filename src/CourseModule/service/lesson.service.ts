@@ -23,7 +23,9 @@ export class LessonService {
       throw new ConflictException();
     }
 
-    lesson.sequenceNumber = 1 + await this.repository.count({ course: lesson.course });
+    const lessonCount = await this.repository.count({ course: lesson.course });
+    // eslint-disable-next-line require-atomic-updates
+    lesson.sequenceNumber = lessonCount+1;
 
     return this.repository.save(lesson);
   }
@@ -59,6 +61,23 @@ export class LessonService {
     if (!lesson) {
       throw new NotFoundException();
     }
+    return lesson;
+  }
+
+  @Transactional()
+  public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
+    return await this.repository.count({ course });
+  }
+
+  @Transactional()
+  public async getLessonIdByCourseIdAndSeqNum(course: Lesson['course'], sequenceNumber: number): Promise<Lesson['id']> {
+    const lesson = await this.repository.findOne({ course, sequenceNumber });
+    return lesson.id;
+  }
+
+  @Transactional()
+  public async findLessonByCourseIdAndSeqNum(course: Lesson['course'], sequenceNumber: number): Promise<Lesson> {
+    const lesson = await this.repository.findOne({ course, sequenceNumber });
     return lesson;
   }
 }
