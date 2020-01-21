@@ -27,6 +27,13 @@ export class Test extends Audit {
   @Expose()
   @Column({
     nullable: false,
+    name: 'question'
+  })
+  question: string;
+
+  @Expose()
+  @Column({
+    nullable: false,
     name: 'correct_alternative',
   })
   correctAlternative: string;
