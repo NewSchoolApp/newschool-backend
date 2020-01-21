@@ -13,7 +13,7 @@ export const database = (
     username: configService.get<string>('DATABASE_USERNAME'),
     password: configService.get<string>('DATABASE_PASSWORD'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: configService.get<boolean>('SYNC_DATABASE') == true,
+    synchronize: configService.get<boolean>('SYNC_DATABASE'),
     logging: configService.get<string>('NODE_ENV') !== 'TEST',
   };
 };
