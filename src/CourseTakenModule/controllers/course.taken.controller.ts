@@ -242,17 +242,17 @@ export class CourseTakenController {
     return await this.service.attendAClass(user, course);
   }
 
-  @Get('/certificate/user/:user/course/:course')
+  @Get('/certificate/user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: CertificateDTO })
   @ApiImplicitParam({
-    name: 'user',
+    name: 'userId',
     type: String,
     required: true,
     description: 'User id',
   })
   @ApiImplicitParam({
-    name: 'course',
+    name: 'courseId',
     type: String,
     required: true,
     description: 'Course id',
@@ -263,15 +263,15 @@ export class CourseTakenController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getCertificate(@Param('user') user: CourseTakenDTO['user'], @Param('course') course: CourseTakenDTO['course']): Promise<CertificateDTO> {
-    return await this.service.getCertificate(user, course);
+  public async getCertificate(@Param('userId') userId: CourseTakenDTO['user'], @Param('courseId') courseId: CourseTakenDTO['course']): Promise<CertificateDTO> {
+    return await this.service.getCertificate(userId, courseId);
   }
 
-  @Get('/certificates/user/:user')
+  @Get('/certificates/user/:userId')
   @HttpCode(200)
   @ApiOkResponse({ type: CertificateDTO, isArray: true })
   @ApiImplicitParam({
-    name: 'user',
+    name: 'userId',
     type: String,
     required: true,
     description: 'User id',
@@ -282,7 +282,7 @@ export class CourseTakenController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getCertificates(@Param('user') user: CourseTakenDTO['user']): Promise<CertificateDTO[]> {
-    return await this.service.getCertificates(user);
+  public async getCertificates(@Param('userId') userId: CourseTakenDTO['user']): Promise<CertificateDTO[]> {
+    return await this.service.getCertificates(userId);
   }
 }
