@@ -5,7 +5,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 export class AuthDTO {
   @ApiModelProperty({ enum: ['client_credentials', 'password'] })
   @IsEnum(GrantTypeEnum)
-    // tslint:disable-next-line:variable-name
+  // tslint:disable-next-line:variable-name
   grant_type: GrantTypeEnum;
 
   @ApiModelProperty()

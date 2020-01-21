@@ -1,5 +1,12 @@
 import { Audit } from '../../CommonsModule';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Part } from './part.entity';
 import { Expose } from 'class-transformer';
 
@@ -16,6 +23,13 @@ export class Test extends Audit {
     name: 'title',
   })
   title: string;
+
+  @Expose()
+  @Column({
+    nullable: false,
+    name: 'question'
+  })
+  question: string;
 
   @Expose()
   @Column({
@@ -59,7 +73,10 @@ export class Test extends Audit {
   sequenceNumber: number;
 
   @Expose()
-  @ManyToOne<Part>(() => Part, (part: Part) => part.tests)
+  @ManyToOne<Part>(
+    () => Part,
+    (part: Part) => part.tests,
+  )
   @JoinColumn({
     name: 'part_id',
   })

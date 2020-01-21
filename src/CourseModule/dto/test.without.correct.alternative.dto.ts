@@ -17,6 +17,11 @@ export class TestWithoutCorrectAlternativeDTO {
   @IsString()
   @Expose()
   @ApiModelProperty({ type: String })
+  question: Test['question'];
+
+  @IsString()
+  @Expose()
+  @ApiModelProperty({ type: String })
   firstAlternative: Test['firstAlternative'];
 
   @IsString()

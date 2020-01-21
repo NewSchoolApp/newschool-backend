@@ -26,5 +26,4 @@ import { TemplateMapper } from './mapper/template.mapper';
   providers: [MessageService, TemplateMapper],
   exports: [MessageService],
 })
-export class MessageModule {
-}
+export class MessageModule {}

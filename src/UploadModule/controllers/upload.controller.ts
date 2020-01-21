@@ -8,10 +8,7 @@ import { UploadService } from '../service';
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.UPLOAD_ENDPOINT}`,
 )
 export class UploadController {
-  constructor(
-    private readonly service: UploadService,
-  ) {
-  }
+  constructor(private readonly service: UploadService) {}
 
   @Get(':fileName')
   async serveFile(@Param('fileName') fileName, @Res() response): Promise<void> {

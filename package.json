@@ -37,6 +37,7 @@
     "i": "^0.3.6",
     "mysql": "^2.17.1",
     "npm": "^6.13.4",
+    "passport-facebook-token": "^3.3.0",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "remove": "^0.1.5",
@@ -62,6 +63,7 @@
     "@typescript-eslint/parser": "^2.10.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
+    "husky": "^4.0.10",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "supertest": "^4.0.2",
@@ -84,5 +86,10 @@
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
+    }
   }
 }

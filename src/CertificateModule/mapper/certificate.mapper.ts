@@ -5,7 +5,6 @@ import { CertificateDTO } from '../dto';
 
 @Injectable()
 export class CertificateMapper extends Mapper<Certificate, CertificateDTO> {
-
   constructor() {
     super(Certificate, CertificateDTO);
   }
@@ -25,5 +24,4 @@ export class CertificateMapper extends Mapper<Certificate, CertificateDTO> {
   toEntityList(dtoArray: CertificateDTO[]): Certificate[] {
     return super.toEntityList(dtoArray);
   }
-
 }

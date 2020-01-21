@@ -1,11 +1,17 @@
 import * as crypto from 'crypto';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { Role } from '../../SecurityModule';
 import { ChangePassword } from './change-password.entity';
 import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
-import { Course } from '../../CourseModule';
 import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Entity()
@@ -42,11 +48,25 @@ export class User extends Audit {
   @Expose()
   salt: string;
 
-  @ManyToOne(() => Role, (role: Role) => role.users)
+  @Column({ name: 'facebook_id', nullable: true })
+  @Expose()
+  facebookId: string;
+
+  @Column({ name: 'google_sub', nullable: true })
+  @Expose()
+  googleSub: string;
+
+  @ManyToOne(
+    () => Role,
+    (role: Role) => role.users,
+  )
   @Expose()
   role: Role;
 
-  @OneToMany<ChangePassword>('ChangePassword', (changePassword: ChangePassword) => changePassword.user)
+  @OneToMany<ChangePassword>(
+    'ChangePassword',
+    (changePassword: ChangePassword) => changePassword.user,
+  )
   @Expose()
   changePasswordRequests: ChangePassword[];
 
@@ -54,11 +74,16 @@ export class User extends Audit {
   @Expose()
   certificates: Certificate[];
 
-  @OneToMany<CourseTaken>('CourseTaken', (courseTaken: CourseTaken) => courseTaken.user)
+  @OneToMany<CourseTaken>(
+    'CourseTaken',
+    (courseTaken: CourseTaken) => courseTaken.user,
+  )
   coursesTaken: CourseTaken[];
 
   validPassword(password: string) {
-    const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
+    const hash = crypto
+      .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
+      .toString(`hex`);
     return this.password === hash;
   }
 }

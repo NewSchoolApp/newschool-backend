@@ -1,36 +1,36 @@
 import { ApiModelProperty } from '@nestjs/swagger';
-import { Course } from '../entity';
-import { Expose } from 'class-transformer';
 import { IsString } from 'class-validator';
 
-export class NewCourseDTO {
+export class GoogleAuthUserDTO {
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  title: Course['title'];
+  email: string;
 
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  thumbUrl: Course['thumbUrl'];
+  email_verified: boolean;
 
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  description: Course['description'];
+  family_name: string;
 
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  workload: Course['workload'];
+  given_name: string;
 
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  authorName: Course['authorName'];
+  locale: string;
 
   @ApiModelProperty({ type: String })
   @IsString()
-  @Expose()
-  authorDescription: Course['authorDescription'];
+  name: string;
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  picture: string;
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  sub: string;
 }

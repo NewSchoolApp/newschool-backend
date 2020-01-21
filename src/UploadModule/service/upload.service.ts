@@ -1,7 +1,11 @@
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { Response } from 'express';
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 const fileAccess: (
   path: string,

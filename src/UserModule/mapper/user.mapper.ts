@@ -5,7 +5,6 @@ import { User } from '../entity';
 
 @Injectable()
 export class UserMapper extends Mapper<User, UserDTO> {
-
   constructor() {
     super(User, UserDTO);
   }
@@ -25,5 +24,4 @@ export class UserMapper extends Mapper<User, UserDTO> {
   toEntityList(dtoArray: UserDTO[]): User[] {
     return super.toEntityList(dtoArray);
   }
-
 }

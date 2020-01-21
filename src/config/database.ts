@@ -1,7 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
-export const database = (configService: ConfigService): MysqlConnectionOptions => {
+export const database = (
+  configService: ConfigService,
+): MysqlConnectionOptions => {
   return {
     type: 'mysql',
     host: configService.get<string>('DATABASE_HOST'),

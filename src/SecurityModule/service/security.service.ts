@@ -1,10 +1,19 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
 import { classToPlain } from 'class-transformer';
-import { GeneratedTokenDTO, RefreshTokenUserDTO } from '../dto';
+import {
+  FacebookAuthUserDTO,
+  GeneratedTokenDTO,
+  GoogleAuthUserDTO,
+  RefreshTokenUserDTO,
+} from '../dto';
 import { UserService } from '../../UserModule/service';
 import { ClientCredentialsRepository, RoleRepository } from '../repository';
 import { JwtService } from '@nestjs/jwt';
@@ -20,11 +29,12 @@ export class SecurityService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
-  ) {
-  }
+  ) {}
 
   @Transactional()
-  public async validateClientCredentials(base64Login: string): Promise<GeneratedTokenDTO> {
+  public async validateClientCredentials(
+    base64Login: string,
+  ): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
@@ -45,12 +55,15 @@ export class SecurityService {
   }
 
   private base64ToString(base64Login: string): string {
-    return Buffer.from(base64Login, 'base64')
-      .toString('ascii');
+    return Buffer.from(base64Login, 'base64').toString('ascii');
   }
 
   @Transactional()
-  public async validateUserCredentials(base64Login: string, username: string, password: string): Promise<GeneratedTokenDTO> {
+  public async validateUserCredentials(
+    base64Login: string,
+    username: string,
+    password: string,
+  ): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
@@ -58,12 +71,58 @@ export class SecurityService {
       ClientCredentialsEnum[name],
       secret,
     );
-    const user: User = await this.userService.findByEmailAndPassword(username, password);
+    const user: User = await this.userService.findByEmailAndPassword(
+      username,
+      password,
+    );
+    return this.generateLoginObject(user);
+  }
+
+  public async validateFacebookUser(
+    facebookAuthUser: FacebookAuthUserDTO,
+  ): Promise<GeneratedTokenDTO> {
+    const user: User = await this.userService.findByEmail(
+      facebookAuthUser.email,
+    );
+    if (!user.facebookId) {
+      user.facebookId = facebookAuthUser.id;
+      const { role, ...userInfo } = user;
+      const userWithFacebookId: User = await this.userService.update(
+        user.id,
+        userInfo,
+      );
+      return this.generateLoginObject(userWithFacebookId);
+    }
+    if (user.facebookId !== facebookAuthUser.id) {
+      throw new NotFoundException('User not found');
+    }
+    return this.generateLoginObject(user);
+  }
+
+  public async validateGoogleUser(
+    googleAuthUser: GoogleAuthUserDTO,
+  ): Promise<GeneratedTokenDTO> {
+    const user: User = await this.userService.findByEmail(googleAuthUser.email);
+    if (!user.facebookId) {
+      user.googleSub = googleAuthUser.sub;
+      const { role, ...userInfo } = user;
+      const userWithGoogleSub: User = await this.userService.update(
+        user.id,
+        userInfo,
+      );
+      return this.generateLoginObject(userWithGoogleSub);
+    }
+    if (user.googleSub !== googleAuthUser.sub) {
+      throw new NotFoundException('User not found');
+    }
     return this.generateLoginObject(user);
   }
 
   @Transactional()
-  public async refreshToken(base64Login: string, refreshToken: string): Promise<GeneratedTokenDTO> {
+  public async refreshToken(
+    base64Login: string,
+    refreshToken: string,
+  ): Promise<GeneratedTokenDTO> {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
@@ -75,7 +134,7 @@ export class SecurityService {
     try {
       refreshTokenUser = this.getUserFromToken(refreshToken);
     } catch (error) {
-      if (error instanceof TokenExpiredError){
+      if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Refresh Token expired');
       }
       throw error;
@@ -92,23 +151,38 @@ export class SecurityService {
     return this.jwtService.verify<T>(jwt);
   }
 
-  private generateLoginObject(authenticatedUser: ClientCredentials | User): GeneratedTokenDTO {
+  private generateLoginObject(
+    authenticatedUser: ClientCredentials | User,
+  ): GeneratedTokenDTO {
     return {
-      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), { expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN') }),
-      refreshToken: this.jwtService.sign(classToPlain({
-        ...authenticatedUser,
-        isRefreshToken: true,
-      }), { expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN') }),
+      accessToken: this.jwtService.sign(classToPlain(authenticatedUser), {
+        expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
+      }),
+      refreshToken: this.jwtService.sign(
+        classToPlain({
+          ...authenticatedUser,
+          isRefreshToken: true,
+        }),
+        {
+          expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN'),
+        },
+      ),
       tokenType: 'bearer',
       expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
     };
   }
 
-  private async findClientCredentialsByNameAndSecret(name: ClientCredentialsEnum, secret: string): Promise<ClientCredentials> {
+  private async findClientCredentialsByNameAndSecret(
+    name: ClientCredentialsEnum,
+    secret: string,
+  ): Promise<ClientCredentials> {
     if (!name) {
       throw new InvalidClientCredentialsError();
     }
-    const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(name, secret);
+    const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(
+      name,
+      secret,
+    );
     if (!clientCredentials) {
       throw new InvalidClientCredentialsError();
     }

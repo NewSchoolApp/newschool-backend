@@ -1,18 +1,34 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { CourseTaken } from '../entity';
+import { CertificateDTO } from '../dto';
+import { CourseTakenStatusEnum } from '../enum';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
-
-  async findByUserId(user: CourseTaken['user']): Promise<CourseTaken[] | undefined> {
-    return this.find({ user });
+  async findByUserId(
+    user: CourseTaken['user'],
+  ): Promise<CourseTaken[] | undefined> {
+    return this.find({ relations: ['user', 'course'], where: { user: user } })
   }
 
-  async findByCourseId(course: CourseTaken['course']): Promise<CourseTaken[] | undefined> {
+  async findCertificateByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CertificateDTO> {
+    return this.findOne({ user, course, status: CourseTakenStatusEnum.COMPLETED }, { relations: ['user', 'course'] });
+  }
+
+  async findCertificatesByUserId(user: CourseTaken['user']): Promise<CertificateDTO[]> {
+    return this.find({ relations: ['user', 'course'], where: { user: user, status: CourseTakenStatusEnum.COMPLETED } });
+  }
+
+  async findByCourseId(
+    course: CourseTaken['course'],
+  ): Promise<CourseTaken[] | undefined> {
     return this.find({ course });
   }
 
-  async findByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CourseTaken | undefined> {
-    return this.findOne({ user, course }, { relations: ['user', 'course']});
+  async findByUserIdAndCourseId(
+    user: CourseTaken['user'],
+    course: CourseTaken['course'],
+  ): Promise<CourseTaken | undefined> {
+    return this.findOne({ user, course }, { relations: ['user', 'course'] });
   }
 }

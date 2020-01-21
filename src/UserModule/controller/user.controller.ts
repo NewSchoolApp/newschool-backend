@@ -18,7 +18,8 @@ import { UserService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   AdminChangePasswordDTO,
-  ChangePasswordDTO, ChangePasswordForgotFlowDTO,
+  ChangePasswordDTO,
+  ChangePasswordForgotFlowDTO,
   ChangePasswordRequestIdDTO,
   ForgotPasswordDTO,
   NewStudentDTO,
@@ -44,11 +45,12 @@ import { RoleEnum } from '../../SecurityModule/enum';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
-import { CourseDTO } from '../../CourseModule/dto';
 
 @ApiUseTags('User')
 @ApiBearerAuth()
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`)
+@Controller(
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`,
+)
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
@@ -57,14 +59,16 @@ export class UserController {
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
-  ) {
-  }
+  ) {}
 
   @Get()
   @HttpCode(200)
   @ApiOperation({ title: 'Get Users', description: 'Get all users' })
   @ApiOkResponse({ type: NewUserDTO, isArray: true, description: 'All users' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async getAll(): Promise<UserDTO[]> {
@@ -74,16 +78,29 @@ export class UserController {
   @Get('/me')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
-  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
-  @ApiOperation({ title: 'Find user by jwt id', description: 'Decodes de jwt and finds the user by the jwt id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: Number,
+    required: true,
+    description: 'User id',
+  })
+  @ApiOperation({
+    title: 'Find user by jwt id',
+    description: 'Decodes de jwt and finds the user by the jwt id',
+  })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findUserByJwtId(
     @Headers('authorization') authorization: string,
   ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
   }
@@ -91,18 +108,28 @@ export class UserController {
   @Put('/me')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
-  @ApiOperation({ title: 'Update user by jwt id', description: 'Decodes de jwt and updates the user by the jwt id' })
+  @ApiOperation({
+    title: 'Update user by jwt id',
+    description: 'Decodes de jwt and updates the user by the jwt id',
+  })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateUserByJwtId(
     @Headers('authorization') authorization: string,
     @Body() selfUpdatedInfo: SelfUpdateDTO,
   ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.update(id, selfUpdatedInfo as UserUpdateDTO));
+    return this.mapper.toDto(
+      await this.service.update(id, selfUpdatedInfo as UserUpdateDTO),
+    );
   }
 
   @Put('/me/change-password')
@@ -113,30 +140,43 @@ export class UserController {
     description: 'Decodes de jwt and updates the user password by the jwt id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have STUDENT role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async changeUserPasswordByJwtId(
     @Headers('authorization') authorization: string,
     @Body() changePassword: ChangePasswordDTO,
   ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.changePassword(id, changePassword));
+    return this.mapper.toDto(
+      await this.service.changePassword(id, changePassword),
+    );
   }
 
   @Get(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
-  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: Number,
+    required: true,
+    description: 'User id',
+  })
   @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async findById(
-    @Param('id') id: UserDTO['id'],
-  ): Promise<UserDTO> {
+  public async findById(@Param('id') id: UserDTO['id']): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(await this.service.findById(id));
   }
@@ -147,7 +187,10 @@ export class UserController {
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
   @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
   @ApiImplicitBody({ name: 'User', type: NewUserDTO })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() user: NewUserDTO): Promise<UserDTO> {
@@ -159,23 +202,39 @@ export class UserController {
   @HttpCode(201)
   @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User student created' })
-  @ApiOperation({ title: 'Add student user', description: 'Creates a new student' })
+  @ApiOperation({
+    title: 'Add student user',
+    description: 'Creates a new student',
+  })
   @ApiImplicitBody({ name: 'User', type: NewStudentDTO })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async addStudent(@Body() user: NewStudentDTO): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
-    return this.mapper.toDto(await this.service.add({ ...user, role: RoleEnum.STUDENT }));
+    return this.mapper.toDto(
+      await this.service.add({ ...user, role: RoleEnum.STUDENT }),
+    );
   }
 
   @Put(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: Number,
+    required: true,
+    description: 'User id',
+  })
   @ApiOperation({ title: 'Update user', description: 'Update user by id' })
   @ApiOkResponse({ type: UserDTO })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -189,9 +248,15 @@ export class UserController {
   @Put(':id/change-password')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
-  @ApiOperation({ title: 'change-password', description: 'Changes password from an authenticated user' })
+  @ApiOperation({
+    title: 'change-password',
+    description: 'Changes password from an authenticated user',
+  })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async changeUserPassword(
@@ -199,21 +264,33 @@ export class UserController {
     @Body() changePassword: AdminChangePasswordDTO,
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.adminChangePassword(id, changePassword));
+    return this.mapper.toDto(
+      await this.service.adminChangePassword(id, changePassword),
+    );
   }
 
   @Post('/forgot-password')
   @HttpCode(200)
   @Transactional()
   @ApiOkResponse({ type: ChangePasswordRequestIdDTO })
-  @ApiOperation({ title: 'Create change password request', description: 'Create change password request' })
+  @ApiOperation({
+    title: 'Create change password request',
+    description: 'Create change password request',
+  })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async forgotPassword(@Body() forgotPasswordDTO: ForgotPasswordDTO): Promise<ChangePasswordRequestIdDTO> {
+  public async forgotPassword(
+    @Body() forgotPasswordDTO: ForgotPasswordDTO,
+  ): Promise<ChangePasswordRequestIdDTO> {
     this.logger.log(`forgot password: ${forgotPasswordDTO}`);
-    const forgotPasswordRequestId = await this.service.forgotPassword(forgotPasswordDTO);
+    const forgotPasswordRequestId = await this.service.forgotPassword(
+      forgotPasswordDTO,
+    );
     const changePasswordRequestIdDTO = new ChangePasswordRequestIdDTO();
     changePasswordRequestIdDTO.id = forgotPasswordRequestId;
     return changePasswordRequestIdDTO;
@@ -223,14 +300,24 @@ export class UserController {
   @HttpCode(200)
   @ApiOperation({
     title: 'Validate change password request',
-    description: 'validate change password expiration time. If time is not expired, 200 is returned',
+    description:
+      'validate change password expiration time. If time is not expired, 200 is returned',
   })
-  @ApiGoneResponse({ description: 'thrown if change password request time is up' })
-  @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @ApiGoneResponse({
+    description: 'thrown if change password request time is up',
+  })
+  @ApiNotFoundResponse({
+    description: 'thrown if change password request is not found',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async validateChangePasswordExpirationTime(@Param('changePasswordRequestId') changePasswordRequestId: string) {
+  public async validateChangePasswordExpirationTime(
+    @Param('changePasswordRequestId') changePasswordRequestId: string,
+  ) {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
   }
@@ -240,16 +327,26 @@ export class UserController {
   @ApiOperation({
     title: 'change password on forgot password flow',
   })
-  @ApiNotFoundResponse({ description: 'thrown if change password request is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role' })
+  @ApiNotFoundResponse({
+    description: 'thrown if change password request is not found',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async changePassword(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
     @Body() changePasswordDTO: ChangePasswordForgotFlowDTO,
   ): Promise<void> {
-    this.logger.log(`change password request id: ${changePasswordRequestId}, change password information: ${changePasswordDTO}`);
-    await this.service.changePasswordForgotPasswordFlow(changePasswordRequestId, changePasswordDTO);
+    this.logger.log(
+      `change password request id: ${changePasswordRequestId}, change password information: ${changePasswordDTO}`,
+    );
+    await this.service.changePasswordForgotPasswordFlow(
+      changePasswordRequestId,
+      changePasswordDTO,
+    );
   }
 
   @Post('/:userId/certificate/:certificateId')
@@ -263,34 +360,68 @@ export class UserController {
 
   @Get('me/certificate')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
-  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have STUDENT role'})
+  @ApiOperation({
+    title: 'Get Certificates',
+    description: 'Get All Certificates',
+  })
+  @ApiOkResponse({
+    type: CertificateUserDTO,
+    isArray: true,
+    description: 'All Certificates',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have STUDENT role',
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-    public async findUserCertificates( @Headers('authorization') authorization: string): Promise<CertificateUserDTO[]> {
-      const { id }: User = this.securityService.getUserFromToken(authorization.split(' ')[1]);
-      return await this.service.getCertificateByUser(id);
+  public async findUserCertificates(
+    @Headers('authorization') authorization: string,
+  ): Promise<CertificateUserDTO[]> {
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
+    return await this.service.getCertificateByUser(id);
   }
 
   @Get(':id/certificate')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Certificates', description: 'Get All Certificates'})
-  @ApiOkResponse({ type: CertificateUserDTO, isArray: true, description: 'All Certificates'})
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role'})
+  @ApiOperation({
+    title: 'Get Certificates',
+    description: 'Get All Certificates',
+  })
+  @ApiOkResponse({
+    type: CertificateUserDTO,
+    isArray: true,
+    description: 'All Certificates',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-    public async findCertificatesByUser( @Param('id') id: string): Promise<CertificateUserDTO[]> {
-      return await this.service.getCertificateByUser(id);
+  public async findCertificatesByUser(
+    @Param('id') id: string,
+  ): Promise<CertificateUserDTO[]> {
+    return await this.service.getCertificateByUser(id);
   }
 
   @Delete('/:id')
   @HttpCode(200)
-  @ApiImplicitQuery({ name: 'id', type: Number, required: true, description: 'User id' })
+  @ApiImplicitQuery({
+    name: 'id',
+    type: Number,
+    required: true,
+    description: 'User id',
+  })
   @ApiOperation({ title: 'Delete user', description: 'Delete user by id' })
   @ApiOkResponse({ type: null })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({ description: 'thrown if there is not an authorization token or if authorization token does not have ADMIN role' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: UserDTO['id']): Promise<void> {

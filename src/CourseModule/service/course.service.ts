@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository';
 import { Course } from '../entity';
@@ -8,13 +13,11 @@ import { UserService } from '../../UserModule';
 
 @Injectable()
 export class CourseService {
-
   constructor(
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
     private readonly userService: UserService,
-  ) {
-  }
+  ) {}
 
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
@@ -31,7 +34,9 @@ export class CourseService {
   }
 
   public async findByAuthorName(authorName: string): Promise<Course[]> {
-    const courses: Course[] = await this.repository.findByAuthorName(authorName);
+    const courses: Course[] = await this.repository.findByAuthorName(
+      authorName,
+    );
     if (!courses.length) {
       throw new NotFoundException('No courses found for this author');
     }
@@ -39,9 +44,17 @@ export class CourseService {
   }
 
   @Transactional()
-  public async update(id: Course['id'], userUpdatedInfo: CourseUpdateDTO): Promise<Course> {
+  public async update(
+    id: Course['id'],
+    userUpdatedInfo: CourseUpdateDTO,
+  ): Promise<Course> {
     const course: Course = await this.findById(id);
-    return this.repository.save(this.mapper.toEntity({ ...course, ...userUpdatedInfo } as unknown as CourseDTO));
+    return this.repository.save(
+      this.mapper.toEntity(({
+        ...course,
+        ...userUpdatedInfo,
+      } as unknown) as CourseDTO),
+    );
   }
 
   @Transactional()
