@@ -16,6 +16,7 @@ import {
   CourseTakenDTO,
   CourseTakenUpdateDTO,
   NewCourseTakenDTO,
+  CertificateDTO,
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
@@ -166,7 +167,6 @@ export class CourseTakenController {
     return await this.service.update(user, course, courseTakenUpdatedInfo);
   }
 
-  //Conferir
   @Delete('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
@@ -240,5 +240,49 @@ export class CourseTakenController {
     @Param('course') course: CourseTakenDTO['course'],
   ): Promise<AttendAClassDTO> {
     return await this.service.attendAClass(user, course);
+  }
+
+  @Get('/certificate/user/:userId/course/:courseId')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CertificateDTO })
+  @ApiImplicitParam({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: 'User id',
+  })
+  @ApiImplicitParam({
+    name: 'courseId',
+    type: String,
+    required: true,
+    description: 'Course id',
+  })
+  @ApiOperation({
+    title: 'Find certificates by user and course',
+    description: 'Find certificates by user id and course id',
+  })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async getCertificate(@Param('userId') userId: CourseTakenDTO['user'], @Param('courseId') courseId: CourseTakenDTO['course']): Promise<CertificateDTO> {
+    return await this.service.getCertificate(userId, courseId);
+  }
+
+  @Get('/certificates/user/:userId')
+  @HttpCode(200)
+  @ApiOkResponse({ type: CertificateDTO, isArray: true })
+  @ApiImplicitParam({
+    name: 'userId',
+    type: String,
+    required: true,
+    description: 'User id',
+  })
+  @ApiOperation({
+    title: 'Find certificates by user',
+    description: 'Find certificates by user id',
+  })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async getCertificates(@Param('userId') userId: CourseTakenDTO['user']): Promise<CertificateDTO[]> {
+    return await this.service.getCertificates(userId);
   }
 }
