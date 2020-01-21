@@ -20,6 +20,7 @@ import {
   PartService,
   Test,
   TestService,
+  Course,
 } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
 import {
@@ -30,6 +31,7 @@ import {
 } from '../../CourseModule/dto';
 import { UserDTO } from '../../UserModule/dto';
 import { UserMapper } from '../../UserModule/mapper';
+import { CertificateDTO } from '../dto/';
 
 @Injectable()
 export class CourseTakenService {
@@ -306,5 +308,15 @@ export class CourseTakenService {
     course: CourseTaken['course'],
   ): Promise<void> {
     await this.repository.delete({ user, course });
+  }
+
+  @Transactional()
+  public async getCertificate(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CertificateDTO>{
+    return this.repository.findCertificateByUserIdAndCourseId(user, course);
+  }
+
+  @Transactional()
+  public async getCertificates(user: CourseTaken['user']): Promise<CertificateDTO[]>{
+    return this.repository.findCertificatesByUserId(user);
   }
 }
