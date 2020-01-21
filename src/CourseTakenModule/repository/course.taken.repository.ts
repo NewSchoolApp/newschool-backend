@@ -6,7 +6,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   async findByUserId(
     user: CourseTaken['user'],
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ user });
+    return this.find({ relations: ['course'], where: { user: user } })
   }
 
   async findByCourseId(
