@@ -28,15 +28,15 @@ export class AttendAClassDTO {
   @Expose()
   completition: CourseTaken['completition'];
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: LessonDTO })
   @Expose()
   currentLesson: LessonDTO;
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: PartDTO })
   @Expose()
   currentPart: PartDTO;
 
-  @ApiModelProperty({ type: String })
+  @ApiModelProperty({ type: TestWithoutCorrectAlternativeDTO })
   @Expose()
   currentTest: TestWithoutCorrectAlternativeDTO;
 }

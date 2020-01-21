@@ -17,6 +17,11 @@ export class TestDTO {
   @IsString()
   @Expose()
   @ApiModelProperty({ type: String })
+  question: Test['question'];
+
+  @IsString()
+  @Expose()
+  @ApiModelProperty({ type: String })
   correctAlternative: Test['correctAlternative'];
 
   @IsString()
