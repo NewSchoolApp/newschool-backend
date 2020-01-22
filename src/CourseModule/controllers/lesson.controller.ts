@@ -106,9 +106,10 @@ export class LessonController {
     @Param('id') id: LessonDTO['id'],
     @Body() lessonUpdatedInfo: LessonUpdateDTO,
   ): Promise<LessonDTO> {
+    console.log('id: ' + id + ' lesson: ' + JSON.stringify(lessonUpdatedInfo));
     return await this.service.update(
       id,
-      this.mapper.toEntity(lessonUpdatedInfo as LessonDTO),
+      lessonUpdatedInfo,
     );
   }
 

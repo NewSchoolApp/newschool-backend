@@ -7,10 +7,15 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
 import { Lesson } from '../entity';
 import { LessonUpdateDTO } from '../dto';
+import { LessonMapper } from '../mapper';
 
 @Injectable()
 export class LessonService {
-  constructor(private readonly repository: LessonRepository) {}
+  constructor(
+    private readonly repository: LessonRepository,
+    private readonly mapper: LessonMapper,
+    ) {
+    }
 
   @Transactional()
   public async add(lesson: Lesson): Promise<Lesson> {
@@ -37,6 +42,7 @@ export class LessonService {
     lessonUpdatedInfo: LessonUpdateDTO,
   ): Promise<Lesson> {
     const lesson: Lesson = await this.findById(id);
+    console.log('on update method: lesson: ' + JSON.stringify(lesson) + ' lessonUpdatedInfo: ' + JSON.stringify(lessonUpdatedInfo));
     return this.repository.save({ ...lesson, ...lessonUpdatedInfo });
   }
 
