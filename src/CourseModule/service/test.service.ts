@@ -7,10 +7,15 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TestRepository } from '../repository';
 import { Test } from '../entity';
 import { TestUpdateDTO } from '../dto';
+import { TestMapper } from '../mapper';
 
 @Injectable()
 export class TestService {
-  constructor(private readonly repository: TestRepository) {}
+  constructor(
+    private readonly repository: TestRepository,
+    private readonly mapper: TestMapper,
+    ) {
+    }
 
   @Transactional()
   public async add(test: Test): Promise<Test> {
@@ -36,6 +41,7 @@ export class TestService {
     testUpdatedInfo: TestUpdateDTO,
   ): Promise<Test> {
     const test: Test = await this.findById(id);
+    console.log('testUpdatedInfo: ' + JSON.stringify(testUpdatedInfo));
     return this.repository.save({ ...test, ...testUpdatedInfo });
   }
 
@@ -55,8 +61,33 @@ export class TestService {
 
   @Transactional()
   public async delete(id: Test['id']): Promise<void> {
-    await this.repository.delete({ id });
+    const test: Test = await this.repository.findOne({ id }, { relations: ['part'] });
+    const deletedSequenceNum = test.sequenceNumber;
+    const maxValueForTest = await this.repository.count({ part: test.part });
+
+    if (test.sequenceNumber !== maxValueForTest){
+      const tests = await (await this.repository.find({ part: test.part })).sort(this.sortByProperty('sequenceNumber'));
+
+      await this.repository.delete({ id });
+      for (let i = deletedSequenceNum; i < maxValueForTest; i++) {
+        tests[i].sequenceNumber = i;
+        this.update(tests[i].id, tests[i]);
+      }
+    }
+    else{
+      await this.repository.delete({ id });
+    }
   }
+
+  private sortByProperty(property){  
+    return function(a,b){  
+       if(a[property] > b[property])  
+          return 1;  
+       else if(a[property] < b[property])  
+          return -1;  
+       return 0;  
+    }  
+ }
 
   @Transactional()
   public async findByTitle(
@@ -93,7 +124,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test['id']> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
@@ -106,7 +137,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,

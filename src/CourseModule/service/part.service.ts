@@ -48,9 +48,35 @@ export class PartService {
     return part;
   }
 
+  @Transactional()
   public async delete(id: Part['id']): Promise<void> {
-    await this.repository.delete(id);
+    const part: Part = await this.repository.findOne({ id }, { relations: ['lesson'] });
+    const deletedSequenceNum = part.sequenceNumber;
+    const maxValueForPart = await this.repository.count({ lesson: part.lesson });
+
+    if (part.sequenceNumber !== maxValueForPart){
+      const parts = await (await this.repository.find({ lesson: part.lesson })).sort(this.sortByProperty('sequenceNumber'));
+
+      await this.repository.delete({ id });
+      for (let i = deletedSequenceNum; i < maxValueForPart; i++) {
+        parts[i].sequenceNumber = i;
+        this.update(parts[i].id, parts[i]);
+      }
+    }
+    else{
+      await this.repository.delete({ id });
+    }
   }
+
+  private sortByProperty(property){  
+    return function(a,b){  
+       if(a[property] > b[property])  
+          return 1;  
+       else if(a[property] < b[property])  
+          return -1;  
+       return 0;  
+    }  
+ }
 
   public async findByTitle(
     title: Part['title'],

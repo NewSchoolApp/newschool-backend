@@ -58,9 +58,39 @@ export class LessonService {
   }
 
   @Transactional()
-  public async delete(id: Lesson['id']): Promise<void> {
+  public async deletex(id: Lesson['id']): Promise<void> {
     await this.repository.delete({ id });
   }
+
+  @Transactional()
+  public async delete(id: Lesson['id']): Promise<void> {
+    const lesson: Lesson = await this.repository.findOne({ id }, { relations: ['lesson'] });
+    const deletedSequenceNum = lesson.sequenceNumber;
+    const maxValueForCourse = await this.repository.count({ course: lesson.course });
+
+    if (lesson.sequenceNumber !== maxValueForCourse){
+      const lessons = await (await this.repository.find({ course: lesson.course })).sort(this.sortByProperty('sequenceNumber'));
+
+      await this.repository.delete({ id });
+      for (let i = deletedSequenceNum; i < maxValueForCourse; i++) {
+        lessons[i].sequenceNumber = i;
+        this.update(lessons[i].id, lessons[i]);
+      }
+    }
+    else{
+      await this.repository.delete({ id });
+    }
+  }
+
+  private sortByProperty(property){  
+    return function(a,b){  
+       if(a[property] > b[property])  
+          return 1;  
+       else if(a[property] < b[property])  
+          return -1;  
+       return 0;  
+    }  
+ }
 
   @Transactional()
   public async findByTitle(
