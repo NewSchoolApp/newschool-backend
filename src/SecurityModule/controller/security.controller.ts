@@ -64,6 +64,7 @@ export class SecurityController {
     }
   }
 
+  @UseInterceptors(FileInterceptor(''))
   @Post('/facebook/token')
   @HttpCode(200)
   async authenticateFacebookUser(
@@ -72,6 +73,7 @@ export class SecurityController {
     return this.service.validateFacebookUser(facebookAuthUser);
   }
 
+  @UseInterceptors(FileInterceptor(''))
   @Post('/google/token')
   @HttpCode(200)
   async authenticateGoogleUser(

@@ -8,15 +8,26 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   async findByUserId(
     user: CourseTaken['user'],
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ relations: ['user', 'course'], where: { user: user } })
+    return this.find({ relations: ['user', 'course'], where: { user: user } });
   }
 
-  async findCertificateByUserIdAndCourseId(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CertificateDTO> {
-    return this.findOne({ user, course, status: CourseTakenStatusEnum.COMPLETED }, { relations: ['user', 'course'] });
+  async findCertificateByUserIdAndCourseId(
+    user: CourseTaken['user'],
+    course: CourseTaken['course'],
+  ): Promise<CertificateDTO> {
+    return this.findOne(
+      { user, course, status: CourseTakenStatusEnum.COMPLETED },
+      { relations: ['user', 'course'] },
+    );
   }
 
-  async findCertificatesByUserId(user: CourseTaken['user']): Promise<CertificateDTO[]> {
-    return this.find({ relations: ['user', 'course'], where: { user: user, status: CourseTakenStatusEnum.COMPLETED } });
+  async findCertificatesByUserId(
+    user: CourseTaken['user'],
+  ): Promise<CertificateDTO[]> {
+    return this.find({
+      relations: ['user', 'course'],
+      where: { user: user, status: CourseTakenStatusEnum.COMPLETED },
+    });
   }
 
   async findByCourseId(

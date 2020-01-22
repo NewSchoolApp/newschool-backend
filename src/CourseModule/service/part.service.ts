@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PartRepository } from '../repository';
 import { Part } from '../entity';
 import { PartUpdateDTO } from '../dto';
@@ -6,8 +10,7 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class PartService {
-  constructor(private readonly repository: PartRepository) {
-  }
+  constructor(private readonly repository: PartRepository) {}
 
   public async add(part: Part): Promise<Part> {
     const partSameTitle: Part = await this.repository.findByTitleAndLessonId({
@@ -47,9 +50,14 @@ export class PartService {
 
   @Transactional()
   public async delete(id: Part['id']): Promise<void> {
-    const part: Part = await this.repository.findOne({ id }, { relations: ['lesson'] });
+    const part: Part = await this.repository.findOne(
+      { id },
+      { relations: ['lesson'] },
+    );
     const deletedSequenceNum = part.sequenceNumber;
-    const maxValueForPart = await this.repository.count({ lesson: part.lesson });
+    const maxValueForPart = await this.repository.count({
+      lesson: part.lesson,
+    });
     await this.repository.delete({ id });
 
     if (part.sequenceNumber === maxValueForPart) {

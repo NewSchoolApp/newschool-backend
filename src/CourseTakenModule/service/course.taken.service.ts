@@ -54,7 +54,10 @@ export class CourseTakenService {
       newCourseTaken.course,
     );
     if (courseAlreadyTaken) {
-      return await this.attendAClass(newCourseTaken.user, newCourseTaken.course);
+      return await this.attendAClass(
+        newCourseTaken.user,
+        newCourseTaken.course,
+      );
     }
 
     const newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
@@ -316,12 +319,17 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getCertificate(user: CourseTaken['user'], course: CourseTaken['course']): Promise<CertificateDTO>{
+  public async getCertificate(
+    user: CourseTaken['user'],
+    course: CourseTaken['course'],
+  ): Promise<CertificateDTO> {
     return this.repository.findCertificateByUserIdAndCourseId(user, course);
   }
 
   @Transactional()
-  public async getCertificates(user: CourseTaken['user']): Promise<CertificateDTO[]>{
+  public async getCertificates(
+    user: CourseTaken['user'],
+  ): Promise<CertificateDTO[]> {
     return this.repository.findCertificatesByUserId(user);
   }
 }

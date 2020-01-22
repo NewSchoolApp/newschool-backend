@@ -27,7 +27,7 @@ export class Test extends Audit {
   @Expose()
   @Column({
     nullable: false,
-    name: 'question'
+    name: 'question',
   })
   question: string;
 

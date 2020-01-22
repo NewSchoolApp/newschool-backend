@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
 import { Lesson } from '../entity';
@@ -6,10 +10,7 @@ import { LessonUpdateDTO } from '../dto';
 
 @Injectable()
 export class LessonService {
-  constructor(
-    private readonly repository: LessonRepository,
-  ) {
-  }
+  constructor(private readonly repository: LessonRepository) {}
 
   @Transactional()
   public async add(lesson: Lesson): Promise<Lesson> {
@@ -55,9 +56,14 @@ export class LessonService {
 
   @Transactional()
   public async delete(id: Lesson['id']): Promise<void> {
-    const lesson: Lesson = await this.repository.findOne({ id }, { relations: ['lesson'] });
+    const lesson: Lesson = await this.repository.findOne(
+      { id },
+      { relations: ['lesson'] },
+    );
     const deletedSequenceNum = lesson.sequenceNumber;
-    const maxValueForLesson = await this.repository.count({ course: lesson.course });
+    const maxValueForLesson = await this.repository.count({
+      course: lesson.course,
+    });
     await this.repository.delete({ id });
     if (lesson.sequenceNumber === maxValueForLesson) {
       return;
