@@ -58,11 +58,6 @@ export class LessonService {
   }
 
   @Transactional()
-  public async deletex(id: Lesson['id']): Promise<void> {
-    await this.repository.delete({ id });
-  }
-
-  @Transactional()
   public async delete(id: Lesson['id']): Promise<void> {
     const lesson: Lesson = await this.repository.findOne({ id }, { relations: ['lesson'] });
     const deletedSequenceNum = lesson.sequenceNumber;
