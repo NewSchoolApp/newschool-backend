@@ -7,13 +7,11 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TestRepository } from '../repository';
 import { Test } from '../entity';
 import { TestUpdateDTO } from '../dto';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class TestService {
-  constructor(
-    private readonly repository: TestRepository,
-    ) {
-    }
+  constructor(private readonly repository: TestRepository) {}
 
   @Transactional()
   public async add(test: Test): Promise<Test> {
@@ -58,33 +56,35 @@ export class TestService {
 
   @Transactional()
   public async delete(id: Test['id']): Promise<void> {
-    const test: Test = await this.repository.findOne({ id }, { relations: ['part'] });
-    const deletedSequenceNum = test.sequenceNumber;
-    const maxValueForTest = await this.repository.count({ part: test.part });
+    const deletedTest: Test = await this.repository.findOne(
+      { id },
+      { relations: ['part'] },
+    );
+    const testQuantity: number = await this.repository.count({
+      part: deletedTest.part,
+    });
+    await this.repository.delete({ id });
 
-    if (test.sequenceNumber !== maxValueForTest){
-      const tests = await (await this.repository.find({ part: test.part })).sort(this.sortByProperty('sequenceNumber'));
-
-      await this.repository.delete({ id });
-      for (let i = deletedSequenceNum; i < maxValueForTest; i++) {
-        tests[i].sequenceNumber = i;
-        this.update(tests[i].id, tests[i]);
-      }
+    if (deletedTest.sequenceNumber === testQuantity) {
+      return;
     }
-    else{
-      await this.repository.delete({ id });
+
+    const tests: Test[] = await this.repository.find({
+      where: {
+        sequenceNumber: MoreThan(deletedTest.sequenceNumber),
+      },
+      order: {
+        sequenceNumber: 'ASC',
+      },
+    });
+
+    for (const test of tests) {
+      await this.repository.save({
+        ...test,
+        sequenceNumber: test.sequenceNumber - 1,
+      });
     }
   }
-
-  private sortByProperty(property){  
-    return function(a,b){  
-       if(a[property] > b[property])  
-          return 1;  
-       else if(a[property] < b[property])  
-          return -1;  
-       return 0;  
-    }  
- }
 
   @Transactional()
   public async findByTitle(

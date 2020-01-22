@@ -106,10 +106,7 @@ export class LessonController {
     @Param('id') id: LessonDTO['id'],
     @Body() lessonUpdatedInfo: LessonUpdateDTO,
   ): Promise<LessonDTO> {
-    return await this.service.update(
-      id,
-      lessonUpdatedInfo,
-    );
+    return await this.service.update(id, lessonUpdatedInfo);
   }
 
   @Delete('/:id')
