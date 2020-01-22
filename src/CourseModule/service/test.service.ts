@@ -7,13 +7,11 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TestRepository } from '../repository';
 import { Test } from '../entity';
 import { TestUpdateDTO } from '../dto';
-import { TestMapper } from '../mapper';
 
 @Injectable()
 export class TestService {
   constructor(
     private readonly repository: TestRepository,
-    private readonly mapper: TestMapper,
     ) {
     }
 
@@ -41,7 +39,6 @@ export class TestService {
     testUpdatedInfo: TestUpdateDTO,
   ): Promise<Test> {
     const test: Test = await this.findById(id);
-    console.log('testUpdatedInfo: ' + JSON.stringify(testUpdatedInfo));
     return this.repository.save({ ...test, ...testUpdatedInfo });
   }
 
