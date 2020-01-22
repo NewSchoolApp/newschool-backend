@@ -1,37 +1,15 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
-import {
-  AttendAClassDTO,
-  CourseTakenUpdateDTO,
-  NewCourseTakenDTO,
-} from '../dto';
+import { AttendAClassDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
-import {
-  CourseService,
-  Lesson,
-  LessonService,
-  Part,
-  PartService,
-  Test,
-  TestService,
-  Course,
-} from '../../CourseModule';
+import { CourseService, Lesson, LessonService, Part, PartService, Test, TestService } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
-import {
-  CourseDTO,
-  LessonDTO,
-  PartDTO,
-  TestWithoutCorrectAlternativeDTO,
-} from '../../CourseModule/dto';
-import { UserDTO } from '../../UserModule/dto';
+import { CourseDTO, LessonDTO, PartDTO, TestWithoutCorrectAlternativeDTO } from '../../CourseModule/dto';
 import { UserMapper } from '../../UserModule/mapper';
 import { CertificateDTO } from '../dto/';
+import { User } from '../../UserModule/entity';
 
 @Injectable()
 export class CourseTakenService {
@@ -43,7 +21,8 @@ export class CourseTakenService {
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
-  ) {}
+  ) {
+  }
 
   @Transactional()
   public async add(
@@ -328,7 +307,7 @@ export class CourseTakenService {
 
   @Transactional()
   public async getCertificates(
-    user: CourseTaken['user'],
+    user: User['id'],
   ): Promise<CertificateDTO[]> {
     return this.repository.findCertificatesByUserId(user);
   }

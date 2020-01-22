@@ -1,23 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import {
-  AttendAClassDTO,
-  CourseTakenDTO,
-  CourseTakenUpdateDTO,
-  NewCourseTakenDTO,
-  CertificateDTO,
-} from '../dto';
+import { AttendAClassDTO, CertificateDTO, CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -30,6 +14,7 @@ import {
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
+import { UserDTO } from '../../UserModule/dto';
 
 @ApiUseTags('CourseTaken')
 @ApiBearerAuth()
@@ -40,7 +25,8 @@ export class CourseTakenController {
   constructor(
     private readonly service: CourseTakenService,
     private readonly mapper: CourseTakenMapper,
-  ) {}
+  ) {
+  }
 
   @Get('/user/:user')
   @HttpCode(200)
@@ -283,10 +269,10 @@ export class CourseTakenController {
     title: 'Find certificates by user',
     description: 'Find certificates by user id',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificates(
-    @Param('userId') userId: CourseTakenDTO['user'],
+    @Param('userId') userId: UserDTO['id'],
   ): Promise<CertificateDTO[]> {
     return await this.service.getCertificates(userId);
   }
