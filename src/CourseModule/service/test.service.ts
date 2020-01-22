@@ -60,7 +60,7 @@ export class TestService {
       { id },
       { relations: ['part'] },
     );
-    const testQuantity = await this.repository.count({
+    const testQuantity: number = await this.repository.count({
       part: deletedTest.part,
     });
     await this.repository.delete({ id });
@@ -69,7 +69,7 @@ export class TestService {
       return;
     }
 
-    const tests = await this.repository.find({
+    const tests: Test[] = await this.repository.find({
       where: {
         sequenceNumber: MoreThan(deletedTest.sequenceNumber),
       },

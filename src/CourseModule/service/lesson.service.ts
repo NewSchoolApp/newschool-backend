@@ -61,7 +61,7 @@ export class LessonService {
       { id },
       { relations: ['course'] },
     );
-    const lessonQuantity = await this.repository.count({
+    const lessonQuantity: number = await this.repository.count({
       course: deletedLesson.course,
     });
     await this.repository.delete({ id });
@@ -69,7 +69,7 @@ export class LessonService {
       return;
     }
 
-    const lessons = await this.repository.find({
+    const lessons: Lesson[] = await this.repository.find({
       where: {
         sequenceNumber: MoreThan(deletedLesson),
       },

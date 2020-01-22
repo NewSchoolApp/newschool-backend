@@ -55,7 +55,7 @@ export class PartService {
       { id },
       { relations: ['lesson'] },
     );
-    const partQuantity = await this.repository.count({
+    const partQuantity: number = await this.repository.count({
       lesson: deletedPart.lesson,
     });
     await this.repository.delete({ id });
@@ -64,7 +64,7 @@ export class PartService {
       return;
     }
 
-    const parts = await this.repository.find({
+    const parts: Part[] = await this.repository.find({
       where: {
         sequenceNumber: MoreThan(deletedPart.sequenceNumber),
       },
