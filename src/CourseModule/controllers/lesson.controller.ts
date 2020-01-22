@@ -108,7 +108,7 @@ export class LessonController {
   ): Promise<LessonDTO> {
     return await this.service.update(
       id,
-      this.mapper.toEntity(lessonUpdatedInfo as LessonDTO),
+      lessonUpdatedInfo,
     );
   }
 

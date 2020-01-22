@@ -54,7 +54,7 @@ export class CourseTakenService {
       newCourseTaken.course,
     );
     if (courseAlreadyTaken) {
-      throw new ConflictException('Course already taken by user');
+      return await this.attendAClass(newCourseTaken.user, newCourseTaken.course);
     }
 
     const newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
@@ -235,11 +235,13 @@ export class CourseTakenService {
       nextPart,
       nextLesson,
     );
-    courseTaken.completition = await this.calculateCompletition(
-      courseTaken,
-      currentLessonId,
-      currentPartId,
-    );
+    if (courseTaken.status === CourseTakenStatusEnum.TAKEN) {
+      courseTaken.completition = await this.calculateCompletition(
+        courseTaken,
+        currentLessonId,
+        currentPartId,
+      );
+    }
     const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken);
 
     await this.update(
@@ -267,6 +269,9 @@ export class CourseTakenService {
       courseTaken.currentPart = 1;
       courseTaken.currentLesson++;
     } else {
+      courseTaken.currentTest = 1;
+      courseTaken.currentPart = 1;
+      courseTaken.currentLesson = 1;
       courseTaken.status = CourseTakenStatusEnum.COMPLETED;
       courseTaken.courseCompleteDate = new Date(Date.now());
     }
