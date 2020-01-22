@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PartRepository } from '../repository';
 import { Part } from '../entity';
 import { PartUpdateDTO } from '../dto';
@@ -10,7 +6,8 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class PartService {
-  constructor(private readonly repository: PartRepository) {}
+  constructor(private readonly repository: PartRepository) {
+  }
 
   public async add(part: Part): Promise<Part> {
     const partSameTitle: Part = await this.repository.findByTitleAndLessonId({
@@ -48,8 +45,40 @@ export class PartService {
     return part;
   }
 
+  @Transactional()
   public async delete(id: Part['id']): Promise<void> {
-    await this.repository.delete(id);
+    const part: Part = await this.repository.findOne({ id }, { relations: ['lesson'] });
+    const deletedSequenceNum = part.sequenceNumber;
+    const maxValueForPart = await this.repository.count({ lesson: part.lesson });
+    await this.repository.delete({ id });
+
+    if (part.sequenceNumber === maxValueForPart) {
+      return;
+    }
+
+    const parts = await this.repository.find({
+      where: {
+        lesson: part.lesson,
+      },
+      order: {
+        sequenceNumber: 'ASC',
+      },
+    });
+
+    for (let i = deletedSequenceNum; i < maxValueForPart; i++) {
+      await this.repository.save({ ...parts[i], sequenceNumber: i });
+    }
+  }
+
+  private sortByProperty(property) {
+    return function(a, b) {
+      if (a[property] > b[property]) {
+        return 1;
+      } else if (a[property] < b[property]) {
+        return -1;
+      }
+      return 0;
+    };
   }
 
   public async findByTitle(
