@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
@@ -20,7 +16,6 @@ import {
   PartService,
   Test,
   TestService,
-  Course,
 } from '../../CourseModule';
 import { CourseTakenStatusEnum } from '../enum';
 import {
@@ -29,9 +24,9 @@ import {
   PartDTO,
   TestWithoutCorrectAlternativeDTO,
 } from '../../CourseModule/dto';
-import { UserDTO } from '../../UserModule/dto';
 import { UserMapper } from '../../UserModule/mapper';
 import { CertificateDTO } from '../dto/';
+import { User } from '../../UserModule/entity';
 
 @Injectable()
 export class CourseTakenService {
@@ -327,9 +322,7 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getCertificates(
-    user: CourseTaken['user'],
-  ): Promise<CertificateDTO[]> {
+  public async getCertificates(user: User['id']): Promise<CertificateDTO[]> {
     return this.repository.findCertificatesByUserId(user);
   }
 }

@@ -2,6 +2,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { CourseTaken } from '../entity';
 import { CertificateDTO } from '../dto';
 import { CourseTakenStatusEnum } from '../enum';
+import { User } from '../../UserModule/entity';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
@@ -21,9 +22,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     );
   }
 
-  async findCertificatesByUserId(
-    user: CourseTaken['user'],
-  ): Promise<CertificateDTO[]> {
+  async findCertificatesByUserId(user: User['id']): Promise<CertificateDTO[]> {
     return this.find({
       relations: ['user', 'course'],
       where: { user: user, status: CourseTakenStatusEnum.COMPLETED },

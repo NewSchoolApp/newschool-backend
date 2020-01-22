@@ -13,10 +13,10 @@ import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   AttendAClassDTO,
+  CertificateDTO,
   CourseTakenDTO,
   CourseTakenUpdateDTO,
   NewCourseTakenDTO,
-  CertificateDTO,
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
@@ -30,6 +30,7 @@ import {
   ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
+import { UserDTO } from '../../UserModule/dto';
 
 @ApiUseTags('CourseTaken')
 @ApiBearerAuth()
@@ -283,10 +284,10 @@ export class CourseTakenController {
     title: 'Find certificates by user',
     description: 'Find certificates by user id',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificates(
-    @Param('userId') userId: CourseTakenDTO['user'],
+    @Param('userId') userId: UserDTO['id'],
   ): Promise<CertificateDTO[]> {
     return await this.service.getCertificates(userId);
   }
