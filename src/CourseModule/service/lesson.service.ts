@@ -7,6 +7,7 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
 import { Lesson } from '../entity';
 import { LessonUpdateDTO } from '../dto';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class LessonService {
@@ -56,29 +57,31 @@ export class LessonService {
 
   @Transactional()
   public async delete(id: Lesson['id']): Promise<void> {
-    const lesson: Lesson = await this.repository.findOne(
+    const deletedLesson: Lesson = await this.repository.findOne(
       { id },
-      { relations: ['lesson'] },
+      { relations: ['course'] },
     );
-    const deletedSequenceNum = lesson.sequenceNumber;
-    const maxValueForLesson = await this.repository.count({
-      course: lesson.course,
+    const lessonQuantity = await this.repository.count({
+      course: deletedLesson.course,
     });
     await this.repository.delete({ id });
-    if (lesson.sequenceNumber === maxValueForLesson) {
+    if (deletedLesson.sequenceNumber === lessonQuantity) {
       return;
     }
 
     const lessons = await this.repository.find({
       where: {
-        course: lesson.course,
+        sequenceNumber: MoreThan(deletedLesson),
       },
       order: {
         sequenceNumber: 'ASC',
       },
     });
-    for (let i = deletedSequenceNum; i < maxValueForLesson; i++) {
-      await this.repository.save({ ...lessons[i], sequenceNumber: i });
+    for (const lesson of lessons) {
+      await this.repository.save({
+        ...lesson,
+        sequenceNumber: lesson.sequenceNumber - 1,
+      });
     }
   }
 

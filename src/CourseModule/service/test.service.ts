@@ -7,6 +7,7 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TestRepository } from '../repository';
 import { Test } from '../entity';
 import { TestUpdateDTO } from '../dto';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class TestService {
@@ -55,29 +56,33 @@ export class TestService {
 
   @Transactional()
   public async delete(id: Test['id']): Promise<void> {
-    const test: Test = await this.repository.findOne(
+    const deletedTest: Test = await this.repository.findOne(
       { id },
       { relations: ['part'] },
     );
-    const deletedSequenceNum = test.sequenceNumber;
-    const maxValueForTest = await this.repository.count({ part: test.part });
+    const testQuantity = await this.repository.count({
+      part: deletedTest.part,
+    });
     await this.repository.delete({ id });
 
-    if (test.sequenceNumber === maxValueForTest) {
+    if (deletedTest.sequenceNumber === testQuantity) {
       return;
     }
 
     const tests = await this.repository.find({
       where: {
-        part: test.part,
+        sequenceNumber: MoreThan(deletedTest.sequenceNumber),
       },
       order: {
         sequenceNumber: 'ASC',
       },
     });
 
-    for (let i = deletedSequenceNum; i < maxValueForTest; i++) {
-      await this.repository.save({ ...tests[i], sequenceNumber: i });
+    for (const test of tests) {
+      await this.repository.save({
+        ...test,
+        sequenceNumber: test.sequenceNumber - 1,
+      });
     }
   }
 

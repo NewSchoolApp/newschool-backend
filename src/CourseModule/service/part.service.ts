@@ -7,6 +7,7 @@ import { PartRepository } from '../repository';
 import { Part } from '../entity';
 import { PartUpdateDTO } from '../dto';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class PartService {
@@ -50,31 +51,33 @@ export class PartService {
 
   @Transactional()
   public async delete(id: Part['id']): Promise<void> {
-    const part: Part = await this.repository.findOne(
+    const deletedPart: Part = await this.repository.findOne(
       { id },
       { relations: ['lesson'] },
     );
-    const deletedSequenceNum = part.sequenceNumber;
-    const maxValueForPart = await this.repository.count({
-      lesson: part.lesson,
+    const partQuantity = await this.repository.count({
+      lesson: deletedPart.lesson,
     });
     await this.repository.delete({ id });
 
-    if (part.sequenceNumber === maxValueForPart) {
+    if (deletedPart.sequenceNumber === partQuantity) {
       return;
     }
 
     const parts = await this.repository.find({
       where: {
-        lesson: part.lesson,
+        sequenceNumber: MoreThan(deletedPart.sequenceNumber),
       },
       order: {
         sequenceNumber: 'ASC',
       },
     });
 
-    for (let i = deletedSequenceNum; i < maxValueForPart; i++) {
-      await this.repository.save({ ...parts[i], sequenceNumber: i });
+    for (const part of parts) {
+      await this.repository.save({
+        ...part,
+        sequenceNumber: part.sequenceNumber - 1,
+      });
     }
   }
 
