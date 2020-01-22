@@ -10,7 +10,10 @@ import { LessonUpdateDTO } from '../dto';
 
 @Injectable()
 export class LessonService {
-  constructor(private readonly repository: LessonRepository) {}
+  constructor(
+    private readonly repository: LessonRepository,
+    ) {
+    }
 
   @Transactional()
   public async add(lesson: Lesson): Promise<Lesson> {
