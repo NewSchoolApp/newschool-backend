@@ -1,7 +1,23 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { AttendAClassDTO, CertificateDTO, CourseTakenDTO, CourseTakenUpdateDTO, NewCourseTakenDTO } from '../dto';
+import {
+  AttendAClassDTO,
+  CertificateDTO,
+  CourseTakenDTO,
+  CourseTakenUpdateDTO,
+  NewCourseTakenDTO,
+} from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
   ApiBearerAuth,
@@ -25,8 +41,7 @@ export class CourseTakenController {
   constructor(
     private readonly service: CourseTakenService,
     private readonly mapper: CourseTakenMapper,
-  ) {
-  }
+  ) {}
 
   @Get('/user/:user')
   @HttpCode(200)

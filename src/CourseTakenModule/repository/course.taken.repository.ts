@@ -22,9 +22,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     );
   }
 
-  async findCertificatesByUserId(
-    user: User['id'],
-  ): Promise<CertificateDTO[]> {
+  async findCertificatesByUserId(user: User['id']): Promise<CertificateDTO[]> {
     return this.find({
       relations: ['user', 'course'],
       where: { user: user, status: CourseTakenStatusEnum.COMPLETED },
