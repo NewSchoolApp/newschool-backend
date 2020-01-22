@@ -61,13 +61,13 @@ export class LessonService {
   public async delete(id: Lesson['id']): Promise<void> {
     const lesson: Lesson = await this.repository.findOne({ id }, { relations: ['lesson'] });
     const deletedSequenceNum = lesson.sequenceNumber;
-    const maxValueForCourse = await this.repository.count({ course: lesson.course });
+    const maxValueForLesson = await this.repository.count({ course: lesson.course });
 
-    if (lesson.sequenceNumber !== maxValueForCourse){
+    if (lesson.sequenceNumber !== maxValueForLesson){
       const lessons = await (await this.repository.find({ course: lesson.course })).sort(this.sortByProperty('sequenceNumber'));
 
       await this.repository.delete({ id });
-      for (let i = deletedSequenceNum; i < maxValueForCourse; i++) {
+      for (let i = deletedSequenceNum; i < maxValueForLesson; i++) {
         lessons[i].sequenceNumber = i;
         this.update(lessons[i].id, lessons[i]);
       }

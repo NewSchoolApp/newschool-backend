@@ -124,7 +124,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test['id']> {
-    Test['part'] = part;
+    test: Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
@@ -137,7 +137,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test> {
-    Test['part'] = part;
+    test: Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
