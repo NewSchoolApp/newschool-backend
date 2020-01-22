@@ -81,17 +81,6 @@ export class PartService {
     }
   }
 
-  private sortByProperty(property) {
-    return function(a, b) {
-      if (a[property] > b[property]) {
-        return 1;
-      } else if (a[property] < b[property]) {
-        return -1;
-      }
-      return 0;
-    };
-  }
-
   public async findByTitle(
     title: Part['title'],
     lesson: Part['lesson'],
