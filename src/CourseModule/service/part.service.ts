@@ -7,6 +7,7 @@ import { PartRepository } from '../repository';
 import { Part } from '../entity';
 import { PartUpdateDTO } from '../dto';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class PartService {
@@ -50,33 +51,35 @@ export class PartService {
 
   @Transactional()
   public async delete(id: Part['id']): Promise<void> {
-    const part: Part = await this.repository.findOne({ id }, { relations: ['lesson'] });
-    const deletedSequenceNum = part.sequenceNumber;
-    const maxValueForPart = await this.repository.count({ lesson: part.lesson });
+    const deletedPart: Part = await this.repository.findOne(
+      { id },
+      { relations: ['lesson'] },
+    );
+    const partQuantity: number = await this.repository.count({
+      lesson: deletedPart.lesson,
+    });
+    await this.repository.delete({ id });
 
-    if (part.sequenceNumber !== maxValueForPart){
-      const parts = await (await this.repository.find({ lesson: part.lesson })).sort(this.sortByProperty('sequenceNumber'));
-
-      await this.repository.delete({ id });
-      for (let i = deletedSequenceNum; i < maxValueForPart; i++) {
-        parts[i].sequenceNumber = i;
-        this.update(parts[i].id, parts[i]);
-      }
+    if (deletedPart.sequenceNumber === partQuantity) {
+      return;
     }
-    else{
-      await this.repository.delete({ id });
+
+    const parts: Part[] = await this.repository.find({
+      where: {
+        sequenceNumber: MoreThan(deletedPart.sequenceNumber),
+      },
+      order: {
+        sequenceNumber: 'ASC',
+      },
+    });
+
+    for (const part of parts) {
+      await this.repository.save({
+        ...part,
+        sequenceNumber: part.sequenceNumber - 1,
+      });
     }
   }
-
-  private sortByProperty(property){  
-    return function(a,b){  
-       if(a[property] > b[property])  
-          return 1;  
-       else if(a[property] < b[property])  
-          return -1;  
-       return 0;  
-    }  
- }
 
   public async findByTitle(
     title: Part['title'],

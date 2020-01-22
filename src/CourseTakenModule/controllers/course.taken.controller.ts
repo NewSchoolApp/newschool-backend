@@ -263,7 +263,10 @@ export class CourseTakenController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getCertificate(@Param('userId') userId: CourseTakenDTO['user'], @Param('courseId') courseId: CourseTakenDTO['course']): Promise<CertificateDTO> {
+  public async getCertificate(
+    @Param('userId') userId: CourseTakenDTO['user'],
+    @Param('courseId') courseId: CourseTakenDTO['course'],
+  ): Promise<CertificateDTO> {
     return await this.service.getCertificate(userId, courseId);
   }
 
@@ -282,7 +285,9 @@ export class CourseTakenController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getCertificates(@Param('userId') userId: CourseTakenDTO['user']): Promise<CertificateDTO[]> {
+  public async getCertificates(
+    @Param('userId') userId: CourseTakenDTO['user'],
+  ): Promise<CertificateDTO[]> {
     return await this.service.getCertificates(userId);
   }
 }

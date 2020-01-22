@@ -103,7 +103,7 @@ export class SecurityService {
     googleAuthUser: GoogleAuthUserDTO,
   ): Promise<GeneratedTokenDTO> {
     const user: User = await this.userService.findByEmail(googleAuthUser.email);
-    if (!user.facebookId) {
+    if (!user.googleSub) {
       user.googleSub = googleAuthUser.sub;
       const { role, ...userInfo } = user;
       const userWithGoogleSub: User = await this.userService.update(
