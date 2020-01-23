@@ -81,8 +81,10 @@ export class TestController {
   @ApiImplicitBody({ name: 'Test', type: NewTestDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() test): Promise<TestDTO> {
-    return this.mapper.toDto(await this.service.add(test));
+  public async add(@Body() test: TestDTO): Promise<TestDTO> {
+    return this.mapper.toDto(
+      await this.service.add(this.mapper.toEntity(test)),
+    );
   }
 
   @Put('/:id')
