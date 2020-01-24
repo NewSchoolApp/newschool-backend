@@ -297,7 +297,7 @@ export class CourseTakenService {
 
       completition = percentualPerLesson * (courseTaken.currentLesson - 1);
       completition += percentualPerPart * (courseTaken.currentPart - 1);
-      completition += percentualPerTest * (courseTaken.currentTest - 1);
+      completition += percentualPerTest * courseTaken.currentTest;
     } else {
       completition = 100;
     }
