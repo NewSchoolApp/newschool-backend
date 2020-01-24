@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PartRepository } from '../repository';
@@ -20,18 +19,22 @@ export class PartService {
       throw new BadRequestException('Part must have youtube or vimeo url');
     }
 
-    try {
-      return this.repository.save({
-        ...part,
-        sequenceNumber:
-          1 + (await this.repository.count({ lesson: part.lesson })),
-      });
-    } catch (e) {
-      if (e.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('Part with same title already exists');
-      }
-      throw new InternalServerErrorException(e.message);
+    const lessonSameTitle: Part = await this.repository.findByTitleAndLessonId({
+      title: part.title,
+      lesson: part.lesson,
+    });
+
+    if (lessonSameTitle) {
+      throw new ConflictException(
+        'There is already a part with this title for this lesson',
+      );
     }
+
+    return this.repository.save({
+      ...part,
+      sequenceNumber:
+        1 + (await this.repository.count({ lesson: part.lesson })),
+    });
   }
 
   @Transactional()

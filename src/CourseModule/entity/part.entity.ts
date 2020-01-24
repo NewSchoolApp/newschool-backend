@@ -20,7 +20,6 @@ export class Part extends Audit {
   @Column({
     nullable: false,
     name: 'title',
-    unique: true,
   })
   title: string;
 

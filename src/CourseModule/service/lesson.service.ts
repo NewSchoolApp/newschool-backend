@@ -6,7 +6,7 @@ import {
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
 import { Lesson } from '../entity';
-import { LessonUpdateDTO } from '../dto';
+import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class LessonService {
   constructor(private readonly repository: LessonRepository) {}
 
   @Transactional()
-  public async add(lesson: Lesson): Promise<Lesson> {
+  public async add(lesson: NewLessonDTO): Promise<Lesson> {
     const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId(
       {
         title: lesson.title,
@@ -22,14 +22,16 @@ export class LessonService {
       },
     );
     if (lessonSameTitle) {
-      throw new ConflictException();
+      throw new ConflictException(
+        'There is already a lesson with this title for this course',
+      );
     }
 
-    const lessonCount = await this.repository.count({ course: lesson.course });
-    // eslint-disable-next-line require-atomic-updates
-    lesson.sequenceNumber = lessonCount + 1;
-
-    return this.repository.save(lesson);
+    return this.repository.save({
+      ...lesson,
+      sequenceNumber:
+        1 + (await this.repository.count({ course: lesson.course })),
+    });
   }
 
   @Transactional()
