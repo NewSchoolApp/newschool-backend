@@ -1,10 +1,16 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { Course } from '../entity';
-import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsString,
+} from 'class-validator';
 
 export class NewCourseDTO {
   @ApiModelProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
   title: Course['title'];
@@ -19,12 +25,15 @@ export class NewCourseDTO {
   @Expose()
   description: Course['description'];
 
-  @ApiModelProperty({ type: String })
-  @IsString()
+  @ApiModelProperty({ type: Number })
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
   @Expose()
   workload: Course['workload'];
 
   @ApiModelProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
   authorName: Course['authorName'];
