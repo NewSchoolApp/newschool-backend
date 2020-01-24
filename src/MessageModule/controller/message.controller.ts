@@ -23,7 +23,7 @@ import {
   ApiUnauthorizedResponse,
   ApiUseTags,
 } from '@nestjs/swagger';
-import { ContactUsSwagger, EmailSwagger } from '../swagger';
+import { EmailSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { TemplateDTO } from '../dto/templates.dto';
 import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
@@ -67,7 +67,7 @@ export class MessageController {
     title: 'Send contact us message',
     description: 'Send a new contact us email message',
   })
-  @ApiImplicitBody({ name: 'ContactUs', type: ContactUsSwagger })
+  @ApiImplicitBody({ name: 'ContactUs', type: ContactUsDTO })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN/External role',
@@ -77,7 +77,7 @@ export class MessageController {
   public async sendEmailContactUs(
     @Body() contactUs: ContactUsDTO,
   ): Promise<void> {
-    this.logger.log(`ContactUs: ${contactUs}`);
+    this.logger.log(`ContactUs: ${JSON.stringify(contactUs)}`);
     await this.service.sendContactUsEmail(contactUs);
   }
 
