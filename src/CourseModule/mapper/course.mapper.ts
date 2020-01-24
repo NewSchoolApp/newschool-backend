@@ -5,12 +5,11 @@ import { Course } from '../entity';
 
 @Injectable()
 export class CourseMapper extends Mapper<Course, CourseDTO> {
-
   constructor() {
     super(Course, CourseDTO);
   }
 
-  toDto(entityObject: Course): CourseDTO {
+  toDto(entityObject: Partial<Course>): CourseDTO {
     return super.toDto(entityObject);
   }
 
@@ -18,12 +17,11 @@ export class CourseMapper extends Mapper<Course, CourseDTO> {
     return super.toDtoList(entityArray);
   }
 
-  toEntity(dtoObject: CourseDTO): Course {
+  toEntity(dtoObject: Partial<CourseDTO>): Course {
     return super.toEntity(dtoObject);
   }
 
-  toEntityList(dtoArray: CourseDTO): Course[] {
+  toEntityList(dtoArray: CourseDTO[]): Course[] {
     return super.toEntityList(dtoArray);
   }
-
 }

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SecurityController } from './controller';
-import { SecurityService } from './service';
+import { RoleService, SecurityService } from './service';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientCredentials, Role } from './entity';
@@ -15,14 +16,19 @@ import { UserModule } from '../UserModule';
       ClientCredentials,
       ClientCredentialsRepository,
     ]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN },
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
+      }),
+      inject: [ConfigService],
     }),
     UserModule,
   ],
   controllers: [SecurityController],
-  providers: [SecurityService],
+  providers: [SecurityService, RoleService],
+  exports: [SecurityService, RoleService],
 })
-export class SecurityModule {
-}
+export class SecurityModule {}

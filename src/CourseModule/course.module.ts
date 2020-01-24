@@ -1,23 +1,72 @@
 import { Module } from '@nestjs/common';
-import { CourseController } from './controllers';
-import { CourseService } from './service';
+import {
+  CourseController,
+  LessonController,
+  PartController,
+  TestController,
+} from './controllers';
+import {
+  CourseService,
+  LessonService,
+  PartService,
+  TestService,
+} from './service';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseRepository } from './repository';
-import { Course } from './entity';
-import { CourseMapper } from './mapper';
+import {
+  CourseRepository,
+  LessonRepository,
+  PartRepository,
+  TestRepository,
+} from './repository';
+import { Course, Lesson, Part, Test } from './entity';
+import { CourseMapper, LessonMapper, PartMapper, TestMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
+import { UserModule } from '../UserModule';
+import { SecurityModule } from '../SecurityModule';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Course, CourseRepository]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.EXPIRES_IN_ACCESS_TOKEN },
+    TypeOrmModule.forFeature([
+      Course,
+      CourseRepository,
+      Lesson,
+      LessonRepository,
+      Part,
+      PartRepository,
+      Test,
+      TestRepository,
+    ]),
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        },
+      }),
+      inject: [ConfigService],
     }),
+    MulterModule.register({ dest: './upload' }),
+    UserModule,
+    SecurityModule,
   ],
-  controllers: [CourseController],
-  providers: [CourseService, CourseMapper],
-  exports: [CourseService],
+  controllers: [
+    CourseController,
+    LessonController,
+    PartController,
+    TestController,
+  ],
+  providers: [
+    CourseService,
+    CourseMapper,
+    LessonService,
+    LessonMapper,
+    PartService,
+    PartMapper,
+    TestService,
+    TestMapper,
+  ],
+  exports: [CourseService, LessonService, PartService, TestService],
 })
-export class CourseModule {
-}
+export class CourseModule {}

@@ -1,29 +1,37 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { User } from '../entity';
-import { IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
+import { RoleEnum } from '../../SecurityModule/enum';
 
 export class UserUpdateDTO {
   @ApiModelProperty({ type: String })
-  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  id: User['id'];
+
+  @ApiModelProperty({ type: String })
+  @IsString()
+  @Expose()
   name: User['name'];
 
   @ApiModelProperty({ type: String })
-  @IsNotEmpty()
+  @IsString()
+  @Expose()
   email: User['email'];
 
   @ApiModelProperty({ type: String })
-  @IsNotEmpty()
+  @IsString()
+  @Expose()
   urlFacebook: User['urlFacebook'];
 
   @ApiModelProperty({ type: String })
-  @IsNotEmpty()
+  @IsString()
+  @Expose()
   urlInstagram: User['urlInstagram'];
 
-  @ApiModelProperty({ type: String })
-  @IsNotEmpty()
-  password: User['password'];
-
-  @ApiModelProperty({ type: User['role'] })
-  @IsNotEmpty()
-  role: User['role'];
+  @ApiModelProperty({ type: RoleEnum })
+  @IsOptional()
+  @Expose()
+  role?: RoleEnum;
 }

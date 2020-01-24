@@ -10,5 +10,4 @@ export class UserUpdatedInfoSwagger {
 
   @ApiModelProperty({ type: String })
   password: User['password'];
-
 }
