@@ -38,9 +38,10 @@ export class Course extends Audit {
 
   @Column({
     nullable: false,
+    type: 'int',
   })
   @Expose()
-  workload: string;
+  workload: number;
 
   @Column({
     nullable: true,
