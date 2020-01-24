@@ -43,6 +43,7 @@ export class MessageService {
         template: 'contact-us',
         context: {
           name: contactUs.name,
+          cellphone: contactUs.cellphone,
           message: contactUs.message,
         },
       });
