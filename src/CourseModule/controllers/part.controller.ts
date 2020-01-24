@@ -15,16 +15,16 @@ import { NewPartDTO, PartDTO, PartUpdateDTO } from '../dto';
 import { PartMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitQuery,
   ApiOkResponse,
   ApiOperation,
-  ApiUseTags,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
-@ApiUseTags('Part')
+@ApiTags('Part')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.PART_ENDPOINT}`,
@@ -37,9 +37,9 @@ export class PartController {
 
   @Get('/lesson/:lesson')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Parts', description: 'Get all Parts' })
+  @ApiOperation({ summary: 'Get Parts', description: 'Get all Parts' })
   @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'lesson',
     type: String,
     required: true,
@@ -56,13 +56,13 @@ export class PartController {
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: PartDTO })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ title: 'Find Part by id', description: 'Find Part by id' })
+  @ApiOperation({ summary: 'Find Part by id', description: 'Find Part by id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: PartDTO['id']): Promise<PartDTO> {
@@ -72,8 +72,8 @@ export class PartController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: PartDTO, description: 'Part created' })
-  @ApiOperation({ title: 'Add part', description: 'Creates a new part' })
-  @ApiImplicitBody({ name: 'Part', type: NewPartDTO })
+  @ApiOperation({ summary: 'Add part', description: 'Creates a new part' })
+  @ApiBody({ type: NewPartDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() part: PartDTO): Promise<PartDTO> {
@@ -85,13 +85,13 @@ export class PartController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: PartDTO })
-  @ApiImplicitBody({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ title: 'Update part', description: 'Update part by id' })
+  @ApiOperation({ summary: 'Update part', description: 'Update part by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -104,13 +104,13 @@ export class PartController {
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ title: 'Delete part', description: 'Delete part by id' })
+  @ApiOperation({ summary: 'Delete part', description: 'Delete part by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: PartDTO['id']): Promise<void> {

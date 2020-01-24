@@ -1,16 +1,16 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Lesson } from '../entity';
 
 export class LessonUpdatedInfoSwagger {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   title: Lesson['title'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   description: Lesson['description'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   course: Lesson['course'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   sequenceNumber: Lesson['sequenceNumber'];
 }

@@ -1,28 +1,28 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { CourseTaken } from '../entity';
 
 export class CourseTakenUpdatedInfoSwagger {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   user: CourseTaken['user'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   course: CourseTaken['course'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   courseStartDate: CourseTaken['courseStartDate'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   courseCompleteDate: CourseTaken['courseCompleteDate'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   completition: CourseTaken['completition'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   currentLesson: CourseTaken['currentLesson'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   currentPart: CourseTaken['currentPart'];
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   currentTest: CourseTaken['currentTest'];
 }

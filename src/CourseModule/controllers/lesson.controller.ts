@@ -15,16 +15,16 @@ import { LessonDTO, LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { LessonMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitQuery,
   ApiOkResponse,
   ApiOperation,
-  ApiUseTags,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
-@ApiUseTags('Lesson')
+@ApiTags('Lesson')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.LESSON_ENDPOINT}`,
@@ -38,7 +38,7 @@ export class LessonController {
   @Get('/course/:course')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Lessons',
+    summary: 'Get Lessons',
     description: 'Get all Lessons by Course',
   })
   @ApiOkResponse({
@@ -46,7 +46,7 @@ export class LessonController {
     isArray: true,
     description: 'All Lessons by Course',
   })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
@@ -63,14 +63,14 @@ export class LessonController {
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: LessonDTO })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Lesson id',
   })
   @ApiOperation({
-    title: 'Find Lesson by id',
+    summary: 'Find Lesson by id',
     description: 'Find Lesson by id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -82,8 +82,8 @@ export class LessonController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: LessonDTO, description: 'Lesson created' })
-  @ApiOperation({ title: 'Add lesson', description: 'Creates a new lesson' })
-  @ApiImplicitBody({ name: 'Lesson', type: NewLessonDTO })
+  @ApiOperation({ summary: 'Add lesson', description: 'Creates a new lesson' })
+  @ApiBody({ type: NewLessonDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() lesson): Promise<LessonDTO> {
@@ -93,13 +93,16 @@ export class LessonController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: LessonDTO })
-  @ApiImplicitBody({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Lesson id',
   })
-  @ApiOperation({ title: 'Update lesson', description: 'Update lesson by id' })
+  @ApiOperation({
+    summary: 'Update lesson',
+    description: 'Update lesson by id',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -112,13 +115,16 @@ export class LessonController {
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Lesson id',
   })
-  @ApiOperation({ title: 'Delete lesson', description: 'Delete lesson by id' })
+  @ApiOperation({
+    summary: 'Delete lesson',
+    description: 'Delete lesson by id',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: LessonDTO['id']): Promise<void> {

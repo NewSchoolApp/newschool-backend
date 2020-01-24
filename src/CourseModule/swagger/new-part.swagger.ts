@@ -1,19 +1,19 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Part } from '../entity';
 
 export class NewPartSwagger {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   title: Part['title'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   description: Part['description'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   vimeoUrl: Part['vimeoUrl'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   youtubeURL: Part['youtubeUrl'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   lesson: Part['lesson'];
 }

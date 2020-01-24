@@ -31,22 +31,22 @@ import {
 import { UserMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiGoneResponse,
-  ApiImplicitBody,
-  ApiImplicitQuery,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
+  ApiTags,
   ApiUnauthorizedResponse,
-  ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
 import { CertificateUserDTO } from '../dto/CertificateUserDTO';
 
-@ApiUseTags('User')
+@ApiTags('User')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`,
@@ -63,7 +63,7 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Users', description: 'Get all users' })
+  @ApiOperation({ summary: 'Get Users', description: 'Get all users' })
   @ApiOkResponse({ type: NewUserDTO, isArray: true, description: 'All users' })
   @ApiUnauthorizedResponse({
     description:
@@ -78,14 +78,8 @@ export class UserController {
   @Get('/me')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
-  @ApiImplicitQuery({
-    name: 'id',
-    type: Number,
-    required: true,
-    description: 'User id',
-  })
   @ApiOperation({
-    title: 'Find user by jwt id',
+    summary: 'Find user by jwt id',
     description: 'Decodes de jwt and finds the user by the jwt id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -109,7 +103,7 @@ export class UserController {
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({
-    title: 'Update user by jwt id',
+    summary: 'Update user by jwt id',
     description: 'Decodes de jwt and updates the user by the jwt id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -136,7 +130,7 @@ export class UserController {
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({
-    title: 'Update user by jwt id',
+    summary: 'Update user by jwt id',
     description: 'Decodes de jwt and updates the user password by the jwt id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -162,13 +156,13 @@ export class UserController {
   @Get(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'User id',
   })
-  @ApiOperation({ title: 'Find user by id', description: 'Find user by id' })
+  @ApiOperation({ summary: 'Find user by id', description: 'Find user by id' })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({
     description:
@@ -185,8 +179,8 @@ export class UserController {
   @HttpCode(201)
   @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
-  @ApiOperation({ title: 'Add user', description: 'Creates a new user' })
-  @ApiImplicitBody({ name: 'User', type: NewUserDTO })
+  @ApiOperation({ summary: 'Add user', description: 'Creates a new user' })
+  @ApiBody({ type: NewUserDTO })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
@@ -203,10 +197,10 @@ export class UserController {
   @Transactional()
   @ApiCreatedResponse({ type: NewUserDTO, description: 'User student created' })
   @ApiOperation({
-    title: 'Add student user',
+    summary: 'Add student user',
     description: 'Creates a new student',
   })
-  @ApiImplicitBody({ name: 'User', type: NewStudentDTO })
+  @ApiBody({ type: NewStudentDTO })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have EXTERNAL role',
@@ -222,13 +216,13 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'User id',
   })
-  @ApiOperation({ title: 'Update user', description: 'Update user by id' })
+  @ApiOperation({ summary: 'Update user', description: 'Update user by id' })
   @ApiOkResponse({ type: UserDTO })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({
@@ -249,7 +243,7 @@ export class UserController {
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({
-    title: 'change-password',
+    summary: 'change-password',
     description: 'Changes password from an authenticated user',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -274,7 +268,7 @@ export class UserController {
   @Transactional()
   @ApiOkResponse({ type: ChangePasswordRequestIdDTO })
   @ApiOperation({
-    title: 'Create change password request',
+    summary: 'Create change password request',
     description: 'Create change password request',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
@@ -299,7 +293,7 @@ export class UserController {
   @Get('/forgot-password/:changePasswordRequestId/validate')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Validate change password request',
+    summary: 'Validate change password request',
     description:
       'validate change password expiration time. If time is not expired, 200 is returned',
   })
@@ -325,7 +319,7 @@ export class UserController {
   @Post('/forgot-password/:changePasswordRequestId')
   @HttpCode(200)
   @ApiOperation({
-    title: 'change password on forgot password flow',
+    summary: 'change password on forgot password flow',
   })
   @ApiNotFoundResponse({
     description: 'thrown if change password request is not found',
@@ -361,7 +355,7 @@ export class UserController {
   @Get('me/certificate')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Certificates',
+    summary: 'Get Certificates',
     description: 'Get All Certificates',
   })
   @ApiOkResponse({
@@ -387,7 +381,7 @@ export class UserController {
   @Get(':id/certificate')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Certificates',
+    summary: 'Get Certificates',
     description: 'Get All Certificates',
   })
   @ApiOkResponse({
@@ -407,15 +401,15 @@ export class UserController {
     return await this.service.getCertificateByUser(id);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'User id',
   })
-  @ApiOperation({ title: 'Delete user', description: 'Delete user by id' })
+  @ApiOperation({ summary: 'Delete user', description: 'Delete user by id' })
   @ApiOkResponse({ type: null })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({

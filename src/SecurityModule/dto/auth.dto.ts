@@ -1,24 +1,24 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { GrantTypeEnum } from '../enum';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthDTO {
-  @ApiModelProperty({ enum: ['client_credentials', 'password'] })
+  @ApiProperty({ enum: ['client_credentials', 'password', 'refresh_token'] })
   @IsEnum(GrantTypeEnum)
   // tslint:disable-next-line:variable-name
   grant_type: GrantTypeEnum;
 
-  @ApiModelProperty()
+  @ApiProperty()
   @IsString()
   @IsOptional()
   username: string;
 
-  @ApiModelProperty()
+  @ApiProperty()
   @IsString()
   @IsOptional()
   password: string;
 
-  @ApiModelProperty()
+  @ApiProperty()
   @IsString()
   @IsOptional()
   refresh_token: string;
