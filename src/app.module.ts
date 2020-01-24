@@ -3,24 +3,33 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { database } from './config/database';
 import { SecurityModule } from './SecurityModule';
 import { UserModule } from './UserModule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { CourseModule } from './CourseModule';
 import { CourseTakenModule } from './CourseTakenModule';
 import { CertificateModule } from './CertificateModule';
 import { MessageModule } from './MessageModule';
 import { UploadModule } from './UploadModule';
+import { AppConfigModule, AppConfigService } from './AppConfigModule';
+
+// const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
+//   imports: [AppConfigModule],
+//   useFactory: (appConfigService: AppConfigService) => appConfigService.getDatabaseConfig(),
+//   inject: [AppConfigService],
+// };
 
 @Module({
   imports: [
+    AppConfigModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: database,
-      inject: [ConfigService],
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (appConfigService: AppConfigService) =>
+        appConfigService.getDatabaseConfig(),
     }),
     MailerModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
