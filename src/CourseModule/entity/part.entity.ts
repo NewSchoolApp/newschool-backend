@@ -10,47 +10,55 @@ import {
 } from 'typeorm';
 import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
+import { Expose } from 'class-transformer';
 
 @Unique(['sequenceNumber', 'lesson'])
 @Entity()
 export class Part extends Audit {
   @PrimaryGeneratedColumn('uuid')
+  @Expose()
   id: string;
 
   @Column({
     nullable: false,
     name: 'title',
   })
+  @Expose()
   title: string;
 
   @Column({
     nullable: false,
     name: 'description',
   })
+  @Expose()
   description: string;
 
   @Column({
     nullable: true,
     name: 'vimeo_url',
   })
+  @Expose()
   vimeoUrl: string;
 
   @Column({
     nullable: true,
     name: 'youtube_url',
   })
+  @Expose()
   youtubeUrl: string;
 
   @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.parts)
   @JoinColumn({
     name: 'lesson_id',
   })
+  @Expose()
   lesson: Lesson;
 
   @Column({
     nullable: false,
     name: 'seq_num',
   })
+  @Expose()
   sequenceNumber: number;
 
   @OneToMany<Test>('Test', (test: Test) => test.part)
