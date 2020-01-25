@@ -1,12 +1,12 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class GeneratedTokenDTO {
-  @ApiModelProperty()
+  @ApiProperty()
   accessToken: string;
-  @ApiModelProperty()
+  @ApiProperty()
   refreshToken: string;
-  @ApiModelProperty()
+  @ApiProperty()
   tokenType: string;
-  @ApiModelProperty()
+  @ApiProperty()
   expiresIn: string;
 }

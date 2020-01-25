@@ -1,9 +1,9 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class TemplateDTO {
-  @ApiModelProperty({
+  @ApiProperty({
     type: String,
     description: 'Template Name, <strong>this name is unique</strong>.',
     required: true,
@@ -13,7 +13,7 @@ export class TemplateDTO {
   @Expose()
   name: string;
 
-  @ApiModelProperty({
+  @ApiProperty({
     type: String,
     description: 'Value that will be placed in the message subject.',
     required: true,
@@ -23,7 +23,7 @@ export class TemplateDTO {
   @Expose()
   title: string;
 
-  @ApiModelProperty({
+  @ApiProperty({
     type: String,
     description: 'Template to be saved',
     required: true,

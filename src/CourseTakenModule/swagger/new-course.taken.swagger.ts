@@ -1,13 +1,13 @@
 import { CourseTaken } from '../entity';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class NewCourseTakenSwagger {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   user: CourseTaken['user'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   course: CourseTaken['course'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   status: CourseTaken['status'];
 }

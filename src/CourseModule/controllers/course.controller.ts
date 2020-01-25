@@ -19,15 +19,15 @@ import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
 import { CourseMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitParam,
-  ApiImplicitQuery,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
   ApiUnauthorizedResponse,
-  ApiUseTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -36,7 +36,7 @@ import { SecurityService } from '../../SecurityModule/service';
 import { NewUserDTO } from '../../UserModule/dto';
 import { Course } from '../entity';
 
-@ApiUseTags('Course')
+@ApiTags('Course')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`,
@@ -50,8 +50,8 @@ export class CourseController {
 
   @Get()
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Courses', description: 'Get all Courses' })
-  @ApiImplicitQuery({
+  @ApiOperation({ summary: 'Get Courses', description: 'Get all Courses' })
+  @ApiQuery({
     name: 'enabled',
     type: Boolean,
     required: false,
@@ -75,14 +75,14 @@ export class CourseController {
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Find Course by id',
+    summary: 'Find Course by id',
     description: 'Find Course by id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -94,14 +94,14 @@ export class CourseController {
   @Get('/slug/:slug')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'slug',
     type: String,
     required: true,
     description: 'Course slug',
   })
   @ApiOperation({
-    title: 'Find Course by slug',
+    summary: 'Find Course by slug',
     description: 'Find Course by slug',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -116,8 +116,8 @@ export class CourseController {
   @UseInterceptors(FileInterceptor('photo'))
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
-  @ApiOperation({ title: 'Add course', description: 'Creates a new course' })
-  @ApiImplicitBody({ name: 'Course', type: NewCourseDTO })
+  @ApiOperation({ summary: 'Add course', description: 'Creates a new course' })
+  @ApiBody({ type: NewCourseDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(
@@ -130,13 +130,16 @@ export class CourseController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Course id',
   })
-  @ApiOperation({ title: 'Update course', description: 'Update course by id' })
+  @ApiOperation({
+    summary: 'Update course',
+    description: 'Update course by id',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -149,13 +152,16 @@ export class CourseController {
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Course id',
   })
-  @ApiOperation({ title: 'Delete course', description: 'Delete course by id' })
+  @ApiOperation({
+    summary: 'Delete course',
+    description: 'Delete course by id',
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: CourseDTO['id']): Promise<void> {
@@ -165,14 +171,14 @@ export class CourseController {
   @Get('author/:name')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'name',
     type: Number,
     required: true,
     description: 'Author name',
   })
   @ApiOperation({
-    title: 'Find courses by author name',
+    summary: 'Find courses by author name',
     description: 'Find courses by author name',
   })
   @ApiNotFoundResponse({ description: 'thrown if courses are not found' })

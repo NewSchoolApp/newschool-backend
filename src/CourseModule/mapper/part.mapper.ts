@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Mapper } from '../../CommonsModule/mapper';
 import { PartDTO } from '../dto/part.dto';
 import { Part } from '../entity';
+import { NewPartDTO } from '../dto';
 
 @Injectable()
 export class PartMapper extends Mapper<Part, PartDTO> {
@@ -9,7 +10,7 @@ export class PartMapper extends Mapper<Part, PartDTO> {
     super(Part, PartDTO);
   }
 
-  toDto(entityObject: Part): PartDTO {
+  toDto(entityObject: Partial<Part>): PartDTO {
     return super.toDto(entityObject);
   }
 
@@ -17,7 +18,7 @@ export class PartMapper extends Mapper<Part, PartDTO> {
     return super.toDtoList(entityArray);
   }
 
-  toEntity(dtoObject: PartDTO): Part {
+  toEntity(dtoObject: Partial<PartDTO>): Part {
     return super.toEntity(dtoObject);
   }
 
