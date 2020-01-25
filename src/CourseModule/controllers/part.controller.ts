@@ -76,10 +76,8 @@ export class PartController {
   @ApiBody({ type: NewPartDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() part: PartDTO): Promise<PartDTO> {
-    return this.mapper.toDto(
-      await this.service.add(this.mapper.toEntity(part)),
-    );
+  public async add(@Body() part: NewPartDTO): Promise<PartDTO> {
+    return this.mapper.toDto(await this.service.add(this.mapper.toEntity(part)));
   }
 
   @Put('/:id')

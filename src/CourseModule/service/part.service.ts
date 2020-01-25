@@ -15,8 +15,8 @@ export class PartService {
   constructor(private readonly repository: PartRepository) {}
 
   public async add(part: Part): Promise<Part> {
-    if (!part.youtubeUrl && !part.vimeoUrl) {
-      throw new BadRequestException('Part must have youtube or vimeo url');
+    if (!part.youtubeUrl) {
+      throw new BadRequestException('Part must have youtube url');
     }
 
     const lessonSameTitle: Part = await this.repository.findByTitleAndLessonId({
