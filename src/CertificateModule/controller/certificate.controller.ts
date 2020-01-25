@@ -12,21 +12,21 @@ import {
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitQuery,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
+  ApiTags,
   ApiUnauthorizedResponse,
-  ApiUseTags,
 } from '@nestjs/swagger';
 import { CertificateService } from '../service';
 import { CertificateMapper } from '../mapper';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
 import { RoleEnum } from '../../SecurityModule/enum';
 
-@ApiUseTags('Certificate')
+@ApiTags('Certificate')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.CERTIFICATE_ENDPOINT}`,
@@ -40,7 +40,7 @@ export class CertificateController {
   @Get()
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Certificates',
+    summary: 'Get Certificates',
     description: 'Get all certificates',
   })
   @ApiOkResponse({
@@ -65,10 +65,10 @@ export class CertificateController {
     description: 'Created certificate',
   })
   @ApiOperation({
-    title: 'Add certificate',
+    summary: 'Add certificate',
     description: 'Creates a new certificate',
   })
-  @ApiImplicitBody({ name: 'certificate', type: NewCertificateDTO })
+  @ApiBody({ type: NewCertificateDTO })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
@@ -79,16 +79,16 @@ export class CertificateController {
     return this.mapper.toDto(await this.service.save(newCertificate));
   }
 
-  @Put('/:id')
+  @Put(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'Certificate id',
   })
   @ApiOperation({
-    title: 'Update certificate',
+    summary: 'Update certificate',
     description: 'Update certificate by id',
   })
   @ApiOkResponse({ type: NewCertificateDTO })
@@ -106,16 +106,16 @@ export class CertificateController {
     return this.mapper.toDto(await this.service.update(id, certificate));
   }
 
-  @Get('/:id')
+  @Get(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'Certificate Id',
   })
   @ApiOperation({
-    title: 'Find certificate by id',
+    summary: 'Find certificate by id',
     description: 'Find certificate by id',
   })
   @ApiNotFoundResponse({ description: 'thrown if certificate is not found' })
@@ -129,16 +129,16 @@ export class CertificateController {
     return this.mapper.toDto(await this.service.findById(id));
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: Number,
     required: true,
     description: 'Certificate id',
   })
   @ApiOperation({
-    title: 'Delete certificate',
+    summary: 'Delete certificate',
     description: 'Delete certificate by id',
   })
   @ApiOkResponse({ type: null })

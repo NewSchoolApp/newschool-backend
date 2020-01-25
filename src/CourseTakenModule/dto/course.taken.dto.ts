@@ -1,48 +1,49 @@
 import { CourseTaken } from '../entity';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsString } from 'class-validator';
 import { User } from '../../UserModule';
 import { Course } from '../../CourseModule';
 import { UserDTO } from '../../UserModule/dto';
+import { CourseDTO } from '../../CourseModule/dto';
 
 export class CourseTakenDTO {
-  @ApiModelProperty({ type: User })
+  @ApiProperty({ type: () => UserDTO })
   @Type(() => UserDTO)
   @IsString()
   @Expose()
   user: CourseTaken['user'];
 
-  @ApiModelProperty({ type: Course })
+  @ApiProperty({ type: () => CourseDTO })
   @IsString()
   @Expose()
   course: CourseTaken['course'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   courseStartDate: CourseTaken['courseStartDate'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   courseCompleteDate: CourseTaken['courseCompleteDate'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   status: CourseTaken['status'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   completition: CourseTaken['completition'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   currentLesson: CourseTaken['currentLesson'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   currentPart: CourseTaken['currentPart'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   currentTest: CourseTaken['currentTest'];
 }

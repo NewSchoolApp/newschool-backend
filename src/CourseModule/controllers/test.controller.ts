@@ -15,17 +15,16 @@ import { NewTestDTO, TestDTO, TestUpdateDTO } from '../dto';
 import { TestMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitParam,
-  ApiImplicitQuery,
   ApiOkResponse,
   ApiOperation,
-  ApiUseTags,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 
-@ApiUseTags('Test')
+@ApiTags('Test')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.TEST_ENDPOINT}`,
@@ -38,13 +37,13 @@ export class TestController {
 
   @Get('/part/:part')
   @HttpCode(200)
-  @ApiOperation({ title: 'Get Tests', description: 'Get all Tests by Part' })
+  @ApiOperation({ summary: 'Get Tests', description: 'Get all Tests by Part' })
   @ApiOkResponse({
     type: TestDTO,
     isArray: true,
     description: 'All Tests by Part',
   })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'part',
     type: String,
     required: true,
@@ -61,13 +60,13 @@ export class TestController {
   @Get('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: TestDTO })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ title: 'Find Test by id', description: 'Find test by id' })
+  @ApiOperation({ summary: 'Find Test by id', description: 'Find test by id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: TestDTO['id']): Promise<TestDTO> {
@@ -77,8 +76,8 @@ export class TestController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: TestDTO, description: 'Test created' })
-  @ApiOperation({ title: 'Add test', description: 'Creates a new test' })
-  @ApiImplicitBody({ name: 'Test', type: NewTestDTO })
+  @ApiOperation({ summary: 'Add test', description: 'Creates a new test' })
+  @ApiBody({ type: NewTestDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() test: TestDTO): Promise<TestDTO> {
@@ -90,13 +89,13 @@ export class TestController {
   @Put('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: TestDTO })
-  @ApiImplicitBody({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Test id',
   })
-  @ApiOperation({ title: 'Update test', description: 'Update test by id' })
+  @ApiOperation({ summary: 'Update test', description: 'Update test by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -109,13 +108,13 @@ export class TestController {
   @Delete('/:id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Test id',
   })
-  @ApiOperation({ title: 'Delete test', description: 'Delete test by id' })
+  @ApiOperation({ summary: 'Delete test', description: 'Delete test by id' })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: TestDTO['id']): Promise<void> {
@@ -125,20 +124,20 @@ export class TestController {
   @Get('/checkTest/:id/:chosenAlternative')
   @HttpCode(200)
   @ApiOkResponse({ type: Boolean })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'id',
     type: String,
     required: true,
     description: 'Test id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'chosenAlternative',
     type: String,
     required: true,
     description: 'chosenAlternative',
   })
   @ApiOperation({
-    title: 'Check test answer',
+    summary: 'Check test answer',
     description: 'Check test by test id and chosen alternative',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)

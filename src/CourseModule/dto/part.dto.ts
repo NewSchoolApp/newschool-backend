@@ -1,43 +1,43 @@
 import { Part } from '../entity';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class PartDTO {
   @IsString()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   id: Part['id'];
 
   @IsString()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   title: Part['title'];
 
   @IsString()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   description: Part['description'];
 
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   vimeoUrl: Part['vimeoUrl'];
 
   @IsString()
   @IsOptional()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   youtubeUrl: Part['youtubeUrl'];
 
   @IsString()
   @Expose()
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   lesson: Part['lesson'];
 
   @IsNumber()
   @Expose()
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   sequenceNumber: Part['sequenceNumber'];
 }

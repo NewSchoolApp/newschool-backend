@@ -1,41 +1,41 @@
 import { Course } from '../entity';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class CourseDTO {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   id: Course['id'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   title: Course['title'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   description: Course['description'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   workload: Course['workload'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   thumbUrl: Course['thumbUrl'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   enabled: Course['enabled'];
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   authorName: string;
 
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   @Expose()
   authorDescription: string;
 
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   @Expose()
   slug: string;
 }
