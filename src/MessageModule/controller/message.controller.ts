@@ -13,22 +13,22 @@ import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { ContactUsDTO, EmailDTO } from '../dto';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiImplicitBody,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
   ApiUnauthorizedResponse,
-  ApiUseTags,
 } from '@nestjs/swagger';
 import { EmailSwagger } from '../swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { TemplateDTO } from '../dto/templates.dto';
 import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
 
-@ApiUseTags('Message')
+@ApiTags('Message')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.MESSAGE_ENDPOINT}`,
@@ -42,10 +42,10 @@ export class MessageController {
   @HttpCode(201)
   @ApiCreatedResponse({ type: EmailDTO, description: 'Send email' })
   @ApiOperation({
-    title: 'Send email message',
+    summary: 'Send email message',
     description: 'Send a new email message',
   })
-  @ApiImplicitBody({ name: 'Email', type: EmailSwagger })
+  @ApiBody({ type: EmailSwagger })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN/External role',
@@ -64,10 +64,10 @@ export class MessageController {
     description: 'Send contact us email',
   })
   @ApiOperation({
-    title: 'Send contact us message',
+    summary: 'Send contact us message',
     description: 'Send a new contact us email message',
   })
-  @ApiImplicitBody({ name: 'ContactUs', type: ContactUsDTO })
+  @ApiBody({ type: ContactUsDTO })
   @ApiUnauthorizedResponse({
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN/External role',
@@ -84,7 +84,7 @@ export class MessageController {
   @Get('listTemplates')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get all templates',
+    summary: 'Get all templates',
     description: 'Get all templates',
   })
   @ApiOkResponse({
@@ -107,9 +107,9 @@ export class MessageController {
 
   @Put('editTemplate')
   @HttpCode(200)
-  @ApiImplicitBody({ name: 'TemplateDTO', type: TemplateDTO })
+  @ApiBody({ type: TemplateDTO })
   @ApiOperation({
-    title: 'Edit one template',
+    summary: 'Edit one template',
     description: 'Edit one template by name',
   })
   @ApiNotFoundResponse({ description: 'thrown if template is not found' })
@@ -134,15 +134,14 @@ export class MessageController {
 
   @Post('createTemplate')
   @HttpCode(200)
-  @ApiImplicitBody({
-    name: 'TemplateDTO',
+  @ApiBody({
     type: TemplateDTO,
     description:
       'Rules for template creation: <br />' +
       'Create as an html template. <br />' +
       'Place fields that will be replaced must be placed with sequential numbers. <br />',
   })
-  @ApiOperation({ title: 'Create template', description: 'Create template' })
+  @ApiOperation({ summary: 'Create template', description: 'Create template' })
   @ApiCreatedResponse({
     type: TemplateDTO,
     description: 'Template successfully created',
@@ -168,15 +167,14 @@ export class MessageController {
 
   @Post('sendMessage')
   @HttpCode(200)
-  @ApiImplicitBody({
-    name: 'SendMessage',
+  @ApiBody({
     type: SendMessageSwagger,
     description:
       'The template has the free body property, that is you can enter the ' +
       'values you need for sending the message.',
     required: true,
   })
-  @ApiOperation({ title: 'Send Message', description: 'Send a message' })
+  @ApiOperation({ summary: 'Send Message', description: 'Send a message' })
   @ApiOkResponse({ description: 'Message successfully sended' })
   @ApiUnauthorizedResponse({
     description:

@@ -1,15 +1,15 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SMSSwagger {
-  @ApiModelProperty({ type: String })
-  name: String;
+  @ApiProperty({ type: String })
+  name: string;
 
-  @ApiModelProperty({ type: String })
-  phone: String;
+  @ApiProperty({ type: String })
+  phone: string;
 
-  @ApiModelProperty({ type: String })
-  message: String;
+  @ApiProperty({ type: String })
+  message: string;
 
-  @ApiModelProperty({ type: String })
-  title: String;
+  @ApiProperty({ type: String })
+  title: string;
 }

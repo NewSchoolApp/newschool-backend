@@ -9,7 +9,7 @@ export class TestMapper extends Mapper<Test, TestDTO> {
     super(Test, TestDTO);
   }
 
-  toDto(entityObject: Test): TestDTO {
+  toDto(entityObject: Partial<Test>): TestDTO {
     return super.toDto(entityObject);
   }
 
@@ -17,7 +17,7 @@ export class TestMapper extends Mapper<Test, TestDTO> {
     return super.toDtoList(entityArray);
   }
 
-  toEntity(dtoObject: TestDTO): Test {
+  toEntity(dtoObject: Partial<TestDTO>): Test {
     return super.toEntity(dtoObject);
   }
 

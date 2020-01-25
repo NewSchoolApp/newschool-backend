@@ -21,18 +21,17 @@ import {
 import { CourseTakenMapper } from '../mapper';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
-  ApiImplicitBody,
-  ApiImplicitParam,
-  ApiImplicitQuery,
   ApiOkResponse,
   ApiOperation,
-  ApiUseTags,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
 import { UserDTO } from '../../UserModule/dto';
 
-@ApiUseTags('CourseTaken')
+@ApiTags('CourseTaken')
 @ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_TAKEN_ENDPOINT}`,
@@ -46,10 +45,10 @@ export class CourseTakenController {
   @Get('/user/:user')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Courses',
+    summary: 'Get Courses',
     description: 'Get all courses by User id',
   })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'user',
     type: String,
     required: true,
@@ -71,10 +70,10 @@ export class CourseTakenController {
   @Get('/course/:course')
   @HttpCode(200)
   @ApiOperation({
-    title: 'Get Users',
+    summary: 'Get Users',
     description: 'Get all users by Course id',
   })
-  @ApiImplicitQuery({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
@@ -96,20 +95,20 @@ export class CourseTakenController {
   @Get('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'user',
     type: String,
     required: true,
     description: 'User id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Find course taken',
+    summary: 'Find course taken',
     description: 'Find course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -127,10 +126,10 @@ export class CourseTakenController {
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseTakenDTO, description: 'Course Taken' })
   @ApiOperation({
-    title: 'Add course taken',
+    summary: 'Add course taken',
     description: 'Creates a new entry on course taken',
   })
-  @ApiImplicitBody({ name: 'CourseTaken', type: NewCourseTakenDTO })
+  @ApiBody({ type: NewCourseTakenDTO })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async add(
@@ -142,20 +141,20 @@ export class CourseTakenController {
   @Put('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'user',
     type: String,
     required: true,
     description: 'User id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Update course taken',
+    summary: 'Update course taken',
     description: 'Update course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN)
@@ -171,20 +170,20 @@ export class CourseTakenController {
   @Delete('/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'user',
     type: String,
     required: true,
     description: 'User id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Delete course taken',
+    summary: 'Delete course taken',
     description: 'Delete course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -199,9 +198,9 @@ export class CourseTakenController {
   @Post('/advance-on-course')
   @HttpCode(201)
   @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiImplicitBody({ name: 'CourseTaken', type: CourseTakenDTO })
+  @ApiBody({ type: CourseTakenDTO })
   @ApiOperation({
-    title: 'Update course taken',
+    summary: 'Update course taken',
     description: 'Update course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -218,20 +217,20 @@ export class CourseTakenController {
   @Get('/attend-a-class/:user/:course')
   @HttpCode(200)
   @ApiOkResponse({ type: AttendAClassDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'user',
     type: String,
     required: true,
     description: 'User id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'course',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Find course taken',
+    summary: 'Find course taken',
     description: 'Find course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -246,20 +245,20 @@ export class CourseTakenController {
   @Get('/certificate/user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: CertificateDTO })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'userId',
     type: String,
     required: true,
     description: 'User id',
   })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'courseId',
     type: String,
     required: true,
     description: 'Course id',
   })
   @ApiOperation({
-    title: 'Find certificates by user and course',
+    summary: 'Find certificates by user and course',
     description: 'Find certificates by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -274,14 +273,14 @@ export class CourseTakenController {
   @Get('/certificates/user/:userId')
   @HttpCode(200)
   @ApiOkResponse({ type: CertificateDTO, isArray: true })
-  @ApiImplicitParam({
+  @ApiParam({
     name: 'userId',
     type: String,
     required: true,
     description: 'User id',
   })
   @ApiOperation({
-    title: 'Find certificates by user',
+    summary: 'Find certificates by user',
     description: 'Find certificates by user id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)

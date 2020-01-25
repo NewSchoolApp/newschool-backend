@@ -83,7 +83,6 @@ export class SecurityController {
   }
 
   @Post('/token/details')
-  @ApiBearerAuth()
   getTokenDetails(
     @Headers('authorization') authorizationHeader: string,
   ): ClientCredentials | User {

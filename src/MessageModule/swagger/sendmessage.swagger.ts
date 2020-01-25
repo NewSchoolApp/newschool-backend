@@ -1,13 +1,13 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SendMessageSwagger {
-  @ApiModelProperty({
+  @ApiProperty({
     required: true,
     description: 'Free to upload any data needed for emailing',
   })
   data: any;
 
-  @ApiModelProperty({
+  @ApiProperty({
     type: String,
     required: true,
     description: 'Email that will be sent the message',
@@ -15,7 +15,7 @@ export class SendMessageSwagger {
   })
   contactEmail: string;
 
-  @ApiModelProperty({
+  @ApiProperty({
     type: String,
     required: true,
     description: 'Name of template to use.',

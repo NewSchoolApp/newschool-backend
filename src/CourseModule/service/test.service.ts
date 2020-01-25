@@ -25,10 +25,10 @@ export class TestService {
       );
     }
 
-    test.sequenceNumber =
-      1 + (await this.repository.count({ part: test.part }));
-
-    return this.repository.save(test);
+    return this.repository.save({
+      ...test,
+      sequenceNumber: 1 + (await this.repository.count({ part: test.part })),
+    });
   }
 
   @Transactional()
@@ -108,7 +108,10 @@ export class TestService {
       throw new NotFoundException('No test found');
     }
 
-    return test.correctAlternative === chosenAlternative ? true : false;
+    return test.correctAlternative.toLowerCase() ==
+      chosenAlternative.toLowerCase()
+      ? true
+      : false;
   }
 
   @Transactional()
