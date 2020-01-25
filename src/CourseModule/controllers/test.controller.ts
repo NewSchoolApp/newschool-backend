@@ -80,7 +80,7 @@ export class TestController {
   @ApiBody({ type: NewTestDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() test: TestDTO): Promise<TestDTO> {
+  public async add(@Body() test: NewTestDTO): Promise<TestDTO> {
     return this.mapper.toDto(
       await this.service.add(this.mapper.toEntity(test)),
     );
