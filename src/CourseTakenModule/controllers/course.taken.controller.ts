@@ -261,7 +261,7 @@ export class CourseTakenController {
     summary: 'Find certificates by user and course',
     description: 'Find certificates by user id and course id',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificate(
     @Param('userId') userId: CourseTakenDTO['user'],
