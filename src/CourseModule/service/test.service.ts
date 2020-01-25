@@ -108,7 +108,10 @@ export class TestService {
       throw new NotFoundException('No test found');
     }
 
-    return test.correctAlternative === chosenAlternative ? true : false;
+    return test.correctAlternative.toLowerCase() ==
+      chosenAlternative.toLowerCase()
+      ? true
+      : false;
   }
 
   @Transactional()
