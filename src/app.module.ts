@@ -1,11 +1,11 @@
-import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
+import { MailerModule } from '@nest-modules/mailer';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SecurityModule } from './SecurityModule';
 import { UserModule } from './UserModule';
-import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseModule } from './CourseModule';
 import { CourseTakenModule } from './CourseTakenModule';
 import { CertificateModule } from './CertificateModule';
@@ -29,28 +29,13 @@ import { AppConfigModule, AppConfigService } from './AppConfigModule';
       imports: [AppConfigModule],
       inject: [AppConfigService],
       useFactory: (appConfigService: AppConfigService) =>
-        appConfigService.getDatabaseConfig(),
+        appConfigService.getDatabaseConfig(__dirname),
     }),
     MailerModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({
-        transport: {
-          host: configService.get<string>('SMTP_HOST'),
-          port: configService.get<number>('SMTP_PORT'),
-          secure: configService.get<number>('SMTP_PORT') === 465, // true for 465, false for other ports
-          auth: {
-            user: configService.get<string>('SMTP_USER'),
-            pass: configService.get<string>('SMTP_PASSWORD'),
-          },
-        },
-        template: {
-          dir: __dirname + '/../templates',
-          adapter: new HandlebarsAdapter(), // or new PugAdapter()
-          options: {
-            strict: true,
-          },
-        },
-      }),
-      inject: [ConfigService],
+      useFactory: async (appConfigService: AppConfigService) =>
+        appConfigService.getSmtpConfiguration(__dirname),
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
     }),
     SecurityModule,
     UserModule,

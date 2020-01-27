@@ -9,9 +9,12 @@ import {
 } from 'typeorm-transactional-cls-hooked';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
+import * as path from 'path';
+import { AppConfigService } from './AppConfigModule/service';
 
 async function bootstrap() {
   require('dotenv-flow').config();
+  (global as any).appRoot = path.resolve(__dirname);
 
   initializeTransactionalContext();
   patchTypeORMRepositoryWithBaseRepository();
@@ -35,8 +38,11 @@ async function bootstrap() {
   );
 
   const configService = app.get<ConfigService>(ConfigService);
+  const appConfigService = app.get<AppConfigService>(AppConfigService);
 
-  app.useGlobalFilters(new HttpExceptionFilter(configService));
+  app.useGlobalFilters(
+    new HttpExceptionFilter(configService, appConfigService),
+  );
 
   await app.listen(configService.get<number>('PORT') || 8080);
 }
