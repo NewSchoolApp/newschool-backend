@@ -38,7 +38,7 @@ export class PartService {
 
     return this.repository.save({
       ...part,
-      sequenceNumber: 1 + (await this.repository.count({ lesson: lesson })),
+      sequenceNumber: 1 + (await this.repository.count({ lesson })),
     });
   }
 
