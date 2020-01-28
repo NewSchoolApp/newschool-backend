@@ -121,7 +121,7 @@ export class TestController {
     await this.service.delete(id);
   }
 
-  @Get('/checkTest/:id/:chosenAlternative')
+  @Get(':id/checkTest/alternative/:chosenAlternative')
   @HttpCode(200)
   @ApiOkResponse({ type: Boolean })
   @ApiParam({
