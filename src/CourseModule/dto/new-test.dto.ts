@@ -4,51 +4,51 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class NewTestDTO {
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   title: Test['title'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   question: Test['question'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   correctAlternative: Test['correctAlternative'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   firstAlternative: Test['firstAlternative'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   secondAlternative: Test['secondAlternative'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   thirdAlternative: Test['thirdAlternative'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   fourthAlternative: Test['fourthAlternative'];
 
+  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  part: Test['part'];
+  partId: string;
 }
