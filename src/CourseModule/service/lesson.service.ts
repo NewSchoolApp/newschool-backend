@@ -5,13 +5,17 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
-import { Lesson } from '../entity';
+import { Course, Lesson } from '../entity';
 import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
+import { CourseService } from './course.service';
 
 @Injectable()
 export class LessonService {
-  constructor(private readonly repository: LessonRepository) {}
+  constructor(
+    private readonly repository: LessonRepository,
+    private readonly courseService: CourseService,
+  ) {}
 
   @Transactional()
   public async add(lesson: NewLessonDTO): Promise<Lesson> {
@@ -44,7 +48,8 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getAll(course: Lesson['course']): Promise<Lesson[]> {
+  public async getAll(courseId: Course['id']): Promise<Lesson[]> {
+    const course: Course = await this.courseService.findById(courseId);
     return this.repository.find({ course });
   }
 
