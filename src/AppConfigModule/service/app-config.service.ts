@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nest-modules/mailer';
+import * as path from 'path';
 import Rollbar = require('rollbar');
 
 @Injectable()
@@ -58,7 +59,7 @@ export class AppConfigService {
     return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
   }
 
-  public getSmtpConfiguration(dirname) {
+  public getSmtpConfiguration() {
     return {
       transport: {
         host: this.smtpHost,
@@ -70,7 +71,7 @@ export class AppConfigService {
         },
       },
       template: {
-        dir: dirname + '/../templates',
+        dir: path.resolve(path.join(__dirname, '..', '..')) + '/../templates',
         adapter: new HandlebarsAdapter(), // or new PugAdapter()
         options: {
           strict: true,
@@ -79,11 +80,14 @@ export class AppConfigService {
     };
   }
 
-  public getDatabaseConfig(dirname): MysqlConnectionOptions {
+  public getDatabaseConfig(): MysqlConnectionOptions {
     return {
       type: 'mysql',
       multipleStatements: true,
-      entities: [dirname + '/**/*.entity{.ts,.js}'],
+      entities: [
+        path.resolve(path.join(__dirname, '..', '..')) +
+          '/**/*.entity{.ts,.js}',
+      ],
       host: this.databaseHost,
       database: this.databaseName,
       port: this.databasePort,
