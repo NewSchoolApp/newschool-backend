@@ -90,21 +90,6 @@ export class LessonService {
     }
   }
 
-  // @Transactional()
-  // public async findByTitle(
-  //   title: Lesson['title'],
-  //   course: Lesson['course'],
-  // ): Promise<Lesson> {
-  //   const lesson = await this.repository.findByTitleAndCourseId({
-  //     title,
-  //     course,
-  //   });
-  //   if (!lesson) {
-  //     throw new NotFoundException();
-  //   }
-  //   return lesson;
-  // }
-
   @Transactional()
   public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
     return await this.repository.count({ course });
