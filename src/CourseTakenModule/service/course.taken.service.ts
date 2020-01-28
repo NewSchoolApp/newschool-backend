@@ -233,13 +233,11 @@ export class CourseTakenService {
       nextPart,
       nextLesson,
     );
-    if (courseTaken.status === CourseTakenStatusEnum.TAKEN) {
-      courseTaken.completition = await this.calculateCompletition(
-        courseTaken,
-        currentLessonId,
-        currentPartId,
-      );
-    }
+    courseTaken.completition = await this.calculateCompletition(
+      courseTaken,
+      currentLessonId,
+      currentPartId,
+    );
     const courseTakenUpdatedInfo = this.mapper.toUpdateDto(courseTaken);
 
     await this.update(
@@ -281,26 +279,29 @@ export class CourseTakenService {
     currentLesson: string,
     currentPart: string,
   ): Promise<number> {
-    const lessonsAmount: number = await this.lessonService.getMaxValueForLesson(
-      courseTaken.course,
-    );
-    const partsAmount = await this.partService.getMaxValueForPart(
-      currentLesson,
-    );
-    const testsAmount = await this.testService.getMaxValueForTest(currentPart);
+    if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
+      return 100;
+    }
+
+    const [
+      lessonsQuantity,
+      partsQuantity,
+      testsQuantity,
+    ]: number[] = await Promise.all([
+      this.lessonService.getMaxValueForLesson(courseTaken.course),
+      this.partService.getMaxValueForPart(currentLesson),
+      this.testService.getMaxValueForTest(currentPart),
+    ]);
+
     let completition: number;
 
-    if (courseTaken.status === CourseTakenStatusEnum.TAKEN) {
-      const percentualPerLesson = 100 / lessonsAmount;
-      const percentualPerPart = percentualPerLesson / partsAmount;
-      const percentualPerTest = percentualPerPart / testsAmount;
+    const percentualPerLesson = 100 / lessonsQuantity;
+    const percentualPerPart = percentualPerLesson / partsQuantity;
+    const percentualPerTest = percentualPerPart / testsQuantity;
 
-      completition = percentualPerLesson * (courseTaken.currentLesson - 1);
-      completition += percentualPerPart * (courseTaken.currentPart - 1);
-      completition += percentualPerTest * courseTaken.currentTest;
-    } else {
-      completition = 100;
-    }
+    completition = percentualPerLesson * (courseTaken.currentLesson - 1);
+    completition += percentualPerPart * (courseTaken.currentPart - 1);
+    completition += percentualPerTest * courseTaken.currentTest;
 
     return completition > 100 ? 100 : completition;
   }
