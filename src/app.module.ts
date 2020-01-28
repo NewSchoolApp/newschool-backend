@@ -14,22 +14,16 @@ import { UploadModule } from './UploadModule';
 import { AppConfigModule, AppConfigService } from './AppConfigModule';
 import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
 
-// const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
-//   imports: [AppConfigModule],
-//   useFactory: (appConfigService: AppConfigService) => appConfigService.getDatabaseConfig(),
-//   inject: [AppConfigService],
-// };
-
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [AppConfigModule],
   inject: [AppConfigService],
   useFactory: (appConfigService: AppConfigService) =>
-    appConfigService.getDatabaseConfig(__dirname),
+    appConfigService.getDatabaseConfig(),
 };
 
 const mailerAsyncModule: MailerAsyncOptions = {
   useFactory: (appConfigService: AppConfigService) =>
-    appConfigService.getSmtpConfiguration(__dirname),
+    appConfigService.getSmtpConfiguration(),
   imports: [AppConfigModule],
   inject: [AppConfigService],
 };
