@@ -81,9 +81,7 @@ export class TestController {
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async add(@Body() test: NewTestDTO): Promise<TestDTO> {
-    return this.mapper.toDto(
-      await this.service.add(this.mapper.toEntity(test)),
-    );
+    return this.mapper.toDto(await this.service.add(test));
   }
 
   @Put('/:id')
