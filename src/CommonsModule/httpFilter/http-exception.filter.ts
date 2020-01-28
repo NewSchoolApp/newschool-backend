@@ -4,17 +4,13 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import * as Rollbar from 'rollbar';
 import { AppConfigService } from '../../AppConfigModule/service';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly appConfigService: AppConfigService,
-  ) {}
+  constructor(private readonly appConfigService: AppConfigService) {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -22,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const error = exception.getResponse();
 
-    const env = this.configService.get<string>('NODE_ENV');
+    const env = this.appConfigService.nodeEnv;
 
     if (env === 'TEST' || env === 'PROD') {
       const rollbar = new Rollbar(

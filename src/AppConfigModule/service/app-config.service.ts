@@ -1,12 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { ConfigService } from '@nestjs/config';
-import Rollbar = require('rollbar');
 import { HandlebarsAdapter } from '@nest-modules/mailer';
+import Rollbar = require('rollbar');
 
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
+
+  changePasswordExpirationTime: number = this.configService.get<number>(
+    'CHANGE_PASSWORD_EXPIRATION_TIME',
+  );
+
+  nodeEnv: string = this.configService.get<string>('NODE_ENV');
+  port: number = this.configService.get<number>('PORT');
+
+  expiresInAccessToken: string = this.configService.get<string>(
+    'EXPIRES_IN_ACCESS_TOKEN',
+  );
+  expiresInRefreshToken: string = this.configService.get<string>(
+    'EXPIRES_IN_REFRESH_TOKEN',
+  );
+
+  smtpHost: string = this.configService.get<string>('SMTP_HOST');
+  smtpPort: number = this.configService.get<number>('SMTP_PORT');
+  secure: boolean = this.configService.get<number>('SMTP_PORT') === 465; // true for 465, false for other ports
+  smtpUser: string = this.configService.get<string>('SMTP_USER');
+  smtpPassword: string = this.configService.get<string>('SMTP_PASSWORD');
+
+  emailContactUs: string = this.configService.get<string>('EMAIL_CONTACTUS');
+  frontUrl: string = this.configService.get<string>('FRONT_URL');
+  changePasswordFrontUrl: string = this.configService.get<string>(
+    'CHANGE_PASSWORD_URL',
+  );
+
+  databaseHost: string = this.configService.get<string>('DATABASE_HOST');
+  databaseName: string = this.configService.get<string>('DATABASE_NAME');
+  databasePort: number = this.configService.get<number>('DATABASE_PORT');
+  databaseUsername: string = this.configService.get<string>(
+    'DATABASE_USERNAME',
+  );
+  databasePassword: string = this.configService.get<string>(
+    'DATABASE_PASSWORD',
+  );
+  synchronize: boolean = this.configService.get<boolean>('SYNC_DATABASE');
+  logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
 
   public getRollbarConfiguration(): Rollbar.Configuration {
     return {
@@ -16,15 +54,19 @@ export class AppConfigService {
     };
   }
 
+  public getChangePasswordFrontUrl(changePasswordRequestId) {
+    return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
+  }
+
   public getSmtpConfiguration(dirname) {
     return {
       transport: {
-        host: this.configService.get<string>('SMTP_HOST'),
-        port: this.configService.get<number>('SMTP_PORT'),
-        secure: this.configService.get<number>('SMTP_PORT') === 465, // true for 465, false for other ports
+        host: this.smtpHost,
+        port: this.smtpPort,
+        secure: this.secure,
         auth: {
-          user: this.configService.get<string>('SMTP_USER'),
-          pass: this.configService.get<string>('SMTP_PASSWORD'),
+          user: this.smtpUser,
+          pass: this.smtpPassword,
         },
       },
       template: {
@@ -40,15 +82,15 @@ export class AppConfigService {
   public getDatabaseConfig(dirname): MysqlConnectionOptions {
     return {
       type: 'mysql',
-      host: this.configService.get<string>('DATABASE_HOST'),
-      database: this.configService.get<string>('DATABASE_NAME'),
       multipleStatements: true,
-      port: this.configService.get<number>('DATABASE_PORT'),
-      username: this.configService.get<string>('DATABASE_USERNAME'),
-      password: this.configService.get<string>('DATABASE_PASSWORD'),
       entities: [dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: this.configService.get<boolean>('SYNC_DATABASE'),
-      logging: this.configService.get<string>('NODE_ENV') !== 'TEST',
+      host: this.databaseHost,
+      database: this.databaseName,
+      port: this.databasePort,
+      username: this.databaseUsername,
+      password: this.databasePassword,
+      synchronize: this.synchronize,
+      logging: this.logging,
     };
   }
 }

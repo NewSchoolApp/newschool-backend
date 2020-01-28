@@ -30,6 +30,7 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { AppConfigService } from '../../AppConfigModule/service';
 
 @Injectable()
 export class UserService {
@@ -39,6 +40,7 @@ export class UserService {
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
+    private readonly appConfigService: AppConfigService,
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
@@ -285,11 +287,9 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: `${this.configService.get<string>(
-            'FRONT_URL',
-          )}/${this.configService.get<string>(
-            'CHANGE_PASSWORD_URL',
-          )}/${changePasswordRequestId}`,
+          urlTrocaSenha: this.appConfigService.getChangePasswordFrontUrl(
+            changePasswordRequestId,
+          ),
         },
       });
     } catch (e) {
