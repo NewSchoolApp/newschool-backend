@@ -4,19 +4,19 @@ import {
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nest-modules/mailer';
 import { ContactUsDTO, EmailDTO } from '../dto';
 import { TemplateRepository } from '../repository/template.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TemplateDTO } from '../dto/templates.dto';
 import { TemplateMapper } from '../mapper/template.mapper';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
+    private readonly appConfigService: ConfigService,
     private readonly templateRepository: TemplateRepository,
     private readonly mapperTemplate: TemplateMapper,
   ) {}
@@ -24,7 +24,7 @@ export class MessageService {
   public async sendEmail(email: EmailDTO): Promise<void> {
     try {
       await this.mailerService.sendMail({
-        to: this.configService.get<string>('EMAIL_CONTACTUS'),
+        to: this.appConfigService.emailContactUs,
         from: email.email,
         subject: email.title,
         html: email.message,
@@ -37,7 +37,7 @@ export class MessageService {
   public async sendContactUsEmail(contactUs: ContactUsDTO): Promise<void> {
     try {
       await this.mailerService.sendMail({
-        to: this.configService.get<string>('EMAIL_CONTACTUS'),
+        to: this.appConfigService.emailContactUs,
         from: contactUs.email,
         subject: 'Fale conosco',
         template: 'contact-us',
@@ -66,7 +66,7 @@ export class MessageService {
       );
 
       await this.mailerService.sendMail({
-        to: this.configService.get<string>('EMAIL_CONTACTUS'),
+        to: this.appConfigService.emailContactUs,
         from: contactEmail,
         subject: model.title,
         html: htmlMessage,

@@ -3,7 +3,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InvalidClientCredentialsError } from '../exception';
 import { ClientCredentials } from '../entity';
 import { ClientCredentialsEnum } from '../enum';
@@ -20,6 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../../UserModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class SecurityService {
@@ -28,7 +28,7 @@ export class SecurityService {
     private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly configService: ConfigService,
+    private readonly appConfigService: ConfigService,
   ) {}
 
   @Transactional()
@@ -156,7 +156,7 @@ export class SecurityService {
   ): GeneratedTokenDTO {
     return {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), {
-        expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
+        expiresIn: this.appConfigService.expiresInAccessToken,
       }),
       refreshToken: this.jwtService.sign(
         classToPlain({
@@ -164,11 +164,11 @@ export class SecurityService {
           isRefreshToken: true,
         }),
         {
-          expiresIn: this.configService.get<string>('EXPIRES_IN_REFRESH_TOKEN'),
+          expiresIn: this.appConfigService.expiresInRefreshToken,
         },
       ),
       tokenType: 'bearer',
-      expiresIn: this.configService.get<string>('EXPIRES_IN_ACCESS_TOKEN'),
+      expiresIn: this.appConfigService.expiresInAccessToken,
     };
   }
 
