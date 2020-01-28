@@ -9,7 +9,7 @@ import {
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
 import * as path from 'path';
-import { AppConfigService } from './AppConfigModule/service';
+import { ConfigService } from './ConfigModule/service';
 
 async function bootstrap() {
   require('dotenv-flow').config();
@@ -36,7 +36,7 @@ async function bootstrap() {
     }),
   );
 
-  const appConfigService = app.get<AppConfigService>(AppConfigService);
+  const appConfigService = app.get<ConfigService>(ConfigService);
 
   app.useGlobalFilters(new HttpExceptionFilter(appConfigService));
 

@@ -9,7 +9,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
@@ -30,7 +29,7 @@ import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { AppConfigService } from '../../AppConfigModule/service';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class UserService {
@@ -40,7 +39,6 @@ export class UserService {
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
-    private readonly appConfigService: AppConfigService,
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
   ) {}
@@ -287,7 +285,7 @@ export class UserService {
         template: 'change-password',
         context: {
           name: user.name,
-          urlTrocaSenha: this.appConfigService.getChangePasswordFrontUrl(
+          urlTrocaSenha: this.configService.getChangePasswordFrontUrl(
             changePasswordRequestId,
           ),
         },

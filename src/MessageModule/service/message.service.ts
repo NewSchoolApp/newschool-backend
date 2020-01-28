@@ -10,13 +10,13 @@ import { TemplateRepository } from '../repository/template.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TemplateDTO } from '../dto/templates.dto';
 import { TemplateMapper } from '../mapper/template.mapper';
-import { AppConfigService } from '../../AppConfigModule/service';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly appConfigService: AppConfigService,
+    private readonly appConfigService: ConfigService,
     private readonly templateRepository: TemplateRepository,
     private readonly mapperTemplate: TemplateMapper,
   ) {}

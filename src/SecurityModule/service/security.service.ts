@@ -19,7 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../../UserModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { AppConfigService } from '../../AppConfigModule/service';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class SecurityService {
@@ -28,7 +28,7 @@ export class SecurityService {
     private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly appConfigService: AppConfigService,
+    private readonly appConfigService: ConfigService,
   ) {}
 
   @Transactional()

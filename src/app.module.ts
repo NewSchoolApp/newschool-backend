@@ -1,6 +1,6 @@
 import { MailerModule } from '@nest-modules/mailer';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SecurityModule } from './SecurityModule';
@@ -11,27 +11,27 @@ import { CourseTakenModule } from './CourseTakenModule';
 import { CertificateModule } from './CertificateModule';
 import { MessageModule } from './MessageModule';
 import { UploadModule } from './UploadModule';
-import { AppConfigModule, AppConfigService } from './AppConfigModule';
+import { ConfigModule, ConfigService } from './ConfigModule';
 import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
-  imports: [AppConfigModule],
-  inject: [AppConfigService],
-  useFactory: (appConfigService: AppConfigService) =>
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (appConfigService: ConfigService) =>
     appConfigService.getDatabaseConfig(),
 };
 
 const mailerAsyncModule: MailerAsyncOptions = {
-  useFactory: (appConfigService: AppConfigService) =>
+  useFactory: (appConfigService: ConfigService) =>
     appConfigService.getSmtpConfiguration(),
-  imports: [AppConfigModule],
-  inject: [AppConfigService],
+  imports: [ConfigModule],
+  inject: [ConfigService],
 };
 
 @Module({
   imports: [
-    AppConfigModule,
-    ConfigModule.forRoot({
+    ConfigModule,
+    NestConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(typeOrmAsyncModule),
