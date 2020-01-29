@@ -96,8 +96,8 @@ export class PartService {
   }
 
   @Transactional()
-  public async getMaxValueForPart(lesson: string): Promise<number> {
-    return await this.repository.count({ lesson: Part['lesson'] });
+  public async countByLesson(lesson: Lesson): Promise<number> {
+    return await this.repository.count({ lesson });
   }
 
   @Transactional()

@@ -15,7 +15,7 @@ export class CourseTakenUpdatedInfoSwagger {
   courseCompleteDate: CourseTaken['courseCompleteDate'];
 
   @ApiProperty({ type: Number })
-  completition: CourseTaken['completition'];
+  completion: CourseTaken['completion'];
 
   @ApiProperty({ type: Number })
   currentLesson: CourseTaken['currentLesson'];

@@ -12,17 +12,20 @@ import {
 import { CourseTakenService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import {
-  AttendAClassDTO,
+  AlternativeProgressionDTO,
   CertificateDTO,
   CourseTakenDTO,
   CourseTakenUpdateDTO,
+  CurrentProgressionDTO,
   NewCourseTakenDTO,
+  VideoProgressionDTO,
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -31,6 +34,7 @@ import {
 import { RoleEnum } from '../../SecurityModule/enum';
 import { UserDTO } from '../../UserModule/dto';
 
+@ApiExtraModels(VideoProgressionDTO, AlternativeProgressionDTO)
 @ApiTags('CourseTaken')
 @ApiBearerAuth()
 @Controller(
@@ -122,7 +126,7 @@ export class CourseTakenController {
     );
   }
 
-  @Post('/start=course')
+  @Post('/start-course')
   @HttpCode(200)
   @ApiCreatedResponse({ type: CourseTakenDTO, description: 'Course Taken' })
   @ApiOperation({
@@ -193,7 +197,7 @@ export class CourseTakenController {
     await this.service.delete(user, course);
   }
 
-  @Post('/advance-on-course/:courseTakenId')
+  @Post(':courseTakenId/advance-on-course/')
   @HttpCode(201)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiBody({ type: CourseTakenDTO })
@@ -209,32 +213,20 @@ export class CourseTakenController {
     await this.service.advanceCourse(courseTakenId);
   }
 
-  @Get('/attend-a-class/:user/:course')
-  @HttpCode(200)
-  @ApiOkResponse({ type: AttendAClassDTO })
-  @ApiParam({
-    name: 'user',
-    type: String,
-    required: true,
-    description: 'User id',
-  })
-  @ApiParam({
-    name: 'course',
-    type: String,
-    required: true,
-    description: 'Course id',
-  })
+  @Get(':courseTakenId/current-step')
+  @HttpCode(201)
+  @ApiOkResponse({ type: CourseTakenDTO })
+  @ApiBody({ type: CourseTakenDTO })
   @ApiOperation({
-    summary: 'Find course taken',
-    description: 'Find course taken by user id and course id',
+    summary: 'Update course taken',
+    description: 'Update course taken by user id and course id',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async attendAClass(
-    @Param('user') user: CourseTakenDTO['user'],
-    @Param('course') course: CourseTakenDTO['course'],
-  ): Promise<AttendAClassDTO> {
-    return await this.service.attendAClass(user, course);
+  public async currentCourseProgression(
+    @Param('courseTakenId') courseTakenId: string,
+  ): Promise<CurrentProgressionDTO> {
+    return await this.service.getCurrentProgression(courseTakenId);
   }
 
   @Get('/certificate/user/:userId/course/:courseId')

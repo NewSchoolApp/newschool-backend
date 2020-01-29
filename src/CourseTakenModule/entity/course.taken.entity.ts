@@ -9,11 +9,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { User } from '../../UserModule/entity/user.entity';
-import { Course } from '../../CourseModule/entity/course.entity';
+import { User } from '../../UserModule/entity';
+import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
 import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum';
-import { Lesson, Part, Test } from '../../CourseModule/entity';
 
 @Entity()
 @Check(
@@ -72,14 +71,15 @@ export class CourseTaken extends Audit {
   @Expose()
   @Column({
     nullable: false,
-    name: 'completition',
+    name: 'completion',
     default: 0,
   })
-  completition: number;
+  completion: number;
 
   @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCourseTakens)
   @Column({
     nullable: true,
+    type: 'varchar',
     name: 'current_lesson_id',
   })
   @Expose()
@@ -88,6 +88,7 @@ export class CourseTaken extends Audit {
   @OneToMany<Part>('Part', (part: Part) => part.currentCourseTakens)
   @Column({
     nullable: true,
+    type: 'varchar',
     name: 'current_part_id',
   })
   @Expose()
@@ -96,6 +97,7 @@ export class CourseTaken extends Audit {
   @OneToMany<Test>('Test', (test: Test) => test.currentCourseTakens)
   @Column({
     nullable: true,
+    type: 'varchar',
     name: 'current_test_id',
   })
   @Expose()

@@ -31,7 +31,7 @@ export class CourseTakenDTO {
 
   @ApiProperty({ type: String })
   @Expose()
-  completition: CourseTaken['completition'];
+  completion: CourseTaken['completion'];
 
   @ApiProperty({ type: String })
   @Expose()
