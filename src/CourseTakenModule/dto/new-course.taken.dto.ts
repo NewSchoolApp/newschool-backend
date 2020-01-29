@@ -5,15 +5,13 @@ import { Course } from '../../CourseModule/entity';
 import { User } from '../../UserModule/entity';
 
 export class NewCourseTakenDTO {
-  @ApiProperty({ type: String })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @Expose()
   userId: User['id'];
 
-  @ApiProperty({ type: String })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @Expose()
   courseId: Course['id'];
 }

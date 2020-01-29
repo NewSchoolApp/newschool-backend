@@ -22,11 +22,11 @@ export class NewUserDTO {
 
   @ApiProperty({ type: String })
   @Expose()
-  urlFacebook: User['urlFacebook'];
+  urlFacebook?: User['urlFacebook'];
 
   @ApiProperty({ type: String })
   @Expose()
-  urlInstagram: User['urlInstagram'];
+  urlInstagram?: User['urlInstagram'];
 
   @ApiProperty({ enum: RoleEnum })
   @IsNotEmpty()

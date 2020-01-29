@@ -15,57 +15,51 @@ import { CourseTaken } from '../../CourseTakenModule/entity';
 @Unique(['sequenceNumber', 'part'])
 @Entity()
 export class Test extends Audit {
-  @Expose()
   @PrimaryGeneratedColumn('uuid')
+  @Expose()
   id: string;
 
-  @Expose()
   @Column({
-    nullable: false,
     name: 'title',
   })
+  @Expose()
   title: string;
 
-  @Expose()
   @Column({
     nullable: true,
     name: 'question',
   })
-  question: string;
-
   @Expose()
+  question?: string;
+
   @Column({
-    nullable: false,
     name: 'correct_alternative',
   })
+  @Expose()
   correctAlternative: string;
 
-  @Expose()
   @Column({
-    nullable: false,
     name: 'first_alternative',
   })
+  @Expose()
   firstAlternative: string;
 
-  @Expose()
   @Column({
-    nullable: false,
     name: 'second_alternative',
   })
+  @Expose()
   secondAlternative: string;
 
-  @Expose()
   @Column({
-    nullable: false,
     name: 'third_alternative',
   })
+  @Expose()
   thirdAlternative: string;
 
-  @Expose()
   @Column({
-    nullable: false,
     name: 'fourth_alternative',
   })
+  @Expose()
   fourthAlternative: string;
 
   @Column({

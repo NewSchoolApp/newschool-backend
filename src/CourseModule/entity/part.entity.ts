@@ -21,14 +21,12 @@ export class Part extends Audit {
   id: string;
 
   @Column({
-    nullable: false,
     name: 'title',
   })
   @Expose()
   title: string;
 
   @Column({
-    nullable: false,
     name: 'description',
   })
   @Expose()
@@ -39,14 +37,14 @@ export class Part extends Audit {
     name: 'vimeo_url',
   })
   @Expose()
-  vimeoUrl: string;
+  vimeoUrl?: string;
 
   @Column({
     nullable: true,
     name: 'youtube_url',
   })
   @Expose()
-  youtubeUrl: string;
+  youtubeUrl?: string;
 
   @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.parts)
   @JoinColumn({
@@ -56,7 +54,6 @@ export class Part extends Audit {
   lesson: Lesson;
 
   @Column({
-    nullable: false,
     name: 'seq_num',
   })
   @Expose()

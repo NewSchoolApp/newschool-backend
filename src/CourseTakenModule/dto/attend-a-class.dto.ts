@@ -9,34 +9,44 @@ import {
   TestWithoutCorrectAlternativeDTO,
 } from '../../CourseModule/dto';
 import { UserDTO } from '../../UserModule/dto';
+import {
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class AttendAClassDTO {
-  @ApiProperty({ type: () => UserDTO })
+  @IsNotEmptyObject()
   @Type(() => UserDTO)
   @Expose()
   user: UserDTO;
 
-  @ApiProperty({ type: () => Course })
+  @IsNotEmptyObject()
+  @Type(() => CourseDTO)
   @Expose()
   course: CourseDTO;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   status: CourseTaken['status'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
   @Expose()
   completion: CourseTaken['completion'];
 
-  @ApiProperty({ type: () => LessonDTO })
+  @Type(() => LessonDTO)
   @Expose()
   currentLesson: LessonDTO;
 
-  @ApiProperty({ type: () => PartDTO })
+  @Type(() => PartDTO)
   @Expose()
   currentPart: PartDTO;
 
-  @ApiProperty({ type: () => TestWithoutCorrectAlternativeDTO })
+  @Type(() => TestWithoutCorrectAlternativeDTO)
   @Expose()
   currentTest: TestWithoutCorrectAlternativeDTO;
 }

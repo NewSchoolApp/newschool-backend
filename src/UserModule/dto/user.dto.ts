@@ -19,11 +19,11 @@ export class UserDTO {
 
   @ApiProperty({ type: String })
   @Expose()
-  urlFacebook: User['urlFacebook'];
+  urlFacebook?: User['urlFacebook'];
 
   @ApiProperty({ type: String })
   @Expose()
-  urlInstagram: User['urlInstagram'];
+  urlInstagram?: User['urlInstagram'];
 
   @ApiProperty({ type: () => RoleDTO })
   @Expose()

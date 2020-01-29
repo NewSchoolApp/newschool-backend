@@ -75,7 +75,9 @@ export class CertificateController {
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async save(@Body() newCertificate: NewCertificateDTO) {
+  public async save(
+    @Body() newCertificate: NewCertificateDTO,
+  ): Promise<CertificateDTO> {
     return this.mapper.toDto(await this.service.save(newCertificate));
   }
 
@@ -91,7 +93,7 @@ export class CertificateController {
     summary: 'Update certificate',
     description: 'Update certificate by id',
   })
-  @ApiOkResponse({ type: NewCertificateDTO })
+  @ApiOkResponse({ type: CertificateDTO })
   @ApiNotFoundResponse({ description: 'thrown if certificate is not found' })
   @ApiUnauthorizedResponse({
     description:
@@ -102,7 +104,7 @@ export class CertificateController {
   public async update(
     @Param('id') id: string,
     @Body() certificate: CertificateDTO,
-  ) {
+  ): Promise<CertificateDTO> {
     return this.mapper.toDto(await this.service.update(id, certificate));
   }
 

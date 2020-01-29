@@ -6,7 +6,6 @@ import { UserDTO } from '../../UserModule/dto';
 import { CourseDTO } from '../../CourseModule/dto';
 
 export class CertificateDTO {
-  @ApiProperty({ type: () => UserDTO })
   @Type(() => UserDTO)
   @IsString()
   @Expose()
