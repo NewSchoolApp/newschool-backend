@@ -71,18 +71,7 @@ export class CourseTakenService {
   public async getCurrentProgression(
     id: string,
   ): Promise<CurrentProgressionDTO> {
-    const courseTaken = await this.repository.findOne(
-      { id },
-      {
-        relations: [
-          'user',
-          'course',
-          'currentLesson',
-          'currentPart',
-          'currentTest',
-        ],
-      },
-    );
+    const courseTaken = await this.repository.findByIdWithAllRelations(id);
     if (!courseTaken) {
       throw new NotFoundException('CourseTaken not found');
     }
@@ -108,21 +97,8 @@ export class CourseTakenService {
     return alternativeProgression;
   }
 
-  public async advanceCourse(id: string): Promise<void> {
-    const courseTaken: CourseTaken = await this.repository.findOne(
-      {
-        id,
-      },
-      {
-        relations: [
-          'user',
-          'course',
-          'currentLesson',
-          'currentPart',
-          'currentTest',
-        ],
-      },
-    );
+  public async advanceOnCourse(id: string): Promise<void> {
+    const courseTaken = await this.repository.findByIdWithAllRelations(id);
 
     const nextTestSequenceNumber: number = !courseTaken.currentTest
       ? 1
@@ -185,7 +161,7 @@ export class CourseTakenService {
 
     await this.repository.save({
       ...courseTaken,
-      completition: 100,
+      completion: 100,
       status: CourseTakenStatusEnum.COMPLETED,
     });
   }

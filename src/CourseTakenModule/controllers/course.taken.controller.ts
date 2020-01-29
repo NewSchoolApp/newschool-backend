@@ -130,7 +130,7 @@ export class CourseTakenController {
   @HttpCode(200)
   @ApiCreatedResponse({ type: CourseTakenDTO, description: 'Course Taken' })
   @ApiOperation({
-    summary: 'Add course taken',
+    summary: 'Start a course',
     description: 'Creates a new entry on course taken',
   })
   @ApiBody({ type: NewCourseTakenDTO })
@@ -197,20 +197,19 @@ export class CourseTakenController {
     await this.service.delete(user, course);
   }
 
-  @Post(':courseTakenId/advance-on-course/')
-  @HttpCode(201)
+  @Post(':courseTakenId/advance-on-course')
+  @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiBody({ type: CourseTakenDTO })
   @ApiOperation({
-    summary: 'Update course taken',
-    description: 'Update course taken by user id and course id',
+    summary: 'Advance user on course',
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateCourseStatus(
     @Param('courseTakenId') courseTakenId: string,
   ): Promise<void> {
-    await this.service.advanceCourse(courseTakenId);
+    await this.service.advanceOnCourse(courseTakenId);
   }
 
   @Get(':courseTakenId/current-step')
