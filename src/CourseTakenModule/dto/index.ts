@@ -4,3 +4,4 @@ export { CourseTakenUpdateDTO } from './course.taken-update.dto';
 export { MyCoursesDTO } from './my.courses.dto';
 export { AttendAClassDTO } from './attend.a.class.dto';
 export { CertificateDTO } from './certificate.dto';
+export { AdvanceCourseDTO } from './advance-course.dto';

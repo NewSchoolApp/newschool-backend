@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
-import { Lesson } from '../entity';
+import { Course, Lesson } from '../entity';
 import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 
@@ -107,6 +107,7 @@ export class LessonService {
     return await this.repository.count({ course });
   }
 
+  // Deprecated
   @Transactional()
   public async getLessonIdByCourseIdAndSeqNum(
     course: Lesson['course'],
@@ -114,6 +115,14 @@ export class LessonService {
   ): Promise<Lesson['id']> {
     const lesson = await this.repository.findOne({ course, sequenceNumber });
     return lesson.id;
+  }
+
+  @Transactional()
+  public async getByCourseAndSequenceNumber(
+    course: Course,
+    sequenceNumber: number,
+  ): Promise<Lesson> {
+    return await this.repository.findOne({ course, sequenceNumber });
   }
 
   @Transactional()

@@ -5,6 +5,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
@@ -12,6 +13,7 @@ import { User } from '../../UserModule/entity/user.entity';
 import { Course } from '../../CourseModule/entity/course.entity';
 import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum';
+import { Lesson, Part, Test } from '../../CourseModule/entity';
 
 @Entity()
 @Check(
@@ -75,24 +77,27 @@ export class CourseTaken extends Audit {
   })
   completition: number;
 
-  @Expose()
+  @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCourseTakens)
   @Column({
     nullable: true,
     name: 'current_lesson_id',
   })
-  currentLesson: number;
-
   @Expose()
+  currentLesson: Lesson;
+
+  @OneToMany<Part>('Part', (part: Part) => part.currentCourseTakens)
   @Column({
     nullable: true,
     name: 'current_part_id',
   })
-  currentPart: number;
-
   @Expose()
+  currentPart: Part;
+
+  @OneToMany<Test>('Test', (test: Test) => test.currentCourseTakens)
   @Column({
     nullable: true,
     name: 'current_test_id',
   })
-  currentTest: number;
+  @Expose()
+  currentTest: Test;
 }

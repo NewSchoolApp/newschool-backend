@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Part } from './part.entity';
 import { Expose } from 'class-transformer';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Unique(['sequenceNumber', 'part'])
 @Entity()
@@ -81,4 +82,10 @@ export class Test extends Audit {
     name: 'part_id',
   })
   part: Part;
+
+  @ManyToOne<CourseTaken>(
+    'CourseTaken',
+    (courseTaken: CourseTaken) => courseTaken.currentTest,
+  )
+  currentCourseTakens: CourseTaken[];
 }

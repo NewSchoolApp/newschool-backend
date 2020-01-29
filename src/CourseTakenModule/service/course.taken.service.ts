@@ -9,6 +9,7 @@ import {
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
+  Course,
   CourseService,
   Lesson,
   LessonService,
@@ -27,6 +28,7 @@ import {
 import { UserMapper } from '../../UserModule/mapper';
 import { CertificateDTO } from '../dto/';
 import { User } from '../../UserModule/entity';
+import { UserService } from '../../UserModule/service';
 
 @Injectable()
 export class CourseTakenService {
@@ -34,6 +36,7 @@ export class CourseTakenService {
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
     private readonly userMapper: UserMapper,
+    private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
@@ -41,31 +44,95 @@ export class CourseTakenService {
   ) {}
 
   @Transactional()
-  public async add(
-    newCourseTaken: NewCourseTakenDTO,
-  ): Promise<AttendAClassDTO> {
-    const courseAlreadyTaken: CourseTaken = await this.repository.findByUserIdAndCourseId(
-      newCourseTaken.user,
-      newCourseTaken.course,
+  public async add(newCourseTaken: NewCourseTakenDTO): Promise<void> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(newCourseTaken.userId),
+      this.courseService.findById(newCourseTaken.courseId),
+    ]);
+
+    const lesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
+      course,
+      1,
     );
-    if (courseAlreadyTaken) {
-      return await this.attendAClass(
-        newCourseTaken.user,
-        newCourseTaken.course,
-      );
+
+    const part: Part = await this.partService.getByLessonAndSequenceNumber(
+      lesson,
+      1,
+    );
+
+    await this.repository.save({
+      currentLesson: lesson,
+      currentPart: part,
+      currentTest: null,
+      status: CourseTakenStatusEnum.TAKEN,
+      courseStartDate: new Date(Date.now()),
+      course,
+      user,
+    });
+  }
+
+  public async advanceCourse(courseTakenId: string): Promise<void> {
+    const courseTaken: CourseTaken = await this.repository.findOne(
+      {
+        id: courseTakenId,
+      },
+      {
+        relations: ['user', 'course'],
+      },
+    );
+
+    const nextTestSequenceNumber: number = !courseTaken.currentTest
+      ? 1
+      : courseTaken.currentTest.sequenceNumber++;
+
+    const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
+      courseTaken.currentPart,
+      nextTestSequenceNumber,
+    );
+
+    if (nextTest) {
+      await this.repository.save({ ...courseTaken, currentTest: nextTest });
+      return;
     }
 
-    const newCourseTakenEntity = this.mapper.toEntity(newCourseTaken);
+    const nextPart: Part = await this.partService.getByLessonAndSequenceNumber(
+      courseTaken.currentLesson,
+      courseTaken.currentPart.sequenceNumber++,
+    );
 
-    newCourseTakenEntity.currentLesson = 1;
-    newCourseTakenEntity.currentPart = 1;
-    newCourseTakenEntity.currentTest = 1;
-    newCourseTakenEntity.status = CourseTakenStatusEnum.TAKEN;
-    newCourseTakenEntity.courseStartDate = new Date(Date.now());
+    if (nextPart) {
+      await this.repository.save({
+        ...courseTaken,
+        currentTest: null,
+        currentPart: nextPart,
+      });
+      return;
+    }
 
-    await this.repository.save(newCourseTakenEntity);
+    const nextLesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
+      courseTaken.course,
+      courseTaken.currentLesson.sequenceNumber++,
+    );
 
-    return await this.attendAClass(newCourseTaken.user, newCourseTaken.course);
+    if (nextLesson) {
+      const nextPart: Part = await this.partService.getByLessonAndSequenceNumber(
+        nextLesson,
+        1,
+      );
+      await this.repository.save({
+        ...courseTaken,
+        currentTest: null,
+        currentPart: nextPart,
+        currentLesson: nextLesson,
+      });
+      return;
+    }
+
+    await this.repository.save({
+      ...courseTaken,
+      completition: 100,
+      status: CourseTakenStatusEnum.COMPLETED,
+    });
   }
 
   @Transactional()

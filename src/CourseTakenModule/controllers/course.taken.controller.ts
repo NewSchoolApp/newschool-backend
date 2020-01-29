@@ -122,8 +122,8 @@ export class CourseTakenController {
     );
   }
 
-  @Post()
-  @HttpCode(201)
+  @Post('/start=course')
+  @HttpCode(200)
   @ApiCreatedResponse({ type: CourseTakenDTO, description: 'Course Taken' })
   @ApiOperation({
     summary: 'Add course taken',
@@ -132,10 +132,8 @@ export class CourseTakenController {
   @ApiBody({ type: NewCourseTakenDTO })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async add(
-    @Body() courseTaken: NewCourseTakenDTO,
-  ): Promise<AttendAClassDTO> {
-    return await this.service.add(courseTaken);
+  public async add(@Body() courseTaken: NewCourseTakenDTO): Promise<void> {
+    await this.service.add(courseTaken);
   }
 
   @Put('/:user/:course')
@@ -195,7 +193,7 @@ export class CourseTakenController {
     await this.service.delete(user, course);
   }
 
-  @Post('/advance-on-course')
+  @Post('/advance-on-course/:courseTakenId')
   @HttpCode(201)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiBody({ type: CourseTakenDTO })
@@ -206,12 +204,9 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateCourseStatus(
-    @Body() courseTaken: CourseTakenDTO,
-  ): Promise<AttendAClassDTO> {
-    return await this.service.updateCourseStatus(
-      courseTaken.user,
-      courseTaken.course,
-    );
+    @Param('courseTakenId') courseTakenId: string,
+  ): Promise<void> {
+    await this.service.advanceCourse(courseTakenId);
   }
 
   @Get('/attend-a-class/:user/:course')
