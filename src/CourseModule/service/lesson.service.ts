@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
-import { Lesson } from '../entity';
+import { Course, Lesson } from '../entity';
 import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 
@@ -103,25 +103,15 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
+  public async countByCourse(course: Course): Promise<number> {
     return await this.repository.count({ course });
   }
 
   @Transactional()
-  public async getLessonIdByCourseIdAndSeqNum(
-    course: Lesson['course'],
-    sequenceNumber: number,
-  ): Promise<Lesson['id']> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson.id;
-  }
-
-  @Transactional()
-  public async findLessonByCourseIdAndSeqNum(
-    course: Lesson['course'],
+  public async getByCourseAndSequenceNumber(
+    course: Course,
     sequenceNumber: number,
   ): Promise<Lesson> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson;
+    return await this.repository.findOne({ course, sequenceNumber });
   }
 }
