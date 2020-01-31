@@ -107,30 +107,11 @@ export class LessonService {
     return await this.repository.count({ course });
   }
 
-  // Deprecated
-  @Transactional()
-  public async getLessonIdByCourseIdAndSeqNum(
-    course: Lesson['course'],
-    sequenceNumber: number,
-  ): Promise<Lesson['id']> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson.id;
-  }
-
   @Transactional()
   public async getByCourseAndSequenceNumber(
     course: Course,
     sequenceNumber: number,
   ): Promise<Lesson> {
     return await this.repository.findOne({ course, sequenceNumber });
-  }
-
-  @Transactional()
-  public async findLessonByCourseIdAndSeqNum(
-    course: Lesson['course'],
-    sequenceNumber: number,
-  ): Promise<Lesson> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson;
   }
 }

@@ -68,37 +68,62 @@ export class CourseTakenService {
     });
   }
 
-  public async getCurrentProgression(
-    id: string,
-  ): Promise<CurrentProgressionDTO> {
-    const courseTaken = await this.repository.findByIdWithAllRelations(id);
+  private async findByUserAndCourse(
+    user: CourseTaken['user'],
+    course: CourseTaken['course'],
+  ) {
+    const courseTaken = await this.repository.findByUserAndCourseWithAllRelations(
+      user,
+      course,
+    );
     if (!courseTaken) {
       throw new NotFoundException('CourseTaken not found');
     }
+    return courseTaken;
+  }
+
+  public async getCurrentProgression(
+    userId: string,
+    courseId: string,
+  ): Promise<CurrentProgressionDTO> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+    const courseTaken = await this.findByUserAndCourse(user, course);
     if (!courseTaken.currentTest) {
       const videoProgression = new VideoProgressionDTO();
       const videoProgressionData = new VideoProgressionDataDTO();
       videoProgressionData.videoUrl =
         courseTaken.currentPart.youtubeUrl || courseTaken.currentPart.vimeoUrl;
-      videoProgression.type = StepEnum.VIDEO;
+      videoProgression.type = StepEnum.NEW_PART;
+      if (courseTaken.currentPart.sequenceNumber === 1) {
+        videoProgression.type = StepEnum.NEW_LESSON;
+        videoProgressionData.lessonTitle = courseTaken.currentLesson.title;
+      }
       videoProgression.data = videoProgressionData;
       return videoProgression;
     }
 
     const alternativeProgression = new AlternativeProgressionDTO();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       correctAlternative,
       ...currentTestWithoutCorrectAlternative
     } = courseTaken.currentTest;
     const alternativeProgressionData = currentTestWithoutCorrectAlternative;
-    alternativeProgression.type = StepEnum.ALTERNATIVE;
+    alternativeProgression.type = StepEnum.NEW_TEST;
     alternativeProgression.data = alternativeProgressionData;
     return alternativeProgression;
   }
 
-  public async advanceOnCourse(id: string): Promise<void> {
-    const courseTaken = await this.repository.findByIdWithAllRelations(id);
+  public async advanceOnCourse(userId: string, courseId): Promise<void> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+
+    const courseTaken = await this.findByUserAndCourse(user, course);
 
     const nextTestSequenceNumber: number = !courseTaken.currentTest
       ? 1
@@ -168,14 +193,20 @@ export class CourseTakenService {
 
   @Transactional()
   public async update(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+    userId: string,
+    courseId: string,
     courseTakenUpdatedInfo: CourseTakenUpdateDTO,
   ): Promise<CourseTaken> {
-    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+
+    const courseTaken: CourseTaken = await this.findByUserAndCourse(
       user,
       course,
     );
+
     return this.repository.save(
       this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo }),
     );
@@ -251,10 +282,11 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async delete(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
-  ): Promise<void> {
+  public async delete(userId: string, courseId: string): Promise<void> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
     await this.repository.delete({ user, course });
   }
 

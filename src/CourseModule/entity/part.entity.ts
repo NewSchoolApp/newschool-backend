@@ -69,5 +69,5 @@ export class Part extends Audit {
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentPart,
   )
-  currentCourseTakens: CourseTaken[];
+  currentCoursesTaken: CourseTaken[];
 }

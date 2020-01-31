@@ -93,7 +93,7 @@ export class AppConfigService {
       port: this.databasePort,
       username: this.databaseUsername,
       password: this.databasePassword,
-      synchronize: this.synchronize,
+      synchronize: true,
       logging: this.logging,
     };
   }

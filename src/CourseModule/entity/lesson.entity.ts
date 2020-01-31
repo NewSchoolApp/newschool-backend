@@ -49,5 +49,5 @@ export class Lesson extends Audit {
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentLesson,
   )
-  currentCourseTakens: CourseTaken[];
+  currentCoursesTaken: CourseTaken[];
 }

@@ -12,9 +12,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.find({ relations: ['user', 'course'], where: { user: user } });
   }
 
-  public async findByIdWithAllRelations(id: CourseTaken['id']) {
+  public async findByUserAndCourseWithAllRelations(
+    user: CourseTaken['user'],
+    course: CourseTaken['course'],
+  ) {
     return this.findOne(
-      { id },
+      { user, course },
       {
         relations: [
           'user',

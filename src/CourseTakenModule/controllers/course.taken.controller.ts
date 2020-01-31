@@ -140,7 +140,7 @@ export class CourseTakenController {
     await this.service.add(courseTaken);
   }
 
-  @Put('/:user/:course')
+  @Put('user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiParam({
@@ -162,24 +162,24 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
-    @Param('user') user: CourseTakenDTO['user'],
-    @Param('course') course: CourseTakenDTO['course'],
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
     @Body() courseTakenUpdatedInfo: CourseTakenUpdateDTO,
   ): Promise<CourseTakenDTO> {
-    return await this.service.update(user, course, courseTakenUpdatedInfo);
+    return await this.service.update(userId, courseId, courseTakenUpdatedInfo);
   }
 
-  @Delete('/:user/:course')
+  @Delete('user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
   @ApiParam({
-    name: 'user',
+    name: 'userId',
     type: String,
     required: true,
     description: 'User id',
   })
   @ApiParam({
-    name: 'course',
+    name: 'courseId',
     type: String,
     required: true,
     description: 'Course id',
@@ -191,13 +191,13 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async delete(
-    @Param('user') user: CourseTakenDTO['user'],
-    @Param('course') course: CourseTakenDTO['course'],
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ): Promise<void> {
-    await this.service.delete(user, course);
+    await this.service.delete(userId, courseId);
   }
 
-  @Post(':courseTakenId/advance-on-course')
+  @Post('advance-on-course/user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiBody({ type: CourseTakenDTO })
@@ -207,12 +207,13 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateCourseStatus(
-    @Param('courseTakenId') courseTakenId: string,
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ): Promise<void> {
-    await this.service.advanceOnCourse(courseTakenId);
+    await this.service.advanceOnCourse(userId, courseId);
   }
 
-  @Get(':courseTakenId/current-step')
+  @Get('current-step/user/:userId/course/:courseId')
   @HttpCode(201)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiBody({ type: CourseTakenDTO })
@@ -223,9 +224,10 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async currentCourseProgression(
-    @Param('courseTakenId') courseTakenId: string,
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ): Promise<CurrentProgressionDTO> {
-    return await this.service.getCurrentProgression(courseTakenId);
+    return await this.service.getCurrentProgression(userId, courseId);
   }
 
   @Get('/certificate/user/:userId/course/:courseId')

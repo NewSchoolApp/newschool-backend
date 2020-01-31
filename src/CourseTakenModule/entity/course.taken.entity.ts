@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { User } from '../../UserModule/entity';
@@ -26,39 +25,36 @@ import { CourseTakenStatusEnum } from '../enum';
   unique: true,
 })
 export class CourseTaken extends Audit {
-  @Expose()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Expose()
-  @ManyToOne<User>('User', (user: User) => user.coursesTaken)
+  @ManyToOne<User>('User', (user: User) => user.coursesTaken, { primary: true })
   @JoinColumn({
     name: 'user_id',
   })
+  @Expose()
   user: User;
 
-  @Expose()
-  @ManyToOne<Course>('Course', (course: Course) => course.takenCourses)
+  @ManyToOne<Course>('Course', (course: Course) => course.takenCourses, {
+    primary: true,
+  })
   @JoinColumn({
     name: 'course_id',
   })
+  @Expose()
   course: Course;
 
-  @Expose()
   @Column({
     nullable: false,
     name: 'course_start_date',
   })
+  @Expose()
   courseStartDate: Date;
 
-  @Expose()
   @Column({
     nullable: true,
     name: 'course_complete_date',
   })
+  @Expose()
   courseCompleteDate: Date;
 
-  @Expose()
   @Column({
     nullable: false,
     name: 'status',
@@ -66,17 +62,18 @@ export class CourseTaken extends Audit {
     enum: CourseTakenStatusEnum,
     default: CourseTakenStatusEnum.TAKEN,
   })
+  @Expose()
   status: CourseTakenStatusEnum;
 
-  @Expose()
   @Column({
     nullable: false,
     name: 'completion',
     default: 0,
   })
+  @Expose()
   completion: number;
 
-  @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCourseTakens)
+  @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken)
   @Column({
     nullable: true,
     type: 'varchar',
@@ -85,7 +82,7 @@ export class CourseTaken extends Audit {
   @Expose()
   currentLesson: Lesson;
 
-  @OneToMany<Part>('Part', (part: Part) => part.currentCourseTakens)
+  @OneToMany<Part>('Part', (part: Part) => part.currentCoursesTaken)
   @Column({
     nullable: true,
     type: 'varchar',
@@ -94,7 +91,7 @@ export class CourseTaken extends Audit {
   @Expose()
   currentPart: Part;
 
-  @OneToMany<Test>('Test', (test: Test) => test.currentCourseTakens)
+  @OneToMany<Test>('Test', (test: Test) => test.currentCoursesTaken)
   @Column({
     nullable: true,
     type: 'varchar',

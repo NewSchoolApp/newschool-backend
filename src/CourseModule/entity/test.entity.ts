@@ -87,5 +87,5 @@ export class Test extends Audit {
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentTest,
   )
-  currentCourseTakens: CourseTaken[];
+  currentCoursesTaken: CourseTaken[];
 }
