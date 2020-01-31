@@ -47,7 +47,8 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getAll(course: Lesson['course']): Promise<Lesson[]> {
+  public async getAll(courseId: Course['id']): Promise<Lesson[]> {
+    const course: Course = await this.courseService.findById(courseId);
     return this.repository.find({ course });
   }
 
@@ -96,20 +97,10 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getLessonIdByCourseIdAndSeqNum(
-    course: Lesson['course'],
-    sequenceNumber: number,
-  ): Promise<Lesson['id']> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson.id;
-  }
-
-  @Transactional()
-  public async findLessonByCourseIdAndSeqNum(
-    course: Lesson['course'],
+  public async getByCourseAndSequenceNumber(
+    course: Course,
     sequenceNumber: number,
   ): Promise<Lesson> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson;
+    return await this.repository.findOne({ course, sequenceNumber });
   }
 }

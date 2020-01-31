@@ -5,24 +5,30 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PartRepository } from '../repository';
-import { Part } from '../entity';
-import { PartUpdateDTO } from '../dto';
+import { Lesson, Part } from '../entity';
+import { NewPartDTO, PartUpdateDTO } from '../dto';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { MoreThan } from 'typeorm';
+import { LessonService } from './lesson.service';
 
 @Injectable()
 export class PartService {
-  constructor(private readonly repository: PartRepository) {}
+  constructor(
+    private readonly lessonService: LessonService,
+    private readonly repository: PartRepository,
+  ) {}
 
-  public async add(part: Part): Promise<Part> {
-    if (!part.youtubeUrl) {
-      throw new BadRequestException('Part must have youtube url');
+  public async add(part: NewPartDTO): Promise<Part> {
+    if (!part.vimeoUrl && !part.youtubeUrl) {
+      throw new BadRequestException('Part must have a video url');
     }
 
-    const lessonSameTitle: Part = await this.repository.findByTitleAndLessonId({
-      title: part.title,
-      lesson: part.lesson,
-    });
+    const lesson: Lesson = await this.lessonService.findById(part.lessonId);
+
+    const lessonSameTitle: Part = await this.repository.findByTitleAndLesson(
+      part.title,
+      lesson,
+    );
 
     if (lessonSameTitle) {
       throw new ConflictException(
@@ -32,8 +38,7 @@ export class PartService {
 
     return this.repository.save({
       ...part,
-      sequenceNumber:
-        1 + (await this.repository.count({ lesson: part.lesson })),
+      sequenceNumber: 1 + (await this.repository.count({ lesson })),
     });
   }
 
@@ -90,23 +95,9 @@ export class PartService {
     }
   }
 
-  public async findByTitle(
-    title: Part['title'],
-    lesson: Part['lesson'],
-  ): Promise<Part> {
-    const part = await this.repository.findByTitleAndLessonId({
-      title,
-      lesson,
-    });
-    if (!part) {
-      throw new NotFoundException();
-    }
-    return part;
-  }
-
   @Transactional()
-  public async getMaxValueForPart(lesson: string): Promise<number> {
-    return await this.repository.count({ lesson: Part['lesson'] });
+  public async countByLesson(lesson: Lesson): Promise<number> {
+    return await this.repository.count({ lesson });
   }
 
   @Transactional()
@@ -120,6 +111,17 @@ export class PartService {
       sequenceNumber,
     });
     return part.id;
+  }
+
+  @Transactional()
+  public async getByLessonAndSequenceNumber(
+    lesson: Lesson,
+    sequenceNumber: number,
+  ): Promise<Part> {
+    return await this.repository.findOne({
+      lesson,
+      sequenceNumber,
+    });
   }
 
   @Transactional()

@@ -32,7 +32,7 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
 
     updateDtoObject.user = entityObject.user;
     updateDtoObject.course = entityObject.course;
-    updateDtoObject.completition = entityObject.completition;
+    updateDtoObject.completion = entityObject.completion;
     updateDtoObject.courseStartDate = entityObject.courseStartDate;
     updateDtoObject.courseCompleteDate = entityObject.courseCompleteDate;
     updateDtoObject.status = entityObject.status;
@@ -53,7 +53,7 @@ export class CourseTakenMapper extends Mapper<CourseTaken, CourseTakenDTO> {
     courseTakenArray.forEach((courseTaken, index) => {
       myCourseDtoArray[index].course = courseArray[index];
       myCourseDtoArray[index].user = user;
-      myCourseDtoArray[index].completition = courseTaken.completition;
+      myCourseDtoArray[index].completion = courseTaken.completion;
       myCourseDtoArray[index].courseStartDate = courseTaken.courseStartDate;
       myCourseDtoArray[index].courseCompleteDate =
         courseTaken.courseCompleteDate;

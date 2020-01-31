@@ -26,7 +26,7 @@ export class AttendAClassDTO {
 
   @ApiProperty({ type: String })
   @Expose()
-  completition: CourseTaken['completition'];
+  completion: CourseTaken['completion'];
 
   @ApiProperty({ type: () => LessonDTO })
   @Expose()

@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
@@ -9,9 +8,12 @@ import {
 } from 'typeorm-transactional-cls-hooked';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
+import * as path from 'path';
+import { ConfigService } from './ConfigModule/service';
 
 async function bootstrap() {
   require('dotenv-flow').config();
+  (global as any).appRoot = path.resolve(__dirname);
 
   initializeTransactionalContext();
   patchTypeORMRepositoryWithBaseRepository();
@@ -34,11 +36,11 @@ async function bootstrap() {
     }),
   );
 
-  const configService = app.get<ConfigService>(ConfigService);
+  const appConfigService = app.get<ConfigService>(ConfigService);
 
-  app.useGlobalFilters(new HttpExceptionFilter(configService));
+  app.useGlobalFilters(new HttpExceptionFilter(appConfigService));
 
-  await app.listen(configService.get<number>('PORT') || 8080);
+  await app.listen(appConfigService.port || 8080);
 }
 
 bootstrap();
