@@ -87,7 +87,7 @@ export class LessonController {
   @ApiBody({ type: NewLessonDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() lesson): Promise<LessonDTO> {
+  public async add(@Body() lesson: NewLessonDTO): Promise<LessonDTO> {
     return this.mapper.toDto(await this.service.add(lesson));
   }
 

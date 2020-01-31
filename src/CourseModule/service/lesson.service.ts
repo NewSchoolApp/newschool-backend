@@ -13,18 +13,18 @@ import { CourseService } from './course.service';
 @Injectable()
 export class LessonService {
   constructor(
-    private readonly repository: LessonRepository,
     private readonly courseService: CourseService,
+    private readonly repository: LessonRepository,
   ) {}
 
   @Transactional()
   public async add(lesson: NewLessonDTO): Promise<Lesson> {
-    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId(
-      {
-        title: lesson.title,
-        course: lesson.course,
-      },
+    const course: Course = await this.courseService.findById(lesson.courseId);
+    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourse(
+      lesson.title,
+      course,
     );
+
     if (lessonSameTitle) {
       throw new ConflictException(
         'There is already a lesson with this title for this course',
@@ -33,8 +33,7 @@ export class LessonService {
 
     return this.repository.save({
       ...lesson,
-      sequenceNumber:
-        1 + (await this.repository.count({ course: lesson.course })),
+      sequenceNumber: 1 + (await this.repository.count({ course: course })),
     });
   }
 
@@ -93,22 +92,7 @@ export class LessonService {
   }
 
   @Transactional()
-  public async findByTitle(
-    title: Lesson['title'],
-    course: Lesson['course'],
-  ): Promise<Lesson> {
-    const lesson = await this.repository.findByTitleAndCourseId({
-      title,
-      course,
-    });
-    if (!lesson) {
-      throw new NotFoundException();
-    }
-    return lesson;
-  }
-
-  @Transactional()
-  public async countByCourse(course: Course): Promise<number> {
+  public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
     return await this.repository.count({ course });
   }
 
