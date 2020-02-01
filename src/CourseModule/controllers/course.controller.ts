@@ -140,13 +140,14 @@ export class CourseController {
     summary: 'Update course',
     description: 'Update course by id',
   })
+  @ApiBody({ type: CourseUpdateDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
     @Param('id') id: CourseDTO['id'],
     @Body() courseUpdatedInfo: CourseUpdateDTO,
-  ) {
-    return await this.service.update(id, courseUpdatedInfo);
+  ): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.update(id, courseUpdatedInfo));
   }
 
   @Delete('/:id')
