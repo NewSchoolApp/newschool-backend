@@ -92,7 +92,7 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
+  public async countByCourse(course: Course): Promise<number> {
     return await this.repository.count({ course });
   }
 
