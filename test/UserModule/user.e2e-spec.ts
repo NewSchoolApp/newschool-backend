@@ -10,6 +10,7 @@ import {
   GrantTypeEnum,
   RoleEnum,
 } from '../../src/SecurityModule/enum';
+import { User } from '../../src/UserModule/entity';
 import { Constants } from '../../src/CommonsModule';
 import { NewUserDTO, UserUpdateDTO } from '../../src/UserModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
@@ -67,7 +68,7 @@ describe('UserController (e2e)', () => {
     );
   });
 
-  it.only('should add user', async done => {
+  it('should add user', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -222,6 +223,30 @@ describe('UserController (e2e)', () => {
   });
 
   afterAll(async () => {
+    const userRepository: Repository<User> = moduleFixture.get<
+      Repository<User>
+    >(getRepositoryToken(User));
+    const users = await userRepository.find();
+    await Promise.all(users.map(async user => userRepository.remove(user)));
+
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
+    const clients = await clientCredentialRepository.find({
+      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
+    });
+    if (clients.length) {
+      await clientCredentialRepository.remove(clients[0]);
+    }
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
+    const roles = await roleRepository.find({
+      name: RoleEnum.ADMIN,
+    });
+    if (roles.length) {
+      await roleRepository.remove(roles[0]);
+    }
     await app.close();
   });
 });

@@ -95,19 +95,6 @@ describe('SecurityController (e2e)', () => {
   });
 
   it('should throw if grant type is invalid', async done => {
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
-    clientCredentials.secret = 'test';
-    clientCredentials.role = adminRole;
-    await clientCredentialRepository.save(clientCredentials);
-
-    const authorization = stringToBase64(
-      `${clientCredentials.name}:${clientCredentials.secret}`,
-    );
-
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -165,6 +152,30 @@ describe('SecurityController (e2e)', () => {
   });
 
   afterAll(async () => {
+    const userRepository: Repository<User> = moduleFixture.get<
+      Repository<User>
+    >(getRepositoryToken(User));
+    const users = await userRepository.find();
+    await Promise.all(users.map(async user => userRepository.remove(user)));
+
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
+    const clients = await clientCredentialRepository.find({
+      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
+    });
+    if (clients.length) {
+      await clientCredentialRepository.remove(clients[0]);
+    }
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
+    const roles = await roleRepository.find({
+      name: RoleEnum.ADMIN,
+    });
+    if (roles.length) {
+      await roleRepository.remove(roles[0]);
+    }
     await app.close();
   });
 });
