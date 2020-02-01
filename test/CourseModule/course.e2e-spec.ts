@@ -77,7 +77,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Test',
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .expect(201)
@@ -119,7 +119,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E2',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Teste',
             description: 'teste 2',
           } as NewCourseDTO)
           .then(_res => {
@@ -147,7 +147,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E3',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Teste',
             description: 'teste 2',
           } as NewCourseDTO)
           .then(_res => {
@@ -175,7 +175,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E4',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Teste',
             description: 'teste 2',
           } as NewCourseDTO)
           .then(() => {
@@ -217,7 +217,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Teste',
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .then(_res => {
@@ -242,7 +242,7 @@ describe('CourseController (e2e)', () => {
           .send({
             title: 'Teste E3E',
             thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
+            authorName: 'Teste',
             description: 'Este é um registro de teste',
           } as NewCourseDTO)
           .then(_res => {
