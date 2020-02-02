@@ -13,6 +13,7 @@ import {
   NewCourseTakenDTO,
   VideoProgressionDataDTO,
   VideoProgressionDTO,
+  CourseTakenDTO,
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
@@ -102,6 +103,13 @@ export class CourseTakenService {
       this.courseService.findById(courseId),
     ]);
     const courseTaken = await this.findByUserAndCourse(user, course);
+
+    if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
+      let courseTakenDTO = new CurrentProgressionDTO();
+      courseTakenDTO = { ...courseTaken, type: StepEnum.NEW_TEST };
+      return courseTakenDTO;
+    }
+
     if (!courseTaken.currentTest) {
       const videoProgression = new VideoProgressionDTO();
       const videoProgressionData = new VideoProgressionDataDTO();
@@ -138,7 +146,7 @@ export class CourseTakenService {
 
     const nextTestSequenceNumber: number = !courseTaken.currentTest
       ? 1
-      : courseTaken.currentTest.sequenceNumber++;
+      : courseTaken.currentTest.sequenceNumber + 1;
 
     const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
       courseTaken.currentPart,
@@ -156,7 +164,7 @@ export class CourseTakenService {
 
     const nextPart: Part = await this.partService.getByLessonAndSequenceNumber(
       courseTaken.currentLesson,
-      courseTaken.currentPart.sequenceNumber++,
+      courseTaken.currentPart.sequenceNumber + 1,
     );
 
     if (nextPart) {
@@ -174,7 +182,7 @@ export class CourseTakenService {
 
     const nextLesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
       courseTaken.course,
-      courseTaken.currentLesson.sequenceNumber++,
+      courseTaken.currentLesson.sequenceNumber + 1,
     );
 
     if (nextLesson) {
@@ -182,9 +190,15 @@ export class CourseTakenService {
         nextLesson,
         1,
       );
+
+      const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
+        nextPart,
+        1,
+      );
+
       const updatedCourseTaken = {
         ...courseTaken,
-        currentTest: null,
+        currentTest: nextTest,
         currentPart: nextPart,
         currentLesson: nextLesson,
       };
