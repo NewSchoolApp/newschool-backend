@@ -1,14 +1,14 @@
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
 
-export class FacebookAuthUserDTO {  
+export class FacebookAuthUserDTO {
   @ApiProperty({ type: String })
-  @IsString()
-  email: string;
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   id: string;
+
   @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
-  name: string;
+  email: string;
 }

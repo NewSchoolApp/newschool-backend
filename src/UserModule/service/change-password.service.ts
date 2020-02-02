@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ChangePasswordRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Injectable()
 export class ChangePasswordService {
@@ -15,9 +15,7 @@ export class ChangePasswordService {
   ): Promise<ChangePassword> {
     const changePassword: ChangePassword = new ChangePassword();
     changePassword.user = user;
-    changePassword.expirationTime = this.configService.get<number>(
-      'CHANGE_PASSWORD_EXPIRATION_TIME',
-    );
+    changePassword.expirationTime = this.configService.changePasswordExpirationTime;
     return this.repository.save(changePassword);
   }
 

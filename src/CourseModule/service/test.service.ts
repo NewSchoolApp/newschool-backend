@@ -5,20 +5,25 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TestRepository } from '../repository';
-import { Test } from '../entity';
-import { TestUpdateDTO } from '../dto';
+import { Part, Test } from '../entity';
+import { NewTestDTO, TestUpdateDTO } from '../dto';
 import { MoreThan } from 'typeorm';
+import { PartService } from './part.service';
 
 @Injectable()
 export class TestService {
-  constructor(private readonly repository: TestRepository) {}
+  constructor(
+    private readonly partService: PartService,
+    private readonly repository: TestRepository,
+  ) {}
 
   @Transactional()
-  public async add(test: Test): Promise<Test> {
-    const testSameTitle: Test = await this.repository.findByTitleAndPartId({
-      title: test.title,
-      part: test.part,
-    });
+  public async add(test: NewTestDTO): Promise<Test> {
+    const part: Part = await this.partService.findById(test.partId);
+    const testSameTitle: Test = await this.repository.findByTitleAndPartId(
+      test.title,
+      part,
+    );
     if (testSameTitle) {
       throw new ConflictException(
         'There is already a test with this title for this part',
@@ -27,7 +32,7 @@ export class TestService {
 
     return this.repository.save({
       ...test,
-      sequenceNumber: 1 + (await this.repository.count({ part: test.part })),
+      sequenceNumber: 1 + (await this.repository.count({ part })),
     });
   }
 
@@ -84,18 +89,6 @@ export class TestService {
         sequenceNumber: test.sequenceNumber - 1,
       });
     }
-  }
-
-  @Transactional()
-  public async findByTitle(
-    title: Test['title'],
-    part: Test['part'],
-  ): Promise<Test> {
-    const test = await this.repository.findByTitleAndPartId({ title, part });
-    if (!test) {
-      throw new NotFoundException('No test found');
-    }
-    return test;
   }
 
   @Transactional()

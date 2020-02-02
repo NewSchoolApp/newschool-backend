@@ -4,9 +4,9 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import * as Rollbar from 'rollbar';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -18,14 +18,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const error = exception.getResponse();
 
-    let env = this.configService.get<string>('NODE_ENV');
+    const env = this.configService.nodeEnv;
 
     if (env === 'TEST' || env === 'PROD') {
-      const rollbar = new Rollbar({
-        accessToken: this.configService.get<string>('ROLLBAR_TOKEN'),
-        captureUncaught: true,
-        captureUnhandledRejections: true,
-      });
+      const rollbar = new Rollbar(this.configService.getRollbarConfiguration());
 
       rollbar.warning(JSON.stringify(error));
     }
