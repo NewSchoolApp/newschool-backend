@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import { Part } from './part.entity';
 import { Expose } from 'class-transformer';
@@ -83,7 +84,7 @@ export class Test extends Audit {
   })
   part: Part;
 
-  @ManyToOne<CourseTaken>(
+  @OneToMany<CourseTaken>(
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentTest,
   )

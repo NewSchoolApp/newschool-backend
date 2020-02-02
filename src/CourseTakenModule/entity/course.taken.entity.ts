@@ -28,6 +28,7 @@ export class CourseTaken extends Audit {
   @ManyToOne<User>('User', (user: User) => user.coursesTaken, { primary: true })
   @JoinColumn({
     name: 'user_id',
+    referencedColumnName: 'id',
   })
   @Expose()
   user: User;
@@ -37,6 +38,7 @@ export class CourseTaken extends Audit {
   })
   @JoinColumn({
     name: 'course_id',
+    referencedColumnName: 'id',
   })
   @Expose()
   course: Course;
@@ -73,29 +75,32 @@ export class CourseTaken extends Audit {
   @Expose()
   completion: number;
 
-  @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken)
-  @Column({
+  @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken, {
     nullable: true,
-    type: 'varchar',
+  })
+  @JoinColumn({
     name: 'current_lesson_id',
+    referencedColumnName: 'id',
   })
   @Expose()
   currentLesson: Lesson;
 
-  @OneToMany<Part>('Part', (part: Part) => part.currentCoursesTaken)
-  @Column({
+  @ManyToOne<Part>('Part', (part: Part) => part.currentCoursesTaken, {
     nullable: true,
-    type: 'varchar',
+  })
+  @JoinColumn({
     name: 'current_part_id',
+    referencedColumnName: 'id',
   })
   @Expose()
   currentPart: Part;
 
-  @OneToMany<Test>('Test', (test: Test) => test.currentCoursesTaken)
-  @Column({
+  @ManyToOne<Test>('Test', (test: Test) => test.currentCoursesTaken, {
     nullable: true,
-    type: 'varchar',
+  })
+  @JoinColumn({
     name: 'current_test_id',
+    referencedColumnName: 'id',
   })
   @Expose()
   currentTest: Test;
