@@ -1,7 +1,7 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
@@ -13,7 +13,6 @@ import {
   NewCourseTakenDTO,
   VideoProgressionDataDTO,
   VideoProgressionDTO,
-  CourseTakenDTO,
 } from '../dto';
 import { CourseTakenMapper } from '../mapper';
 import {
@@ -108,9 +107,7 @@ export class CourseTakenService {
     const courseTaken = await this.findByUserAndCourse(user, course);
 
     if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
-      let courseTakenDTO = new CurrentProgressionDTO();
-      courseTakenDTO = { ...courseTaken, type: StepEnum.NEW_TEST };
-      return courseTakenDTO;
+      return { ...courseTaken, type: StepEnum.NEW_TEST };
     }
 
     if (!courseTaken.currentTest) {
@@ -236,10 +233,9 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getAllByUserId(
-    user: CourseTaken['user'],
-  ): Promise<CourseTaken[]> {
-    const courseTaken: CourseTaken[] = await this.repository.findByUserId(user);
+  public async findAllByUserId(userId: string): Promise<CourseTaken[]> {
+    const user: User = await this.userService.findById(userId);
+    const courseTaken: CourseTaken[] = await this.repository.findByUser(user);
     if (!courseTaken) {
       throw new NotFoundException('This user did not started any course');
     }
@@ -247,10 +243,9 @@ export class CourseTakenService {
   }
 
   @Transactional()
-  public async getAllByCourseId(
-    course: CourseTaken['course'],
-  ): Promise<CourseTaken[]> {
-    const courseTaken: CourseTaken[] = await this.repository.findByCourseId(
+  public async getAllByCourseId(courseId: string): Promise<CourseTaken[]> {
+    const course: Course = await this.courseService.findById(courseId);
+    const courseTaken: CourseTaken[] = await this.repository.findByCourse(
       course,
     );
     if (!courseTaken) {
@@ -261,9 +256,13 @@ export class CourseTakenService {
 
   @Transactional()
   public async findByUserIdAndCourseId(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+    userId: string,
+    courseId: string,
   ): Promise<CourseTaken> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
     const courseTaken: CourseTaken = await this.repository.findOne(
       { user, course },
       { relations: ['user', 'course'] },
@@ -319,10 +318,14 @@ export class CourseTakenService {
 
   @Transactional()
   public async getCertificate(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+    userId: string,
+    courseId: string,
   ): Promise<CertificateDTO> {
-    return this.repository.findCertificateByUserIdAndCourseId(user, course);
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+    return this.repository.findCertificateByUserAndCourse(user, course);
   }
 
   @Transactional()
