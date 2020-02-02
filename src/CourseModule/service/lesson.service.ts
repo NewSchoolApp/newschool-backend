@@ -5,22 +5,26 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { LessonRepository } from '../repository';
-import { Lesson } from '../entity';
+import { Course, Lesson } from '../entity';
 import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
+import { CourseService } from './course.service';
 
 @Injectable()
 export class LessonService {
-  constructor(private readonly repository: LessonRepository) {}
+  constructor(
+    private readonly courseService: CourseService,
+    private readonly repository: LessonRepository,
+  ) {}
 
   @Transactional()
   public async add(lesson: NewLessonDTO): Promise<Lesson> {
-    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourseId(
-      {
-        title: lesson.title,
-        course: lesson.course,
-      },
+    const course: Course = await this.courseService.findById(lesson.courseId);
+    const lessonSameTitle: Lesson = await this.repository.findByTitleAndCourse(
+      lesson.title,
+      course,
     );
+
     if (lessonSameTitle) {
       throw new ConflictException(
         'There is already a lesson with this title for this course',
@@ -29,8 +33,7 @@ export class LessonService {
 
     return this.repository.save({
       ...lesson,
-      sequenceNumber:
-        1 + (await this.repository.count({ course: lesson.course })),
+      sequenceNumber: 1 + (await this.repository.count({ course: course })),
     });
   }
 
@@ -44,7 +47,8 @@ export class LessonService {
   }
 
   @Transactional()
-  public async getAll(course: Lesson['course']): Promise<Lesson[]> {
+  public async getAll(courseId: Course['id']): Promise<Lesson[]> {
+    const course: Course = await this.courseService.findById(courseId);
     return this.repository.find({ course });
   }
 
@@ -88,40 +92,15 @@ export class LessonService {
   }
 
   @Transactional()
-  public async findByTitle(
-    title: Lesson['title'],
-    course: Lesson['course'],
-  ): Promise<Lesson> {
-    const lesson = await this.repository.findByTitleAndCourseId({
-      title,
-      course,
-    });
-    if (!lesson) {
-      throw new NotFoundException();
-    }
-    return lesson;
-  }
-
-  @Transactional()
-  public async getMaxValueForLesson(course: Lesson['course']): Promise<number> {
+  public async countByCourse(course: Course): Promise<number> {
     return await this.repository.count({ course });
   }
 
   @Transactional()
-  public async getLessonIdByCourseIdAndSeqNum(
-    course: Lesson['course'],
-    sequenceNumber: number,
-  ): Promise<Lesson['id']> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson.id;
-  }
-
-  @Transactional()
-  public async findLessonByCourseIdAndSeqNum(
-    course: Lesson['course'],
+  public async getByCourseAndSequenceNumber(
+    course: Course,
     sequenceNumber: number,
   ): Promise<Lesson> {
-    const lesson = await this.repository.findOne({ course, sequenceNumber });
-    return lesson;
+    return await this.repository.findOne({ course, sequenceNumber });
   }
 }

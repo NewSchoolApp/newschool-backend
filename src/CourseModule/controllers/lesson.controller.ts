@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleEnum } from '../../SecurityModule/enum';
+import { Course } from '../entity';
 
 @ApiTags('Lesson')
 @ApiBearerAuth()
@@ -35,7 +36,7 @@ export class LessonController {
     private readonly mapper: LessonMapper,
   ) {}
 
-  @Get('/course/:course')
+  @Get('/course/:courseId')
   @HttpCode(200)
   @ApiOperation({
     summary: 'Get Lessons',
@@ -55,9 +56,9 @@ export class LessonController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAll(
-    @Param('course') course: LessonDTO['course'],
+    @Param('courseId') courseId: Course['id'],
   ): Promise<LessonDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAll(course));
+    return this.mapper.toDtoList(await this.service.getAll(courseId));
   }
 
   @Get('/:id')
@@ -86,7 +87,7 @@ export class LessonController {
   @ApiBody({ type: NewLessonDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
-  public async add(@Body() lesson): Promise<LessonDTO> {
+  public async add(@Body() lesson: NewLessonDTO): Promise<LessonDTO> {
     return this.mapper.toDto(await this.service.add(lesson));
   }
 

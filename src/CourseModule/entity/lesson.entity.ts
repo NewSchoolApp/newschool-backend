@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Course } from './course.entity';
 import { Part } from './part.entity';
+import { CourseTaken } from '../../CourseTakenModule/entity';
 
 @Unique(['sequenceNumber', 'course'])
 @Entity()
@@ -43,4 +44,10 @@ export class Lesson extends Audit {
 
   @OneToMany<Part>('Part', (part: Part) => part.lesson)
   parts: Part[];
+
+  @OneToMany<CourseTaken>(
+    'CourseTaken',
+    (courseTaken: CourseTaken) => courseTaken.currentLesson,
+  )
+  currentCoursesTaken: CourseTaken[];
 }
