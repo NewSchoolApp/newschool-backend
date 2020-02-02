@@ -52,7 +52,10 @@ export class CourseTakenService {
       this.courseService.findById(newCourseTakenDto.courseId),
     ]);
 
-    const courseTaken = await this.findByUserIdAndCourseId(user, course);
+    const courseTaken = await this.repository.findByUserAndCourseWithAllRelations(
+      user,
+      course,
+    );
 
     if (courseTaken) {
       throw new ConflictException('This user has already started this course');
@@ -191,14 +194,9 @@ export class CourseTakenService {
         1,
       );
 
-      const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
-        nextPart,
-        1,
-      );
-
       const updatedCourseTaken = {
         ...courseTaken,
-        currentTest: nextTest,
+        currentTest: null,
         currentPart: nextPart,
         currentLesson: nextLesson,
       };
@@ -297,11 +295,15 @@ export class CourseTakenService {
     const percentualPerPart = percentualPerLesson / partsQuantity;
     const percentualPerTest = percentualPerPart / testsQuantity;
 
+    const currentTestSequenceNumber = courseTaken.currentTest
+      ? courseTaken.currentTest.sequenceNumber
+      : 1;
+
     completion =
       percentualPerLesson * (courseTaken.currentLesson.sequenceNumber - 1);
     completion +=
       percentualPerPart * (courseTaken.currentPart.sequenceNumber - 1);
-    completion += percentualPerTest * courseTaken.currentTest.sequenceNumber;
+    completion += percentualPerTest * currentTestSequenceNumber;
 
     return completion > 100 ? 100 : completion;
   }
