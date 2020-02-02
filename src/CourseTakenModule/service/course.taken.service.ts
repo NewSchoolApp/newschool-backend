@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenRepository } from '../repository';
 import { CourseTaken } from '../entity';
@@ -46,6 +50,12 @@ export class CourseTakenService {
       this.userService.findById(newCourseTakenDto.userId),
       this.courseService.findById(newCourseTakenDto.courseId),
     ]);
+
+    const courseTaken = await this.findByUserIdAndCourseId(user, course);
+
+    if (courseTaken) {
+      throw new ConflictException('This user has already started this course');
+    }
 
     const lesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
       course,
