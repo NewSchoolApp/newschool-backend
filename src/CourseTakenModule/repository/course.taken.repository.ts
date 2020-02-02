@@ -12,6 +12,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.find({ relations: ['user', 'course'], where: { user: user } });
   }
 
+  public async findByUser(
+    user: CourseTaken['user'],
+  ): Promise<CourseTaken[] | undefined> {
+    return this.find({ relations: ['user', 'course'], where: { user } });
+  }
+
   public async findByUserAndCourseWithAllRelations(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
@@ -30,7 +36,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     );
   }
 
-  public async findCertificateByUserIdAndCourseId(
+  public async findCertificateByUserAndCourse(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
   ): Promise<CertificateDTO> {
@@ -50,6 +56,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async findByCourseId(
+    course: CourseTaken['course'],
+  ): Promise<CourseTaken[] | undefined> {
+    return this.find({ course });
+  }
+
+  public async findByCourse(
     course: CourseTaken['course'],
   ): Promise<CourseTaken[] | undefined> {
     return this.find({ course });

@@ -46,14 +46,14 @@ export class CourseTakenController {
     private readonly mapper: CourseTakenMapper,
   ) {}
 
-  @Get('/user/:user')
+  @Get('/user/:userId')
   @HttpCode(200)
   @ApiOperation({
     summary: 'Get Courses',
     description: 'Get all courses by User id',
   })
   @ApiParam({
-    name: 'user',
+    name: 'userId',
     type: String,
     required: true,
     description: 'User id',
@@ -66,19 +66,19 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAllByUserId(
-    @Param('user') user: CourseTakenDTO['user'],
+    @Param('userId') userId: string,
   ): Promise<CourseTakenDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAllByUserId(user));
+    return this.mapper.toDtoList(await this.service.findAllByUserId(userId));
   }
 
-  @Get('/course/:course')
+  @Get('/course/:courseId')
   @HttpCode(200)
   @ApiOperation({
     summary: 'Get Users',
     description: 'Get all users by Course id',
   })
   @ApiParam({
-    name: 'course',
+    name: 'courseId',
     type: String,
     required: true,
     description: 'Course id',
@@ -86,27 +86,27 @@ export class CourseTakenController {
   @ApiOkResponse({
     type: CourseTakenDTO,
     isArray: true,
-    description: 'All users by Course id',
+    description: 'All courses taken by Course id',
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async getAllCourseId(
-    @Param('course') course: CourseTakenDTO['course'],
+    @Param('courseId') courseId: string,
   ): Promise<CourseTakenDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAllByCourseId(course));
+    return this.mapper.toDtoList(await this.service.getAllByCourseId(courseId));
   }
 
-  @Get('/:user/:course')
+  @Get('/user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOkResponse({ type: CourseTakenDTO })
   @ApiParam({
-    name: 'user',
+    name: 'userId',
     type: String,
     required: true,
     description: 'User id',
   })
   @ApiParam({
-    name: 'course',
+    name: 'courseId',
     type: String,
     required: true,
     description: 'Course id',
@@ -118,11 +118,11 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findByUserIdAndCourseId(
-    @Param('user') user: CourseTakenDTO['user'],
-    @Param('course') course: CourseTakenDTO['course'],
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ): Promise<CourseTakenDTO> {
     return this.mapper.toDto(
-      await this.service.findByUserIdAndCourseId(user, course),
+      await this.service.findByUserIdAndCourseId(userId, courseId),
     );
   }
 
@@ -252,8 +252,8 @@ export class CourseTakenController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificate(
-    @Param('userId') userId: CourseTakenDTO['user'],
-    @Param('courseId') courseId: CourseTakenDTO['course'],
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
   ): Promise<CertificateDTO> {
     return await this.service.getCertificate(userId, courseId);
   }
