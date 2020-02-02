@@ -10,7 +10,8 @@ export class CourseUpdateDTO {
   @Expose()
   title: Course['title'];
 
-  @ApiProperty({ type: String })
+   @ApiProperty({ type: String })
+   @IsNotEmpty()
   @IsString()
   @Expose()
   thumbUrl: Course['thumbUrl'];
