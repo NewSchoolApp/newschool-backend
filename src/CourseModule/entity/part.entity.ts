@@ -65,7 +65,7 @@ export class Part extends Audit {
   @OneToMany<Test>('Test', (test: Test) => test.part)
   tests: Test[];
 
-  @ManyToOne<CourseTaken>(
+  @OneToMany<CourseTaken>(
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentPart,
   )

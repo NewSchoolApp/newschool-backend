@@ -41,10 +41,10 @@ export class CourseTakenService {
   ) {}
 
   @Transactional()
-  public async add(newCourseTaken: NewCourseTakenDTO): Promise<void> {
+  public async add(newCourseTakenDto: NewCourseTakenDTO): Promise<void> {
     const [user, course]: [User, Course] = await Promise.all([
-      this.userService.findById(newCourseTaken.userId),
-      this.courseService.findById(newCourseTaken.courseId),
+      this.userService.findById(newCourseTakenDto.userId),
+      this.courseService.findById(newCourseTakenDto.courseId),
     ]);
 
     const lesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
@@ -56,16 +56,17 @@ export class CourseTakenService {
       lesson,
       1,
     );
+    const newCourseTaken = new CourseTaken();
+    newCourseTaken.user = user;
+    newCourseTaken.course = course;
+    newCourseTaken.course = course;
+    newCourseTaken.currentLesson = lesson;
+    newCourseTaken.currentPart = part;
+    newCourseTaken.currentTest = null;
+    newCourseTaken.status = CourseTakenStatusEnum.TAKEN;
+    newCourseTaken.courseStartDate = new Date(Date.now());
 
-    await this.repository.save({
-      currentLesson: lesson,
-      currentPart: part,
-      currentTest: null,
-      status: CourseTakenStatusEnum.TAKEN,
-      courseStartDate: new Date(Date.now()),
-      course,
-      user,
-    });
+    await this.repository.save(newCourseTaken);
   }
 
   private async findByUserAndCourse(
