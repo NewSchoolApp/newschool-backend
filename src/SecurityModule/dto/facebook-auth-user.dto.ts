@@ -1,10 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class FacebookAuthUserDTO {
-  @ApiProperty({ type: String })
-  @IsString()
-  birthday: string;
+export class FacebookAuthUserDTO {  
   @ApiProperty({ type: String })
   @IsString()
   email: string;
