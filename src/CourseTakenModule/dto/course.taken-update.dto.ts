@@ -42,7 +42,7 @@ export class CourseTakenUpdateDTO {
   @IsString()
   @IsNotEmpty()
   @Expose()
-  completition: CourseTaken['completition'];
+  completion: CourseTaken['completion'];
 
   @ApiProperty({ type: String })
   @Expose()

@@ -5,11 +5,11 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { User } from '../../UserModule/entity/user.entity';
-import { Course } from '../../CourseModule/entity/course.entity';
+import { User } from '../../UserModule/entity';
+import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
 import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum';
 
@@ -25,39 +25,38 @@ import { CourseTakenStatusEnum } from '../enum';
   unique: true,
 })
 export class CourseTaken extends Audit {
-  @Expose()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Expose()
-  @ManyToOne<User>('User', (user: User) => user.coursesTaken)
+  @ManyToOne<User>('User', (user: User) => user.coursesTaken, { primary: true })
   @JoinColumn({
     name: 'user_id',
+    referencedColumnName: 'id',
   })
+  @Expose()
   user: User;
 
-  @Expose()
-  @ManyToOne<Course>('Course', (course: Course) => course.takenCourses)
+  @ManyToOne<Course>('Course', (course: Course) => course.takenCourses, {
+    primary: true,
+  })
   @JoinColumn({
     name: 'course_id',
+    referencedColumnName: 'id',
   })
+  @Expose()
   course: Course;
 
-  @Expose()
   @Column({
     nullable: false,
     name: 'course_start_date',
   })
+  @Expose()
   courseStartDate: Date;
 
-  @Expose()
   @Column({
     nullable: true,
     name: 'course_complete_date',
   })
+  @Expose()
   courseCompleteDate: Date;
 
-  @Expose()
   @Column({
     nullable: false,
     name: 'status',
@@ -65,34 +64,44 @@ export class CourseTaken extends Audit {
     enum: CourseTakenStatusEnum,
     default: CourseTakenStatusEnum.TAKEN,
   })
+  @Expose()
   status: CourseTakenStatusEnum;
 
-  @Expose()
   @Column({
     nullable: false,
-    name: 'completition',
+    name: 'completion',
     default: 0,
   })
-  completition: number;
-
   @Expose()
-  @Column({
+  completion: number;
+
+  @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken, {
     nullable: true,
+  })
+  @JoinColumn({
     name: 'current_lesson_id',
+    referencedColumnName: 'id',
   })
-  currentLesson: number;
-
   @Expose()
-  @Column({
+  currentLesson: Lesson;
+
+  @ManyToOne<Part>('Part', (part: Part) => part.currentCoursesTaken, {
     nullable: true,
+  })
+  @JoinColumn({
     name: 'current_part_id',
+    referencedColumnName: 'id',
   })
-  currentPart: number;
-
   @Expose()
-  @Column({
+  currentPart: Part;
+
+  @ManyToOne<Test>('Test', (test: Test) => test.currentCoursesTaken, {
     nullable: true,
-    name: 'current_test_id',
   })
-  currentTest: number;
+  @JoinColumn({
+    name: 'current_test_id',
+    referencedColumnName: 'id',
+  })
+  @Expose()
+  currentTest: Test;
 }

@@ -101,15 +101,14 @@ export class TestService {
       throw new NotFoundException('No test found');
     }
 
-    return test.correctAlternative.toLowerCase() ==
-      chosenAlternative.toLowerCase()
-      ? true
-      : false;
+    return (
+      test.correctAlternative.toLowerCase() == chosenAlternative.toLowerCase()
+    );
   }
 
   @Transactional()
-  public async getMaxValueForTest(part: string): Promise<number> {
-    return await this.repository.count({ part: Test['part'] });
+  public async countByPart(part: Part): Promise<number> {
+    return await this.repository.count({ part });
   }
 
   @Transactional()
@@ -123,6 +122,17 @@ export class TestService {
       sequenceNumber,
     });
     return test.id;
+  }
+
+  @Transactional()
+  public async getByPartAndSequenceNumber(
+    part: Part,
+    sequenceNumber: number,
+  ): Promise<Test> {
+    return await this.repository.findOne({
+      part,
+      sequenceNumber,
+    });
   }
 
   @Transactional()
