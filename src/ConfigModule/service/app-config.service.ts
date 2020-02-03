@@ -25,9 +25,13 @@ export class AppConfigService {
 
   smtpHost: string = this.configService.get<string>('SMTP_HOST');
   smtpPort: number = this.configService.get<number>('SMTP_PORT');
-  secure: boolean = this.configService.get<number>('SMTP_PORT') === 465; // true for 465, false for other ports
+  smtpSecure: boolean | undefined = this.configService.get<boolean | undefined>(
+    'SMTP_SECURE',
+  );
+  smtpRequireTls: boolean = this.configService.get<boolean>('SMTP_REQUIRE_TLS');
   smtpUser: string = this.configService.get<string>('SMTP_USER');
   smtpPassword: string = this.configService.get<string>('SMTP_PASSWORD');
+  smtpFrom: string = this.configService.get<string>('SMTP_FROM');
 
   emailContactUs: string = this.configService.get<string>('EMAIL_CONTACTUS');
   frontUrl: string = this.configService.get<string>('FRONT_URL');
@@ -64,7 +68,8 @@ export class AppConfigService {
       transport: {
         host: this.smtpHost,
         port: this.smtpPort,
-        secure: this.secure,
+        secure: this.smtpSecure,
+        requireTLS: this.smtpRequireTls,
         auth: {
           user: this.smtpUser,
           pass: this.smtpPassword,
