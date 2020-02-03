@@ -2,8 +2,6 @@ import { CourseTaken } from '../entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { User } from '../../UserModule';
-import { Course } from '../../CourseModule';
 import { UserDTO } from '../../UserModule/dto';
 import { CourseDTO } from '../../CourseModule/dto';
 
@@ -33,7 +31,7 @@ export class CourseTakenDTO {
 
   @ApiProperty({ type: String })
   @Expose()
-  completition: CourseTaken['completition'];
+  completion: CourseTaken['completion'];
 
   @ApiProperty({ type: String })
   @Expose()

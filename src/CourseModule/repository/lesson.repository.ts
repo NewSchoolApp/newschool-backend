@@ -1,17 +1,16 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Lesson } from '../entity';
+import { Course, Lesson } from '../entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
-  async findByTitle({ title, course }): Promise<Lesson | undefined> {
-    return this.findByTitleAndCourseId({ title, course });
-  }
-
-  async findById({ id }): Promise<Lesson | undefined> {
+  async findById(id: string): Promise<Lesson | undefined> {
     return this.findOne({ id });
   }
 
-  async findByTitleAndCourseId({ title, course }): Promise<Lesson | undefined> {
+  async findByTitleAndCourse(
+    title: string,
+    course: Course,
+  ): Promise<Lesson | undefined> {
     return this.findOne({ title, course });
   }
 }
