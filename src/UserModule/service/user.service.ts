@@ -280,7 +280,7 @@ export class UserService {
     try {
       await this.mailerService.sendMail({
         to: user.email,
-        from: this.configService.smtpUser,
+        from: this.configService.smtpFrom,
         subject: 'Troca de senha',
         template: 'change-password',
         context: {

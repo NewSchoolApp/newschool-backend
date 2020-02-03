@@ -31,6 +31,7 @@ export class AppConfigService {
   smtpRequireTls: boolean = this.configService.get<boolean>('SMTP_REQUIRE_TLS');
   smtpUser: string = this.configService.get<string>('SMTP_USER');
   smtpPassword: string = this.configService.get<string>('SMTP_PASSWORD');
+  smtpFrom: string = this.configService.get<string>('SMTP_FROM');
 
   emailContactUs: string = this.configService.get<string>('EMAIL_CONTACTUS');
   frontUrl: string = this.configService.get<string>('FRONT_URL');
