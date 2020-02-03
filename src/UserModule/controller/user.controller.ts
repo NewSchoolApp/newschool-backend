@@ -44,7 +44,7 @@ import {
 import { RoleEnum } from '../../SecurityModule/enum';
 import { SecurityService } from '../../SecurityModule';
 import { User } from '../entity';
-import { CertificateUserDTO } from '../dto/CertificateUserDTO';
+import { CertificateUserDTO } from '../dto/certificate-user.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()

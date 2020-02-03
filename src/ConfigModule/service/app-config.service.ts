@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { ConfigService } from '@nestjs/config';
-import { HandlebarsAdapter } from '@nest-modules/mailer';
+import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import Rollbar = require('rollbar');
 
@@ -59,11 +59,11 @@ export class AppConfigService {
     };
   }
 
-  public getChangePasswordFrontUrl(changePasswordRequestId) {
+  public getChangePasswordFrontUrl(changePasswordRequestId): string {
     return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
   }
 
-  public getSmtpConfiguration() {
+  public getSmtpConfiguration(): MailerOptions {
     return {
       transport: {
         host: this.smtpHost,
@@ -98,7 +98,7 @@ export class AppConfigService {
       port: this.databasePort,
       username: this.databaseUsername,
       password: this.databasePassword,
-      synchronize: this.synchronize,
+      synchronize: false,
       logging: this.logging,
     };
   }

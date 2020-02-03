@@ -1,6 +1,7 @@
 import { CourseTaken } from '../entity';
 import { Expose, Type } from 'class-transformer';
 import {
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -13,20 +14,20 @@ export class CourseTakenUpdateDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  user: CourseTaken['user'];
+  userId: string;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
-  course: CourseTaken['course'];
+  courseId: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsDate()
   @Expose()
   courseStartDate: CourseTaken['courseStartDate'];
 
   @IsOptional()
-  @IsString()
+  @IsDate()
   @Expose()
   courseCompleteDate: CourseTaken['courseCompleteDate'];
 
@@ -44,15 +45,15 @@ export class CourseTakenUpdateDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  currentLesson: CourseTaken['currentLesson'];
+  currentLessonId: string;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
-  currentPart: CourseTaken['currentPart'];
+  currentPartId: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  currentTest: CourseTaken['currentTest'];
+  currentTestId: string;
 }

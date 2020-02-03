@@ -1,1 +1,1 @@
-export { CourseTakenMapper } from './course.taken.mapper';
+export { CourseTakenMapper } from './course-taken.mapper';

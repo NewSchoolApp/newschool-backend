@@ -1,13 +1,15 @@
 import { RoleEnum } from '../enum';
 import { Expose } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class RoleDTO {
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   id: string;
 
-  @ApiProperty({ enum: RoleEnum })
+  @IsNotEmpty()
+  @IsEnum(RoleEnum)
   @Expose()
   name: RoleEnum;
 }

@@ -1,32 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entity';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class SelfUpdateDTO {
-  @ApiProperty({ type: String })
-  @IsString()
   @IsOptional()
+  @IsString()
   @Expose()
-  id: User['id'];
+  id?: User['id'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
   name: User['name'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
   @Expose()
   email: User['email'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
   @IsString()
   @Expose()
-  urlFacebook: User['urlFacebook'];
+  urlFacebook?: User['urlFacebook'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
   @IsString()
   @Expose()
-  urlInstagram: User['urlInstagram'];
+  urlInstagram?: User['urlInstagram'];
 }
