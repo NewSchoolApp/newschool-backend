@@ -34,7 +34,7 @@ export class CourseTakenDTO {
   @IsOptional()
   @IsDate()
   @Expose()
-  courseCompleteDate: CourseTaken['courseCompleteDate'];
+  courseCompleteDate?: CourseTaken['courseCompleteDate'];
 
   @IsNotEmpty()
   @IsEnum(CourseTakenStatusEnum)
