@@ -38,6 +38,7 @@ export class PartService {
 
     return this.repository.save({
       ...part,
+      lesson,
       sequenceNumber: 1 + (await this.repository.count({ lesson })),
     });
   }
@@ -47,8 +48,15 @@ export class PartService {
     id: Part['id'],
     partUpdatedInfo: PartUpdateDTO,
   ): Promise<Part> {
-    const part: Part = await this.findById(id);
-    return this.repository.save({ ...part, ...partUpdatedInfo });
+    const part: Part = await this.repository.findByIdWithLesson(id);
+    if (!part) {
+      throw new NotFoundException('Part not found');
+    }
+    const lesson =
+      partUpdatedInfo.lessonId === part.lesson.id
+        ? part.lesson
+        : await this.lessonService.findById(partUpdatedInfo.lessonId);
+    return this.repository.save({ ...part, ...partUpdatedInfo, lesson });
   }
 
   public async getAll(lesson: Part['lesson']): Promise<Part[]> {

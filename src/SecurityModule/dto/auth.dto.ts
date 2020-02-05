@@ -8,18 +8,16 @@ export class AuthDTO {
   // tslint:disable-next-line:variable-name
   grant_type: GrantTypeEnum;
 
-  @ApiProperty()
-  @IsString()
   @IsOptional()
-  username: string;
+  @IsString()
+  username?: string;
 
-  @ApiProperty()
-  @IsString()
   @IsOptional()
-  password: string;
+  @IsString()
+  password?: string;
 
-  @ApiProperty()
-  @IsString()
   @IsOptional()
-  refresh_token: string;
+  @IsString()
+  // eslint-disable-next-line camelcase
+  refresh_token?: string;
 }

@@ -91,7 +91,7 @@ export class LessonController {
     return this.mapper.toDto(await this.service.add(lesson));
   }
 
-  @Put('/:id')
+  @Put(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: LessonDTO })
   @ApiParam({
@@ -113,7 +113,7 @@ export class LessonController {
     return await this.service.update(id, lessonUpdatedInfo);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
   @ApiParam({

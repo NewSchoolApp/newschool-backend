@@ -1,59 +1,58 @@
 import { Test } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Expose } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
 export class TestUpdateDTO {
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   title: Test['title'];
 
+  @IsOptional()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  question: Test['question'];
+  question?: Test['question'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   correctAlternative: Test['correctAlternative'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   firstAlternative: Test['firstAlternative'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   secondAlternative: Test['secondAlternative'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   thirdAlternative: Test['thirdAlternative'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   fourthAlternative: Test['fourthAlternative'];
 
+  @IsNotEmpty()
+  @Type(() => Number)
   @IsNumber()
+  @Min(1)
   @Expose()
-  @ApiProperty({ type: Number })
   sequenceNumber: Test['sequenceNumber'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  part: Test['part'];
+  partId: string;
 }

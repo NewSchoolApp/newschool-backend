@@ -1,12 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GeneratedTokenDTO {
-  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   accessToken: string;
-  @ApiProperty()
+
+  @IsNotEmpty()
+  @IsString()
   refreshToken: string;
-  @ApiProperty()
+
+  @IsNotEmpty()
+  @IsString()
   tokenType: string;
-  @ApiProperty()
+
+  @IsNotEmpty()
+  @IsString()
   expiresIn: string;
 }

@@ -1,42 +1,43 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Part } from '../entity';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Expose } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
 export class PartUpdateDTO {
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   title: Part['title'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   description: Part['description'];
 
+  @IsOptional()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  vimeoUrl: Part['vimeoUrl'];
+  vimeoUrl?: Part['vimeoUrl'];
 
+  @IsOptional()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  youtubeUrl: Part['youtubeUrl'];
+  youtubeUrl?: Part['youtubeUrl'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  lesson: Part['lesson'];
+  lessonId: string;
 
+  @IsNotEmpty()
+  @Type(() => Number)
   @IsNumber()
+  @Min(1)
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: Number })
   sequenceNumber: Part['sequenceNumber'];
 }
