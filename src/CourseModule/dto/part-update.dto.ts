@@ -32,7 +32,7 @@ export class PartUpdateDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  lesson: Part['lesson'];
+  lessonId: string;
 
   @IsNotEmpty()
   @Type(() => Number)
