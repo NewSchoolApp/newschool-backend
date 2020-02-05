@@ -7,6 +7,10 @@ export class TestRepository extends Repository<Test> {
     return this.findOne({ id });
   }
 
+  async findByIdWithPart(id: string): Promise<Test | undefined> {
+    return this.findOne({ id }, { relations: ['part'] });
+  }
+
   async findByTitleAndPartId(
     title: string,
     part: Part,

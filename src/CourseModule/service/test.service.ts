@@ -41,8 +41,15 @@ export class TestService {
     id: Test['id'],
     testUpdatedInfo: TestUpdateDTO,
   ): Promise<Test> {
-    const test: Test = await this.findById(id);
-    return this.repository.save({ ...test, ...testUpdatedInfo });
+    const test: Test = await this.repository.findByIdWithPart(id);
+    if (!test) {
+      throw new NotFoundException('Test not found');
+    }
+    const part =
+      testUpdatedInfo.partId === test.part.id
+        ? test.part
+        : await this.partService.findById(testUpdatedInfo.partId);
+    return this.repository.save({ ...test, ...testUpdatedInfo, part });
   }
 
   @Transactional()

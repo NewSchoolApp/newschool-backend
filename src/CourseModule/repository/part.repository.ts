@@ -13,4 +13,8 @@ export class PartRepository extends Repository<Part> {
   ): Promise<Part | undefined> {
     return this.findOne({ title, lesson });
   }
+
+  async findByIdWithLesson(id: string): Promise<Part | undefined> {
+    return this.findOne({ id }, { relations: ['lesson'] });
+  }
 }

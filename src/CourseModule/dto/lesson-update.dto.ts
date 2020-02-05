@@ -16,7 +16,7 @@ export class LessonUpdateDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  course: Lesson['course'];
+  courseId: string;
 
   @IsNotEmpty()
   @Type(() => Number)

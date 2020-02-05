@@ -7,6 +7,10 @@ export class LessonRepository extends Repository<Lesson> {
     return this.findOne({ id });
   }
 
+  async findByIdWithCourse(id: string): Promise<Lesson | undefined> {
+    return this.findOne({ id }, { relations: ['course'] });
+  }
+
   async findByTitleAndCourse(
     title: string,
     course: Course,
