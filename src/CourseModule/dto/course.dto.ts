@@ -1,41 +1,59 @@
 import { Course } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CourseDTO {
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   id: Course['id'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   title: Course['title'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   description: Course['description'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
   @Expose()
   workload: Course['workload'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
+  @IsString()
   @Expose()
-  thumbUrl: Course['thumbUrl'];
+  thumbUrl?: Course['thumbUrl'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsBoolean()
   @Expose()
   enabled: Course['enabled'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   authorName: string;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   authorDescription: string;
 
-  @ApiProperty({ type: Number })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   slug: string;
 }
