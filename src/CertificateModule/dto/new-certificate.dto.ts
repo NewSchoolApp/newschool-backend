@@ -1,16 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class NewCertificateDTO {
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
+  @Expose()
   title: string;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
+  @Expose()
   text: string;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
   @IsString()
+  @Expose()
   certificateBackgroundName: string;
 }

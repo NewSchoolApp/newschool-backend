@@ -85,7 +85,7 @@ export class CourseTakenService {
   private async findByUserAndCourse(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
-  ) {
+  ): Promise<CourseTaken> {
     const courseTaken = await this.repository.findByUserAndCourseWithAllRelations(
       user,
       course,
@@ -217,9 +217,18 @@ export class CourseTakenService {
     courseId: string,
     courseTakenUpdatedInfo: CourseTakenUpdateDTO,
   ): Promise<CourseTaken> {
-    const [user, course]: [User, Course] = await Promise.all([
+    const [user, course, currentTest, currentLesson, currentPart]: [
+      User,
+      Course,
+      Test,
+      Lesson,
+      Part,
+    ] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),
+      this.testService.findById(courseTakenUpdatedInfo.currentTestId),
+      this.lessonService.findById(courseTakenUpdatedInfo.currentLessonId),
+      this.partService.findById(courseTakenUpdatedInfo.currentPartId),
     ]);
 
     const courseTaken: CourseTaken = await this.findByUserAndCourse(
@@ -228,7 +237,13 @@ export class CourseTakenService {
     );
 
     return this.repository.save(
-      this.mapper.toEntity({ ...courseTaken, ...courseTakenUpdatedInfo }),
+      this.mapper.toEntity({
+        ...courseTaken,
+        ...courseTakenUpdatedInfo,
+        currentLesson,
+        currentTest,
+        currentPart,
+      }),
     );
   }
 

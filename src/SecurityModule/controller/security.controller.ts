@@ -17,12 +17,13 @@ import {
   GoogleAuthUserDTO,
 } from '../dto';
 import { GrantTypeEnum } from '../enum';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ClientCredentials } from '../entity';
 import { User } from '../../UserModule/entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller(`/${Constants.OAUTH_ENDPOINT}`)
+@ApiTags('Security')
 export class SecurityController {
   private readonly logger = new Logger(SecurityController.name);
 
@@ -83,6 +84,7 @@ export class SecurityController {
   }
 
   @Post('/token/details')
+  @ApiBearerAuth()
   getTokenDetails(
     @Headers('authorization') authorizationHeader: string,
   ): ClientCredentials | User {

@@ -1,47 +1,65 @@
 import { CourseTaken } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsNumber,
+  IsOptional,
+  Max,
+  Min,
+} from 'class-validator';
 import { UserDTO } from '../../UserModule/dto';
 import { CourseDTO } from '../../CourseModule/dto';
+import { CourseTakenStatusEnum } from '../enum';
+import { Lesson, Part, Test } from '../../CourseModule/entity';
 
 export class CourseTakenDTO {
-  @ApiProperty({ type: () => UserDTO })
+  @IsNotEmpty()
   @Type(() => UserDTO)
-  @IsString()
   @Expose()
   user: CourseTaken['user'];
 
-  @ApiProperty({ type: () => CourseDTO })
-  @IsString()
+  @IsNotEmptyObject()
+  @Type(() => CourseDTO)
   @Expose()
   course: CourseTaken['course'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsDate()
   @Expose()
   courseStartDate: CourseTaken['courseStartDate'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
+  @IsDate()
   @Expose()
-  courseCompleteDate: CourseTaken['courseCompleteDate'];
+  courseCompleteDate?: CourseTaken['courseCompleteDate'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsEnum(CourseTakenStatusEnum)
   @Expose()
   status: CourseTaken['status'];
 
-  @ApiProperty({ type: String })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(100)
   @Expose()
   completion: CourseTaken['completion'];
 
-  @ApiProperty({ type: String })
+  @Type(() => Lesson)
+  @IsNotEmptyObject()
   @Expose()
   currentLesson: CourseTaken['currentLesson'];
 
-  @ApiProperty({ type: String })
+  @Type(() => Part)
+  @IsNotEmptyObject()
   @Expose()
   currentPart: CourseTaken['currentPart'];
 
-  @ApiProperty({ type: String })
+  @Type(() => Test)
+  @IsNotEmptyObject()
   @Expose()
   currentTest: CourseTaken['currentTest'];
 }

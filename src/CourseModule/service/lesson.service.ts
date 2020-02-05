@@ -33,6 +33,7 @@ export class LessonService {
 
     return this.repository.save({
       ...lesson,
+      course,
       sequenceNumber: 1 + (await this.repository.count({ course: course })),
     });
   }
@@ -42,8 +43,19 @@ export class LessonService {
     id: Lesson['id'],
     lessonUpdatedInfo: LessonUpdateDTO,
   ): Promise<Lesson> {
-    const lesson: Lesson = await this.findById(id);
-    return this.repository.save({ ...lesson, ...lessonUpdatedInfo });
+    const lesson: Lesson = await this.repository.findByIdWithCourse(id);
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
+    const course =
+      lessonUpdatedInfo.courseId === lesson.course.id
+        ? lesson.course
+        : await this.courseService.findById(lessonUpdatedInfo.courseId);
+    return this.repository.save({
+      ...lesson,
+      ...lessonUpdatedInfo,
+      course,
+    });
   }
 
   @Transactional()

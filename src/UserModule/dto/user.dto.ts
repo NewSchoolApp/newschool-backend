@@ -3,35 +3,41 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto';
 import { CourseDTO } from '../../CourseModule/dto';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserDTO {
-  @ApiProperty({ type: Number })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   id: User['id'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   name: User['name'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   email: User['email'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
+  @IsString()
   @Expose()
-  urlFacebook: User['urlFacebook'];
+  urlFacebook?: User['urlFacebook'];
 
-  @ApiProperty({ type: String })
+  @IsOptional()
+  @IsString()
   @Expose()
-  urlInstagram: User['urlInstagram'];
+  urlInstagram?: User['urlInstagram'];
 
-  @ApiProperty({ type: () => RoleDTO })
-  @Expose()
   @Type(() => RoleDTO)
+  @IsNotEmpty()
+  @Expose()
   role: RoleDTO;
 
   @ApiProperty({ type: () => CourseDTO, isArray: true })
-  @Expose()
   @Type(() => CourseDTO)
+  @Expose()
   createdCourses: CourseDTO[];
 }
