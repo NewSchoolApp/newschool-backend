@@ -1,58 +1,59 @@
 import { CourseTaken } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { User } from '../../UserModule';
-import { Course } from '../../CourseModule';
-import { UserDTO } from '../../UserModule/dto';
-import { CourseDTO } from '../../CourseModule/dto';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { CourseTakenStatusEnum } from '../enum';
 
 export class CourseTakenUpdateDTO {
-  @ApiProperty({ type: () => UserDTO })
-  @Type(() => UserDTO)
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @Expose()
-  user: CourseTaken['user'];
+  userId: string;
 
-  @ApiProperty({ type: () => CourseDTO })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @Expose()
-  course: CourseTaken['course'];
+  courseId: string;
 
-  @ApiProperty({ type: String })
-  @IsString()
   @IsNotEmpty()
+  @IsDate()
   @Expose()
   courseStartDate: CourseTaken['courseStartDate'];
 
-  @ApiProperty({ type: String })
-  @IsString()
+  @IsOptional()
+  @IsDate()
   @Expose()
-  courseCompleteDate: CourseTaken['courseCompleteDate'];
+  courseCompleteDate?: CourseTaken['courseCompleteDate'];
 
-  @ApiProperty({ type: String })
-  @IsString()
   @IsNotEmpty()
+  @IsEnum(CourseTakenStatusEnum)
   @Expose()
   status: CourseTaken['status'];
 
-  @ApiProperty({ type: Number })
-  @IsString()
   @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
   @Expose()
   completion: CourseTaken['completion'];
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
-  currentLesson: CourseTaken['currentLesson'];
+  currentLessonId: string;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
-  currentPart: CourseTaken['currentPart'];
+  currentPartId: string;
 
-  @ApiProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
-  currentTest: CourseTaken['currentTest'];
+  currentTestId: string;
 }

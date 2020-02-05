@@ -12,32 +12,24 @@ export class Course extends Audit {
   id: string;
 
   @Column({
-    nullable: false,
     unique: true,
   })
   @Expose()
   title: string;
 
-  @Column({
-    nullable: false,
-  })
+  @Column()
   @Expose()
   description: string;
 
-  @Column({
-    nullable: false,
-  })
+  @Column()
   @Expose()
   authorName: string;
 
-  @Column({
-    nullable: false,
-  })
+  @Column()
   @Expose()
   authorDescription: string;
 
   @Column({
-    nullable: false,
     type: 'int',
   })
   @Expose()
@@ -47,7 +39,7 @@ export class Course extends Audit {
     nullable: true,
   })
   @Expose()
-  thumbUrl: string;
+  thumbUrl?: string;
 
   @Column({
     type: 'boolean',

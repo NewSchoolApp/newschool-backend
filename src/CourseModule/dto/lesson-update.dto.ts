@@ -1,30 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Lesson } from '../entity';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
 export class LessonUpdateDTO {
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   title: Lesson['title'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
   description: Lesson['description'];
 
+  @IsNotEmpty()
   @IsString()
   @Expose()
-  @IsNotEmpty()
-  @ApiProperty({ type: String })
-  course: Lesson['course'];
+  courseId: string;
 
-  @IsNumber()
-  @Expose()
   @IsNotEmpty()
-  @ApiProperty({ type: Number })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Expose()
   sequenceNumber: Lesson['sequenceNumber'];
 }

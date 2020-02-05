@@ -11,6 +11,6 @@ export { PartUpdateDTO } from './part-update.dto';
 export { NewPartDTO } from './new-part.dto';
 
 export { TestDTO } from './test.dto';
-export { TestWithoutCorrectAlternativeDTO } from './test.without.correct.alternative.dto';
+export { TestWithoutCorrectAlternativeDTO } from './test-without-correct-alternative.dto';
 export { TestUpdateDTO } from './test-update.dto';
 export { NewTestDTO } from './new-test.dto';

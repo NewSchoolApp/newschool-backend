@@ -149,7 +149,7 @@ export class CourseController {
     return await this.service.update(id, courseUpdatedInfo);
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
   @ApiParam({

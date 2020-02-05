@@ -35,7 +35,7 @@ export class PartController {
     private readonly mapper: PartMapper,
   ) {}
 
-  @Get('/lesson/:lesson')
+  @Get('lesson/:lesson')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get Parts', description: 'Get all Parts' })
   @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
@@ -80,7 +80,7 @@ export class PartController {
     return this.mapper.toDto(await this.service.add(part));
   }
 
-  @Put('/:id')
+  @Put(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: PartDTO })
   @ApiParam({

@@ -12,7 +12,7 @@ import {
 import { UserRepository } from '../repository';
 import { ChangePassword, User } from '../entity';
 import { UserNotFoundError } from '../../SecurityModule/exception';
-import { CertificateUserDTO } from '../dto/CertificateUserDTO';
+import { CertificateUserDTO } from '../dto/certificate-user.dto';
 import {
   AdminChangePasswordDTO,
   ChangePasswordDTO,
