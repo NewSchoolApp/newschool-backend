@@ -208,6 +208,7 @@ export class CourseTakenService {
       ...courseTaken,
       completion: 100,
       status: CourseTakenStatusEnum.COMPLETED,
+      courseCompleteDate: new Date(Date.now()),
     });
   }
 
