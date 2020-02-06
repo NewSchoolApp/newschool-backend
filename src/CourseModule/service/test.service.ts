@@ -32,6 +32,7 @@ export class TestService {
 
     return this.repository.save({
       ...test,
+      part,
       sequenceNumber: 1 + (await this.repository.count({ part })),
     });
   }
@@ -123,7 +124,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test['id']> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
@@ -147,7 +148,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
