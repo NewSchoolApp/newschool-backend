@@ -21,6 +21,13 @@
   ],
   "rules": {
     "camelcase": "error",
-    "rest-spread-spacing": "error"
+    "rest-spread-spacing": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "ignoreRestSiblings": true
+      }
+    ]
   }
 }
