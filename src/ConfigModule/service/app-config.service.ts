@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { ConfigService } from '@nestjs/config';
-import { HandlebarsAdapter } from '@nest-modules/mailer';
+import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import Rollbar = require('rollbar');
 
@@ -25,9 +25,13 @@ export class AppConfigService {
 
   smtpHost: string = this.configService.get<string>('SMTP_HOST');
   smtpPort: number = this.configService.get<number>('SMTP_PORT');
-  secure: boolean = this.configService.get<number>('SMTP_PORT') === 465; // true for 465, false for other ports
+  smtpSecure: boolean | undefined = this.configService.get<boolean | undefined>(
+    'SMTP_SECURE',
+  );
+  smtpRequireTls: boolean = this.configService.get<boolean>('SMTP_REQUIRE_TLS');
   smtpUser: string = this.configService.get<string>('SMTP_USER');
   smtpPassword: string = this.configService.get<string>('SMTP_PASSWORD');
+  smtpFrom: string = this.configService.get<string>('SMTP_FROM');
 
   emailContactUs: string = this.configService.get<string>('EMAIL_CONTACTUS');
   frontUrl: string = this.configService.get<string>('FRONT_URL');
@@ -55,16 +59,17 @@ export class AppConfigService {
     };
   }
 
-  public getChangePasswordFrontUrl(changePasswordRequestId) {
+  public getChangePasswordFrontUrl(changePasswordRequestId): string {
     return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
   }
 
-  public getSmtpConfiguration() {
+  public getSmtpConfiguration(): MailerOptions {
     return {
       transport: {
         host: this.smtpHost,
         port: this.smtpPort,
-        secure: this.secure,
+        secure: this.smtpSecure,
+        requireTLS: this.smtpRequireTls,
         auth: {
           user: this.smtpUser,
           pass: this.smtpPassword,
@@ -93,7 +98,7 @@ export class AppConfigService {
       port: this.databasePort,
       username: this.databaseUsername,
       password: this.databasePassword,
-      synchronize: this.synchronize,
+      synchronize: false,
       logging: this.logging,
     };
   }

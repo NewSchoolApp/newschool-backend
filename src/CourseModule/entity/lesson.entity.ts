@@ -19,19 +19,16 @@ export class Lesson extends Audit {
   id: string;
 
   @Column({
-    nullable: false,
     name: 'title',
   })
   title: string;
 
   @Column({
-    nullable: false,
     name: 'description',
   })
   description: string;
 
   @Column({
-    nullable: false,
     name: 'seq_num',
   })
   sequenceNumber: number;
@@ -45,7 +42,7 @@ export class Lesson extends Audit {
   @OneToMany<Part>('Part', (part: Part) => part.lesson)
   parts: Part[];
 
-  @ManyToOne<CourseTaken>(
+  @OneToMany<CourseTaken>(
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.currentLesson,
   )

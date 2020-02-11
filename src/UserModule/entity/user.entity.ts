@@ -36,11 +36,11 @@ export class User extends Audit {
 
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
-  urlFacebook: string;
+  urlFacebook?: string;
 
   @Column({ name: 'url_instagram', nullable: true })
   @Expose()
-  urlInstagram: string;
+  urlInstagram?: string;
 
   @Column({
     default: '',

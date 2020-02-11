@@ -32,6 +32,7 @@ export class TestService {
 
     return this.repository.save({
       ...test,
+      part,
       sequenceNumber: 1 + (await this.repository.count({ part })),
     });
   }
@@ -41,8 +42,15 @@ export class TestService {
     id: Test['id'],
     testUpdatedInfo: TestUpdateDTO,
   ): Promise<Test> {
-    const test: Test = await this.findById(id);
-    return this.repository.save({ ...test, ...testUpdatedInfo });
+    const test: Test = await this.repository.findByIdWithPart(id);
+    if (!test) {
+      throw new NotFoundException('Test not found');
+    }
+    const part =
+      testUpdatedInfo.partId === test.part.id
+        ? test.part
+        : await this.partService.findById(testUpdatedInfo.partId);
+    return this.repository.save({ ...test, ...testUpdatedInfo, part });
   }
 
   @Transactional()
@@ -116,7 +124,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test['id']> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
@@ -140,7 +148,7 @@ export class TestService {
     part: string,
     sequenceNumber: number,
   ): Promise<Test> {
-    part: Test['part'] = part;
+    Test['part'] = part;
     const test = await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,

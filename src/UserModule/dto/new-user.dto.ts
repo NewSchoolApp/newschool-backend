@@ -1,35 +1,36 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entity';
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum';
 
 export class NewUserDTO {
-  @ApiProperty({ type: String })
   @IsNotEmpty()
+  @IsString()
   @Expose()
   name: User['name'];
 
-  @ApiProperty({ type: String })
   @IsNotEmpty()
+  @IsString()
   @Expose()
   email: User['email'];
 
-  @ApiProperty({ type: String })
   @IsNotEmpty()
+  @IsString()
   @Expose()
   password: User['password'];
 
-  @ApiProperty({ type: String })
-  @Expose()
-  urlFacebook: User['urlFacebook'];
-
-  @ApiProperty({ type: String })
-  @Expose()
-  urlInstagram: User['urlInstagram'];
-
-  @ApiProperty({ enum: RoleEnum })
   @IsNotEmpty()
+  @IsString()
+  @Expose()
+  urlFacebook?: User['urlFacebook'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  urlInstagram?: User['urlInstagram'];
+
+  @IsNotEmpty()
+  @IsEnum(RoleEnum)
   @Expose()
   role: RoleEnum;
 }

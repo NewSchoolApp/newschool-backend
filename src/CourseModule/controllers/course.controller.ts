@@ -150,7 +150,7 @@ export class CourseController {
     return this.mapper.toDto(await this.service.update(id, courseUpdatedInfo));
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: null })
   @ApiParam({
