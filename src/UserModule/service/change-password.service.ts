@@ -19,7 +19,7 @@ export class ChangePasswordService {
     return this.repository.save(changePassword);
   }
 
-  public async findById(id: string) {
+  public async findById(id: string): Promise<ChangePassword> {
     const changePassword: ChangePassword = await this.repository.findOne(
       { id },
       { relations: ['user'] },

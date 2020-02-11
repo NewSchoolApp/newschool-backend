@@ -1,4 +1,5 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata, CustomDecorator } from '@nestjs/common';
 import { RoleEnum } from '../../SecurityModule/enum';
 
-export const NeedRole = (...roles: RoleEnum[]) => SetMetadata('roles', roles);
+export const NeedRole = (...roles: RoleEnum[]): CustomDecorator<string> =>
+  SetMetadata('roles', roles);

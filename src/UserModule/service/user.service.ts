@@ -171,7 +171,9 @@ export class UserService {
   }
 
   @Transactional()
-  public async validateChangePassword(changePasswordRequestId: string) {
+  public async validateChangePassword(
+    changePasswordRequestId: string,
+  ): Promise<void> {
     const changePassword: ChangePassword = await this.changePasswordService.findById(
       changePasswordRequestId,
     );
@@ -252,7 +254,7 @@ export class UserService {
   public async addCertificateToUser(
     userId: User['id'],
     certificateId: Certificate['id'],
-  ) {
+  ): Promise<User> {
     const [user, certificate]: [User, Certificate] = await Promise.all([
       this.repository.findByIdWithCertificates(userId),
       this.certificateService.findById(certificateId),

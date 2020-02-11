@@ -188,6 +188,7 @@ export class MessageController {
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async sendMessage(@Body() model: any): Promise<void> {
     await this.service.sendMessage(
       model.data,

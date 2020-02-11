@@ -11,8 +11,9 @@ import 'reflect-metadata';
 import * as path from 'path';
 import { ConfigService } from './ConfigModule/service';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   require('dotenv-flow').config();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (global as any).appRoot = path.resolve(__dirname);
 
   initializeTransactionalContext();

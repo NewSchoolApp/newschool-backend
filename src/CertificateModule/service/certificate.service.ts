@@ -39,7 +39,7 @@ export class CertificateService {
   }
 
   @Transactional()
-  public async delete(id: Certificate['id']) {
+  public async delete(id: Certificate['id']): Promise<void> {
     await this.findById(id);
     await this.repository.delete({ id });
   }

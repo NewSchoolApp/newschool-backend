@@ -311,7 +311,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
-  ) {
+  ): Promise<void> {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
   }
@@ -347,7 +347,7 @@ export class UserController {
   public async addCertificateToUser(
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
-  ) {
+  ): Promise<void> {
     this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
     await this.service.addCertificateToUser(userId, certificateId);
   }

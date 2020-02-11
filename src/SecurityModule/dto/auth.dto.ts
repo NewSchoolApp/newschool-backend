@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class AuthDTO {
   @ApiProperty({ enum: ['client_credentials', 'password', 'refresh_token'] })
   @IsEnum(GrantTypeEnum)
-  // tslint:disable-next-line:variable-name
+  // eslint-disable-next-line camelcase
   grant_type: GrantTypeEnum;
 
   @IsOptional()

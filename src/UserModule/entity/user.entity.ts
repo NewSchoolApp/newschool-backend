@@ -80,7 +80,7 @@ export class User extends Audit {
   )
   coursesTaken: CourseTaken[];
 
-  validPassword(password: string) {
+  validPassword(password: string): boolean {
     const hash = crypto
       .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
       .toString(`hex`);

@@ -12,7 +12,7 @@ import { ConfigService } from '../../ConfigModule/service';
 export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly configService: ConfigService) {}
 
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();

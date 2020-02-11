@@ -21,7 +21,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   public async findByUserAndCourseWithAllRelations(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
-  ) {
+  ): Promise<CourseTaken | undefined> {
     return this.findOne(
       { user, course },
       {

@@ -1,12 +1,4 @@
-import {
-  Check,
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Check, Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Audit } from '../../CommonsModule';
 import { User } from '../../UserModule/entity';
 import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
