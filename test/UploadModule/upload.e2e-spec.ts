@@ -13,7 +13,6 @@ import { Constants } from '../../src/CommonsModule';
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
   const uploadUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.UPLOAD_ENDPOINT}`;
 
   beforeAll(async () => {
@@ -24,15 +23,6 @@ describe('UploadController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
-
-    const dbConnection = moduleFixture.get(Connection);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -49,14 +39,6 @@ describe('UploadController (e2e)', () => {
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
-  });
-
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
   });
 
   it('should not get a not found file', async done => {
@@ -79,7 +61,7 @@ describe('UploadController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 500 when fail to get the file', async done => {
+  it('should return 404 when file not exists', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
@@ -88,18 +70,18 @@ describe('UploadController (e2e)', () => {
     });
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
-      .expect(500)
+      .expect(404)
       .expect(res => {
         expect(res.body).toStrictEqual({
-          error: 'Internal Server Error',
+          error: 'Not Found',
           message: expect.any(String),
-          statusCode: 500,
+          statusCode: 404,
         });
       })
       .then(() => done());
   });
 
-  it('should return 200 when get the file with success', async done => {
+  it('should return 200 when get the file with success', async () => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
@@ -117,7 +99,6 @@ describe('UploadController (e2e)', () => {
       })
       .then(() => {
         fs.unlinkSync(filePath);
-        done();
       });
   });
 
