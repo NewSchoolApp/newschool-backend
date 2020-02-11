@@ -114,6 +114,24 @@ describe('MessageController (e2e)', () => {
   });
 
   afterAll(async () => {
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
+    const clients = await clientCredentialRepository.find({
+      name: ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'],
+    });
+    if (clients.length) {
+      await clientCredentialRepository.remove(clients[0]);
+    }
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
+    const roles = await roleRepository.find({
+      name: RoleEnum.ADMIN,
+    });
+    if (roles.length) {
+      await roleRepository.remove(roles[0]);
+    }
     await app.close();
   });
 });

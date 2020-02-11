@@ -30,4 +30,14 @@ export class CourseUpdateDTO {
   @Min(1)
   @Expose()
   workload: Course['workload'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  authorName: Course['authorName'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  authorDescription: Course['authorDescription'];
 }
