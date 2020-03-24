@@ -11,4 +11,8 @@ export class UserRepository extends Repository<User> {
   async findByIdWithCertificates(id: string) {
     return this.findOneOrFail(id, { relations: ['certificates'] });
   }
+  
+  async addPointToUser(userId: string, points: number) {
+    throw new NotImplementedException();
+  }
 }
