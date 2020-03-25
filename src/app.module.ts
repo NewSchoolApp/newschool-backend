@@ -13,6 +13,7 @@ import { MessageModule } from './MessageModule';
 import { UploadModule } from './UploadModule';
 import { ConfigModule, ConfigService } from './ConfigModule';
 import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
+import { DashboardModule } from './DashboardModule';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -43,6 +44,7 @@ const mailerAsyncModule: MailerAsyncOptions = {
     CertificateModule,
     MessageModule,
     UploadModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
