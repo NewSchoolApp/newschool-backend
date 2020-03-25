@@ -13,6 +13,6 @@ export class DashboardController {
   public async getUserQuantity(
     @Query('status') status?: UserStatusEnum,
   ): Promise<number> {
-    return this.service.getUserQuantity(status);
+    return null;
   }
 }

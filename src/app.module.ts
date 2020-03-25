@@ -1,8 +1,7 @@
 import { MailerModule } from '@nest-modules/mailer';
+import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
 import { Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { SecurityModule } from './SecurityModule';
 import { UserModule } from './UserModule';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
@@ -12,7 +11,6 @@ import { CertificateModule } from './CertificateModule';
 import { MessageModule } from './MessageModule';
 import { UploadModule } from './UploadModule';
 import { ConfigModule, ConfigService } from './ConfigModule';
-import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
 import { DashboardModule } from './DashboardModule';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
@@ -46,7 +44,5 @@ const mailerAsyncModule: MailerAsyncOptions = {
     UploadModule,
     DashboardModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

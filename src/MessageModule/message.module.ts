@@ -20,7 +20,7 @@ import { TemplateMapper } from './mapper/template.mapper';
       }),
       inject: [ConfigService],
     }),
-    forwardRef(() => SecurityModule),
+    SecurityModule,
   ],
   controllers: [MessageController],
   providers: [MessageService, TemplateMapper],
