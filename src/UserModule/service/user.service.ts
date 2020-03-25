@@ -30,6 +30,7 @@ import { RoleService } from '../../SecurityModule/service';
 import { Role } from '../../SecurityModule/entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { ConfigService } from '../../ConfigModule/service';
+import { UserStatusEnum } from 'src/DashboardModule';
 
 @Injectable()
 export class UserService {
@@ -73,6 +74,15 @@ export class UserService {
         certificate.certificate_certificateBackgroundName;
       return c;
     });
+  }
+
+  public async getUserQuantity(status: UserStatusEnum): Promise<number> {
+    if (!status) {
+      return this.repository.getUsersQuantity();
+    }
+    return status === 'ACTIVE'
+      ? this.repository.getActiveUsersQuantity()
+      : this.repository.getInactiveUsersQuantity();
   }
 
   public async add(user: NewUserDTO): Promise<User> {

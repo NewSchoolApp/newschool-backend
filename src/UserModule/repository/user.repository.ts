@@ -32,7 +32,24 @@ export class UserRepository extends Repository<User> {
     return this.findOneOrFail(id, { relations: ['createdCourses'] });
   }
 
-  async findByEmailAndFacebookId(email: string, facebookId: string) {
+  async findByEmailAndFacebookId(
+    email: string,
+    facebookId: string,
+  ): Promise<User> {
     return this.findOne({ email, facebookId });
+  }
+
+  getUsersQuantity(): Promise<number> {
+    return this.count();
+  }
+
+  // #TODO: Criar lógica de usuários ativos
+  getActiveUsersQuantity(): Promise<number> {
+    return this.count();
+  }
+
+  // #TODO: Criar lógica de usuários inativos
+  getInactiveUsersQuantity(): Promise<number> {
+    return this.count();
   }
 }
