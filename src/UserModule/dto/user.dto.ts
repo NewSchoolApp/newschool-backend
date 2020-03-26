@@ -1,8 +1,8 @@
-import { User } from '../entity';
+import { User } from '../entity/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { RoleDTO } from '../../SecurityModule/dto';
-import { CourseDTO } from '../../CourseModule/dto';
+import { RoleDTO } from '../../SecurityModule/dto/role.dto';
+import { CourseDTO } from '../../CourseModule/dto/course.dto';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserDTO {

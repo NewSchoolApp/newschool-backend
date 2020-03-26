@@ -1,5 +1,5 @@
-import { CourseTaken } from '../entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { CourseTaken } from '../entity/course.taken.entity';
 
 export class NewCourseTakenSwagger {
   @ApiProperty({ type: String })

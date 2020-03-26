@@ -8,10 +8,13 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { User } from '../../UserModule/entity';
-import { Course, Lesson, Part, Test } from '../../CourseModule/entity';
 import { Expose } from 'class-transformer';
-import { CourseTakenStatusEnum } from '../enum';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { User } from '../../UserModule/entity/user.entity';
+import { Part } from '../../CourseModule/entity/part.entity';
+import { Course } from '../../CourseModule/entity/course.entity';
+import { Lesson } from '../../CourseModule/entity/lesson.entity';
+import { Test } from '../../CourseModule/entity/test.entity';
 
 @Entity()
 @Check(

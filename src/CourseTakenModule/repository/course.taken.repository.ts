@@ -1,8 +1,8 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { CourseTaken } from '../entity';
-import { CertificateDTO } from '../dto';
-import { CourseTakenStatusEnum } from '../enum';
-import { User } from '../../UserModule/entity';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { User } from '../../UserModule/entity/user.entity';
+import { CourseTaken } from '../entity/course.taken.entity';
+import { CertificateDTO } from '../dto/certificate.dto';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {

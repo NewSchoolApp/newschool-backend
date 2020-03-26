@@ -8,9 +8,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { MessageService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ContactUsDTO, EmailDTO } from '../dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,10 +21,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { EmailSwagger } from '../swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
 import { TemplateDTO } from '../dto/templates.dto';
 import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { ContactUsDTO } from '../dto/contactus.dto';
+import { EmailDTO } from '../dto/email.dto';
+import { EmailSwagger } from '../swagger/email.swagger';
+import { MessageService } from '../service/message.service';
 
 @ApiTags('Message')
 @ApiBearerAuth()

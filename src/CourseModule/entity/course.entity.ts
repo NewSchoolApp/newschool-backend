@@ -3,7 +3,7 @@ import { Audit } from '../../CommonsModule';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 
 @Entity()
 export class Course extends Audit {

@@ -1,12 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MessageService } from './service';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { SecurityModule } from '../SecurityModule';
-import { MessageController } from './controller';
+import { SecurityModule } from '../SecurityModule/security.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TemplateRepository } from './repository/template.repository';
 import { TemplateMapper } from './mapper/template.mapper';
+import { MessageController } from './controller/message.controller';
+import { MessageService } from './service/message.service';
 
 @Module({
   imports: [

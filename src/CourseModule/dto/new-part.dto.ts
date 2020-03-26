@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Part } from '../entity';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { Part } from '../entity/part.entity';
 
 export class NewPartDTO {
   @IsNotEmpty()

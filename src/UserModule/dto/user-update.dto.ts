@@ -1,7 +1,7 @@
-import { User } from '../entity';
+import { User } from '../entity/user.entity';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 export class UserUpdateDTO {
   @IsNotEmpty()

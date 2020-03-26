@@ -24,7 +24,7 @@ import {
 import { CertificateService } from '../service';
 import { CertificateMapper } from '../mapper';
 import { CertificateDTO, NewCertificateDTO } from '../dto';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 @ApiTags('Certificate')
 @ApiBearerAuth()

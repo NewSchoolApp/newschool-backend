@@ -1,4 +1,3 @@
-import { Course } from '../entity';
 import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -8,6 +7,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
+import { Course } from '../entity/course.entity';
 
 export class CourseDTO {
   @IsNotEmpty()

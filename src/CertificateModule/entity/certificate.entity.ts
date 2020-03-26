@@ -5,8 +5,8 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../UserModule/entity';
 import { Expose } from 'class-transformer';
+import { User } from '../../UserModule/entity/user.entity';
 
 @Entity()
 export class Certificate {

@@ -3,23 +3,22 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InvalidClientCredentialsError } from '../exception';
-import { ClientCredentials } from '../entity';
-import { ClientCredentialsEnum } from '../enum';
+import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
+import { ClientCredentials } from '../entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
 import { classToPlain } from 'class-transformer';
-import {
-  FacebookAuthUserDTO,
-  GeneratedTokenDTO,
-  GoogleAuthUserDTO,
-  RefreshTokenUserDTO,
-} from '../dto';
-import { UserService } from '../../UserModule/service';
-import { ClientCredentialsRepository, RoleRepository } from '../repository';
+import { UserService } from '../../UserModule/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
-import { User } from '../../UserModule/entity';
+import { User } from '../../UserModule/entity/user.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { FacebookAuthUserDTO } from '../dto/facebook-auth-user.dto';
+import { ClientCredentialsRepository } from '../repository/client-credentials.repository';
+import { GeneratedTokenDTO } from '../dto/generated-token.dto';
+import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
+import { RefreshTokenUserDTO } from '../dto/refresh-token-user.dto';
+import { RoleRepository } from '../repository/role.repository';
 
 @Injectable()
 export class SecurityService {

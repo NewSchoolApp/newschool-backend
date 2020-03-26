@@ -1,4 +1,4 @@
-import { User } from '../entity';
+import { User } from '../entity/user.entity';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
 

@@ -5,11 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CourseRepository } from '../repository';
-import { Course } from '../entity';
-import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
-import { CourseMapper } from '../mapper';
-import { UserService } from '../../UserModule';
+import { CourseRepository } from '../repository/course.repository';
+import { CourseMapper } from '../mapper/course.mapper';
+import { CourseDTO } from '../dto/course.dto';
+import { UserService } from '../../UserModule/service/user.service';
+import { CourseUpdateDTO } from '../dto/course-update.dto';
+import { NewCourseDTO } from '../dto/new-course.dto';
+import { Course } from '../entity/course.entity';
 
 @Injectable()
 export class CourseService {
