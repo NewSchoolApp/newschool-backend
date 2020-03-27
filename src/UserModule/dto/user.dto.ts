@@ -1,37 +1,43 @@
 import { User } from '../entity';
-import { ApiModelProperty } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { IsEnum, IsNotEmpty } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
+import { RoleDTO } from '../../SecurityModule/dto';
+import { CourseDTO } from '../../CourseModule/dto';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UserDTO {
-  @ApiModelProperty({ type: Number })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   id: User['id'];
 
-  @ApiModelProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   name: User['name'];
 
-  @ApiModelProperty({ type: String })
+  @IsNotEmpty()
+  @IsString()
   @Expose()
   email: User['email'];
 
-  @ApiModelProperty({ type: String })
+  @IsOptional()
+  @IsString()
   @Expose()
-  urlFacebook: User['urlFacebook'];
+  urlFacebook?: User['urlFacebook'];
 
-  @ApiModelProperty({ type: String })
+  @IsOptional()
+  @IsString()
   @Expose()
-  urlInstagram: User['urlInstagram'];
+  urlInstagram?: User['urlInstagram'];
 
-  @ApiModelProperty({ type: String })
-  @Expose()
-  password: User['password'];
-
-  @ApiModelProperty({ enum: RoleEnum })
-  @IsEnum(RoleEnum)
+  @Type(() => RoleDTO)
   @IsNotEmpty()
   @Expose()
-  role: User['role'];
+  role: RoleDTO;
+
+  @ApiProperty({ type: () => CourseDTO, isArray: true })
+  @Type(() => CourseDTO)
+  @Expose()
+  createdCourses: CourseDTO[];
 }

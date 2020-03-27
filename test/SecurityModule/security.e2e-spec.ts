@@ -1,13 +1,19 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, GrantTypeEnum, RoleEnum } from '../../src/SecurityModule/enum';
+import {
+  ClientCredentialsEnum,
+  GrantTypeEnum,
+  RoleEnum,
+} from '../../src/SecurityModule/enum';
 import { User } from '../../src/UserModule/entity';
 import * as crypto from 'crypto';
+import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -27,12 +33,14 @@ describe('SecurityController (e2e)', () => {
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
+    initializeTransactionalContext();
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
@@ -42,56 +50,51 @@ describe('SecurityController (e2e)', () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner('master');
+    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
+      'master',
+    );
 
-    const roleRepository: Repository<Role> = moduleFixture.get<Repository<Role>>(getRepositoryToken(Role));
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
     const role: Role = new Role();
     role.name = RoleEnum.ADMIN;
     const savedRole = await roleRepository.save(role);
 
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
     const clientCredentials: ClientCredentials = new ClientCredentials();
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test';
     clientCredentials.role = savedRole;
     await clientCredentialRepository.save(clientCredentials);
-    authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
+    authorization = stringToBase64(
+      `${clientCredentials.name}:${clientCredentials.secret}`,
+    );
   });
 
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
+  it('should validate client credentials', async done => {
+    configService = app.get<ConfigService>(ConfigService);
 
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
-  });
-
-  it('should validate client credentials', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .expect(200)
-      .expect((res) => {
+      .expect(res => {
         expect(res.body.accessToken).not.toBeNull();
         expect(res.body.refreshToken).not.toBeNull();
         expect(res.body.tokenType).toBe('bearer');
-        expect(res.body.expiresIn).toBe(Number(process.env.EXPIRES_IN_ACCESS_TOKEN));
+        expect(res.body.expiresIn).toBe(
+          configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
+        );
       })
       .then(() => done());
   });
 
-  it('should throw if grant type is invalid', async (done) => {
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<Repository<ClientCredentials>>(getRepositoryToken(ClientCredentials));
-    const clientCredentials: ClientCredentials = new ClientCredentials();
-    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
-    clientCredentials.secret = 'test';
-    clientCredentials.role = adminRole;
-    await clientCredentialRepository.save(clientCredentials);
-
-    const authorization = stringToBase64(`${clientCredentials.name}:${clientCredentials.secret}`);
-
+  it('should throw if grant type is invalid', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -101,7 +104,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should throw 404 if client credentials is wrong', async (done) => {
+  it('should throw 404 if client credentials is wrong', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${stringToBase64('wrong:authorization')}`)
@@ -111,8 +114,10 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should validate grant type password', async (done) => {
-    const userRepository: Repository<User> = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+  it('should validate grant type password', async done => {
+    const userRepository: Repository<User> = moduleFixture.get<
+      Repository<User>
+    >(getRepositoryToken(User));
     const user: User = new User();
     const salt = createSalt();
     user.name = 'test user1';
@@ -134,7 +139,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 404 if user not found', async (done) => {
+  it('should return 404 if user not found', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -147,6 +152,30 @@ describe('SecurityController (e2e)', () => {
   });
 
   afterAll(async () => {
+    const userRepository: Repository<User> = moduleFixture.get<
+      Repository<User>
+    >(getRepositoryToken(User));
+    const users = await userRepository.find();
+    await Promise.all(users.map(async user => userRepository.remove(user)));
+
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
+    const clients = await clientCredentialRepository.find({
+      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
+    });
+    if (clients.length) {
+      await clientCredentialRepository.remove(clients[0]);
+    }
+    const roleRepository: Repository<Role> = moduleFixture.get<
+      Repository<Role>
+    >(getRepositoryToken(Role));
+    const roles = await roleRepository.find({
+      name: RoleEnum.ADMIN,
+    });
+    if (roles.length) {
+      await roleRepository.remove(roles[0]);
+    }
     await app.close();
   });
 });

@@ -1,10 +1,15 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../../UserModule/entity';
 import { Expose } from 'class-transformer';
 
 @Entity()
 export class Certificate {
-
   @PrimaryGeneratedColumn('uuid')
   @Expose()
   id: string;
@@ -17,7 +22,15 @@ export class Certificate {
   @Expose()
   text: string;
 
-  @ManyToMany(() => User, (user: User) => user.certificates)
+  // field created to have in assets different images being passed for each course created
+  @Column()
+  @Expose()
+  certificateBackgroundName: string;
+
+  @ManyToMany(
+    () => User,
+    (user: User) => user.certificates,
+  )
   @JoinTable()
   @Expose()
   users: User[];

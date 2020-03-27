@@ -1,6 +1,9 @@
-import { ApiModelProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class ChangePasswordRequestIdDTO {
-  @ApiModelProperty()
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   id: string;
 }

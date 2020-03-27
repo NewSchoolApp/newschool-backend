@@ -1,27 +1,31 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 import { Response } from 'express';
-import * as Rollbar from 'rollbar'
+import * as Rollbar from 'rollbar';
+import { ConfigService } from '../../ConfigModule/service';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost) {
-        
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse<Response>();
-        const status = exception.getStatus();
+  constructor(private readonly configService: ConfigService) {}
 
-        const rollbar = new Rollbar({
-            accessToken: process.env.ROLLBAR_TOKEN,
-            captureUncaught: true,
-            captureUnhandledRejections: true
-          });
-                
-        const objResponse = exception.getResponse();
-        
-        console.error(objResponse);
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const status = exception.getStatus();
+    const error = exception.getResponse();
 
-        rollbar.warning(JSON.stringify(objResponse));
+    const env = this.configService.nodeEnv;
 
-        response.status(status).json(objResponse);
+    if (env === 'TEST' || env === 'PROD') {
+      const rollbar = new Rollbar(this.configService.getRollbarConfiguration());
+
+      rollbar.warning(JSON.stringify(error));
     }
+
+    response.status(status).json(error);
+  }
 }

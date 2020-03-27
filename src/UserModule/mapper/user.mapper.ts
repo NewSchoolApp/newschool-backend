@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Mapper } from '../../CommonsModule/mapper';
-import { UserDTO } from '../dto/user.dto';
+import { UserDTO } from '../dto';
 import { User } from '../entity';
 
 @Injectable()
 export class UserMapper extends Mapper<User, UserDTO> {
-
   constructor() {
     super(User, UserDTO);
   }
@@ -25,5 +24,4 @@ export class UserMapper extends Mapper<User, UserDTO> {
   toEntityList(dtoArray: UserDTO[]): User[] {
     return super.toEntityList(dtoArray);
   }
-
 }
