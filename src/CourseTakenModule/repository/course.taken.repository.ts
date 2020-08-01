@@ -20,7 +20,9 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async getActiveUsersQuantity(): Promise<number> {
-    const activeUsers: {'user_id': number}[] = await this.createQueryBuilder('coursetaken')
+    const activeUsers: { user_id: number }[] = await this.createQueryBuilder(
+      'coursetaken',
+    )
       .where('coursetaken.completion', MoreThanOrEqual<number>(30))
       .select('DISTINCT coursetaken.user', 'user')
       .orderBy('user')

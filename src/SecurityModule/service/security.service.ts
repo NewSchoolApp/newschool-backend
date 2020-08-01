@@ -30,7 +30,6 @@ export class SecurityService {
     private readonly appConfigService: ConfigService,
   ) {}
 
-  @Transactional()
   public async validateClientCredentials(
     base64Login: string,
   ): Promise<GeneratedTokenDTO> {

@@ -5,8 +5,10 @@ import { CourseTakenService } from '../../CourseTakenModule/service/course.taken
 
 @Injectable()
 export class DashboardService {
-  constructor(private userService: UserService,
-              private courseTakenService: CourseTakenService) {}
+  constructor(
+    private userService: UserService,
+    private courseTakenService: CourseTakenService,
+  ) {}
 
   public async getUserQuantity(status?: UserStatusEnum): Promise<number> {
     if (!status) {

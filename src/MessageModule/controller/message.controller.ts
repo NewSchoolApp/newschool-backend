@@ -40,7 +40,7 @@ export class MessageController {
   constructor(private readonly service: MessageService) {}
 
   @Post('/email')
-  @HttpCode(201)
+  @HttpCode(200)
   @ApiCreatedResponse({ type: EmailDTO, description: 'Send email' })
   @ApiOperation({
     summary: 'Send email message',
@@ -59,7 +59,7 @@ export class MessageController {
   }
 
   @Post('/email/contactus')
-  @HttpCode(201)
+  @HttpCode(200)
   @ApiCreatedResponse({
     type: ContactUsDTO,
     description: 'Send contact us email',
