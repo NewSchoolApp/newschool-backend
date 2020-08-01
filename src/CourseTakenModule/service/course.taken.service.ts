@@ -79,6 +79,10 @@ export class CourseTakenService {
     await this.repository.save(newCourseTaken);
   }
 
+  public async getActiveUsersQuantity(): Promise<number> {
+    return this.repository.getActiveUsersQuantity();
+  }
+
   private async findByUserAndCourse(
     user: CourseTaken['user'],
     course: CourseTaken['course'],

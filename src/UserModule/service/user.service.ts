@@ -75,13 +75,8 @@ export class UserService {
     });
   }
 
-  public async getUserQuantity(status: UserStatusEnum): Promise<number> {
-    if (!status) {
-      return this.repository.getUsersQuantity();
-    }
-    return status === 'ACTIVE'
-      ? this.repository.getActiveUsersQuantity()
-      : this.repository.getInactiveUsersQuantity();
+  public async getUsersQuantity(): Promise<number> {
+    return this.repository.getUsersQuantity();
   }
 
   public async add(user: NewUserDTO): Promise<User> {
