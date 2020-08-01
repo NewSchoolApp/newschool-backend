@@ -54,8 +54,10 @@ export class TestService {
   }
 
   @Transactional()
-  public async getAll(part: Test['part']): Promise<Test[]> {
-    return this.repository.find({ part });
+  public async getAll(partId: string): Promise<Test[]> {
+    return this.repository.find({
+      part: await this.partService.findById(partId),
+    });
   }
 
   @Transactional()
@@ -104,11 +106,7 @@ export class TestService {
     id: Test['id'],
     chosenAlternative: string,
   ): Promise<boolean> {
-    const test = await this.repository.findById({ id });
-    if (!test) {
-      throw new NotFoundException('No test found');
-    }
-
+    const test: Test = await this.findById(id);
     return (
       test.correctAlternative.toLowerCase() == chosenAlternative.toLowerCase()
     );

@@ -35,7 +35,7 @@ export class TestController {
     private readonly mapper: TestMapper,
   ) {}
 
-  @Get('/part/:part')
+  @Get('/part/:partId')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get Tests', description: 'Get all Tests by Part' })
   @ApiOkResponse({
@@ -51,10 +51,8 @@ export class TestController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(
-    @Param('part') part: TestDTO['part'],
-  ): Promise<TestDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAll(part));
+  public async getAll(@Param('partId') partId: string): Promise<TestDTO[]> {
+    return this.mapper.toDtoList(await this.service.getAll(partId));
   }
 
   @Get('/:id')
@@ -119,7 +117,7 @@ export class TestController {
     await this.service.delete(id);
   }
 
-  @Get(':id/checkTest/alternative/:chosenAlternative')
+  @Get(':id/check-test/alternative/:chosenAlternative')
   @HttpCode(200)
   @ApiOkResponse({ type: Boolean })
   @ApiParam({

@@ -59,8 +59,8 @@ export class PartService {
     return this.repository.save({ ...part, ...partUpdatedInfo, lesson });
   }
 
-  public async getAll(lesson: Part['lesson']): Promise<Part[]> {
-    return this.repository.find({ lesson });
+  public async getAll(lessonId: string): Promise<Part[]> {
+    return this.repository.find({ lesson: await this.lessonService.findById(lessonId) });
   }
 
   public async findById(id: Part['id']): Promise<Part> {
