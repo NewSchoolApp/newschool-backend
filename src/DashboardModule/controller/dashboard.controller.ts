@@ -4,7 +4,9 @@ import { DashboardService } from '../service/dashboard.service';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { UserQuantityDTO } from '../dto/user-quantity.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Dashboard')
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.DASHBOARD_ENDPOINT}`,
 )
