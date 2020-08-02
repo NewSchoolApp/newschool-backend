@@ -4,7 +4,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constants } from '../../src/CommonsModule';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
 import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
@@ -14,6 +13,7 @@ import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { UserUpdateDTO } from '../../src/UserModule/dto/user-update.dto';
 import { User } from '../../src/UserModule/entity/user.entity';
+import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');

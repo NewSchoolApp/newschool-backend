@@ -4,7 +4,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constants } from '../../src/CommonsModule';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
 import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
 import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
@@ -14,6 +13,7 @@ import { EmailDTO } from '../../src/MessageModule/dto/email.dto';
 import { ContactUsDTO } from '../../src/MessageModule/dto/contactus.dto';
 import { MailerService } from '@nest-modules/mailer';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -120,7 +120,7 @@ describe('MessageController (e2e)', () => {
             email: 'my-user1@email.com',
             message: 'lore ypsulum teste',
             name: 'Aluno',
-            cellphone: '11900001111'
+            cellphone: '11900001111',
           } as ContactUsDTO)
           .expect(200)
           .then(() => done());

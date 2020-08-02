@@ -1,4 +1,3 @@
-import { Audit } from '../../CommonsModule';
 import {
   Column,
   Entity,
@@ -12,6 +11,7 @@ import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
 import { Expose } from 'class-transformer';
 import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Unique(['sequenceNumber', 'lesson'])
 @Entity()

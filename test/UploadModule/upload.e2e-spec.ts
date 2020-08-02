@@ -6,11 +6,11 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Constants } from '../../src/CommonsModule';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
 import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
 import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { Constants } from '../../src/CommonsModule/constants';
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;

@@ -56,8 +56,10 @@ export class TestService {
   }
 
   @Transactional()
-  public async getAll(part: Test['part']): Promise<Test[]> {
-    return this.repository.find({ part });
+  public async getAll(partId: string): Promise<Test[]> {
+    return this.repository.find({
+      part: await this.partService.findById(partId),
+    });
   }
 
   @Transactional()

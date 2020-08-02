@@ -62,8 +62,9 @@ export class LessonService {
 
   @Transactional()
   public async getAll(courseId: Course['id']): Promise<Lesson[]> {
-    const course: Course = await this.courseService.findById(courseId);
-    return this.repository.find({ course });
+    return this.repository.find({
+      course: await this.courseService.findById(courseId),
+    });
   }
 
   @Transactional()

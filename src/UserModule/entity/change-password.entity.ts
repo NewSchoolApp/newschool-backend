@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Audit } from '../../CommonsModule/entity';
 import { User } from './user.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity()
 export class ChangePassword extends Audit {

@@ -1,5 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { DashboardService } from '../service/dashboard.service';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';

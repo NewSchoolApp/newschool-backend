@@ -13,13 +13,10 @@ import { CertificateUserDTO } from '../dto/certificate-user.dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
-import { Certificate } from '../../CertificateModule/entity';
-import { CertificateService } from '../../CertificateModule/service';
 import { RoleService } from '../../SecurityModule/service/role.service';
 import { Role } from '../../SecurityModule/entity/role.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
-import { UserStatusEnum } from 'src/DashboardModule/enum/UserStatusEnum';
 import { ChangePassword } from '../entity/change-password.entity';
 import { AdminChangePasswordDTO } from '../dto/admin-change-password.dto';
 import { UserRepository } from '../repository/user.repository';
@@ -30,6 +27,8 @@ import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found
 import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { CertificateService } from '../../CertificateModule/service/certificate.service';
+import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 
 @Injectable()
 export class UserService {

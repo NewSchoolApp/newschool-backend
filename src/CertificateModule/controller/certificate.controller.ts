@@ -9,7 +9,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -21,10 +23,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CertificateService } from '../service';
-import { CertificateMapper } from '../mapper';
-import { CertificateDTO, NewCertificateDTO } from '../dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { CertificateMapper } from '../mapper/certificate.mapper';
+import { CertificateService } from '../service/certificate.service';
+import { CertificateDTO } from '../dto/certificate.dto';
+import { NewCertificateDTO } from '../dto/new-certificate.dto';
 
 @ApiTags('Certificate')
 @ApiBearerAuth()
