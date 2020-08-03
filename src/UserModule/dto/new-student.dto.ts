@@ -57,6 +57,11 @@ export class NewStudentDTO {
   @Expose()
   profession: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address: string;
+
   @IsOptional()
   @IsString()
   @Expose()

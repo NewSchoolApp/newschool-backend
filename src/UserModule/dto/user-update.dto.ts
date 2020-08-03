@@ -58,6 +58,11 @@ export class UserUpdateDTO {
   @Expose()
   profession: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address: string;
+
   @IsOptional()
   @IsString()
   @Expose()

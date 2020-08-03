@@ -51,6 +51,11 @@ export class SelfUpdateDTO {
   @Expose()
   profession: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address: string;
+
   @IsOptional()
   @IsString()
   @Expose()

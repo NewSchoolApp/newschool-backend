@@ -54,6 +54,11 @@ export class UserDTO {
   @Expose()
   profession: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address: string;
+
   @IsOptional()
   @IsString()
   @Expose()

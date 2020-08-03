@@ -55,6 +55,11 @@ export class NewUserDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
+  address: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   urlFacebook?: User['urlFacebook'];
 
   @IsNotEmpty()

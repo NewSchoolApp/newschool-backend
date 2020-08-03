@@ -36,7 +36,7 @@ export class User extends Audit {
   @Expose()
   password: string;
 
-  @Column()
+  @Column({ nullable: false })
   @Expose()
   nickname: string;
 
@@ -59,6 +59,10 @@ export class User extends Audit {
   @Column({ nullable: false })
   @Expose()
   profession: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  address: string;
 
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
