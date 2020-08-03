@@ -22,17 +22,18 @@ jobs:
         uses: mirromutth/mysql-action@v1.1
         with:
           mysql version: 5.7
-          mysql user: 'tests' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-          mysql password: 'tests' # Required if "mysql user" exists. The password for the "mysql user"
+          mysql database: 'newschool_tests'
+          mysql user: 'newschool_tests' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: '123987' # Required if "mysql user" exists. The password for the "mysql user"
       - name: Integration tests
         run: npm run test:e2e
         env:
           CI: true
           NODE_ENV: 'TEST'
           DATABASE_HOST: 'localhost'
-          DATABASE_NAME: 'test'
-          DATABASE_USERNAME: 'tests'
-          DATABASE_PASSWORD: 'tests'
+          DATABASE_NAME: 'newschool_tests'
+          DATABASE_USERNAME: 'newschool_tests'
+          DATABASE_PASSWORD: '123987'
           DATABASE_PORT: 3306
 
   build:
