@@ -36,7 +36,7 @@ export class LessonService {
     return this.repository.save({
       ...lesson,
       course,
-      sequenceNumber: 1 + (await this.repository.count({ course: course })),
+      sequenceNumber: 1 + (await this.repository.count({ course })),
     });
   }
 

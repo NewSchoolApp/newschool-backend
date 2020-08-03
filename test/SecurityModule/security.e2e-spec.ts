@@ -13,6 +13,8 @@ import { ClientCredentials } from '../../src/SecurityModule/entity/client-creden
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { User } from '../../src/UserModule/entity/user.entity';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -125,6 +127,13 @@ describe('SecurityController (e2e)', () => {
     user.email = 'my@email.com';
     user.salt = salt;
     user.password = createHashedPassword('mypass', user.salt);
+    user.nickname = 'random nickname';
+    user.birthday = new Date();
+    user.gender = GenderEnum.MALE;
+    user.institutionName = 'random institution';
+    user.profession = 'random profession';
+    user.schooling = EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO;
+    user.address = 'random address';
     user.urlFacebook = 'facebook';
     user.urlInstagram = 'instagram';
     user.role = adminRole;

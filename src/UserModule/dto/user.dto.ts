@@ -1,9 +1,11 @@
 import { User } from '../entity/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto/role.dto';
 import { CourseDTO } from '../../CourseModule/dto/course.dto';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -20,6 +22,42 @@ export class UserDTO {
   @IsString()
   @Expose()
   email: User['email'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  nickname: string;
+
+  @Transform(date => date && new Date(date))
+  @IsNotEmpty()
+  @IsDate()
+  @Expose()
+  birthday: Date;
+
+  @IsNotEmpty()
+  @IsEnum(GenderEnum)
+  @Expose()
+  gender: GenderEnum;
+
+  @IsNotEmpty()
+  @IsEnum(EscolarityEnum)
+  @Expose()
+  schooling: EscolarityEnum;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  institutionName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  profession: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address: string;
 
   @IsOptional()
   @IsString()

@@ -13,6 +13,8 @@ import { Expose } from 'class-transformer';
 import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { Certificate } from '../../CertificateModule/entity/certificate.entity';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
 
 @Entity()
 export class User extends Audit {
@@ -33,6 +35,34 @@ export class User extends Audit {
   @Column()
   @Expose()
   password: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  nickname: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  birthday: Date;
+
+  @Column({ type: 'enum', enum: GenderEnum, nullable: false })
+  @Expose()
+  gender: GenderEnum;
+
+  @Column({ type: 'enum', enum: EscolarityEnum, nullable: false })
+  @Expose()
+  schooling: EscolarityEnum;
+
+  @Column({ nullable: false })
+  @Expose()
+  institutionName: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  profession: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  address: string;
 
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
@@ -56,10 +86,7 @@ export class User extends Audit {
   @Expose()
   googleSub: string;
 
-  @ManyToOne(
-    () => Role,
-    (role: Role) => role.users,
-  )
+  @ManyToOne(() => Role, (role: Role) => role.users)
   @Expose()
   role: Role;
 

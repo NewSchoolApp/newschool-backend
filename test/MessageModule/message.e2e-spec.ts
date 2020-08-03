@@ -50,13 +50,6 @@ describe('MessageController (e2e)', () => {
 
     dbConnection = moduleFixture.get(Connection);
     await dbConnection.synchronize(true);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -77,14 +70,6 @@ describe('MessageController (e2e)', () => {
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,
     );
-  });
-
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
   });
 
   it('should send email', async done => {
