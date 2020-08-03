@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
@@ -63,13 +63,13 @@ describe('UserController (e2e)', () => {
     );
   });
 
-  it('should add user', async done => {
+  it('should add user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -85,6 +85,7 @@ describe('UserController (e2e)', () => {
             profession: 'random profession',
             birthday: new Date(),
             institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
           .expect(201)
@@ -92,13 +93,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should throw if user is missing a required property', async done => {
+  it('should throw if user is missing a required property', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -114,13 +115,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should find user by id', async done => {
+  it('should find user by id', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -136,13 +137,14 @@ describe('UserController (e2e)', () => {
             profession: 'random profession',
             birthday: new Date(),
             institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             return request(app.getHttpServer())
               .get(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect(response => {
+              .expect((response) => {
                 expect(response.body.email).toBe('my-user2@email.com');
               })
               .expect(200)
@@ -151,13 +153,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should update user', async done => {
+  it('should update user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -173,9 +175,10 @@ describe('UserController (e2e)', () => {
             profession: 'random profession',
             birthday: new Date(),
             institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             const updateBody: UserUpdateDTO = {
               id: _res.body.id,
               email: _res.body.email,
@@ -187,6 +190,7 @@ describe('UserController (e2e)', () => {
               profession: 'random profession',
               birthday: new Date(),
               institutionName: 'random institution',
+              address: 'random adress',
               urlFacebook: _res.body.urlFacebook,
               urlInstagram: _res.body.urlInstagram,
             };
@@ -195,11 +199,11 @@ describe('UserController (e2e)', () => {
               .type('form')
               .set('Authorization', `Bearer ${res.body.accessToken}`)
               .send(updateBody)
-              .then(__res => {
+              .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
-                  .expect(response => {
+                  .expect((response) => {
                     expect(response.body.name).toBe('updated name');
                   })
                   .then(() => done());
@@ -208,13 +212,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should delete user', async done => {
+  it('should delete user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -232,11 +236,11 @@ describe('UserController (e2e)', () => {
             institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             return request(app.getHttpServer())
               .delete(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .then(__res => {
+              .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)

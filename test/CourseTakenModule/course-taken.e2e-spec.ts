@@ -153,6 +153,7 @@ describe('CourseTakenController (e2e)', () => {
       schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
       profession: 'random profession',
       birthday: new Date(),
+      address: 'random adress',
       institutionName: 'random institution',
       role: adminRoleEnum,
     };
@@ -235,6 +236,7 @@ describe('CourseTakenController (e2e)', () => {
       schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
       profession: 'random profession',
       birthday: new Date(),
+      address: 'random adress',
       institutionName: 'random institution',
       role: adminRoleEnum,
     };
@@ -289,6 +291,7 @@ describe('CourseTakenController (e2e)', () => {
       schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
       profession: 'random profession',
       birthday: new Date(),
+      address: 'random adress',
       institutionName: 'random institution',
       role: adminRoleEnum,
     };
@@ -333,6 +336,7 @@ describe('CourseTakenController (e2e)', () => {
       profession: 'random profession',
       birthday: new Date(),
       institutionName: 'random institution',
+      address: 'random adress',
       role: adminRoleEnum,
     };
     const newCourse: NewCourseDTO = {
@@ -564,6 +568,7 @@ describe('CourseTakenController (e2e)', () => {
       profession: 'random profession',
       birthday: new Date(),
       institutionName: 'random institution',
+      address: 'random adress',
       role: adminRoleEnum,
     };
     const userRes: request.Response = await request(app.getHttpServer())
@@ -646,6 +651,7 @@ describe('CourseTakenController (e2e)', () => {
       profession: 'random profession',
       birthday: new Date(),
       institutionName: 'random institution',
+      address: 'random adress',
       role: adminRoleEnum,
     };
     const newCourse: NewCourseDTO = {
