@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Certificate } from '../entity';
+import { Certificate } from '../entity/certificate.entity';
 
 @EntityRepository(Certificate)
 export class CertificateRepository extends Repository<Certificate> {

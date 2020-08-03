@@ -9,7 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { SecurityService } from '../service/security.service';
-import { Constants } from '../../CommonsModule';
+import { Constants } from '../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '../../UserModule/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';

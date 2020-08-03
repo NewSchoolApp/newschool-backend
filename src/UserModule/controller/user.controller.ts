@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service/user.service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
 import { UserMapper } from '../mapper/user.mapper';
 import {
   ApiBearerAuth,
@@ -43,6 +42,9 @@ import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { NewStudentDTO } from '../dto/new-student.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 
 @ApiTags('User')
 @ApiBearerAuth()

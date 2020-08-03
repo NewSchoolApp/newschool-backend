@@ -7,12 +7,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Audit } from '../../CommonsModule';
 import { Role } from '../../SecurityModule/entity/role.entity';
 import { ChangePassword } from './change-password.entity';
-import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
 import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 
 @Entity()
 export class User extends Audit {

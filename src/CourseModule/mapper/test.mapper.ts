@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Mapper } from '../../CommonsModule/mapper';
 import { TestDTO } from '../dto/test.dto';
 import { Test } from '../entity/test.entity';
+import { Mapper } from '../../CommonsModule/mapper/mapper';
 
 @Injectable()
 export class TestMapper extends Mapper<Test, TestDTO> {
