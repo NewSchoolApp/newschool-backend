@@ -22,6 +22,7 @@ const stringToBase64 = (string: string) => {
 describe('MessageController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
+  let dbConnection: Connection;
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
@@ -47,7 +48,8 @@ describe('MessageController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
+    dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -128,24 +130,7 @@ describe('MessageController (e2e)', () => {
   });
 
   afterAll(async () => {
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clients = await clientCredentialRepository.find({
-      name: ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'],
-    });
-    if (clients.length) {
-      await clientCredentialRepository.remove(clients[0]);
-    }
-    const roleRepository: Repository<Role> = moduleFixture.get<
-      Repository<Role>
-    >(getRepositoryToken(Role));
-    const roles = await roleRepository.find({
-      name: RoleEnum.ADMIN,
-    });
-    if (roles.length) {
-      await roleRepository.remove(roles[0]);
-    }
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

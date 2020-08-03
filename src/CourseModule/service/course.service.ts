@@ -65,7 +65,6 @@ export class CourseService {
     return this.repository.find({ enabled: enabled });
   }
 
-  @Transactional()
   public async findById(id: Course['id']): Promise<Course> {
     const course: Course = await this.repository.findOne(id);
     if (!course) {

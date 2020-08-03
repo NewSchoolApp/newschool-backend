@@ -28,6 +28,7 @@ const fileToUpload = path.resolve(
 describe('CourseController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
+  let dbConnection: Connection;
   let queryRunner: QueryRunner;
   let authorization: string;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
@@ -42,7 +43,8 @@ describe('CourseController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
+    dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -312,41 +314,7 @@ describe('CourseController (e2e)', () => {
   });
 
   afterAll(async () => {
-    const courseRepository: Repository<Course> = moduleFixture.get<
-      Repository<Course>
-    >(getRepositoryToken(Course));
-    const courses = await courseRepository.find();
-    const unlink = util.promisify(fs.unlink);
-    const fileExists = util.promisify(fs.exists);
-    await Promise.all(
-      courses.map(async course => {
-        const pathFile = path.resolve(
-          path.join(__dirname, '..', '..', 'upload', course.photoName),
-        );
-        if (await fileExists(pathFile)) {
-          await unlink(pathFile);
-        }
-        await courseRepository.remove(course);
-      }),
-    );
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clients = await clientCredentialRepository.find({
-      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
-    });
-    if (clients.length) {
-      await clientCredentialRepository.remove(clients[0]);
-    }
-    const roleRepository: Repository<Role> = moduleFixture.get<
-      Repository<Role>
-    >(getRepositoryToken(Role));
-    const roles = await roleRepository.find({
-      name: RoleEnum.ADMIN,
-    });
-    if (roles.length) {
-      await roleRepository.remove(roles[0]);
-    }
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

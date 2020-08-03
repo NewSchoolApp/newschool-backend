@@ -106,12 +106,10 @@ export class LessonService {
     }
   }
 
-  @Transactional()
   public async countByCourse(course: Course): Promise<number> {
     return await this.repository.count({ course });
   }
 
-  @Transactional()
   public async getByCourseAndSequenceNumber(
     course: Course,
     sequenceNumber: number,

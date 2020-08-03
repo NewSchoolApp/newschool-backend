@@ -47,7 +47,6 @@ export class UserService {
     return this.repository.find();
   }
 
-  @Transactional()
   public async findById(id: User['id']): Promise<User> {
     const user: User | undefined = await this.repository.findOne(id, {
       relations: ['role'],
