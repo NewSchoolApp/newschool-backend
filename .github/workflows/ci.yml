@@ -21,6 +21,7 @@ jobs:
       - name: Setup integration database
         uses: mirromutth/mysql-action@v1.1
         with:
+          mysql version: 5.7
           mysql user: 'tests' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
           mysql password: 'tests' # Required if "mysql user" exists. The password for the "mysql user"
       - name: Integration tests
