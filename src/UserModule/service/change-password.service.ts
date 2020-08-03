@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ChangePasswordRepository } from '../repository';
-import { ChangePassword, User } from '../entity';
-import { ConfigService } from '../../ConfigModule/service';
+import { ChangePasswordRepository } from '../repository/change-password.repository';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { ChangePassword } from '../entity/change-password.entity';
+import { User } from '../entity/user.entity';
 
 @Injectable()
 export class ChangePasswordService {
@@ -19,7 +20,7 @@ export class ChangePasswordService {
     return this.repository.save(changePassword);
   }
 
-  public async findById(id: string) {
+  public async findById(id: string): Promise<ChangePassword> {
     const changePassword: ChangePassword = await this.repository.findOne(
       { id },
       { relations: ['user'] },

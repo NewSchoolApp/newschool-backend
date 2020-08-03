@@ -5,10 +5,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, RoleEnum } from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
@@ -51,14 +53,6 @@ describe('UploadController (e2e)', () => {
     await clientCredentialRepository.save(clientCredentials);
   });
 
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
-  });
-
   it('should not get a not found file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -79,7 +73,7 @@ describe('UploadController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 500 when fail to get the file', async done => {
+  it('should return 404 when fail to get the file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
@@ -88,12 +82,12 @@ describe('UploadController (e2e)', () => {
     });
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
-      .expect(500)
+      .expect(404)
       .expect(res => {
         expect(res.body).toStrictEqual({
-          error: 'Internal Server Error',
+          error: 'Not Found',
           message: expect.any(String),
-          statusCode: 500,
+          statusCode: 404,
         });
       })
       .then(() => done());
@@ -110,7 +104,7 @@ describe('UploadController (e2e)', () => {
     const filePath = `${__dirname}/../../upload/${fileName}`;
     fs.writeFileSync(filePath, '1');
     return request(app.getHttpServer())
-      .get(uploadUrl + '/' + fileName)
+      .get(`${uploadUrl}/${fileName}`)
       .expect(200)
       .expect(res => {
         expect(res.body).toBeTruthy();

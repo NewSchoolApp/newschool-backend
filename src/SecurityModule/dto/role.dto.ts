@@ -1,4 +1,4 @@
-import { RoleEnum } from '../enum';
+import { RoleEnum } from '../enum/role.enum';
 import { Expose } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 

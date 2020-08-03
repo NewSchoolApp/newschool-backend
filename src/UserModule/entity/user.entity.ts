@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from '../../CommonsModule';
-import { Role } from '../../SecurityModule';
+import { Role } from '../../SecurityModule/entity/role.entity';
 import { ChangePassword } from './change-password.entity';
 import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 
 @Entity()
 export class User extends Audit {

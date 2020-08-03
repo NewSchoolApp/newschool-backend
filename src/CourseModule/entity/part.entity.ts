@@ -11,7 +11,7 @@ import {
 import { Lesson } from './lesson.entity';
 import { Test } from './test.entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 
 @Unique(['sequenceNumber', 'lesson'])
 @Entity()

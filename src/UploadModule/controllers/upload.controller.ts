@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Constants } from '../../CommonsModule';
 import { ApiTags } from '@nestjs/swagger';
-import { UploadService } from '../service';
+import { UploadService } from '../service/upload.service';
 
 @ApiTags('Upload')
 @Controller(

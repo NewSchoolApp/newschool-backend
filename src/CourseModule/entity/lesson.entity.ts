@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Course } from './course.entity';
 import { Part } from './part.entity';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 
 @Unique(['sequenceNumber', 'course'])
 @Entity()

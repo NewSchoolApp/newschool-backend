@@ -4,14 +4,16 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { EmailDTO, ContactUsDTO } from '../../src/MessageModule/dto';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { EmailDTO } from '../../src/MessageModule/dto/email.dto';
+import { ContactUsDTO } from '../../src/MessageModule/dto/contactus.dto';
+import { MailerService } from '@nest-modules/mailer';
+import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -25,10 +27,21 @@ describe('MessageController (e2e)', () => {
   let adminRole: Role;
   const messageUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.MESSAGE_ENDPOINT}`;
 
+  const mailerServiceMock = {
+    sendMail() {
+      console.log('email sent');
+    },
+  };
+
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(MailerService)
+      .useValue(mailerServiceMock)
+      .compile();
+
+    initializeTransactionalContext();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
@@ -80,7 +93,7 @@ describe('MessageController (e2e)', () => {
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
         return request(app.getHttpServer())
-          .post(messageUrl + '/message/email')
+          .post(`${messageUrl}/email`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .send({
             email: 'my-user1@email.com',
@@ -88,7 +101,7 @@ describe('MessageController (e2e)', () => {
             message: 'lore ypsulum teste',
             name: 'Aluno',
           } as EmailDTO)
-          .expect(201)
+          .expect(200)
           .then(() => done());
       });
   });
@@ -101,14 +114,15 @@ describe('MessageController (e2e)', () => {
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
         return request(app.getHttpServer())
-          .post(messageUrl + '/message/email/contactus')
+          .post(`${messageUrl}/email/contactus`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .send({
             email: 'my-user1@email.com',
             message: 'lore ypsulum teste',
             name: 'Aluno',
+            cellphone: '11900001111'
           } as ContactUsDTO)
-          .expect(201)
+          .expect(200)
           .then(() => done());
       });
   });

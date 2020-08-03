@@ -1,4 +1,3 @@
-import { CourseTaken } from '../entity';
 import { Expose, Type } from 'class-transformer';
 import {
   IsDate,
@@ -10,10 +9,13 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { UserDTO } from '../../UserModule/dto';
-import { CourseDTO } from '../../CourseModule/dto';
-import { CourseTakenStatusEnum } from '../enum';
-import { Lesson, Part, Test } from '../../CourseModule/entity';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { UserDTO } from '../../UserModule/dto/user.dto';
+import { CourseTaken } from '../entity/course.taken.entity';
+import { CourseDTO } from '../../CourseModule/dto/course.dto';
+import { Part } from '../../CourseModule/entity/part.entity';
+import { Lesson } from '../../CourseModule/entity/lesson.entity';
+import { Test } from '../../CourseModule/entity/test.entity';
 
 export class CourseTakenDTO {
   @IsNotEmpty()

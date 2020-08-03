@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import * as Rollbar from 'rollbar';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

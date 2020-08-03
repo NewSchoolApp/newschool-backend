@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Lesson } from '../entity';
+import { Lesson } from '../entity/lesson.entity';
 
 export class LessonUpdatedInfoSwagger {
   @ApiProperty({ type: String })

@@ -9,27 +9,27 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UserRepository } from '../repository';
-import { ChangePassword, User } from '../entity';
-import { UserNotFoundError } from '../../SecurityModule/exception';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
-import {
-  AdminChangePasswordDTO,
-  ChangePasswordDTO,
-  ChangePasswordForgotFlowDTO,
-  ForgotPasswordDTO,
-  NewUserDTO,
-  UserUpdateDTO,
-} from '../dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
 import { Certificate } from '../../CertificateModule/entity';
 import { CertificateService } from '../../CertificateModule/service';
-import { RoleService } from '../../SecurityModule/service';
-import { Role } from '../../SecurityModule/entity';
+import { RoleService } from '../../SecurityModule/service/role.service';
+import { Role } from '../../SecurityModule/entity/role.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { UserStatusEnum } from 'src/DashboardModule/enum/UserStatusEnum';
+import { ChangePassword } from '../entity/change-password.entity';
+import { AdminChangePasswordDTO } from '../dto/admin-change-password.dto';
+import { UserRepository } from '../repository/user.repository';
+import { User } from '../entity/user.entity';
+import { ForgotPasswordDTO } from '../dto/forgot-password';
+import { ChangePasswordForgotFlowDTO } from '../dto/change-password-forgot-flow.dto';
+import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found.error';
+import { NewUserDTO } from '../dto/new-user.dto';
+import { UserUpdateDTO } from '../dto/user-update.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -73,6 +73,10 @@ export class UserService {
         certificate.certificate_certificateBackgroundName;
       return c;
     });
+  }
+
+  public async getUsersQuantity(): Promise<number> {
+    return this.repository.getUsersQuantity();
   }
 
   public async add(user: NewUserDTO): Promise<User> {

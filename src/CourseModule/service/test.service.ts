@@ -4,11 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { TestRepository } from '../repository';
-import { Part, Test } from '../entity';
-import { NewTestDTO, TestUpdateDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 import { PartService } from './part.service';
+import { TestRepository } from '../repository/test.repository';
+import { NewTestDTO } from '../dto/new-test.dto';
+import { Part } from '../entity/part.entity';
+import { TestUpdateDTO } from '../dto/test-update.dto';
+import { Test } from '../entity/test.entity';
 
 @Injectable()
 export class TestService {

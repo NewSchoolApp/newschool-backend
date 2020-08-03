@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ClientCredentialsEnum } from '../enum';
+import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
 import { Audit } from '../../CommonsModule';
 import { Role } from './role.entity';
 

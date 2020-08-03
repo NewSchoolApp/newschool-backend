@@ -4,11 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { LessonRepository } from '../repository';
-import { Course, Lesson } from '../entity';
-import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 import { CourseService } from './course.service';
+import { LessonRepository } from '../repository/lesson.repository';
+import { LessonUpdateDTO } from '../dto/lesson-update.dto';
+import { NewLessonDTO } from '../dto/new-lesson.dto';
+import { Course } from '../entity/course.entity';
+import { Lesson } from '../entity/lesson.entity';
 
 @Injectable()
 export class LessonService {

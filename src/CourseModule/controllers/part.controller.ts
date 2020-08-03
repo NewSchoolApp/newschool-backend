@@ -9,10 +9,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { PartService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { NewPartDTO, PartDTO, PartUpdateDTO } from '../dto';
-import { PartMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,7 +19,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { PartUpdateDTO } from '../dto/part-update.dto';
+import { PartDTO } from '../dto/part.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { PartService } from '../service/part.service';
+import { NewPartDTO } from '../dto/new-part.dto';
+import { PartMapper } from '../mapper/part.mapper';
 
 @ApiTags('Part')
 @ApiBearerAuth()

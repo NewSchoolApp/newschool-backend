@@ -9,10 +9,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { TestService } from '../service';
 import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { NewTestDTO, TestDTO, TestUpdateDTO } from '../dto';
-import { TestMapper } from '../mapper';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,7 +19,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { TestMapper } from '../mapper/test.mapper';
+import { TestDTO } from '../dto/test.dto';
+import { TestService } from '../service/test.service';
+import { NewTestDTO } from '../dto/new-test.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { TestUpdateDTO } from '../dto/test-update.dto';
 
 @ApiTags('Test')
 @ApiBearerAuth()

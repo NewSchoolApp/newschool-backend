@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Lesson, Part } from '../entity';
+import { Part } from '../entity/part.entity';
+import { Lesson } from '../entity/lesson.entity';
 
 @EntityRepository(Part)
 export class PartRepository extends Repository<Part> {

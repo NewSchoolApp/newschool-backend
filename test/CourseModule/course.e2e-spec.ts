@@ -6,17 +6,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
-import { Course } from '../../src/CourseModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
 import { Constants } from '../../src/CommonsModule';
-import { NewCourseDTO } from 'src/CourseModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
+import { Course } from '../../src/CourseModule/entity/course.entity';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
