@@ -13,6 +13,8 @@ import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { UserUpdateDTO } from '../../src/UserModule/dto/user-update.dto';
 import { Constants } from '../../src/CommonsModule/constants';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -21,7 +23,6 @@ const stringToBase64 = (string: string) => {
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
   let dbConnection: Connection;
@@ -40,13 +41,6 @@ describe('UserController (e2e)', () => {
 
     dbConnection = moduleFixture.get(Connection);
     await dbConnection.synchronize(true);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -85,6 +79,12 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
           .expect(201)
@@ -130,6 +130,12 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
           .then(_res => {
@@ -161,6 +167,12 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
           .then(_res => {
@@ -169,6 +181,12 @@ describe('UserController (e2e)', () => {
               email: _res.body.email,
               role: adminRoleEnum,
               name: 'updated name',
+              nickname: 'random nickname',
+              gender: GenderEnum.MALE,
+              schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+              profession: 'random profession',
+              birthday: new Date(),
+              institutionName: 'random institution',
               urlFacebook: _res.body.urlFacebook,
               urlInstagram: _res.body.urlInstagram,
             };
@@ -206,6 +224,12 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
           .then(_res => {

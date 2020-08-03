@@ -111,7 +111,6 @@ export class PartService {
     return await this.repository.count({ lesson });
   }
 
-  @Transactional()
   public async getPartIdByLessonIdAndSeqNum(
     lesson: string,
     sequenceNumber: number,

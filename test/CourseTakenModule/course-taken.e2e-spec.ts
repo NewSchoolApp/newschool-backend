@@ -22,6 +22,8 @@ import { Part } from '../../src/CourseModule/entity/part.entity';
 import { NewLessonDTO } from '../../src/CourseModule/dto/new-lesson.dto';
 import { NewPartDTO } from '../../src/CourseModule/dto/new-part.dto';
 import { NewTestDTO } from '../../src/CourseModule/dto/new-test.dto';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -34,7 +36,6 @@ const fileToUpload = path.resolve(
 describe('CourseTakenController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
   let authorization: string;
   const courseTakenUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_TAKEN_ENDPOINT}`;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
@@ -66,13 +67,6 @@ describe('CourseTakenController (e2e)', () => {
 
     dbConnection = moduleFixture.get(Connection);
     await dbConnection.synchronize(true);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     courseRepository = moduleFixture.get<Repository<Course>>(
       getRepositoryToken(Course),
@@ -154,6 +148,12 @@ describe('CourseTakenController (e2e)', () => {
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
       role: adminRoleEnum,
     };
     const userRes = await request(app.getHttpServer())
@@ -230,6 +230,12 @@ describe('CourseTakenController (e2e)', () => {
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
       role: adminRoleEnum,
     };
     const userRes: request.Response = await request(app.getHttpServer())
@@ -278,6 +284,12 @@ describe('CourseTakenController (e2e)', () => {
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
       role: adminRoleEnum,
     };
     const userRes: request.Response = await request(app.getHttpServer())
@@ -308,6 +320,21 @@ describe('CourseTakenController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const newUser: NewUserDTO = {
+      email: 'my-user5@email.com',
+      password: 'mypass',
+      urlInstagram: 'instagram',
+      urlFacebook: 'facebook',
+      name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
+      role: adminRoleEnum,
+    };
     const newCourse: NewCourseDTO = {
       title: 'Teste coursetaken E2E to add 5',
       thumbUrl: 'http://teste.com/thumb.png',
@@ -316,16 +343,24 @@ describe('CourseTakenController (e2e)', () => {
       description: 'Este é um registro de teste',
       workload: 1,
     };
-    const courseRes = await request(app.getHttpServer())
-      .post(courseUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .field('title', newCourse.title)
-      .field('thumbUrl', newCourse.thumbUrl)
-      .field('authorName', newCourse.authorName)
-      .field('authorDescription', newCourse.authorDescription)
-      .field('description', newCourse.description)
-      .field('workload', newCourse.workload)
-      .attach('photo', fileToUpload);
+    const [userRes, courseRes] = await Promise.all([
+      request(app.getHttpServer())
+        .post(userUrl)
+        .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+        .send(newUser)
+        .expect(201),
+      request(app.getHttpServer())
+        .post(courseUrl)
+        .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+        .field('title', newCourse.title)
+        .field('thumbUrl', newCourse.thumbUrl)
+        .field('authorName', newCourse.authorName)
+        .field('authorDescription', newCourse.authorDescription)
+        .field('description', newCourse.description)
+        .field('workload', newCourse.workload)
+        .attach('photo', fileToUpload)
+        .expect(201),
+    ]);
 
     const newLesson: NewLessonDTO = {
       courseId: courseRes.body.id,
@@ -335,7 +370,8 @@ describe('CourseTakenController (e2e)', () => {
     const lessonRes = await request(app.getHttpServer())
       .post(lessonUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newLesson);
+      .send(newLesson)
+      .expect(201);
 
     const newPart: NewPartDTO = {
       lessonId: lessonRes.body.id,
@@ -347,7 +383,8 @@ describe('CourseTakenController (e2e)', () => {
     const partRes = await request(app.getHttpServer())
       .post(partUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newPart);
+      .send(newPart)
+      .expect(201);
 
     const newTest: NewTestDTO = {
       partId: partRes.body.id,
@@ -359,11 +396,6 @@ describe('CourseTakenController (e2e)', () => {
       thirdAlternative: 'wrong third alternative 1',
       fourthAlternative: 'right fourth alternative 1',
     };
-    const testRes = await request(app.getHttpServer())
-      .post(testUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newTest);
-
     const newTest2: NewTestDTO = {
       partId: partRes.body.id,
       title: 'new test 2',
@@ -374,23 +406,18 @@ describe('CourseTakenController (e2e)', () => {
       thirdAlternative: 'wrong third alternative 2',
       fourthAlternative: 'right fourth alternative 2',
     };
+
+    const testRes = await request(app.getHttpServer())
+      .post(testUrl)
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .send(newTest)
+      .expect(201);
+
     const testRes2 = await request(app.getHttpServer())
       .post(testUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newTest2);
-
-    const newUser: NewUserDTO = {
-      email: 'my-user5@email.com',
-      password: 'mypass',
-      urlInstagram: 'instagram',
-      urlFacebook: 'facebook',
-      name: 'name',
-      role: adminRoleEnum,
-    };
-    const userRes: request.Response = await request(app.getHttpServer())
-      .post(userUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newUser);
+      .send(newTest2)
+      .expect(201);
 
     const newCourseTaken = {
       userId: userRes.body.id,
@@ -406,7 +433,8 @@ describe('CourseTakenController (e2e)', () => {
       .post(
         `${courseTakenUrl}/advance-on-course/user/${userRes.body.id}/course/${courseRes.body.id}`,
       )
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`);
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200);
 
     const addedCourseTaken = await courseTakenRepository.findOne(
       {
@@ -429,7 +457,8 @@ describe('CourseTakenController (e2e)', () => {
       .post(
         `${courseTakenUrl}/advance-on-course/user/${userRes.body.id}/course/${courseRes.body.id}`,
       )
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`);
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200);
 
     const addedCourseTaken2 = await courseTakenRepository.findOne(
       {
@@ -510,15 +539,15 @@ describe('CourseTakenController (e2e)', () => {
 
     const newTest: NewTestDTO = {
       partId: partRes.body.id,
-      title: 'new test 2',
-      question: 'new test 2',
+      title: 'new test 3',
+      question: 'new test 3',
       correctAlternative: '4',
       firstAlternative: 'wrong first alternative 2',
       secondAlternative: 'wrong second alternative 2',
       thirdAlternative: 'wrong third alternative 2',
       fourthAlternative: 'right fourth alternative 2',
     };
-    const testRes = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(testUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .send(newTest);
@@ -529,6 +558,12 @@ describe('CourseTakenController (e2e)', () => {
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
       role: adminRoleEnum,
     };
     const userRes: request.Response = await request(app.getHttpServer())
@@ -567,7 +602,6 @@ describe('CourseTakenController (e2e)', () => {
         ],
       },
     );
-    console.log(addedCourseTaken);
     expect(addedCourseTaken.currentPart.id).toEqual(partRes.body.id);
 
     await request(app.getHttpServer())
@@ -591,7 +625,6 @@ describe('CourseTakenController (e2e)', () => {
         ],
       },
     );
-    console.log(addedCourseTaken2);
     expect(addedCourseTaken2.currentPart.id).toEqual(partRes2.body.id);
   });
 
@@ -601,6 +634,20 @@ describe('CourseTakenController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+    const newUser: NewUserDTO = {
+      email: 'my-user7@email.com',
+      password: 'mypass',
+      urlInstagram: 'instagram',
+      urlFacebook: 'facebook',
+      name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      institutionName: 'random institution',
+      role: adminRoleEnum,
+    };
     const newCourse: NewCourseDTO = {
       title: 'Teste coursetaken E2E to add 7',
       thumbUrl: 'http://teste.com/thumb.png',
@@ -609,36 +656,44 @@ describe('CourseTakenController (e2e)', () => {
       description: 'Este é um registro de teste',
       workload: 1,
     };
-    const courseRes = await request(app.getHttpServer())
-      .post(courseUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .field('title', newCourse.title)
-      .field('thumbUrl', newCourse.thumbUrl)
-      .field('authorName', newCourse.authorName)
-      .field('authorDescription', newCourse.authorDescription)
-      .field('description', newCourse.description)
-      .field('workload', newCourse.workload)
-      .attach('photo', fileToUpload);
-
+    const [userRes, courseRes] = await Promise.all([
+      request(app.getHttpServer())
+        .post(userUrl)
+        .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+        .send(newUser)
+        .expect(201),
+      request(app.getHttpServer())
+        .post(courseUrl)
+        .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+        .field('title', newCourse.title)
+        .field('thumbUrl', newCourse.thumbUrl)
+        .field('authorName', newCourse.authorName)
+        .field('authorDescription', newCourse.authorDescription)
+        .field('description', newCourse.description)
+        .field('workload', newCourse.workload)
+        .attach('photo', fileToUpload)
+        .expect(201),
+    ]);
     const newLesson: NewLessonDTO = {
       courseId: courseRes.body.id,
       description: 'new lesson description 3',
       title: 'new lesson title 3',
     };
-    const lessonRes = await request(app.getHttpServer())
-      .post(lessonUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newLesson);
-
     const newLesson2: NewLessonDTO = {
       courseId: courseRes.body.id,
       description: 'new lesson description 4',
       title: 'new lesson title 4',
     };
+    const lessonRes = await request(app.getHttpServer())
+      .post(lessonUrl)
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .send(newLesson)
+      .expect(201);
     const lessonRes2 = await request(app.getHttpServer())
       .post(lessonUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newLesson2);
+      .send(newLesson2)
+      .expect(201);
 
     const newPart: NewPartDTO = {
       lessonId: lessonRes.body.id,
@@ -647,11 +702,6 @@ describe('CourseTakenController (e2e)', () => {
       vimeoUrl: 'new part vimeo url 3',
       youtubeUrl: 'new part youtube url 3',
     };
-    const partRes = await request(app.getHttpServer())
-      .post(partUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newPart);
-
     const newPart2: NewPartDTO = {
       lessonId: lessonRes2.body.id,
       description: 'new part description 4',
@@ -659,26 +709,28 @@ describe('CourseTakenController (e2e)', () => {
       vimeoUrl: 'new part vimeo url 4',
       youtubeUrl: 'new part youtube url 4',
     };
+
+    const partRes = await request(app.getHttpServer())
+      .post(partUrl)
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .send(newPart)
+      .expect(201);
     const partRes2 = await request(app.getHttpServer())
       .post(partUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newPart2);
+      .send(newPart2)
+      .expect(201);
 
     const newTest: NewTestDTO = {
       partId: partRes.body.id,
-      title: 'new test 3',
-      question: 'new test 3',
+      title: 'new test 4',
+      question: 'new test 4',
       correctAlternative: '4',
       firstAlternative: 'wrong first alternative 3',
       secondAlternative: 'wrong second alternative 3',
       thirdAlternative: 'wrong third alternative 3',
       fourthAlternative: 'right fourth alternative 3',
     };
-    const testRes = await request(app.getHttpServer())
-      .post(testUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newTest);
-
     const newTest2: NewTestDTO = {
       partId: partRes2.body.id,
       title: 'new test 4',
@@ -689,23 +741,16 @@ describe('CourseTakenController (e2e)', () => {
       thirdAlternative: 'wrong third alternative 4',
       fourthAlternative: 'right fourth alternative 4',
     };
-    const testRes2 = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(testUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newTest2);
-
-    const newUser: NewUserDTO = {
-      email: 'my-user7@email.com',
-      password: 'mypass',
-      urlInstagram: 'instagram',
-      urlFacebook: 'facebook',
-      name: 'name',
-      role: adminRoleEnum,
-    };
-    const userRes: request.Response = await request(app.getHttpServer())
-      .post(userUrl)
+      .send(newTest)
+      .expect(201);
+    await request(app.getHttpServer())
+      .post(testUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newUser);
+      .send(newTest2)
+      .expect(201);
 
     const newCourseTaken = {
       userId: userRes.body.id,
