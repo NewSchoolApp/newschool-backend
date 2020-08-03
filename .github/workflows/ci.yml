@@ -18,10 +18,24 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
         run: npm ci
+      - name: Setup integration database
+        uses: mirromutth/mysql-action@v1.1
+        with:
+        host port: 3306 # Optional, default value is 3306. The port of host
+        container port: 3306 # Optional, default value is 3306. The port of container
+        mysql database: 'test' # Optional, default value is "test". The specified database which will be create
+        mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+        mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
       - name: Integration tests
         run: npm run test:e2e
         env:
           CI: true
+          NODE_ENV: 'TEST'
+          DATABASE_HOST: 'localhost'
+          DATABASE_NAME: 'test'
+          DATABASE_USERNAME: 'root'
+          DATABASE_PASSWORD: 'root'
+          DATABASE_PORT: 3306
 
   build:
     name: Build
