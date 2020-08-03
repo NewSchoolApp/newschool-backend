@@ -12,7 +12,6 @@ import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-cred
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { UserUpdateDTO } from '../../src/UserModule/dto/user-update.dto';
-import { User } from '../../src/UserModule/entity/user.entity';
 import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
@@ -25,6 +24,7 @@ describe('UserController (e2e)', () => {
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  let dbConnection: Connection;
   const adminRoleEnum: RoleEnum = RoleEnum.ADMIN;
   const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
@@ -38,7 +38,8 @@ describe('UserController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
+    dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -223,30 +224,7 @@ describe('UserController (e2e)', () => {
   });
 
   afterAll(async () => {
-    const userRepository: Repository<User> = moduleFixture.get<
-      Repository<User>
-    >(getRepositoryToken(User));
-    const users = await userRepository.find();
-    await Promise.all(users.map(async user => userRepository.remove(user)));
-
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clients = await clientCredentialRepository.find({
-      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
-    });
-    if (clients.length) {
-      await clientCredentialRepository.remove(clients[0]);
-    }
-    const roleRepository: Repository<Role> = moduleFixture.get<
-      Repository<Role>
-    >(getRepositoryToken(Role));
-    const roles = await roleRepository.find({
-      name: RoleEnum.ADMIN,
-    });
-    if (roles.length) {
-      await roleRepository.remove(roles[0]);
-    }
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

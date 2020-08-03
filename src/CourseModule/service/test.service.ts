@@ -118,7 +118,6 @@ export class TestService {
     );
   }
 
-  @Transactional()
   public async countByPart(part: Part): Promise<number> {
     return await this.repository.count({ part });
   }
@@ -136,7 +135,6 @@ export class TestService {
     return test.id;
   }
 
-  @Transactional()
   public async getByPartAndSequenceNumber(
     part: Part,
     sequenceNumber: number,
