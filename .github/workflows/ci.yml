@@ -1,6 +1,15 @@
 name: New School Backend CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - feature/*
+      - fix/*
+      - hotfix/*
+
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   integration-tests:
