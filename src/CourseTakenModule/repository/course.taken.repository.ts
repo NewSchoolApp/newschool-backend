@@ -90,4 +90,28 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   ): Promise<CourseTaken | undefined> {
     return this.findOne({ user, course }, { relations: ['user', 'course'] });
   }
+
+  public async getUsersWithTakenCourses(): Promise<number> {
+    return this.createQueryBuilder('coursetaken')
+      .where('coursetaken.status = :courseTakenStatus', {
+        courseTakenStatus: CourseTakenStatusEnum.TAKEN,
+      })
+      .groupBy('coursetaken.user')
+      .getCount();
+  }
+
+  public async getUsersWithCompletedCourses(): Promise<number> {
+    return this.createQueryBuilder('coursetaken')
+      .where('coursetaken.status = :courseTakenStatus', {
+        courseTakenStatus: CourseTakenStatusEnum.COMPLETED,
+      })
+      .groupBy('coursetaken.user')
+      .getCount();
+  }
+
+  public async getUsersWithCompletedAndTakenCourses(): Promise<number> {
+    return this.createQueryBuilder('coursetaken')
+      .groupBy('coursetaken.user')
+      .getCount();
+  }
 }
