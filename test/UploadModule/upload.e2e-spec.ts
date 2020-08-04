@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
 import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
@@ -16,7 +16,6 @@ describe('UploadController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
   let dbConnection: Connection;
-  let queryRunner: QueryRunner;
   const uploadUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.UPLOAD_ENDPOINT}`;
 
   beforeAll(async () => {
@@ -30,13 +29,6 @@ describe('UploadController (e2e)', () => {
 
     dbConnection = moduleFixture.get(Connection);
     await dbConnection.synchronize(true);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -57,7 +49,6 @@ describe('UploadController (e2e)', () => {
 
   it('should not get a not found file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback(new Error('Not Found'));
@@ -77,7 +68,6 @@ describe('UploadController (e2e)', () => {
 
   it('should return 404 when fail to get the file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
@@ -97,7 +87,6 @@ describe('UploadController (e2e)', () => {
 
   it('should return 200 when get the file with success', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
