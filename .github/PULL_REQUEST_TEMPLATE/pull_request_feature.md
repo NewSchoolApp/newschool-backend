@@ -15,6 +15,5 @@ Selecione o que você fez
 
 - [ ] Meu código segue as guidelines do projeto
 - [ ] Eu fiz um review próprio
-- [ ] Eu mudei a documentação
 - [ ] FIZ TESTES!
 - [ ] Não quebrei nenhum teste

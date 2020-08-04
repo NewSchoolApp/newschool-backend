@@ -38,3 +38,4 @@ lerna-debug.log*
 # env file
 .env
 /upload
+/test/coverage

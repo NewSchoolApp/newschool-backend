@@ -149,13 +149,9 @@ export class CourseTakenService {
 
     const courseTaken = await this.findByUserAndCourse(user, course);
 
-    const nextTestSequenceNumber: number = !courseTaken.currentTest
-      ? 1
-      : courseTaken.currentTest.sequenceNumber + 1;
-
     const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
       courseTaken.currentPart,
-      nextTestSequenceNumber,
+      this.getNextSequenceNumber(courseTaken.currentTest),
     );
 
     if (nextTest) {
@@ -169,7 +165,7 @@ export class CourseTakenService {
 
     const nextPart: Part = await this.partService.getByLessonAndSequenceNumber(
       courseTaken.currentLesson,
-      courseTaken.currentPart.sequenceNumber + 1,
+      this.getNextSequenceNumber(courseTaken.currentPart),
     );
 
     if (nextPart) {
@@ -187,7 +183,7 @@ export class CourseTakenService {
 
     const nextLesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
       courseTaken.course,
-      courseTaken.currentLesson.sequenceNumber + 1,
+      this.getNextSequenceNumber(courseTaken.currentLesson)
     );
 
     if (nextLesson) {
@@ -215,6 +211,13 @@ export class CourseTakenService {
       status: CourseTakenStatusEnum.COMPLETED,
       courseCompleteDate: new Date(Date.now()),
     });
+  }
+
+  private getNextSequenceNumber(step: Lesson | Part | Test): number {
+    if (!step) {
+      return 1
+    }
+    return step.sequenceNumber + 1;
   }
 
   @Transactional()

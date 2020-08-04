@@ -49,10 +49,6 @@ describe('CourseTakenController (e2e)', () => {
   let courseRepository: Repository<Course>;
   let userRepository: Repository<User>;
 
-  let lessonRepository: Repository<Lesson>;
-  let partRepository: Repository<Part>;
-  let testRepository: Repository<Test>;
-
   let dbConnection: Connection;
 
   beforeAll(async () => {
@@ -76,16 +72,6 @@ describe('CourseTakenController (e2e)', () => {
     );
     courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
       getRepositoryToken(CourseTaken),
-    );
-
-    lessonRepository = moduleFixture.get<Repository<Lesson>>(
-      getRepositoryToken(Lesson),
-    );
-    partRepository = moduleFixture.get<Repository<Part>>(
-      getRepositoryToken(Part),
-    );
-    testRepository = moduleFixture.get<Repository<Test>>(
-      getRepositoryToken(Test),
     );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
