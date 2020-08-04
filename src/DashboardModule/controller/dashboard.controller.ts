@@ -7,6 +7,7 @@ import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { UserQuantityDTO } from '../dto/user-quantity.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CertificateQuantityDTO } from '../dto/certificate-quantity.dto';
 
 @ApiTags('Dashboard')
 @Controller(
@@ -22,5 +23,12 @@ export class DashboardController {
     @Query('status') status?: UserStatusEnum,
   ): Promise<UserQuantityDTO> {
     return { totalElements: await this.service.getUserQuantity(status) };
+  }
+
+  @Get('/certificate/quantity')
+  @UseGuards(RoleGuard)
+  @NeedRole(RoleEnum.ADMIN)
+  public async getCertificateQuantity(): Promise<CertificateQuantityDTO> {
+    return { totalElements: await this.service.getCertificateQuantity() };
   }
 }

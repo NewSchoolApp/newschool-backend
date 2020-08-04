@@ -97,6 +97,10 @@ export class CourseTakenService {
     return courseTaken;
   }
 
+  public async getCertificateQuantity(): Promise<number> {
+    return this.repository.getCertificateQuantity();
+  }
+
   public async getCurrentProgression(
     userId: string,
     courseId: string,

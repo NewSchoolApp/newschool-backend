@@ -20,6 +20,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async getActiveUsersQuantity(): Promise<number> {
+    // eslint-disable-next-line camelcase
     const activeUsers: { user_id: number }[] = await this.createQueryBuilder(
       'coursetaken',
     )
@@ -28,6 +29,10 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
       .orderBy('user')
       .getRawMany();
     return activeUsers.length;
+  }
+
+  public async getCertificateQuantity(): Promise<number> {
+    return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
   }
 
   public async findByUserAndCourseWithAllRelations(

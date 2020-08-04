@@ -20,4 +20,8 @@ export class DashboardService {
     // TODO: will get here if status === 'INACTIVE'. it should be implemented
     throw new NotImplementedException();
   }
+
+  getCertificateQuantity(): Promise<number> {
+    return this.courseTakenService.getCertificateQuantity();
+  }
 }
