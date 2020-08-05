@@ -181,8 +181,6 @@ describe('DashboardController (e2e)', () => {
     expect(dashboardRes.body.totalElements).toEqual(1);
   });
 
-  
-
   afterAll(async () => {
     await dbConnection.synchronize(true);
     await app.close();

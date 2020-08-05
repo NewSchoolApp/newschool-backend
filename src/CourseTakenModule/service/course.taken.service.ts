@@ -298,7 +298,7 @@ export class CourseTakenService {
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {
-    return this.repository.getUsersWithTakenCourses()
+    return this.repository.getUsersWithTakenCourses();
   }
 
   public async getUsersWithCompletedCourses(): Promise<number> {

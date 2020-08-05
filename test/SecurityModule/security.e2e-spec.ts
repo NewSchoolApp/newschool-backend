@@ -77,7 +77,7 @@ describe('SecurityController (e2e)', () => {
     );
   });
 
-  it('should validate client credentials', async done => {
+  it('should validate client credentials', async (done) => {
     configService = app.get<ConfigService>(ConfigService);
 
     return request(app.getHttpServer())
@@ -86,7 +86,7 @@ describe('SecurityController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.accessToken).not.toBeNull();
         expect(res.body.refreshToken).not.toBeNull();
         expect(res.body.tokenType).toBe('bearer');
@@ -97,7 +97,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should throw if grant type is invalid', async done => {
+  it('should throw if grant type is invalid', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -107,7 +107,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should throw 404 if client credentials is wrong', async done => {
+  it('should throw 404 if client credentials is wrong', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${stringToBase64('wrong:authorization')}`)
@@ -117,7 +117,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should validate grant type password', async done => {
+  it('should validate grant type password', async (done) => {
     const userRepository: Repository<User> = moduleFixture.get<
       Repository<User>
     >(getRepositoryToken(User));
@@ -149,7 +149,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 404 if user not found', async done => {
+  it('should return 404 if user not found', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)

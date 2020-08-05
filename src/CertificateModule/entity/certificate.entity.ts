@@ -27,10 +27,7 @@ export class Certificate {
   @Expose()
   certificateBackgroundName: string;
 
-  @ManyToMany(
-    () => User,
-    (user: User) => user.certificates,
-  )
+  @ManyToMany(() => User, (user: User) => user.certificates)
   @JoinTable()
   @Expose()
   users: User[];
