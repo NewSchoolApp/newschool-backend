@@ -59,6 +59,11 @@ describe('DashboardController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
+    dbConnection
+      .createEntityManager()
+      .query(
+        `SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))`,
+      );
     await dbConnection.synchronize(true);
 
     courseRepository = moduleFixture.get<Repository<Course>>(
