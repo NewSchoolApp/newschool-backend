@@ -92,28 +92,36 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {
-    return this.createQueryBuilder('coursetaken')
+    // TODO: ci version of mysql has "only_full_group_by", check how to disable it to make this query better
+    const entities: any[] = await this.createQueryBuilder('coursetaken')
       .where('coursetaken.status = :courseTakenStatus', {
         courseTakenStatus: CourseTakenStatusEnum.TAKEN,
       })
-      .groupBy('coursetaken.user')
-      .getCount();
+      .select('DISTINCT coursetaken.user', 'user')
+      .orderBy('user')
+      .getRawMany();
+    return entities.length;
   }
 
   public async getUsersWithCompletedCourses(): Promise<number> {
-    return this.createQueryBuilder('coursetaken')
+    // TODO: ci version of mysql has "only_full_group_by", check how to disable it to make this query better
+    const entities: any[] = await this.createQueryBuilder('coursetaken')
       .where('coursetaken.status = :courseTakenStatus', {
         courseTakenStatus: CourseTakenStatusEnum.COMPLETED,
       })
-      .groupBy('coursetaken.user')
-      .getCount();
+      .select('DISTINCT coursetaken.user', 'user')
+      .orderBy('user')
+      .getRawMany();
+    return entities.length;
   }
 
   public async getUsersWithCompletedAndTakenCourses(): Promise<number> {
+    // TODO: ci version of mysql has "only_full_group_by", check how to disable it to make this query better
     // TODO: Typeorm Bug, getCount query is wrong, check https://github.com/typeorm/typeorm/issues/6522
-    const entities = await this.createQueryBuilder('coursetaken')
-      .groupBy('coursetaken.user')
-      .getMany();
+    const entities: any[] = await this.createQueryBuilder('coursetaken')
+      .select('DISTINCT coursetaken.user', 'user')
+      .orderBy('user')
+      .getRawMany();
     return entities.length;
   }
 }
