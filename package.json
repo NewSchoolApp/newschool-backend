@@ -44,7 +44,7 @@
     "rollbar": "2.14.4",
     "rxjs": "6.5.4",
     "slugify": "1.3.6",
-    "swagger-ui-express": "4.1.3",
+    "swagger-ui-express": "4.1.4",
     "typeorm": "0.2.22",
     "typeorm-transactional-cls-hooked": "0.1.10"
   },
