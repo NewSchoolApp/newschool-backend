@@ -44,7 +44,6 @@ describe('CourseController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-    await dbConnection.synchronize(true);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

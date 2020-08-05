@@ -48,7 +48,6 @@ describe('MessageController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-    await dbConnection.synchronize(true);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
