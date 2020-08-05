@@ -69,7 +69,10 @@ export class Test extends Audit {
   sequenceNumber: number;
 
   @Expose()
-  @ManyToOne<Part>(() => Part, (part: Part) => part.tests)
+  @ManyToOne<Part>(
+    () => Part,
+    (part: Part) => part.tests,
+  )
   @JoinColumn({
     name: 'part_id',
   })

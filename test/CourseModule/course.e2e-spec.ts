@@ -73,13 +73,13 @@ describe('CourseController (e2e)', () => {
     );
   });
 
-  it('should add course', async (done) => {
+  it('should add course', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         const newCourse = {
           title: 'Teste E3E to add',
           thumbUrl: 'http://teste.com/thumb.png',
@@ -99,7 +99,7 @@ describe('CourseController (e2e)', () => {
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
           .expect(201)
-          .expect((res) => {
+          .expect(res => {
             expect(res.body.id).not.toBeUndefined();
             expect(res.body.slug).toBe('teste-e3e-to-add');
           })
@@ -107,13 +107,13 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-  it('should find all courses', async (done) => {
+  it('should find all courses', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .get(`${courseUrl}/`)
           .set('Accept', 'application/json')
@@ -130,7 +130,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         const newCourse = {
           title: 'Teste E3E2',
           thumbUrl: 'http://teste.com/thumb.png',
@@ -149,11 +149,11 @@ describe('CourseController (e2e)', () => {
           .field('description', newCourse.description)
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect((response) => {
+              .expect(response => {
                 expect(response.body.description).toBe(_res.body.description);
               })
               .expect(200);
@@ -167,7 +167,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         const newCourse = {
           title: 'Teste E3E3',
           thumbUrl: 'http://teste.com/thumb.png',
@@ -186,11 +186,11 @@ describe('CourseController (e2e)', () => {
           .field('description', newCourse.description)
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/slug/${_res.body.slug}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect((response) => {
+              .expect(response => {
                 expect(response.body.slug).toBe(_res.body.slug);
               })
               .expect(200);
@@ -204,7 +204,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .get(`${courseUrl}/slug/randomSlug`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -218,7 +218,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         return request(app.getHttpServer())
           .get(`${courseUrl}/0`)
           .set('Accept', 'application/json')
@@ -234,7 +234,7 @@ describe('CourseController (e2e)', () => {
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         const newCourse = {
           title: 'Teste E3E to delete',
           thumbUrl: 'http://teste.com/thumb.png',
@@ -253,7 +253,7 @@ describe('CourseController (e2e)', () => {
           .field('description', newCourse.description)
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .delete(`${courseUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -262,13 +262,13 @@ describe('CourseController (e2e)', () => {
       });
   });
 
-  it('should update course', async (done) => {
+  it('should update course', async done => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then((res) => {
+      .then(res => {
         const newCourse = {
           title: 'Teste E3E to update',
           thumbUrl: 'http://teste.com/thumb.png',
@@ -287,7 +287,7 @@ describe('CourseController (e2e)', () => {
           .field('description', newCourse.description)
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
-          .then((_res) => {
+          .then(_res => {
             return request(app.getHttpServer())
               .put(`${courseUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -299,11 +299,11 @@ describe('CourseController (e2e)', () => {
                 description: _res.body.description,
                 workload: _res.body.workload,
               } as NewCourseDTO)
-              .then((__res) => {
+              .then(__res => {
                 return request(app.getHttpServer())
                   .get(`${courseUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
-                  .expect((response) => {
+                  .expect(response => {
                     expect(response.body.title).toBe('Test Update');
                     expect(response.body.slug).toBe('test-update');
                   })

@@ -23,6 +23,9 @@ export class Role extends Audit {
   )
   clientCredentials: ClientCredentials[];
 
-  @OneToMany<User>(() => User, (user: User) => user.role)
+  @OneToMany<User>(
+    () => User,
+    (user: User) => user.role,
+  )
   users: User[];
 }

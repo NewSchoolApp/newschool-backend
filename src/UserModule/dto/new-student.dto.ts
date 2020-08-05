@@ -31,7 +31,7 @@ export class NewStudentDTO {
   @Expose()
   nickname: string;
 
-  @Transform((date) => date && new Date(date))
+  @Transform(date => date && new Date(date))
   @IsNotEmpty()
   @IsDate()
   @Expose()

@@ -133,12 +133,12 @@ export class MessageService {
     html: string,
     values: any[],
   ): string {
-    return html.replace(/({\d})/g, (i) => {
+    return html.replace(/({\d})/g, i => {
       return values[i.replace(/{/, '').replace(/}/, '')];
     });
   }
 
   private transformObjectToArray(model: any): any[] {
-    return Object.keys(model).map((key) => model[key]);
+    return Object.keys(model).map(key => model[key]);
   }
 }

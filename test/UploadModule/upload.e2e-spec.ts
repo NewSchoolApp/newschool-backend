@@ -47,7 +47,7 @@ describe('UploadController (e2e)', () => {
     await clientCredentialRepository.save(clientCredentials);
   });
 
-  it('should not get a not found file', async (done) => {
+  it('should not get a not found file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
@@ -56,7 +56,7 @@ describe('UploadController (e2e)', () => {
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-not-found')
       .expect(404)
-      .expect((res) => {
+      .expect(res => {
         expect(res.body).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -66,7 +66,7 @@ describe('UploadController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 404 when fail to get the file', async (done) => {
+  it('should return 404 when fail to get the file', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
@@ -75,7 +75,7 @@ describe('UploadController (e2e)', () => {
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
       .expect(404)
-      .expect((res) => {
+      .expect(res => {
         expect(res.body).toStrictEqual({
           error: 'Not Found',
           message: expect.any(String),
@@ -85,7 +85,7 @@ describe('UploadController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 200 when get the file with success', async (done) => {
+  it('should return 200 when get the file with success', async done => {
     const mockAccess = jest.spyOn(fs, 'access');
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
@@ -97,7 +97,7 @@ describe('UploadController (e2e)', () => {
     return request(app.getHttpServer())
       .get(`${uploadUrl}/${fileName}`)
       .expect(200)
-      .expect((res) => {
+      .expect(res => {
         expect(res.body).toBeTruthy();
       })
       .then(() => {
