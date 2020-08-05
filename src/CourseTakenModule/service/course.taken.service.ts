@@ -183,7 +183,7 @@ export class CourseTakenService {
 
     const nextLesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
       courseTaken.course,
-      this.getNextSequenceNumber(courseTaken.currentLesson)
+      this.getNextSequenceNumber(courseTaken.currentLesson),
     );
 
     if (nextLesson) {
@@ -215,7 +215,7 @@ export class CourseTakenService {
 
   private getNextSequenceNumber(step: Lesson | Part | Test): number {
     if (!step) {
-      return 1
+      return 1;
     }
     return step.sequenceNumber + 1;
   }
