@@ -86,7 +86,10 @@ export class User extends Audit {
   @Expose()
   googleSub: string;
 
-  @ManyToOne(() => Role, (role: Role) => role.users)
+  @ManyToOne(
+    () => Role,
+    (role: Role) => role.users,
+  )
   @Expose()
   role: Role;
 
