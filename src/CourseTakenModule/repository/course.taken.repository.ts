@@ -110,8 +110,10 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async getUsersWithCompletedAndTakenCourses(): Promise<number> {
-    return this.createQueryBuilder('coursetaken')
+    // TODO: Typeorm Bug, getCount query is wrong, check https://github.com/typeorm/typeorm/issues/6522
+    const entities = await this.createQueryBuilder('coursetaken')
       .groupBy('coursetaken.user')
-      .getCount();
+      .getMany();
+    return entities.length;
   }
 }
