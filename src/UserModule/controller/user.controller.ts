@@ -14,21 +14,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { UserService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import {
-  AdminChangePasswordDTO,
-  ChangePasswordDTO,
-  ChangePasswordForgotFlowDTO,
-  ChangePasswordRequestIdDTO,
-  ForgotPasswordDTO,
-  NewStudentDTO,
-  NewUserDTO,
-  SelfUpdateDTO,
-  UserDTO,
-  UserUpdateDTO,
-} from '../dto';
-import { UserMapper } from '../mapper';
+import { UserService } from '../service/user.service';
+import { UserMapper } from '../mapper/user.mapper';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -41,10 +28,23 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { SecurityService } from '../../SecurityModule';
-import { User } from '../entity';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { SecurityService } from '../../SecurityModule/service/security.service';
+import { User } from '../entity/user.entity';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
+import { AdminChangePasswordDTO } from '../dto/admin-change-password.dto';
+import { ChangePasswordRequestIdDTO } from '../dto/change-password-request-id.dto';
+import { ForgotPasswordDTO } from '../dto/forgot-password';
+import { ChangePasswordForgotFlowDTO } from '../dto/change-password-forgot-flow.dto';
+import { UserDTO } from '../dto/user.dto';
+import { SelfUpdateDTO } from '../dto/self-update.dto';
+import { NewUserDTO } from '../dto/new-user.dto';
+import { UserUpdateDTO } from '../dto/user-update.dto';
+import { NewStudentDTO } from '../dto/new-student.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -311,7 +311,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
-  ) {
+  ): Promise<void> {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
   }
@@ -347,7 +347,7 @@ export class UserController {
   public async addCertificateToUser(
     @Param('userId') userId: string,
     @Param('certificateId') certificateId: string,
-  ) {
+  ): Promise<void> {
     this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
     await this.service.addCertificateToUser(userId, certificateId);
   }

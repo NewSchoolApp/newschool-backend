@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CourseTakenController } from './controllers';
-import { CourseTakenService } from './service';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseTakenRepository } from './repository';
-import { CourseTaken } from './entity';
-import { CourseTakenMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { CourseModule } from '../CourseModule';
-import { UserModule } from '../UserModule';
+import { CourseModule } from '../CourseModule/course.module';
+import { UserModule } from '../UserModule/user.module';
+import { CourseTakenRepository } from './repository/course.taken.repository';
+import { CourseTakenMapper } from './mapper/course-taken.mapper';
+import { CourseTakenService } from './service/course.taken.service';
+import { CourseTakenController } from './controllers/course.taken.controller';
+import { CourseTaken } from './entity/course.taken.entity';
 
 @Module({
   imports: [

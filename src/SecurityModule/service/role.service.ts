@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RoleEnum } from '../enum';
-import { RoleRepository } from '../repository';
-import { Role } from '../entity';
+import { RoleEnum } from '../enum/role.enum';
+import { RoleRepository } from '../repository/role.repository';
+import { Role } from '../entity/role.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()

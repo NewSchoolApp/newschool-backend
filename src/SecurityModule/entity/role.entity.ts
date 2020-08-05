@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RoleEnum } from '../enum';
-import { Audit } from '../../CommonsModule/entity';
+import { RoleEnum } from '../enum/role.enum';
 import { ClientCredentials } from './client-credentials.entity';
-import { User } from '../../UserModule';
+import { User } from '../../UserModule/entity/user.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity()
 export class Role extends Audit {

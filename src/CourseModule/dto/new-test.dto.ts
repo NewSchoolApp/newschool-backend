@@ -1,7 +1,6 @@
-import { Test } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { Test } from '../entity/test.entity';
 
 export class NewTestDTO {
   @IsNotEmpty()

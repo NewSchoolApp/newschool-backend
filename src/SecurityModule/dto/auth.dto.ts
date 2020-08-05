@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { GrantTypeEnum } from '../enum';
+import { GrantTypeEnum } from '../enum/grant-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthDTO {

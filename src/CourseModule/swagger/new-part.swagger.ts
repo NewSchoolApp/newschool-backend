@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Part } from '../entity';
+import { Part } from '../entity/part.entity';
 
 export class NewPartSwagger {
   @ApiProperty({ type: String })

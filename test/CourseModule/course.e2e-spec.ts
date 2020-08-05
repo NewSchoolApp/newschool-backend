@@ -1,26 +1,34 @@
 import * as request from 'supertest';
+import * as fs from 'fs';
+import * as util from 'util';
+import * as path from 'path';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
-import { Constants } from '../../src/CommonsModule';
-import { NewCourseDTO, CourseUpdateDTO } from 'src/CourseModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
+import { Course } from '../../src/CourseModule/entity/course.entity';
+import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
 
+const fileToUpload = path.resolve(
+  path.join(__dirname, '..', '..', 'README.md'),
+);
+
 describe('CourseController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
+  let dbConnection: Connection;
   let queryRunner: QueryRunner;
   let authorization: string;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
@@ -35,7 +43,8 @@ describe('CourseController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
+    dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -71,19 +80,28 @@ describe('CourseController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
+        const newCourse = {
+          title: 'Teste E3E to add',
+          thumbUrl: 'http://teste.com/thumb.png',
+          authorName: 'Test',
+          authorDescription: 'Test description',
+          description: 'Este é um registro de teste',
+          workload: 1,
+        } as NewCourseDTO;
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'Este é um registro de teste',
-          } as NewCourseDTO)
+          .field('title', newCourse.title)
+          .field('thumbUrl', newCourse.thumbUrl)
+          .field('authorName', newCourse.authorName)
+          .field('authorDescription', newCourse.authorDescription)
+          .field('description', newCourse.description)
+          .field('workload', newCourse.workload)
+          .attach('photo', fileToUpload)
           .expect(201)
           .expect(res => {
             expect(res.body.id).not.toBeUndefined();
-            expect(res.body.slug).toBe('teste-e3e');
+            expect(res.body.slug).toBe('teste-e3e-to-add');
           })
           .then(() => done());
       });
@@ -113,15 +131,24 @@ describe('CourseController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
+        const newCourse = {
+          title: 'Teste E3E2',
+          thumbUrl: 'http://teste.com/thumb.png',
+          authorName: 'Teste',
+          authorDescription: 'Test description',
+          description: 'teste 2',
+          workload: 1,
+        } as NewCourseDTO;
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E2',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'teste 2',
-          } as NewCourseDTO)
+          .field('title', newCourse.title)
+          .field('thumbUrl', newCourse.thumbUrl)
+          .field('authorName', newCourse.authorName)
+          .field('authorDescription', newCourse.authorDescription)
+          .field('description', newCourse.description)
+          .field('workload', newCourse.workload)
+          .attach('photo', fileToUpload)
           .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/${_res.body.id}`)
@@ -141,15 +168,24 @@ describe('CourseController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
+        const newCourse = {
+          title: 'Teste E3E3',
+          thumbUrl: 'http://teste.com/thumb.png',
+          authorName: 'Teste',
+          authorDescription: 'Test description',
+          description: 'teste 2',
+          workload: 1,
+        } as NewCourseDTO;
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E3',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'teste 2',
-          } as NewCourseDTO)
+          .field('title', newCourse.title)
+          .field('thumbUrl', newCourse.thumbUrl)
+          .field('authorName', newCourse.authorName)
+          .field('authorDescription', newCourse.authorDescription)
+          .field('description', newCourse.description)
+          .field('workload', newCourse.workload)
+          .attach('photo', fileToUpload)
           .then(_res => {
             return request(app.getHttpServer())
               .get(`${courseUrl}/slug/${_res.body.slug}`)
@@ -170,24 +206,13 @@ describe('CourseController (e2e)', () => {
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
         return request(app.getHttpServer())
-          .post(courseUrl)
+          .get(`${courseUrl}/slug/randomSlug`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E4',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'teste 2',
-          } as NewCourseDTO)
-          .then(() => {
-            return request(app.getHttpServer())
-              .get(`${courseUrl}/slug/randomSlug`)
-              .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect(404);
-          });
+          .expect(404);
       });
   });
 
-  it('should return 404 if ID doesnt exist', async done => {
+  it('should return 404 if ID doesnt exist', async () => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -199,8 +224,7 @@ describe('CourseController (e2e)', () => {
           .set('Accept', 'application/json')
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .expect('Content-Type', /json/)
-          .expect(404)
-          .then(() => done());
+          .expect(404);
       });
   });
 
@@ -211,15 +235,24 @@ describe('CourseController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
+        const newCourse = {
+          title: 'Teste E3E to delete',
+          thumbUrl: 'http://teste.com/thumb.png',
+          authorName: 'Teste',
+          authorDescription: 'Teste',
+          description: 'Este é um registro de teste',
+          workload: 1,
+        } as NewCourseDTO;
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'Este é um registro de teste',
-          } as NewCourseDTO)
+          .field('title', newCourse.title)
+          .field('thumbUrl', newCourse.thumbUrl)
+          .field('authorName', newCourse.authorName)
+          .field('authorDescription', newCourse.authorDescription)
+          .field('description', newCourse.description)
+          .field('workload', newCourse.workload)
+          .attach('photo', fileToUpload)
           .then(_res => {
             return request(app.getHttpServer())
               .delete(`${courseUrl}/${_res.body.id}`)
@@ -236,31 +269,43 @@ describe('CourseController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .then(res => {
+        const newCourse = {
+          title: 'Teste E3E to update',
+          thumbUrl: 'http://teste.com/thumb.png',
+          authorName: 'Teste',
+          authorDescription: 'Teste',
+          description: 'Este é um registro de teste',
+          workload: 1,
+        } as NewCourseDTO;
         return request(app.getHttpServer())
           .post(courseUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
-          .send({
-            title: 'Teste E3E',
-            thumbUrl: 'http://teste.com/thumb.png',
-            authorId: '1',
-            description: 'Este é um registro de teste',
-          } as NewCourseDTO)
+          .field('title', newCourse.title)
+          .field('thumbUrl', newCourse.thumbUrl)
+          .field('authorName', newCourse.authorName)
+          .field('authorDescription', newCourse.authorDescription)
+          .field('description', newCourse.description)
+          .field('workload', newCourse.workload)
+          .attach('photo', fileToUpload)
           .then(_res => {
             return request(app.getHttpServer())
               .put(`${courseUrl}/${_res.body.id}`)
+              .set('Authorization', `Bearer ${res.body.accessToken}`)
               .send({
                 title: 'Test Update',
                 thumbUrl: _res.body.thumbUrl,
-                authorId: _res.body.authorId,
+                authorName: _res.body.authorName,
+                authorDescription: _res.body.authorDescription,
                 description: _res.body.description,
-              } as CourseUpdateDTO)
-              .set('Authorization', `Bearer ${res.body.accessToken}`)
+                workload: _res.body.workload,
+              } as NewCourseDTO)
               .then(__res => {
                 return request(app.getHttpServer())
                   .get(`${courseUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
                   .expect(response => {
                     expect(response.body.title).toBe('Test Update');
+                    expect(response.body.slug).toBe('test-update');
                   })
                   .then(() => done());
               });
@@ -269,6 +314,7 @@ describe('CourseController (e2e)', () => {
   });
 
   afterAll(async () => {
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

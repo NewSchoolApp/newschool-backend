@@ -1,4 +1,3 @@
-import { Course } from '../entity';
 import {
   IsNotEmpty,
   IsNumber,
@@ -7,6 +6,7 @@ import {
   Min,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
+import { Course } from '../entity/course.entity';
 
 export class CourseUpdateDTO {
   @IsNotEmpty()
@@ -30,4 +30,14 @@ export class CourseUpdateDTO {
   @Min(1)
   @Expose()
   workload: Course['workload'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  authorName: Course['authorName'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  authorDescription: Course['authorDescription'];
 }

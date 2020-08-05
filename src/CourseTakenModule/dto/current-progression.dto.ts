@@ -1,6 +1,6 @@
-import { StepEnum } from '../enum';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { StepEnum } from '../enum/step.enum';
 
 export class CurrentProgressionDTO {
   @IsNotEmpty()

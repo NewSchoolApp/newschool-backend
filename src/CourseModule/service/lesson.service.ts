@@ -4,11 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { LessonRepository } from '../repository';
-import { Course, Lesson } from '../entity';
-import { LessonUpdateDTO, NewLessonDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 import { CourseService } from './course.service';
+import { LessonRepository } from '../repository/lesson.repository';
+import { LessonUpdateDTO } from '../dto/lesson-update.dto';
+import { NewLessonDTO } from '../dto/new-lesson.dto';
+import { Course } from '../entity/course.entity';
+import { Lesson } from '../entity/lesson.entity';
 
 @Injectable()
 export class LessonService {
@@ -34,7 +36,7 @@ export class LessonService {
     return this.repository.save({
       ...lesson,
       course,
-      sequenceNumber: 1 + (await this.repository.count({ course: course })),
+      sequenceNumber: 1 + (await this.repository.count({ course })),
     });
   }
 
@@ -60,8 +62,9 @@ export class LessonService {
 
   @Transactional()
   public async getAll(courseId: Course['id']): Promise<Lesson[]> {
-    const course: Course = await this.courseService.findById(courseId);
-    return this.repository.find({ course });
+    return this.repository.find({
+      course: await this.courseService.findById(courseId),
+    });
   }
 
   @Transactional()
@@ -103,12 +106,10 @@ export class LessonService {
     }
   }
 
-  @Transactional()
   public async countByCourse(course: Course): Promise<number> {
     return await this.repository.count({ course });
   }
 
-  @Transactional()
   public async getByCourseAndSequenceNumber(
     course: Course,
     sequenceNumber: number,

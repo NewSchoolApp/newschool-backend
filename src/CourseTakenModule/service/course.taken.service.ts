@@ -4,32 +4,29 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CourseTakenRepository } from '../repository';
-import { CourseTaken } from '../entity';
-import {
-  AlternativeProgressionDTO,
-  CourseTakenUpdateDTO,
-  CurrentProgressionDTO,
-  NewCourseTakenDTO,
-  VideoProgressionDataDTO,
-  VideoProgressionDTO,
-} from '../dto';
-import { CourseTakenMapper } from '../mapper';
-import {
-  Course,
-  CourseService,
-  Lesson,
-  LessonService,
-  Part,
-  PartService,
-  Test,
-  TestService,
-} from '../../CourseModule';
-import { CourseTakenStatusEnum, StepEnum } from '../enum';
-import { UserMapper } from '../../UserModule/mapper';
-import { CertificateDTO } from '../dto/';
-import { User } from '../../UserModule/entity';
-import { UserService } from '../../UserModule/service';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { UserMapper } from '../../UserModule/mapper/user.mapper';
+import { User } from '../../UserModule/entity/user.entity';
+import { UserService } from '../../UserModule/service/user.service';
+import { VideoProgressionDTO } from '../dto/video-progression.dto';
+import { CourseTakenRepository } from '../repository/course.taken.repository';
+import { CourseTakenMapper } from '../mapper/course-taken.mapper';
+import { StepEnum } from '../enum/step.enum';
+import { NewCourseTakenDTO } from '../dto/new-course.taken.dto';
+import { CourseTakenUpdateDTO } from '../dto/course.taken-update.dto';
+import { CurrentProgressionDTO } from '../dto/current-progression.dto';
+import { AlternativeProgressionDTO } from '../dto/alternative-progression.dto';
+import { VideoProgressionDataDTO } from '../dto/video-progression-data.dto';
+import { CourseTaken } from '../entity/course.taken.entity';
+import { CertificateDTO } from '../dto/certificate.dto';
+import { TestService } from '../../CourseModule/service/test.service';
+import { CourseService } from '../../CourseModule/service/course.service';
+import { Part } from '../../CourseModule/entity/part.entity';
+import { PartService } from '../../CourseModule/service/part.service';
+import { Course } from '../../CourseModule/entity/course.entity';
+import { LessonService } from '../../CourseModule/service/lesson.service';
+import { Lesson } from '../../CourseModule/entity/lesson.entity';
+import { Test } from '../../CourseModule/entity/test.entity';
 
 @Injectable()
 export class CourseTakenService {
@@ -82,6 +79,10 @@ export class CourseTakenService {
     await this.repository.save(newCourseTaken);
   }
 
+  public async getActiveUsersQuantity(): Promise<number> {
+    return this.repository.getActiveUsersQuantity();
+  }
+
   private async findByUserAndCourse(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
@@ -94,6 +95,10 @@ export class CourseTakenService {
       throw new NotFoundException('CourseTaken not found');
     }
     return courseTaken;
+  }
+
+  public async getCertificateQuantity(): Promise<number> {
+    return this.repository.getCertificateQuantity();
   }
 
   public async getCurrentProgression(
@@ -144,13 +149,9 @@ export class CourseTakenService {
 
     const courseTaken = await this.findByUserAndCourse(user, course);
 
-    const nextTestSequenceNumber: number = !courseTaken.currentTest
-      ? 1
-      : courseTaken.currentTest.sequenceNumber + 1;
-
     const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
       courseTaken.currentPart,
-      nextTestSequenceNumber,
+      this.getNextSequenceNumber(courseTaken.currentTest),
     );
 
     if (nextTest) {
@@ -164,7 +165,7 @@ export class CourseTakenService {
 
     const nextPart: Part = await this.partService.getByLessonAndSequenceNumber(
       courseTaken.currentLesson,
-      courseTaken.currentPart.sequenceNumber + 1,
+      this.getNextSequenceNumber(courseTaken.currentPart),
     );
 
     if (nextPart) {
@@ -182,7 +183,7 @@ export class CourseTakenService {
 
     const nextLesson: Lesson = await this.lessonService.getByCourseAndSequenceNumber(
       courseTaken.course,
-      courseTaken.currentLesson.sequenceNumber + 1,
+      this.getNextSequenceNumber(courseTaken.currentLesson)
     );
 
     if (nextLesson) {
@@ -210,6 +211,13 @@ export class CourseTakenService {
       status: CourseTakenStatusEnum.COMPLETED,
       courseCompleteDate: new Date(Date.now()),
     });
+  }
+
+  private getNextSequenceNumber(step: Lesson | Part | Test): number {
+    if (!step) {
+      return 1
+    }
+    return step.sequenceNumber + 1;
   }
 
   @Transactional()

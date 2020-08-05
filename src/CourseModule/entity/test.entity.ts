@@ -1,16 +1,16 @@
-import { Audit } from '../../CommonsModule';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
-  OneToMany,
 } from 'typeorm';
 import { Part } from './part.entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Unique(['sequenceNumber', 'part'])
 @Entity()

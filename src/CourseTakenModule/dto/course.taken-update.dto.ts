@@ -1,4 +1,3 @@
-import { CourseTaken } from '../entity';
 import { Expose, Type } from 'class-transformer';
 import {
   IsDate,
@@ -8,7 +7,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { CourseTakenStatusEnum } from '../enum';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { CourseTaken } from '../entity/course.taken.entity';
 
 export class CourseTakenUpdateDTO {
   @IsNotEmpty()

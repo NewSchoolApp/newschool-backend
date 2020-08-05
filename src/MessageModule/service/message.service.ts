@@ -5,12 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { MailerService } from '@nest-modules/mailer';
-import { ContactUsDTO, EmailDTO } from '../dto';
 import { TemplateRepository } from '../repository/template.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TemplateDTO } from '../dto/templates.dto';
 import { TemplateMapper } from '../mapper/template.mapper';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { ContactUsDTO } from '../dto/contactus.dto';
+import { EmailDTO } from '../dto/email.dto';
 
 @Injectable()
 export class MessageService {

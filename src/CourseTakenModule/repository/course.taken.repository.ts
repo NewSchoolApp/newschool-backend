@@ -1,8 +1,9 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { CourseTaken } from '../entity';
-import { CertificateDTO } from '../dto';
-import { CourseTakenStatusEnum } from '../enum';
-import { User } from '../../UserModule/entity';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { User } from '../../UserModule/entity/user.entity';
+import { CourseTaken } from '../entity/course.taken.entity';
+import { CertificateDTO } from '../dto/certificate.dto';
+import { MoreThanOrEqual } from 'typeorm/index';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
@@ -18,10 +19,26 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.find({ relations: ['user', 'course'], where: { user } });
   }
 
+  public async getActiveUsersQuantity(): Promise<number> {
+    // eslint-disable-next-line camelcase
+    const activeUsers: { user_id: number }[] = await this.createQueryBuilder(
+      'coursetaken',
+    )
+      .where('coursetaken.completion', MoreThanOrEqual<number>(30))
+      .select('DISTINCT coursetaken.user', 'user')
+      .orderBy('user')
+      .getRawMany();
+    return activeUsers.length;
+  }
+
+  public async getCertificateQuantity(): Promise<number> {
+    return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
+  }
+
   public async findByUserAndCourseWithAllRelations(
     user: CourseTaken['user'],
     course: CourseTaken['course'],
-  ) {
+  ): Promise<CourseTaken> {
     return this.findOne(
       { user, course },
       {
