@@ -33,7 +33,7 @@
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "dotenv": "8.2.0",
-    "dotenv-flow": "3.1.0",
+    "dotenv-flow": "3.2.0",
     "i": "0.3.6",
     "mysql": "2.18.1",
     "nodemailer": "6.4.11",
