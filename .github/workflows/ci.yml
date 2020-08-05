@@ -30,7 +30,7 @@ jobs:
       - name: Setup integration database
         uses: mirromutth/mysql-action@v1.1
         with:
-          mysql version: 5.6
+          mysql version: 5.7.13
           mysql database: 'newschool_tests'
           mysql user: 'newschool_tests' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
           mysql password: '123987' # Required if "mysql user" exists. The password for the "mysql user"
