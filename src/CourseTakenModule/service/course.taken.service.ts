@@ -297,6 +297,18 @@ export class CourseTakenService {
     return courseTaken;
   }
 
+  public async getUsersWithTakenCourses(): Promise<number> {
+    return this.repository.getUsersWithTakenCourses();
+  }
+
+  public async getUsersWithCompletedCourses(): Promise<number> {
+    return this.repository.getUsersWithCompletedCourses();
+  }
+
+  public async getUsersWithCompletedAndTakenCourses(): Promise<number> {
+    return this.repository.getUsersWithCompletedAndTakenCourses();
+  }
+
   private async calculateCompletion(courseTaken: CourseTaken): Promise<number> {
     if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
       return 100;

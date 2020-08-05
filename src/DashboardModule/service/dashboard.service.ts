@@ -2,6 +2,7 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
 import { CourseTakenService } from '../../CourseTakenModule/service/course.taken.service';
+import { CourseTakenStatusEnum } from '../../CourseTakenModule/enum/enum';
 
 @Injectable()
 export class DashboardService {
@@ -23,5 +24,17 @@ export class DashboardService {
 
   getCertificateQuantity(): Promise<number> {
     return this.courseTakenService.getCertificateQuantity();
+  }
+
+  getUsersInCourseQuantity(
+    status: CourseTakenStatusEnum,
+  ): number | PromiseLike<number> {
+    if (!status) {
+      return this.courseTakenService.getUsersWithCompletedAndTakenCourses();
+    }
+    if (status === CourseTakenStatusEnum.COMPLETED) {
+      return this.courseTakenService.getUsersWithCompletedCourses();
+    }
+    return this.courseTakenService.getUsersWithTakenCourses();
   }
 }

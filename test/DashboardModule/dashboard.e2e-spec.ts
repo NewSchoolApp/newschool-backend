@@ -19,6 +19,10 @@ import { CourseTaken } from '../../src/CourseTakenModule/entity/course.taken.ent
 import { User } from '../../src/UserModule/entity/user.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
+import { UserService } from '../../src/UserModule/service/user.service';
+import { CourseService } from '../../src/CourseModule/service/course.service';
+import { CourseTakenService } from '../../src/CourseTakenModule/service/course.taken.service';
+import { CourseTakenStatusEnum } from '../../src/CourseTakenModule/enum/enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -55,7 +59,6 @@ describe('DashboardController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-    await dbConnection.synchronize(true);
 
     courseRepository = moduleFixture.get<Repository<Course>>(
       getRepositoryToken(Course),
@@ -66,6 +69,18 @@ describe('DashboardController (e2e)', () => {
     courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
       getRepositoryToken(CourseTaken),
     );
+
+    const userService: UserService = moduleFixture.get<UserService>(
+      UserService,
+    );
+
+    const courseService: CourseService = moduleFixture.get<CourseService>(
+      CourseService,
+    );
+
+    const courseTakenService: CourseTakenService = moduleFixture.get<
+      CourseTakenService
+    >(CourseTakenService);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -93,48 +108,6 @@ describe('DashboardController (e2e)', () => {
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,
     );
-  });
-
-  it('should return totalElements 0 if there is no certificate', async () => {
-    const authRes = await request(app.getHttpServer())
-      .post('/oauth/token')
-      .set('Authorization', `Basic ${authorization}`)
-      .set('Content-Type', 'multipart/form-data')
-      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
-
-    const dashboardRes = await request(app.getHttpServer())
-      .get(`${dashboardUrl}/certificate/quantity`)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .expect(200);
-
-    expect(dashboardRes.body.totalElements).toEqual(0);
-  });
-
-  it('should return the correct amount of certificates', async () => {
-    const authRes = await request(app.getHttpServer())
-      .post('/oauth/token')
-      .set('Authorization', `Basic ${authorization}`)
-      .set('Content-Type', 'multipart/form-data')
-      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
-
-    const newCourse: NewCourseDTO = {
-      title: 'Teste coursetaken E2E to add',
-      thumbUrl: 'http://teste.com/thumb.png',
-      authorName: 'Test',
-      authorDescription: 'Test description',
-      description: 'Este é um registro de teste',
-      workload: 1,
-    };
-    const courseRes = await request(app.getHttpServer())
-      .post(courseUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .field('title', newCourse.title)
-      .field('thumbUrl', newCourse.thumbUrl)
-      .field('authorName', newCourse.authorName)
-      .field('authorDescription', newCourse.authorDescription)
-      .field('description', newCourse.description)
-      .field('workload', newCourse.workload)
-      .attach('photo', fileToUpload);
 
     const newUser: NewUserDTO = {
       email: 'my-user1@email.com',
@@ -151,34 +124,137 @@ describe('DashboardController (e2e)', () => {
       institutionName: 'random institution',
       role: adminRoleEnum,
     };
-    const userRes = await request(app.getHttpServer())
-      .post(userUrl)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newUser);
+    const addedUser = await userService.add(newUser);
+
+    const newUser2: NewUserDTO = {
+      email: 'my-user2@email.com',
+      password: 'mypass',
+      urlInstagram: 'instagram',
+      urlFacebook: 'facebook',
+      name: 'name',
+      nickname: 'random nickname',
+      gender: GenderEnum.MALE,
+      schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+      profession: 'random profession',
+      birthday: new Date(),
+      address: 'random adress',
+      institutionName: 'random institution',
+      role: adminRoleEnum,
+    };
+    const addedUser2 = await userService.add(newUser2);
+
+    const newCourse: NewCourseDTO = {
+      title: 'Teste coursetaken E2E to add',
+      thumbUrl: 'http://teste.com/thumb.png',
+      authorName: 'Test',
+      authorDescription: 'Test description',
+      description: 'Este é um registro de teste',
+      workload: 1,
+    };
+    const addedCourse = await courseService.add(newCourse, {
+      filename: 'teste',
+    });
+
+    const newCourse2: NewCourseDTO = {
+      title: 'Teste coursetaken E2E to add 2',
+      thumbUrl: 'http://teste.com/thumb.png',
+      authorName: 'Test',
+      authorDescription: 'Test description',
+      description: 'Este é um registro de teste',
+      workload: 1,
+    };
+    const addedCourse2 = await courseService.add(newCourse2, {
+      filename: 'teste',
+    });
 
     const newCourseTaken = {
-      userId: userRes.body.id,
-      courseId: courseRes.body.id,
+      userId: addedUser.id,
+      courseId: addedCourse.id,
     };
-    await request(app.getHttpServer())
-      .post(`${courseTakenUrl}/start-course`)
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .send(newCourseTaken)
-      .expect(200);
+    await courseTakenService.add(newCourseTaken);
 
-    await request(app.getHttpServer())
-      .post(
-        `${courseTakenUrl}/advance-on-course/user/${userRes.body.id}/course/${courseRes.body.id}`,
-      )
-      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .expect(200);
+    const newCourseTaken2 = {
+      userId: addedUser.id,
+      courseId: addedCourse2.id,
+    };
+    await courseTakenService.add(newCourseTaken2);
+
+    const newCourseTaken3 = {
+      userId: addedUser2.id,
+      courseId: addedCourse2.id,
+    };
+    await courseTakenService.add(newCourseTaken3);
+
+    await courseTakenService.advanceOnCourse(addedUser.id, addedCourse2.id);
+    await courseTakenService.advanceOnCourse(addedUser2.id, addedCourse2.id);
+  });
+
+  it('should have 2 as quantity of certificates created', async () => {
+    const authRes = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
     const dashboardRes = await request(app.getHttpServer())
       .get(`${dashboardUrl}/certificate/quantity`)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .expect(200);
 
+    expect(dashboardRes.body.totalElements).toEqual(2);
+  });
+
+  it('should return 2 as quantity of users on courses', async () => {
+    const authRes = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const dashboardRes = await request(app.getHttpServer())
+      .get(`${dashboardUrl}/course-taken/user/quantity`)
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200);
+
+    console.log(await courseTakenRepository.find());
+
+    expect(dashboardRes.body.totalElements).toEqual(2);
+  });
+
+  it('should return 1 as quantity of users that has TAKEN status', async () => {
+    const authRes = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const dashboardRes = await request(app.getHttpServer())
+      .get(
+        `${dashboardUrl}/course-taken/user/quantity?status=${CourseTakenStatusEnum.TAKEN}`,
+      )
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200);
+
+    console.log(await courseTakenRepository.find());
+
     expect(dashboardRes.body.totalElements).toEqual(1);
+  });
+
+  it('should return 2 as quantity of users that has COMPLETED status', async () => {
+    const authRes = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const dashboardRes = await request(app.getHttpServer())
+      .get(
+        `${dashboardUrl}/course-taken/user/quantity?status=${CourseTakenStatusEnum.COMPLETED}`,
+      )
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200);
+
+    expect(dashboardRes.body.totalElements).toEqual(2);
   });
 
   afterAll(async () => {

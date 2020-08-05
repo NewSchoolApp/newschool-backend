@@ -80,11 +80,11 @@ export class User extends Audit {
 
   @Column({ name: 'facebook_id', nullable: true })
   @Expose()
-  facebookId: string;
+  facebookId?: string;
 
   @Column({ name: 'google_sub', nullable: true })
   @Expose()
-  googleSub: string;
+  googleSub?: string;
 
   @ManyToOne(
     () => Role,
