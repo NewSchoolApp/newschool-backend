@@ -45,7 +45,7 @@
     "rxjs": "6.6.2",
     "slugify": "1.4.5",
     "swagger-ui-express": "4.1.4",
-    "typeorm": "0.2.22",
+    "typeorm": "0.2.25",
     "typeorm-transactional-cls-hooked": "0.1.10"
   },
   "devDependencies": {
