@@ -46,7 +46,7 @@
     "slugify": "1.4.5",
     "swagger-ui-express": "4.1.4",
     "typeorm": "0.2.25",
-    "typeorm-transactional-cls-hooked": "0.1.10"
+    "typeorm-transactional-cls-hooked": "0.1.12"
   },
   "devDependencies": {
     "@nestjs/cli": "6.14.1",
