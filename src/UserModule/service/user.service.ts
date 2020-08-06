@@ -61,7 +61,7 @@ export class UserService {
   public async getCertificateByUser(userId): Promise<CertificateUserDTO[]> {
     const certificates = await this.repository.getCertificateByUser(userId);
 
-    return certificates.map<CertificateUserDTO>(certificate => {
+    return certificates.map<CertificateUserDTO>((certificate) => {
       const c = new CertificateUserDTO();
       c.id = certificate.certificate_id;
       c.title = certificate.certificate_title;

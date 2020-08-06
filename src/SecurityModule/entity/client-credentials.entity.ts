@@ -19,9 +19,6 @@ export class ClientCredentials extends Audit {
   @Column({ type: 'varchar' })
   secret: string;
 
-  @ManyToOne<Role>(
-    () => Role,
-    (role: Role) => role.clientCredentials,
-  )
+  @ManyToOne<Role>(() => Role, (role: Role) => role.clientCredentials)
   role: Role;
 }

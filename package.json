@@ -36,7 +36,7 @@
     "dotenv-flow": "3.2.0",
     "mysql": "2.18.1",
     "nodemailer": "6.4.11",
-    "passport-facebook-token": "3.3.0",
+    "passport-facebook-token": "4.0.0",
     "passport-jwt": "4.0.0",
     "reflect-metadata": "0.1.13",
     "remove": "0.1.5",
