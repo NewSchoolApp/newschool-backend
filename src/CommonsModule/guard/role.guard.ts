@@ -42,7 +42,9 @@ export class RoleGuard implements CanActivate {
       }
       throw new InternalServerErrorException(e);
     }
-    const hasPermission: boolean = roles.some(role => role === user.role.name);
+    const hasPermission: boolean = roles.some(
+      (role) => role === user.role.name,
+    );
     return user?.role && hasPermission;
   }
 }

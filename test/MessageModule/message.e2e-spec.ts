@@ -70,13 +70,13 @@ describe('MessageController (e2e)', () => {
     );
   });
 
-  it('should send email', async done => {
+  it('should send email', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(`${messageUrl}/email`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -91,13 +91,13 @@ describe('MessageController (e2e)', () => {
       });
   });
 
-  it('should send contact us email', async done => {
+  it('should send contact us email', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(`${messageUrl}/email/contactus`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
