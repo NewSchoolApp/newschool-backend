@@ -1,0 +1,29 @@
+name: New School Backend Replicate
+
+on: 
+  push:
+    branches:
+    - develop
+    - stage
+
+env:
+  API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+  GITHUB_USERNAME: newschool-app-devops
+  GITHUB_REPO: newschool-backend
+
+jobs:
+  replicate:
+    if: ${{ github.repository_owner == 'NewSchoolBR' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: replicate branch
+        run: |
+          [ "$GITHUB_REPOSITORY" == "$GITHUB_USERNAME/$GITHUB_REPO" ] && echo 'Same repository' && exit 0
+          CLONE_DIR=$(mktemp -d)
+          REPO_BRANCH=${GITHUB_REF##*/}
+          echo replication of branch $REPO_BRANCH
+          git clone "https://github.com/$GITHUB_REPOSITORY.git" "$CLONE_DIR"
+          cd $CLONE_DIR
+          git checkout "$REPO_BRANCH"
+          git remote add replicate "https://$API_TOKEN_GITHUB@github.com/$GITHUB_USERNAME/$GITHUB_REPO.git"
+          git push replicate "$REPO_BRANCH" --force
