@@ -1,4 +1,3 @@
-import { Part } from '../entity';
 import {
   IsNotEmpty,
   IsNumber,
@@ -7,6 +6,7 @@ import {
   Min,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
+import { Part } from '../entity/part.entity';
 
 export class PartUpdateDTO {
   @IsNotEmpty()

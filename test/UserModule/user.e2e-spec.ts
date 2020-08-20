@@ -2,18 +2,19 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
-import { User } from '../../src/UserModule/entity';
-import { Constants } from '../../src/CommonsModule';
-import { NewUserDTO, UserUpdateDTO } from '../../src/UserModule/dto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
+import { UserUpdateDTO } from '../../src/UserModule/dto/user-update.dto';
+import { Constants } from '../../src/CommonsModule/constants';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -22,9 +23,9 @@ const stringToBase64 = (string: string) => {
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
+  let dbConnection: Connection;
   const adminRoleEnum: RoleEnum = RoleEnum.ADMIN;
   const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
@@ -38,14 +39,7 @@ describe('UserController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
+    dbConnection = moduleFixture.get(Connection);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -68,13 +62,13 @@ describe('UserController (e2e)', () => {
     );
   });
 
-  it('should add user', async done => {
+  it('should add user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -84,6 +78,13 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
           .expect(201)
@@ -91,13 +92,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should throw if user is missing a required property', async done => {
+  it('should throw if user is missing a required property', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -113,13 +114,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should find user by id', async done => {
+  it('should find user by id', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -129,13 +130,20 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             return request(app.getHttpServer())
               .get(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .expect(response => {
+              .expect((response) => {
                 expect(response.body.email).toBe('my-user2@email.com');
               })
               .expect(200)
@@ -144,13 +152,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should update user', async done => {
+  it('should update user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -160,14 +168,28 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
+            address: 'random address',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             const updateBody: UserUpdateDTO = {
               id: _res.body.id,
               email: _res.body.email,
               role: adminRoleEnum,
               name: 'updated name',
+              nickname: 'random nickname',
+              gender: GenderEnum.MALE,
+              schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+              profession: 'random profession',
+              birthday: new Date(),
+              institutionName: 'random institution',
+              address: 'random adress',
               urlFacebook: _res.body.urlFacebook,
               urlInstagram: _res.body.urlInstagram,
             };
@@ -176,11 +198,11 @@ describe('UserController (e2e)', () => {
               .type('form')
               .set('Authorization', `Bearer ${res.body.accessToken}`)
               .send(updateBody)
-              .then(__res => {
+              .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
-                  .expect(response => {
+                  .expect((response) => {
                     expect(response.body.name).toBe('updated name');
                   })
                   .then(() => done());
@@ -189,13 +211,13 @@ describe('UserController (e2e)', () => {
       });
   });
 
-  it('should delete user', async done => {
+  it('should delete user', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
           .post(userUrl)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -205,13 +227,19 @@ describe('UserController (e2e)', () => {
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
+            nickname: 'random nickname',
+            gender: GenderEnum.MALE,
+            schooling: EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO,
+            profession: 'random profession',
+            birthday: new Date(),
+            institutionName: 'random institution',
             role: adminRoleEnum,
           } as NewUserDTO)
-          .then(_res => {
+          .then((_res) => {
             return request(app.getHttpServer())
               .delete(`${userUrl}/${_res.body.id}`)
               .set('Authorization', `Bearer ${res.body.accessToken}`)
-              .then(__res => {
+              .then((__res) => {
                 return request(app.getHttpServer())
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
@@ -223,30 +251,7 @@ describe('UserController (e2e)', () => {
   });
 
   afterAll(async () => {
-    const userRepository: Repository<User> = moduleFixture.get<
-      Repository<User>
-    >(getRepositoryToken(User));
-    const users = await userRepository.find();
-    await Promise.all(users.map(async user => userRepository.remove(user)));
-
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clients = await clientCredentialRepository.find({
-      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
-    });
-    if (clients.length) {
-      await clientCredentialRepository.remove(clients[0]);
-    }
-    const roleRepository: Repository<Role> = moduleFixture.get<
-      Repository<Role>
-    >(getRepositoryToken(Role));
-    const roles = await roleRepository.find({
-      name: RoleEnum.ADMIN,
-    });
-    if (roles.length) {
-      await roleRepository.remove(roles[0]);
-    }
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

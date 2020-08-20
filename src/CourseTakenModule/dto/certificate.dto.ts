@@ -1,8 +1,8 @@
-import { CourseTaken } from '../entity';
 import { Expose, Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsNotEmptyObject } from 'class-validator';
-import { UserDTO } from '../../UserModule/dto';
-import { CourseDTO } from '../../CourseModule/dto';
+import { UserDTO } from '../../UserModule/dto/user.dto';
+import { CourseTaken } from '../entity/course.taken.entity';
+import { CourseDTO } from '../../CourseModule/dto/course.dto';
 
 export class CertificateDTO {
   @IsNotEmptyObject()

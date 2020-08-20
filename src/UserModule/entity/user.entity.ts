@@ -7,12 +7,14 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Audit } from '../../CommonsModule';
-import { Role } from '../../SecurityModule';
+import { Role } from '../../SecurityModule/entity/role.entity';
 import { ChangePassword } from './change-password.entity';
-import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { Certificate } from '../../CertificateModule/entity/certificate.entity';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
 
 @Entity()
 export class User extends Audit {
@@ -34,6 +36,34 @@ export class User extends Audit {
   @Expose()
   password: string;
 
+  @Column({ nullable: false })
+  @Expose()
+  nickname: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  birthday: Date;
+
+  @Column({ type: 'enum', enum: GenderEnum, nullable: false })
+  @Expose()
+  gender: GenderEnum;
+
+  @Column({ type: 'enum', enum: EscolarityEnum, nullable: false })
+  @Expose()
+  schooling: EscolarityEnum;
+
+  @Column({ nullable: false })
+  @Expose()
+  institutionName: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  profession: string;
+
+  @Column({ nullable: false })
+  @Expose()
+  address: string;
+
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
   urlFacebook?: string;
@@ -50,16 +80,13 @@ export class User extends Audit {
 
   @Column({ name: 'facebook_id', nullable: true })
   @Expose()
-  facebookId: string;
+  facebookId?: string;
 
   @Column({ name: 'google_sub', nullable: true })
   @Expose()
-  googleSub: string;
+  googleSub?: string;
 
-  @ManyToOne(
-    () => Role,
-    (role: Role) => role.users,
-  )
+  @ManyToOne(() => Role, (role: Role) => role.users)
   @Expose()
   role: Role;
 

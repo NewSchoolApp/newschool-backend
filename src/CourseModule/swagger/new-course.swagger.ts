@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Course } from '../entity';
-import { User } from '../../UserModule';
+import { User } from '../../UserModule/entity/user.entity';
+import { Course } from '../entity/course.entity';
 
 export class NewCourseSwagger {
   @ApiProperty({ type: String })

@@ -8,19 +8,17 @@ import {
   UnauthorizedException,
   UseInterceptors,
 } from '@nestjs/common';
-import { SecurityService } from '../service';
-import { Constants } from '../../CommonsModule';
-import {
-  AuthDTO,
-  FacebookAuthUserDTO,
-  GeneratedTokenDTO,
-  GoogleAuthUserDTO,
-} from '../dto';
-import { GrantTypeEnum } from '../enum';
+import { SecurityService } from '../service/security.service';
+import { Constants } from '../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ClientCredentials } from '../entity';
-import { User } from '../../UserModule/entity';
+import { User } from '../../UserModule/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FacebookAuthUserDTO } from '../dto/facebook-auth-user.dto';
+import { AuthDTO } from '../dto/auth.dto';
+import { GrantTypeEnum } from '../enum/grant-type.enum';
+import { GeneratedTokenDTO } from '../dto/generated-token.dto';
+import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
+import { ClientCredentials } from '../entity/client-credentials.entity';
 
 @Controller(`/${Constants.OAUTH_ENDPOINT}`)
 @ApiTags('Security')
@@ -33,7 +31,7 @@ export class SecurityController {
   @Post('/token')
   @HttpCode(200)
   async authenticateUser(
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/camelcase,camelcase
     @Body() { grant_type, username, password, refresh_token }: AuthDTO,
     @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
@@ -41,7 +39,7 @@ export class SecurityController {
       throw new UnauthorizedException();
     }
 
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line @typescript-eslint/camelcase,camelcase
     this.logger.log(`grant_type: ${grant_type}`);
 
     // Basic <base64login>

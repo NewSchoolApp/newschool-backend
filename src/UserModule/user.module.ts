@@ -1,14 +1,17 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ChangePasswordService, UserService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { ChangePasswordRepository, UserRepository } from './repository';
-import { ChangePassword, User } from './entity';
-import { UserMapper } from './mapper';
 import { JwtModule } from '@nestjs/jwt';
-import { SecurityModule } from '../SecurityModule';
-import { UserController } from './controller';
-import { CertificateModule } from '../CertificateModule';
+import { SecurityModule } from '../SecurityModule/security.module';
+import { User } from './entity/user.entity';
+import { UserRepository } from './repository/user.repository';
+import { ChangePassword } from './entity/change-password.entity';
+import { ChangePasswordRepository } from './repository/change-password.repository';
+import { UserController } from './controller/user.controller';
+import { UserService } from './service/user.service';
+import { UserMapper } from './mapper/user.mapper';
+import { ChangePasswordService } from './service/change-password.service';
+import { CertificateModule } from '../CertificateModule/certificate.module';
 
 @Module({
   imports: [

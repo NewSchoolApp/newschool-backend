@@ -4,11 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { TestRepository } from '../repository';
-import { Part, Test } from '../entity';
-import { NewTestDTO, TestUpdateDTO } from '../dto';
 import { MoreThan } from 'typeorm';
 import { PartService } from './part.service';
+import { TestRepository } from '../repository/test.repository';
+import { NewTestDTO } from '../dto/new-test.dto';
+import { Part } from '../entity/part.entity';
+import { TestUpdateDTO } from '../dto/test-update.dto';
+import { Test } from '../entity/test.entity';
 
 @Injectable()
 export class TestService {
@@ -54,8 +56,10 @@ export class TestService {
   }
 
   @Transactional()
-  public async getAll(part: Test['part']): Promise<Test[]> {
-    return this.repository.find({ part });
+  public async getAll(partId: string): Promise<Test[]> {
+    return this.repository.find({
+      part: await this.partService.findById(partId),
+    });
   }
 
   @Transactional()
@@ -114,7 +118,6 @@ export class TestService {
     );
   }
 
-  @Transactional()
   public async countByPart(part: Part): Promise<number> {
     return await this.repository.count({ part });
   }
@@ -132,7 +135,6 @@ export class TestService {
     return test.id;
   }
 
-  @Transactional()
   public async getByPartAndSequenceNumber(
     part: Part,
     sequenceNumber: number,

@@ -4,16 +4,17 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from '../../src/app.module';
 import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
-import { User } from '../../src/UserModule/entity';
 import * as crypto from 'crypto';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { User } from '../../src/UserModule/entity/user.entity';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -30,6 +31,7 @@ const createHashedPassword = (password: string, salt: string): string => {
 describe('SecurityController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
+  let dbConnection: Connection;
   let queryRunner: QueryRunner;
   let authorization: string;
   let adminRole: Role;
@@ -45,7 +47,7 @@ describe('SecurityController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
+    dbConnection = moduleFixture.get(Connection);
     const manager = moduleFixture.get(EntityManager);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -74,7 +76,7 @@ describe('SecurityController (e2e)', () => {
     );
   });
 
-  it('should validate client credentials', async done => {
+  it('should validate client credentials', async (done) => {
     configService = app.get<ConfigService>(ConfigService);
 
     return request(app.getHttpServer())
@@ -83,7 +85,7 @@ describe('SecurityController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.accessToken).not.toBeNull();
         expect(res.body.refreshToken).not.toBeNull();
         expect(res.body.tokenType).toBe('bearer');
@@ -94,7 +96,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should throw if grant type is invalid', async done => {
+  it('should throw if grant type is invalid', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -104,7 +106,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should throw 404 if client credentials is wrong', async done => {
+  it('should throw 404 if client credentials is wrong', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${stringToBase64('wrong:authorization')}`)
@@ -114,7 +116,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should validate grant type password', async done => {
+  it('should validate grant type password', async (done) => {
     const userRepository: Repository<User> = moduleFixture.get<
       Repository<User>
     >(getRepositoryToken(User));
@@ -124,6 +126,13 @@ describe('SecurityController (e2e)', () => {
     user.email = 'my@email.com';
     user.salt = salt;
     user.password = createHashedPassword('mypass', user.salt);
+    user.nickname = 'random nickname';
+    user.birthday = new Date();
+    user.gender = GenderEnum.MALE;
+    user.institutionName = 'random institution';
+    user.profession = 'random profession';
+    user.schooling = EscolarityEnum.ENSINO_FUNDAMENTAL_COMPLETO;
+    user.address = 'random address';
     user.urlFacebook = 'facebook';
     user.urlInstagram = 'instagram';
     user.role = adminRole;
@@ -139,7 +148,7 @@ describe('SecurityController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 404 if user not found', async done => {
+  it('should return 404 if user not found', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
@@ -152,30 +161,7 @@ describe('SecurityController (e2e)', () => {
   });
 
   afterAll(async () => {
-    const userRepository: Repository<User> = moduleFixture.get<
-      Repository<User>
-    >(getRepositoryToken(User));
-    const users = await userRepository.find();
-    await Promise.all(users.map(async user => userRepository.remove(user)));
-
-    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
-      Repository<ClientCredentials>
-    >(getRepositoryToken(ClientCredentials));
-    const clients = await clientCredentialRepository.find({
-      name: ClientCredentialsEnum['NEWSCHOOL@FRONT'],
-    });
-    if (clients.length) {
-      await clientCredentialRepository.remove(clients[0]);
-    }
-    const roleRepository: Repository<Role> = moduleFixture.get<
-      Repository<Role>
-    >(getRepositoryToken(Role));
-    const roles = await roleRepository.find({
-      name: RoleEnum.ADMIN,
-    });
-    if (roles.length) {
-      await roleRepository.remove(roles[0]);
-    }
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

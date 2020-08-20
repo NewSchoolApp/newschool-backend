@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CertificateRepository } from '../repository';
-import { Certificate } from '../entity';
-import { CertificateDTO, NewCertificateDTO } from '../dto';
+import { CertificateRepository } from '../repository/certificate.repository';
+import { Certificate } from '../entity/certificate.entity';
+import { NewCertificateDTO } from '../dto/new-certificate.dto';
+import { CertificateDTO } from '../dto/certificate.dto';
 
 @Injectable()
 export class CertificateService {

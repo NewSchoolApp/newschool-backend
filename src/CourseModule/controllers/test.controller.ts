@@ -9,10 +9,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { TestService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { NewTestDTO, TestDTO, TestUpdateDTO } from '../dto';
-import { TestMapper } from '../mapper';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,7 +21,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { TestMapper } from '../mapper/test.mapper';
+import { TestDTO } from '../dto/test.dto';
+import { TestService } from '../service/test.service';
+import { NewTestDTO } from '../dto/new-test.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { TestUpdateDTO } from '../dto/test-update.dto';
 
 @ApiTags('Test')
 @ApiBearerAuth()
@@ -35,7 +39,7 @@ export class TestController {
     private readonly mapper: TestMapper,
   ) {}
 
-  @Get('/part/:part')
+  @Get('/part/:partId')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get Tests', description: 'Get all Tests by Part' })
   @ApiOkResponse({
@@ -51,10 +55,8 @@ export class TestController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(
-    @Param('part') part: TestDTO['part'],
-  ): Promise<TestDTO[]> {
-    return this.mapper.toDtoList(await this.service.getAll(part));
+  public async getAll(@Param('partId') partId: string): Promise<TestDTO[]> {
+    return this.mapper.toDtoList(await this.service.getAll(partId));
   }
 
   @Get('/:id')

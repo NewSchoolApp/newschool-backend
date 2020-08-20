@@ -9,18 +9,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CourseTakenService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import {
-  AlternativeProgressionDTO,
-  CertificateDTO,
-  CourseTakenDTO,
-  CourseTakenUpdateDTO,
-  CurrentProgressionDTO,
-  NewCourseTakenDTO,
-  VideoProgressionDTO,
-} from '../dto';
-import { CourseTakenMapper } from '../mapper';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -31,8 +22,17 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { UserDTO } from '../../UserModule/dto';
+import { CourseTakenMapper } from '../mapper/course-taken.mapper';
+import { CourseTakenService } from '../service/course.taken.service';
+import { NewCourseTakenDTO } from '../dto/new-course.taken.dto';
+import { CourseTakenUpdateDTO } from '../dto/course.taken-update.dto';
+import { CurrentProgressionDTO } from '../dto/current-progression.dto';
+import { UserDTO } from '../../UserModule/dto/user.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { AlternativeProgressionDTO } from '../dto/alternative-progression.dto';
+import { CourseTakenDTO } from '../dto/course.taken.dto';
+import { VideoProgressionDTO } from '../dto/video-progression.dto';
+import { CertificateDTO } from '../dto/certificate.dto';
 
 @ApiExtraModels(VideoProgressionDTO, AlternativeProgressionDTO)
 @ApiTags('CourseTaken')

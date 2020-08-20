@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CertificateController } from './controller';
-import { CertificateService } from './service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Certificate } from './entity';
-import { CertificateRepository } from './repository';
-import { CertificateMapper } from './mapper';
+import { Certificate } from './entity/certificate.entity';
+import { CertificateRepository } from './repository/certificate.repository';
+import { CertificateController } from './controller/certificate.controller';
+import { CertificateService } from './service/certificate.service';
+import { CertificateMapper } from './mapper/certificate.mapper';
 
 @Module({
   imports: [
