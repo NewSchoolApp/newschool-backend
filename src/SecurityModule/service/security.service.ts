@@ -37,8 +37,6 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    console.log(name);
-    console.log(secret);
     const clientCredentials: ClientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
