@@ -1,3 +1,4 @@
+import { GrantTypeEnum } from './../enum/grant-type.enum';
 import {
   Injectable,
   NotFoundException,
@@ -36,9 +37,12 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
+    console.log(name);
+    console.log(secret);
     const clientCredentials: ClientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.CLIENT_CREDENTIALS,
     );
     return this.generateLoginObject(clientCredentials);
   }
@@ -68,6 +72,7 @@ export class SecurityService {
     await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.PASSWORD,
     );
     const user: User = await this.userService.findByEmailAndPassword(
       username,
@@ -127,6 +132,7 @@ export class SecurityService {
     await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.REFRESH_TOKEN,
     );
     let refreshTokenUser: RefreshTokenUserDTO;
     try {
@@ -173,6 +179,7 @@ export class SecurityService {
   private async findClientCredentialsByNameAndSecret(
     name: ClientCredentialsEnum,
     secret: string,
+    grantType: GrantTypeEnum,
   ): Promise<ClientCredentials> {
     if (!name) {
       throw new InvalidClientCredentialsError();
@@ -180,6 +187,7 @@ export class SecurityService {
     const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(
       name,
       secret,
+      grantType,
     );
     if (!clientCredentials) {
       throw new InvalidClientCredentialsError();
