@@ -36,6 +36,7 @@ describe('SecurityController (e2e)', () => {
   let authorization: string;
   let adminRole: Role;
   let configService: ConfigService;
+  let savedRole: Role;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -61,7 +62,7 @@ describe('SecurityController (e2e)', () => {
     >(getRepositoryToken(Role));
     const role: Role = new Role();
     role.name = RoleEnum.ADMIN;
-    const savedRole = await roleRepository.save(role);
+    savedRole = await roleRepository.save(role);
 
     const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
       Repository<ClientCredentials>
@@ -70,6 +71,7 @@ describe('SecurityController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test';
     clientCredentials.role = savedRole;
+    clientCredentials.grantType = GrantTypeEnum.CLIENT_CREDENTIALS;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,
@@ -117,6 +119,20 @@ describe('SecurityController (e2e)', () => {
   });
 
   it('should validate grant type password', async (done) => {
+    const clientCredentialRepository: Repository<ClientCredentials> = moduleFixture.get<
+      Repository<ClientCredentials>
+    >(getRepositoryToken(ClientCredentials));
+    const clientCredentials: ClientCredentials = new ClientCredentials();
+    clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'];
+    clientCredentials.secret = 'test';
+    clientCredentials.role = savedRole;
+    clientCredentials.grantType = GrantTypeEnum.PASSWORD;
+    await clientCredentialRepository.save(clientCredentials);
+
+    authorization = stringToBase64(
+      `${clientCredentials.name}:${clientCredentials.secret}`,
+    );
+
     const userRepository: Repository<User> = moduleFixture.get<
       Repository<User>
     >(getRepositoryToken(User));

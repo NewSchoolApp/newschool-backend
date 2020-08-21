@@ -1,3 +1,4 @@
+import { GrantTypeEnum } from './../enum/grant-type.enum';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
 import { Role } from './role.entity';
@@ -18,6 +19,13 @@ export class ClientCredentials extends Audit {
 
   @Column({ type: 'varchar' })
   secret: string;
+
+  @Column({
+    type: 'enum',
+    enum: GrantTypeEnum,
+    nullable: false,
+  })
+  grantType: GrantTypeEnum;
 
   @ManyToOne<Role>(() => Role, (role: Role) => role.clientCredentials)
   role: Role;

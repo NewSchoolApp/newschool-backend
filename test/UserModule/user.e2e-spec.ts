@@ -56,6 +56,7 @@ describe('UserController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
+    clientCredentials.grantType = GrantTypeEnum.CLIENT_CREDENTIALS;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,
