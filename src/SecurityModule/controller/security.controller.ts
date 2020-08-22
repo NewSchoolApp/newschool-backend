@@ -74,7 +74,6 @@ export class SecurityController {
       throw new UnauthorizedException();
     }
     const [, base64Login]: string[] = authorization.split(' ');
-    this.logger.log(`grant_type: ${grant_type}`);
     return this.service.validateFacebookUser(base64Login, facebookAuthUser);
   }
 
@@ -89,7 +88,6 @@ export class SecurityController {
       throw new UnauthorizedException();
     }
     const [, base64Login]: string[] = authorization.split(' ');
-    this.logger.log(`grant_type: ${grant_type}`);
     return this.service.validateGoogleUser(base64Login, googleAuthUser);
   }
 
