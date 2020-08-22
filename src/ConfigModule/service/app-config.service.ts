@@ -93,6 +93,11 @@ export class AppConfigService {
         path.resolve(path.join(__dirname, '..', '..')) +
           '/**/*.entity{.ts,.js}',
       ],
+      migrations: ['src/migration/*.ts'],
+      migrationsTableName: 'migration',
+      cli: {
+        migrationsDir: 'src/migration',
+      },
       host: this.databaseHost,
       database: this.databaseName,
       port: this.databasePort,
