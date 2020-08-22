@@ -163,7 +163,7 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    await this.findClientCredentialsByNameAndSecret(
+    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
       GrantTypeEnum.REFRESH_TOKEN,
@@ -182,7 +182,10 @@ export class SecurityService {
       throw new UnauthorizedException('The given token is not a Refresh Token');
     }
     const user: User = await this.userService.findByEmail(email);
-    return this.generateLoginObject(user);
+    return this.generateLoginObject(user, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+    });
   }
 
   public getUserFromToken<T extends User>(jwt: string): T {
