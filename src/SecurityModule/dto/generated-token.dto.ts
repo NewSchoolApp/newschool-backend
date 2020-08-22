@@ -1,19 +1,18 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class GeneratedTokenDTO {
   @IsNotEmpty()
   @IsString()
   accessToken: string;
 
-  @IsNotEmpty()
   @IsString()
-  refreshToken: string;
+  refreshToken?: string;
 
   @IsNotEmpty()
   @IsString()
   tokenType: string;
 
   @IsNotEmpty()
-  @IsString()
-  expiresIn: string;
+  @IsNumber()
+  expiresIn: number;
 }

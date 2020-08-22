@@ -27,6 +27,18 @@ export class ClientCredentials extends Audit {
   })
   grantType: GrantTypeEnum;
 
+  @Column({
+    name: 'access_token_validity',
+    nullable: false,
+  })
+  accessTokenValidity: number;
+
+  @Column({
+    name: 'refresh_token_validity',
+    nullable: false,
+  })
+  refreshTokenValidity: number;
+
   @ManyToOne<Role>(() => Role, (role: Role) => role.clientCredentials)
   role: Role;
 }
