@@ -68,8 +68,14 @@ export class SecurityController {
   @HttpCode(200)
   async authenticateFacebookUser(
     @Body() facebookAuthUser: FacebookAuthUserDTO,
+    @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
-    return this.service.validateFacebookUser(facebookAuthUser);
+    if (!authorization) {
+      throw new UnauthorizedException();
+    }
+    const [, base64Login]: string[] = authorization.split(' ');
+    this.logger.log(`grant_type: ${grant_type}`);
+    return this.service.validateFacebookUser(base64Login, facebookAuthUser);
   }
 
   @UseInterceptors(FileInterceptor(''))
@@ -77,8 +83,14 @@ export class SecurityController {
   @HttpCode(200)
   async authenticateGoogleUser(
     @Body() googleAuthUser: GoogleAuthUserDTO,
+    @Headers('authorization') authorization: string,
   ): Promise<GeneratedTokenDTO> {
-    return this.service.validateGoogleUser(googleAuthUser);
+    if (!authorization) {
+      throw new UnauthorizedException();
+    }
+    const [, base64Login]: string[] = authorization.split(' ');
+    this.logger.log(`grant_type: ${grant_type}`);
+    return this.service.validateGoogleUser(base64Login, googleAuthUser);
   }
 
   @Post('/token/details')

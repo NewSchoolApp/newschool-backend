@@ -90,10 +90,12 @@ export class AppConfigService {
       type: 'mysql',
       multipleStatements: true,
       entities: [
-        path.resolve(path.join(__dirname, '..', '..')) +
-          '/**/*.entity{.ts,.js}',
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/**/*.entity{.ts,.js}`,
       ],
-      migrations: ['src/migration/*.ts'],
+      migrationsRun: true,
+      migrations: [`${__dirname}src/migration/*.ts`],
       migrationsTableName: 'migration',
       cli: {
         migrationsDir: 'src/migration',
