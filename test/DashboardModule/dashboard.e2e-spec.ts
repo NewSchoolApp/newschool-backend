@@ -203,8 +203,6 @@ describe('DashboardController (e2e)', () => {
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .expect(200);
 
-    console.log(await courseTakenRepository.find());
-
     expect(dashboardRes.body.totalElements).toEqual(2);
   });
 
@@ -221,9 +219,6 @@ describe('DashboardController (e2e)', () => {
       )
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .expect(200);
-
-    console.log(await courseTakenRepository.find());
-
     expect(dashboardRes.body.totalElements).toEqual(1);
   });
 
