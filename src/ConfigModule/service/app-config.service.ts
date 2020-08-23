@@ -52,6 +52,8 @@ export class AppConfigService {
   );
   synchronize: boolean = this.configService.get<boolean>('SYNC_DATABASE');
   logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
+  runMigrations: boolean =
+    this.configService.get<string>('NODE_ENV') !== 'TEST';
 
   public getRollbarConfiguration(): Rollbar.Configuration {
     return {
@@ -96,7 +98,7 @@ export class AppConfigService {
           path.join(__dirname, '..', '..'),
         )}/**/*.entity{.ts,.js}`,
       ],
-      migrationsRun: true,
+      migrationsRun: this.runMigrations,
       migrations: [
         `${path.resolve(
           path.join(__dirname, '..', '..'),
