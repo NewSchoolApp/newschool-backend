@@ -64,7 +64,7 @@ describe('MessageController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'];
     clientCredentials.secret = 'NEWSCHOOL@EXTERNALSECRET';
     clientCredentials.role = savedRole;
-    clientCredentials.grantType = GrantTypeEnum.CLIENT_CREDENTIALS;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
     clientCredentials.accessTokenValidity = 3600;
     clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);

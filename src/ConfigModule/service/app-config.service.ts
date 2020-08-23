@@ -9,6 +9,8 @@ import Rollbar = require('rollbar');
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
 
+  jwtSecret: string = this.configService.get<string>('JWT_SECRET');
+
   changePasswordExpirationTime: number = this.configService.get<number>(
     'CHANGE_PASSWORD_EXPIRATION_TIME',
   );
@@ -50,6 +52,8 @@ export class AppConfigService {
   );
   synchronize: boolean = this.configService.get<boolean>('SYNC_DATABASE');
   logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
+  runMigrations: boolean =
+    this.configService.get<string>('NODE_ENV') !== 'TEST';
 
   public getRollbarConfiguration(): Rollbar.Configuration {
     return {
@@ -94,8 +98,12 @@ export class AppConfigService {
           path.join(__dirname, '..', '..'),
         )}/**/*.entity{.ts,.js}`,
       ],
-      migrationsRun: true,
-      migrations: [`${__dirname}src/migration/*.ts`],
+      migrationsRun: this.runMigrations,
+      migrations: [
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/migration/*{.ts,.js}`,
+      ],
       migrationsTableName: 'migration',
       cli: {
         migrationsDir: 'src/migration',
