@@ -63,7 +63,7 @@ describe('SecurityController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test';
     clientCredentials.role = savedRole;
-    clientCredentials.grantType = GrantTypeEnum.CLIENT_CREDENTIALS;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
     clientCredentials.accessTokenValidity = 3600;
     clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);
@@ -118,7 +118,7 @@ describe('SecurityController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'];
     clientCredentials.secret = 'test';
     clientCredentials.role = savedRole;
-    clientCredentials.grantType = GrantTypeEnum.PASSWORD;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.PASSWORD];
     clientCredentials.accessTokenValidity = 3600;
     clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);

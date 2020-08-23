@@ -1,4 +1,4 @@
-import { GrantTypeEnum } from './../enum/grant-type.enum';
+import { GrantTypeEnum } from '../enum/grant-type.enum';
 import {
   Injectable,
   NotFoundException,
@@ -18,6 +18,7 @@ import { ClientCredentialsRepository } from '../repository/client-credentials.re
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { RefreshTokenUserDTO } from '../dto/refresh-token-user.dto';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 interface GenerateLoginObjectOptions {
   accessTokenValidity: number;
@@ -30,6 +31,7 @@ export class SecurityService {
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {}
 
   public async validateClientCredentials(
@@ -199,6 +201,7 @@ export class SecurityService {
     let loginObject: GeneratedTokenDTO = {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), {
         expiresIn: accessTokenValidity,
+        secret: this.configService.jwtSecret,
       }),
       tokenType: 'bearer',
       expiresIn: accessTokenValidity,
@@ -208,6 +211,7 @@ export class SecurityService {
         ...loginObject,
         refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), {
           expiresIn: refreshTokenValidity,
+          secret: this.configService.jwtSecret,
         }),
       };
     }
@@ -225,9 +229,11 @@ export class SecurityService {
     const clientCredentials: ClientCredentials = await this.clientCredentialsRepository.findByNameAndSecret(
       name,
       secret,
-      grantType,
     );
-    if (!clientCredentials) {
+    if (
+      !clientCredentials ||
+      !clientCredentials.authorizedGrantTypes.includes(grantType)
+    ) {
       throw new InvalidClientCredentialsError();
     }
     return clientCredentials;

@@ -78,6 +78,12 @@ export class User extends Audit {
   @Expose()
   salt: string;
 
+  @Column({
+    default: false,
+  })
+  @Expose()
+  enabled: boolean;
+
   @Column({ name: 'facebook_id', nullable: true })
   @Expose()
   facebookId?: string;

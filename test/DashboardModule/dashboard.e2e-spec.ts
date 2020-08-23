@@ -85,7 +85,9 @@ describe('DashboardController (e2e)', () => {
       clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
       clientCredentials.secret = 'test2';
       clientCredentials.role = roleAdmin;
-      clientCredentials.grantType = GrantTypeEnum.CLIENT_CREDENTIALS;
+      clientCredentials.authorizedGrantTypes = [
+        GrantTypeEnum.CLIENT_CREDENTIALS,
+      ];
       clientCredentials.accessTokenValidity = 3600;
       clientCredentials.refreshTokenValidity = 3600;
       await clientCredentialRepository.save(clientCredentials);
