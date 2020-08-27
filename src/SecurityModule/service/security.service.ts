@@ -1,3 +1,4 @@
+import { GrantTypeEnum } from '../enum/grant-type.enum';
 import {
   Injectable,
   NotFoundException,
@@ -12,22 +13,25 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../../UserModule/entity/user.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 import { FacebookAuthUserDTO } from '../dto/facebook-auth-user.dto';
 import { ClientCredentialsRepository } from '../repository/client-credentials.repository';
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { RefreshTokenUserDTO } from '../dto/refresh-token-user.dto';
-import { RoleRepository } from '../repository/role.repository';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+
+interface GenerateLoginObjectOptions {
+  accessTokenValidity: number;
+  refreshTokenValidity?: number;
+}
 
 @Injectable()
 export class SecurityService {
   constructor(
     private readonly clientCredentialsRepository: ClientCredentialsRepository,
-    private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
-    private readonly appConfigService: ConfigService,
+    private readonly configService: ConfigService,
   ) {}
 
   public async validateClientCredentials(
@@ -39,8 +43,11 @@ export class SecurityService {
     const clientCredentials: ClientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.CLIENT_CREDENTIALS,
     );
-    return this.generateLoginObject(clientCredentials);
+    return this.generateLoginObject(clientCredentials, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+    });
   }
 
   @Transactional()
@@ -65,20 +72,33 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    await this.findClientCredentialsByNameAndSecret(
+    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.PASSWORD,
     );
     const user: User = await this.userService.findByEmailAndPassword(
       username,
       password,
     );
-    return this.generateLoginObject(user);
+    return this.generateLoginObject(user, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+    });
   }
 
   public async validateFacebookUser(
+    base64Login: string,
     facebookAuthUser: FacebookAuthUserDTO,
   ): Promise<GeneratedTokenDTO> {
+    const [name, secret]: string[] = this.splitClientCredentials(
+      this.base64ToString(base64Login),
+    );
+    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
+      ClientCredentialsEnum[name],
+      secret,
+      GrantTypeEnum.PASSWORD,
+    );
     const user: User = await this.userService.findByEmail(
       facebookAuthUser.email,
     );
@@ -89,17 +109,32 @@ export class SecurityService {
         user.id,
         userInfo,
       );
-      return this.generateLoginObject(userWithFacebookId);
+      return this.generateLoginObject(userWithFacebookId, {
+        accessTokenValidity: clientCredentials.accessTokenValidity,
+        refreshTokenValidity: clientCredentials.refreshTokenValidity,
+      });
     }
     if (user.facebookId !== facebookAuthUser.id) {
       throw new NotFoundException('User not found');
     }
-    return this.generateLoginObject(user);
+    return this.generateLoginObject(user, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+    });
   }
 
   public async validateGoogleUser(
+    base64Login: string,
     googleAuthUser: GoogleAuthUserDTO,
   ): Promise<GeneratedTokenDTO> {
+    const [name, secret]: string[] = this.splitClientCredentials(
+      this.base64ToString(base64Login),
+    );
+    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
+      ClientCredentialsEnum[name],
+      secret,
+      GrantTypeEnum.PASSWORD,
+    );
     const user: User = await this.userService.findByEmail(googleAuthUser.email);
     if (!user.googleSub) {
       user.googleSub = googleAuthUser.sub;
@@ -108,12 +143,18 @@ export class SecurityService {
         user.id,
         userInfo,
       );
-      return this.generateLoginObject(userWithGoogleSub);
+      return this.generateLoginObject(userWithGoogleSub, {
+        accessTokenValidity: clientCredentials.accessTokenValidity,
+        refreshTokenValidity: clientCredentials.refreshTokenValidity,
+      });
     }
     if (user.googleSub !== googleAuthUser.sub) {
       throw new NotFoundException('User not found');
     }
-    return this.generateLoginObject(user);
+    return this.generateLoginObject(user, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+    });
   }
 
   @Transactional()
@@ -124,9 +165,10 @@ export class SecurityService {
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );
-    await this.findClientCredentialsByNameAndSecret(
+    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
       ClientCredentialsEnum[name],
       secret,
+      GrantTypeEnum.REFRESH_TOKEN,
     );
     let refreshTokenUser: RefreshTokenUserDTO;
     try {
@@ -142,7 +184,10 @@ export class SecurityService {
       throw new UnauthorizedException('The given token is not a Refresh Token');
     }
     const user: User = await this.userService.findByEmail(email);
-    return this.generateLoginObject(user);
+    return this.generateLoginObject(user, {
+      accessTokenValidity: clientCredentials.accessTokenValidity,
+      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+    });
   }
 
   public getUserFromToken<T extends User>(jwt: string): T {
@@ -151,28 +196,32 @@ export class SecurityService {
 
   private generateLoginObject(
     authenticatedUser: ClientCredentials | User,
+    { accessTokenValidity, refreshTokenValidity }: GenerateLoginObjectOptions,
   ): GeneratedTokenDTO {
-    return {
+    let loginObject: GeneratedTokenDTO = {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), {
-        expiresIn: this.appConfigService.expiresInAccessToken,
+        expiresIn: accessTokenValidity,
+        secret: this.configService.jwtSecret,
       }),
-      refreshToken: this.jwtService.sign(
-        classToPlain({
-          ...authenticatedUser,
-          isRefreshToken: true,
-        }),
-        {
-          expiresIn: this.appConfigService.expiresInRefreshToken,
-        },
-      ),
       tokenType: 'bearer',
-      expiresIn: this.appConfigService.expiresInAccessToken,
+      expiresIn: accessTokenValidity,
     };
+    if (refreshTokenValidity) {
+      loginObject = {
+        ...loginObject,
+        refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), {
+          expiresIn: refreshTokenValidity,
+          secret: this.configService.jwtSecret,
+        }),
+      };
+    }
+    return loginObject;
   }
 
   private async findClientCredentialsByNameAndSecret(
     name: ClientCredentialsEnum,
     secret: string,
+    grantType: GrantTypeEnum,
   ): Promise<ClientCredentials> {
     if (!name) {
       throw new InvalidClientCredentialsError();
@@ -181,7 +230,10 @@ export class SecurityService {
       name,
       secret,
     );
-    if (!clientCredentials) {
+    if (
+      !clientCredentials ||
+      !clientCredentials.authorizedGrantTypes.includes(grantType)
+    ) {
       throw new InvalidClientCredentialsError();
     }
     return clientCredentials;

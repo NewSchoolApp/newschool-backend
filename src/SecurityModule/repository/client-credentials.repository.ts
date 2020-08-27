@@ -1,3 +1,4 @@
+import { GrantTypeEnum } from './../enum/grant-type.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { ClientCredentials } from '../entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../enum/client-credentials.enum';

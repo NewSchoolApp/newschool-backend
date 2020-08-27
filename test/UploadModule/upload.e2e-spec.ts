@@ -1,3 +1,4 @@
+import { GrantTypeEnum } from './../../src/SecurityModule/enum/grant-type.enum';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from 'supertest';
 import * as fs from 'fs';
@@ -43,6 +44,9 @@ describe('UploadController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
+    clientCredentials.accessTokenValidity = 3600;
+    clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);
   });
 

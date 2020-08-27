@@ -1,11 +1,9 @@
 import * as request from 'supertest';
-import * as fs from 'fs';
-import * as util from 'util';
 import * as path from 'path';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 import { Role } from '../../src/SecurityModule/entity/role.entity';
@@ -14,7 +12,6 @@ import { ClientCredentials } from '../../src/SecurityModule/entity/client-creden
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
-import { Course } from '../../src/CourseModule/entity/course.entity';
 import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
@@ -29,7 +26,6 @@ describe('CourseController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
   let dbConnection: Connection;
-  let queryRunner: QueryRunner;
   let authorization: string;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
 
@@ -44,13 +40,6 @@ describe('CourseController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -66,6 +55,9 @@ describe('CourseController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
+    clientCredentials.accessTokenValidity = 3600;
+    clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,

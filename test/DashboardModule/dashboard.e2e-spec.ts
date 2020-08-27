@@ -1,5 +1,4 @@
 import * as request from 'supertest';
-import * as path from 'path';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
@@ -12,11 +11,9 @@ import { ClientCredentials } from '../../src/SecurityModule/entity/client-creden
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
-import { Course } from '../../src/CourseModule/entity/course.entity';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { CourseTaken } from '../../src/CourseTakenModule/entity/course.taken.entity';
-import { User } from '../../src/UserModule/entity/user.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 import { UserService } from '../../src/UserModule/service/user.service';
@@ -28,23 +25,14 @@ const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
 
-const fileToUpload = path.resolve(
-  path.join(__dirname, '..', '..', 'README.md'),
-);
-
 describe('DashboardController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
   let authorization: string;
-  const courseTakenUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_TAKEN_ENDPOINT}`;
-  const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
-  const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
   const dashboardUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.DASHBOARD_ENDPOINT}`;
   const adminRoleEnum: RoleEnum = RoleEnum.ADMIN;
 
   let courseTakenRepository: Repository<CourseTaken>;
-  let courseRepository: Repository<Course>;
-  let userRepository: Repository<User>;
 
   let dbConnection: Connection;
 
@@ -60,12 +48,6 @@ describe('DashboardController (e2e)', () => {
 
     dbConnection = moduleFixture.get(Connection);
 
-    courseRepository = moduleFixture.get<Repository<Course>>(
-      getRepositoryToken(Course),
-    );
-    userRepository = moduleFixture.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
     courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
       getRepositoryToken(CourseTaken),
     );
@@ -103,6 +85,11 @@ describe('DashboardController (e2e)', () => {
       clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
       clientCredentials.secret = 'test2';
       clientCredentials.role = roleAdmin;
+      clientCredentials.authorizedGrantTypes = [
+        GrantTypeEnum.CLIENT_CREDENTIALS,
+      ];
+      clientCredentials.accessTokenValidity = 3600;
+      clientCredentials.refreshTokenValidity = 3600;
       await clientCredentialRepository.save(clientCredentials);
     }
     authorization = stringToBase64(
@@ -216,8 +203,6 @@ describe('DashboardController (e2e)', () => {
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .expect(200);
 
-    console.log(await courseTakenRepository.find());
-
     expect(dashboardRes.body.totalElements).toEqual(2);
   });
 
@@ -234,9 +219,6 @@ describe('DashboardController (e2e)', () => {
       )
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .expect(200);
-
-    console.log(await courseTakenRepository.find());
-
     expect(dashboardRes.body.totalElements).toEqual(1);
   });
 
