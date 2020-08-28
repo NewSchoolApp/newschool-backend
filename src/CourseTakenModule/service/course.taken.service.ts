@@ -1,10 +1,11 @@
+import { Course } from './../../CourseModule/entity/course.entity';
 import {
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CourseTakenStatusEnum } from '../enum/enum';
+import { CourseTakenStatusEnum, OrderEnum } from '../enum/enum';
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { User } from '../../UserModule/entity/user.entity';
 import { UserService } from '../../UserModule/service/user.service';
@@ -23,10 +24,10 @@ import { TestService } from '../../CourseModule/service/test.service';
 import { CourseService } from '../../CourseModule/service/course.service';
 import { Part } from '../../CourseModule/entity/part.entity';
 import { PartService } from '../../CourseModule/service/part.service';
-import { Course } from '../../CourseModule/entity/course.entity';
 import { LessonService } from '../../CourseModule/service/lesson.service';
 import { Lesson } from '../../CourseModule/entity/lesson.entity';
 import { Test } from '../../CourseModule/entity/test.entity';
+import { promises } from 'dns';
 
 @Injectable()
 export class CourseTakenService {
@@ -367,5 +368,15 @@ export class CourseTakenService {
   @Transactional()
   public async getCertificates(user: User['id']): Promise<CertificateDTO[]> {
     return this.repository.findCertificatesByUserId(user);
+  }
+
+  @Transactional()
+  public async getCoursesByFinished(
+    order: OrderEnum,
+    limit: number,
+  ): Promise<any[]> {
+    //executar query que rotorna o array de cursos de acordo com a ordem levando em consideração a coluna que armazena o array dos alunos que terminaram
+
+    return this.repository.getDistinctCourses(order, limit);
   }
 }

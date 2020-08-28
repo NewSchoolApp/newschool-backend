@@ -1,8 +1,11 @@
+import { OrderEnum } from './../enum/order.enum';
+import { Course } from './../../CourseModule/entity/course.entity';
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
 import { CourseTakenService } from '../../CourseTakenModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../CourseTakenModule/enum/enum';
+
 
 @Injectable()
 export class DashboardService {
@@ -36,5 +39,10 @@ export class DashboardService {
       return this.courseTakenService.getUsersWithCompletedCourses();
     }
     return this.courseTakenService.getUsersWithTakenCourses();
+  }
+
+  getCoursesByFinished( order: OrderEnum, limit: number ): Promise<Course[]>{
+    //deve executar uma função presente em 'courses.taken.service' que por sua vez retorna o resultado de uma query no db
+    return this.courseTakenService.getCoursesByFinished(order, limit)
   }
 }
