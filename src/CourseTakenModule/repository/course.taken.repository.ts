@@ -1,3 +1,4 @@
+import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from './../../DashboardModule/enum/order.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/enum';
@@ -129,7 +130,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   public async getDistinctCourses(
     order: OrderEnum,
     limit: number,
-  ): Promise<CourseTaken[]> {
+  ): Promise<getCoursesByFinished> {
     return this.query(
       `SELECT COUNT(*) AS 'frequency', c.title FROM course_taken LEFT JOIN course c ON course_taken.course_id = c.id GROUP BY course_id ORDER BY course_id ${order} LIMIT ${limit}`,
     );

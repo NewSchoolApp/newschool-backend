@@ -5,7 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CourseTakenStatusEnum, OrderEnum } from '../enum/enum';
+import { CourseTakenStatusEnum } from '../enum/enum';
+import { OrderEnum } from '../enum/order.enum';
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { User } from '../../UserModule/entity/user.entity';
 import { UserService } from '../../UserModule/service/user.service';
@@ -27,7 +28,7 @@ import { PartService } from '../../CourseModule/service/part.service';
 import { LessonService } from '../../CourseModule/service/lesson.service';
 import { Lesson } from '../../CourseModule/entity/lesson.entity';
 import { Test } from '../../CourseModule/entity/test.entity';
-import { promises } from 'dns';
+import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
 
 @Injectable()
 export class CourseTakenService {
@@ -374,7 +375,7 @@ export class CourseTakenService {
   public async getCoursesByFinished(
     order: OrderEnum,
     limit: number,
-  ): Promise<any[]> {
+  ): Promise<getCoursesByFinished> {
     //executar query que rotorna o array de cursos de acordo com a ordem levando em consideração a coluna que armazena o array dos alunos que terminaram
 
     return this.repository.getDistinctCourses(order, limit);
