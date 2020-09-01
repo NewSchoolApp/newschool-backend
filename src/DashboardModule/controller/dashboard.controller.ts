@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards,  } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { Constants } from '../../CommonsModule/constants';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
@@ -48,9 +48,7 @@ export class DashboardController {
   @Get('/user/school')
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async getSchool(
-    @Query('name') name: string,
-  ): Promise<[]> {
+  public async getSchool(@Query('name') name: string): Promise<[]> {
     return await this.service.getUserSchool(name);
   }
 }

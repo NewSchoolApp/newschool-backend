@@ -3,7 +3,7 @@ import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
 import { CourseTakenService } from '../../CourseTakenModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../CourseTakenModule/enum/enum';
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
 @Injectable()
 export class DashboardService {
@@ -40,10 +40,7 @@ export class DashboardService {
   }
 
   public async getUserSchool(name): Promise<any> {
-    let response: any;
-   await fetch(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
-    .then(res => res.text())
-    .then(body => response = body);
-    return JSON.parse(response)
-}
+    return await fetch(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
+      .then((res) => res.json())
+  }
 }
