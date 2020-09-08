@@ -8,6 +8,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  HttpService,
 } from '@nestjs/common';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
 
@@ -34,6 +35,7 @@ import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 export class UserService {
   constructor(
     private readonly repository: UserRepository,
+    private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
@@ -295,5 +297,11 @@ export class UserService {
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
+  }
+  public async getUserSchool(name) {
+    const response = await this.http
+      .get(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
+      .toPromise();
+    return response.data;
   }
 }

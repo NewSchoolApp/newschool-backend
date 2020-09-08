@@ -44,11 +44,4 @@ export class DashboardController {
       totalElements: await this.service.getUsersInCourseQuantity(status),
     };
   }
-
-  @Get('/user/school')
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
-  @UseGuards(RoleGuard)
-  public async getSchool(@Query('name') name: string): Promise<[]> {
-    return await this.service.getUserSchool(name);
-  }
 }
