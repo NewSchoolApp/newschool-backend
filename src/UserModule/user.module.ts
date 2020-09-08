@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Module, HttpModule, HttpService } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -12,6 +12,7 @@ import { UserService } from './service/user.service';
 import { UserMapper } from './mapper/user.mapper';
 import { ChangePasswordService } from './service/change-password.service';
 import { CertificateModule } from '../CertificateModule/certificate.module';
+import { SchoolController } from './controller/school.controller';
 
 @Module({
   imports: [
@@ -32,8 +33,9 @@ import { CertificateModule } from '../CertificateModule/certificate.module';
     }),
     forwardRef(() => SecurityModule),
     CertificateModule,
+    HttpModule,
   ],
-  controllers: [UserController],
+  controllers: [UserController, SchoolController],
   providers: [UserService, UserMapper, ChangePasswordService],
   exports: [UserService, UserMapper],
 })

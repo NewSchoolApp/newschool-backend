@@ -40,7 +40,8 @@ export class DashboardService {
   }
 
   public async getUserSchool(name): Promise<any> {
-    return await fetch(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
-      .then((res) => res.json())
+    return await fetch(
+      `http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`,
+    ).then((res) => res.json());
   }
 }
