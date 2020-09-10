@@ -44,4 +44,4 @@ const mailerAsyncModule: MailerAsyncOptions = {
     DashboardModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

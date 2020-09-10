@@ -8,6 +8,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  HttpService,
 } from '@nestjs/common';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
 
@@ -34,6 +35,7 @@ import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 export class UserService {
   constructor(
     private readonly repository: UserRepository,
+    private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly certificateService: CertificateService,
