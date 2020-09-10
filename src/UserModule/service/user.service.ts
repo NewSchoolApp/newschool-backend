@@ -298,10 +298,5 @@ export class UserService {
       throw new InternalServerErrorException(e);
     }
   }
-  public async getUserSchool(name) {
-    const response = await this.http
-      .get(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
-      .toPromise();
-    return response.data;
-  }
+
 }

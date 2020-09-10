@@ -13,6 +13,7 @@ import { UserMapper } from './mapper/user.mapper';
 import { ChangePasswordService } from './service/change-password.service';
 import { CertificateModule } from '../CertificateModule/certificate.module';
 import { SchoolController } from './controller/school.controller';
+import { SchoolService } from './service/school.service';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { SchoolController } from './controller/school.controller';
     HttpModule,
   ],
   controllers: [UserController, SchoolController],
-  providers: [UserService, UserMapper, ChangePasswordService],
+  providers: [UserService, UserMapper, ChangePasswordService, SchoolService],
   exports: [UserService, UserMapper],
 })
 export class UserModule {}

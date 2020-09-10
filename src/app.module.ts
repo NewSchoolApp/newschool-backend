@@ -12,6 +12,7 @@ import { UploadModule } from './UploadModule/upload.module';
 import { ConfigModule } from './ConfigModule/config.module';
 import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 import { DashboardModule } from './DashboardModule/dashboard.module';
+import { TestService } from './test/test.service';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -43,5 +44,6 @@ const mailerAsyncModule: MailerAsyncOptions = {
     UploadModule,
     DashboardModule,
   ],
+  providers: [TestService],
 })
 export class AppModule {}
