@@ -43,6 +43,5 @@ const mailerAsyncModule: MailerAsyncOptions = {
     UploadModule,
     DashboardModule,
   ],
-  providers: [TestService],
 })
 export class AppModule { }
