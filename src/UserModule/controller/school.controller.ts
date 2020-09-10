@@ -6,9 +6,11 @@ import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { Constants } from '../../CommonsModule/constants';
 import { Schools } from '../dto/school.dto';
 
-@Controller(`${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.SCHOOL_ENDPOINT}`)
+@Controller(
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.SCHOOL_ENDPOINT}`,
+)
 export class SchoolController {
-  constructor(private service: SchoolService) { }
+  constructor(private service: SchoolService) {}
 
   @Get()
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
