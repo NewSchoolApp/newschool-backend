@@ -66,9 +66,10 @@ export class CourseController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAll(
-    @Query('enabled') enabled: boolean,
     @Headers('authorization') authorization: string,
+    @Query('enabled') enabledString?: string,
   ): Promise<CourseDTO[]> {
+    let enabled = enabledString == null ? null : enabledString == 'true';
     const { role }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
     );

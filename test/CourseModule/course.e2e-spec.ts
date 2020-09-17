@@ -13,6 +13,11 @@ import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-cred
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
 import { Constants } from '../../src/CommonsModule/constants';
+import { Course } from '../../src/CourseModule/entity/course.entity';
+import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
+import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
+import { NewStudentDTO } from '../../src/UserModule/dto/new-student.dto';
+import { CourseDTO } from '../../src/CourseModule/dto/course.dto';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -28,6 +33,7 @@ describe('CourseController (e2e)', () => {
   let dbConnection: Connection;
   let authorization: string;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
+  const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -302,6 +308,78 @@ describe('CourseController (e2e)', () => {
               });
           });
       });
+  });
+
+  it('should display all courses', async () => {
+    const courseRepository: Repository<Course> = moduleFixture.get<
+      Repository<Course>
+    >(getRepositoryToken(Course));
+
+    const allCoursesQuantity: number = await courseRepository.count();
+
+    const tokenRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const allCoursesRequest = await request(app.getHttpServer())
+      .get(`${courseUrl}`)
+      .set('Authorization', `Bearer ${tokenRequest.body.accessToken}`);
+
+    expect(allCoursesRequest.body.length).toEqual(allCoursesQuantity);
+  });
+
+  it('should display all enabled courses', async () => {
+    const courseRepository: Repository<Course> = moduleFixture.get<
+      Repository<Course>
+    >(getRepositoryToken(Course));
+
+    const allEnabledCoursesQuantity: number = await courseRepository.count({
+      enabled: true,
+    });
+
+    const tokenRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const allEnabledCoursesRequest = await request(app.getHttpServer())
+      .get(`${courseUrl}?enabled=true`)
+      .set('Authorization', `Bearer ${tokenRequest.body.accessToken}`);
+    expect(allEnabledCoursesRequest.body.length).toEqual(
+      allEnabledCoursesQuantity,
+    );
+    allEnabledCoursesRequest.body.forEach((enabledCourse: CourseDTO) => {
+      expect(enabledCourse.enabled).toEqual(true);
+    });
+  });
+
+  it('should display all disabled courses', async () => {
+    const courseRepository: Repository<Course> = moduleFixture.get<
+      Repository<Course>
+    >(getRepositoryToken(Course));
+
+    const allDisabledCoursesQuantity: number = await courseRepository.count({
+      enabled: false,
+    });
+
+    const tokenRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const allDisabledCoursesRequest = await request(app.getHttpServer())
+      .get(`${courseUrl}?enabled=false`)
+      .set('Authorization', `Bearer ${tokenRequest.body.accessToken}`);
+    expect(allDisabledCoursesRequest.body.length).toEqual(
+      allDisabledCoursesQuantity,
+    );
+    allDisabledCoursesRequest.body.forEach((disabledCourse: CourseDTO) => {
+      expect(disabledCourse.enabled).toEqual(false);
+    });
   });
 
   afterAll(async () => {
