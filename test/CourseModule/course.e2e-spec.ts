@@ -352,7 +352,7 @@ describe('CourseController (e2e)', () => {
       allEnabledCoursesQuantity,
     );
     allEnabledCoursesRequest.body.forEach((enabledCourse: CourseDTO) => {
-      expect(enabledCourse.enabled).toEqual(false);
+      expect(enabledCourse.enabled).toEqual(true);
     });
   });
 
