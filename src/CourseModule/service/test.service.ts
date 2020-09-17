@@ -113,6 +113,8 @@ export class TestService {
       throw new NotFoundException('No test found');
     }
 
+    PubSub.publish('CourseReward::TestOnFirstTake', {});
+
     return (
       test.correctAlternative.toLowerCase() == chosenAlternative.toLowerCase()
     );

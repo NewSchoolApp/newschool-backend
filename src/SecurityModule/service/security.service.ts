@@ -1,5 +1,7 @@
+import * as PubSub from 'pubsub-js';
 import { GrantTypeEnum } from '../enum/grant-type.enum';
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,6 +21,8 @@ import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { RefreshTokenUserDTO } from '../dto/refresh-token-user.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 interface GenerateLoginObjectOptions {
   accessTokenValidity: number;
@@ -32,6 +36,7 @@ export class SecurityService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   public async validateClientCredentials(
@@ -69,6 +74,10 @@ export class SecurityService {
     username: string,
     password: string,
   ): Promise<GeneratedTokenDTO> {
+    PubSub.publish('CourseReward::TestOnFirstTake', {
+      nome: 'teste',
+      requestHeaders: this.request.headers,
+    });
     const [name, secret]: string[] = this.splitClientCredentials(
       this.base64ToString(base64Login),
     );

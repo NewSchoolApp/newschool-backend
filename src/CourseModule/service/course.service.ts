@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -12,6 +13,9 @@ import { UserService } from '../../UserModule/service/user.service';
 import { CourseUpdateDTO } from '../dto/course-update.dto';
 import { NewCourseDTO } from '../dto/new-course.dto';
 import { Course } from '../entity/course.entity';
+import * as PubSub from 'pubsub-js';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 @Injectable()
 export class CourseService {
@@ -19,6 +23,7 @@ export class CourseService {
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
     private readonly userService: UserService,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   @Transactional()
@@ -61,6 +66,10 @@ export class CourseService {
 
   @Transactional()
   public async getAll(enabled?: boolean): Promise<Course[]> {
+    PubSub.publish('CourseReward::TestOnFirstTake', {
+      nome: 'teste',
+      requestHeaders: this.request.headers,
+    });
     if (enabled == null) return this.repository.find();
     return this.repository.find({ enabled: enabled });
   }
