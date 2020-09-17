@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityModule } from '../SecurityModule/security.module';
 import { CourseRewardsService } from './service/course-rewards.service';
+import { PublisherService } from './service/publisher.service';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CourseRewardsService } from './service/course-rewards.service';
     }),
     SecurityModule,
   ],
-  providers: [CourseRewardsService],
+  providers: [CourseRewardsService, PublisherService],
+  exports: [PublisherService],
 })
 export class GameficationModule {}

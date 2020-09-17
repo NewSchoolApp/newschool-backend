@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,12 +12,14 @@ import { NewTestDTO } from '../dto/new-test.dto';
 import { Part } from '../entity/part.entity';
 import { TestUpdateDTO } from '../dto/test-update.dto';
 import { Test } from '../entity/test.entity';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class TestService {
   constructor(
     private readonly partService: PartService,
     private readonly repository: TestRepository,
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
@@ -108,12 +111,9 @@ export class TestService {
     id: Test['id'],
     chosenAlternative: string,
   ): Promise<boolean> {
-    const test = await this.repository.findById({ id });
-    if (!test) {
-      throw new NotFoundException('No test found');
-    }
+    const test = await this.findById(id);
 
-    PubSub.publish('CourseReward::TestOnFirstTake', {});
+    this.publisherService.emitCheckTestReward(test, chosenAlternative);
 
     return (
       test.correctAlternative.toLowerCase() == chosenAlternative.toLowerCase()
