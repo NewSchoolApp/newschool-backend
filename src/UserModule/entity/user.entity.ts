@@ -46,19 +46,19 @@ export class User extends Audit {
   @Expose()
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
   nickname: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
   birthday: Date;
 
-  @Column({ type: 'enum', enum: GenderEnum, nullable: false })
+  @Column({ type: 'enum', enum: GenderEnum, nullable: true })
   @Expose()
   gender: GenderEnum;
 
-  @Column({ type: 'enum', enum: EscolarityEnum, nullable: false })
+  @Column({ type: 'enum', enum: EscolarityEnum, nullable: true })
   @Expose()
   schooling: EscolarityEnum;
 
@@ -66,11 +66,11 @@ export class User extends Audit {
   @Expose()
   institutionName: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
   profession: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
   address: string;
 
