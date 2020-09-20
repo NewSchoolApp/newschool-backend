@@ -10,7 +10,6 @@ import { Expose, Transform } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
-import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class UserUpdateDTO {
   @IsNotEmpty()
@@ -22,11 +21,6 @@ export class UserUpdateDTO {
   @IsString()
   @Expose()
   name: User['name'];
-
-  @IsNotEmpty()
-  @IsEnum(UserProfileEnum)
-  @Expose()
-  profile: User['profile'];
 
   @IsNotEmpty()
   @IsString()

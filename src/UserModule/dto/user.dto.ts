@@ -12,7 +12,6 @@ import {
 } from 'class-validator';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
-import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -29,11 +28,6 @@ export class UserDTO {
   @IsString()
   @Expose()
   email: User['email'];
-
-  @IsNotEmpty()
-  @IsEnum(UserProfileEnum)
-  @Expose()
-  profile: User['profile'];
 
   @IsNotEmpty()
   @IsString()

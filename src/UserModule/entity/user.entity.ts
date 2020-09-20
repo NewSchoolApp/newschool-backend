@@ -15,7 +15,6 @@ import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
-import { UserProfileEnum } from '../enum/user-profile.enum';
 
 @Entity()
 export class User extends Audit {
@@ -32,15 +31,6 @@ export class User extends Audit {
   @Column({ unique: true })
   @Expose()
   email: string;
-
-  @Column({
-    nullable: false,
-    name: 'profile',
-    type: 'enum',
-    enum: UserProfileEnum,
-  })
-  @Expose()
-  profile: UserProfileEnum;
 
   @Column()
   @Expose()

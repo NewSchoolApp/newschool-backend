@@ -4,7 +4,6 @@ import { Expose, Transform } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
-import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class NewUserDTO {
   @IsNotEmpty()
@@ -16,11 +15,6 @@ export class NewUserDTO {
   @IsString()
   @Expose()
   email: User['email'];
-
-  @IsNotEmpty()
-  @IsEnum(UserProfileEnum)
-  @Expose()
-  profile: User['profile'];
 
   @IsNotEmpty()
   @IsString()

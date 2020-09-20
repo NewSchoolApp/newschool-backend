@@ -1,8 +1,0 @@
-export enum UserProfileEnum {
-  STUDENT = 'STUDENT',
-  EX_STUDENT = 'EX_STUDENT',
-  UNIVERSITY = 'UNIVERSITY',
-  FATHER = 'FATHER',
-  INVESTOR = 'INVESTOR',
-  OTHERS = 'OTHERS',
-}

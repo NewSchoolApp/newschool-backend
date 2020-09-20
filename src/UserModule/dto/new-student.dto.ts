@@ -9,7 +9,6 @@ import {
 import { Expose, Transform } from 'class-transformer';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
-import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class NewStudentDTO {
   @IsNotEmpty()
@@ -21,11 +20,6 @@ export class NewStudentDTO {
   @IsString()
   @Expose()
   email: User['email'];
-
-  @IsNotEmpty()
-  @IsEnum(UserProfileEnum)
-  @Expose()
-  profile: User['profile'];
 
   @IsNotEmpty()
   @IsString()

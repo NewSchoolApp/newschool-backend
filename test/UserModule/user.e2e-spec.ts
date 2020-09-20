@@ -15,7 +15,6 @@ import { UserUpdateDTO } from '../../src/UserModule/dto/user-update.dto';
 import { Constants } from '../../src/CommonsModule/constants';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
-import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -79,7 +78,6 @@ describe('UserController (e2e)', () => {
           .send({
             email: 'my-user1@email.com',
             password: 'mypass',
-            profile: UserProfileEnum.STUDENT,
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
@@ -132,7 +130,6 @@ describe('UserController (e2e)', () => {
           .send({
             email: 'my-user2@email.com',
             password: 'mypass',
-            profile: UserProfileEnum.STUDENT,
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
@@ -171,7 +168,6 @@ describe('UserController (e2e)', () => {
           .send({
             email: 'my-user3@email.com',
             password: 'mypass',
-            profile: UserProfileEnum.STUDENT,
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',
@@ -188,7 +184,6 @@ describe('UserController (e2e)', () => {
             const updateBody: UserUpdateDTO = {
               id: _res.body.id,
               email: _res.body.email,
-              profile: UserProfileEnum.STUDENT,
               role: adminRoleEnum,
               name: 'updated name',
               nickname: 'random nickname',
@@ -211,7 +206,6 @@ describe('UserController (e2e)', () => {
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
                   .expect((response) => {
-                    console.log(response.body);
                     expect(response.body.name).toBe('updated name');
                   })
                   .then(() => done());
@@ -233,7 +227,6 @@ describe('UserController (e2e)', () => {
           .send({
             email: 'my-user4@email.com',
             password: 'mypass',
-            profile: UserProfileEnum.STUDENT,
             urlInstagram: 'instagram',
             urlFacebook: 'facebook',
             name: 'name',

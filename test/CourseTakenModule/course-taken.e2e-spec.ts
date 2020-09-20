@@ -1,4 +1,3 @@
-import { UserModule } from './../../src/UserModule/user.module';
 import * as request from 'supertest';
 import * as path from 'path';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -25,7 +24,6 @@ import { NewPartDTO } from '../../src/CourseModule/dto/new-part.dto';
 import { NewTestDTO } from '../../src/CourseModule/dto/new-test.dto';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
-import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -137,7 +135,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user1@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -221,7 +218,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user3@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -277,7 +273,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user4@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -322,7 +317,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user5@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -555,7 +549,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user6@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -639,7 +632,6 @@ describe('CourseTakenController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user7@email.com',
       password: 'mypass',
-      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
