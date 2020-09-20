@@ -20,6 +20,7 @@ import { UserService } from '../../src/UserModule/service/user.service';
 import { CourseService } from '../../src/CourseModule/service/course.service';
 import { CourseTakenService } from '../../src/CourseTakenModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../src/CourseTakenModule/enum/enum';
+import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -99,6 +100,7 @@ describe('DashboardController (e2e)', () => {
     const newUser: NewUserDTO = {
       email: 'my-user1@email.com',
       password: 'mypass',
+      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
@@ -116,6 +118,7 @@ describe('DashboardController (e2e)', () => {
     const newUser2: NewUserDTO = {
       email: 'my-user2@email.com',
       password: 'mypass',
+      profile: UserProfileEnum.STUDENT,
       urlInstagram: 'instagram',
       urlFacebook: 'facebook',
       name: 'name',
