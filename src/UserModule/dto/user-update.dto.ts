@@ -33,23 +33,23 @@ export class UserUpdateDTO {
   @Expose()
   email: User['email'];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
   nickname?: string;
 
   @Transform((date) => date && new Date(date))
-  @IsNotEmpty()
+  @IsOptional()
   @IsDate()
   @Expose()
   birthday?: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(GenderEnum)
   @Expose()
   gender?: GenderEnum;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(EscolarityEnum)
   @Expose()
   schooling?: EscolarityEnum;
@@ -59,12 +59,12 @@ export class UserUpdateDTO {
   @Expose()
   institutionName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
   profession?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
   address?: string;
