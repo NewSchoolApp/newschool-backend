@@ -1,5 +1,11 @@
 import { User } from '../entity/user.entity';
-import { IsDate, IsEnum, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { GenderEnum } from '../enum/gender.enum';
@@ -48,10 +54,10 @@ export class NewUserDTO {
   @Expose()
   schooling?: EscolarityEnum;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
-  institutionName: string;
+  institutionName?: string;
 
   @IsOptional()
   @IsString()
