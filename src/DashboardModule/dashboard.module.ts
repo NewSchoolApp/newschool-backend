@@ -3,7 +3,6 @@ import { DashboardService } from './service/dashboard.service';
 import { DashboardController } from './controller/dashboard.controller';
 import { UserModule } from '../UserModule/user.module';
 import { CourseTakenModule } from '../CourseTakenModule/course.taken.module';
-import { SecurityModule } from '../SecurityModule/security.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
