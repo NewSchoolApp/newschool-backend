@@ -46,33 +46,33 @@ export class User extends Audit {
   @Expose()
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
-  nickname: string;
+  nickname?: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
-  birthday: Date;
+  birthday?: Date;
 
-  @Column({ type: 'enum', enum: GenderEnum, nullable: false })
+  @Column({ type: 'enum', enum: GenderEnum, nullable: true })
   @Expose()
-  gender: GenderEnum;
+  gender?: GenderEnum;
 
-  @Column({ type: 'enum', enum: EscolarityEnum, nullable: false })
+  @Column({ type: 'enum', enum: EscolarityEnum, nullable: true })
   @Expose()
-  schooling: EscolarityEnum;
+  schooling?: EscolarityEnum;
 
   @Column({ nullable: false })
   @Expose()
   institutionName: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
-  profession: string;
+  profession?: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   @Expose()
-  address: string;
+  address?: string;
 
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()

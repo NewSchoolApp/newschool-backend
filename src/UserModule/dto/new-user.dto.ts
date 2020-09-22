@@ -1,5 +1,5 @@
 import { User } from '../entity/user.entity';
-import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { GenderEnum } from '../enum/gender.enum';
@@ -27,48 +27,48 @@ export class NewUserDTO {
   @Expose()
   password: User['password'];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
-  nickname: string;
+  nickname?: string;
 
   @Transform((date) => date && new Date(date))
-  @IsNotEmpty()
+  @IsOptional()
   @IsDate()
   @Expose()
-  birthday: Date;
+  birthday?: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(GenderEnum)
   @Expose()
-  gender: GenderEnum;
+  gender?: GenderEnum;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(EscolarityEnum)
   @Expose()
-  schooling: EscolarityEnum;
+  schooling?: EscolarityEnum;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
   institutionName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
-  profession: string;
+  profession?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
-  address: string;
+  address?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
   urlFacebook?: User['urlFacebook'];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
   urlInstagram?: User['urlInstagram'];
