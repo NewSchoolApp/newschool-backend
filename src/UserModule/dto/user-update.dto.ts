@@ -54,10 +54,10 @@ export class UserUpdateDTO {
   @Expose()
   schooling?: EscolarityEnum;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Expose()
-  institutionName: string;
+  institutionName?: string;
 
   @IsOptional()
   @IsString()

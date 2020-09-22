@@ -24,11 +24,6 @@ export class NewStudentDTO {
   @Expose()
   password: User['password'];
 
-  @IsNotEmpty()
-  @IsString()
-  @Expose()
-  institutionName: string;
-
   @IsOptional()
   @IsString()
   @Expose()
