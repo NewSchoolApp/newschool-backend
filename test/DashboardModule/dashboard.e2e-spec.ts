@@ -21,6 +21,7 @@ import { CourseService } from '../../src/CourseModule/service/course.service';
 import { CourseTakenService } from '../../src/CourseTakenModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../src/CourseTakenModule/enum/enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
+import { OrderEnum } from '../../src/DashboardModule/enum/order.enum';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -241,6 +242,21 @@ describe('DashboardController (e2e)', () => {
 
     expect(dashboardRes.body.totalElements).toEqual(2);
   });
+  it('should return courses by views', async () => {
+    const authRes = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+     const coursesByFrequence = await request(app.getHttpServer())
+      .get(`${dashboardUrl}/course/views`)
+      .query({ order: OrderEnum.ASC, limit: 5 })
+      .set('Authorization', `Bearer ${authRes.body.accessToken}`)
+      .expect(200)
+
+    expect(coursesByFrequence.body.length).toBeLessThanOrEqual(5);
+  })
 
   afterAll(async () => {
     await dbConnection.synchronize(true);
