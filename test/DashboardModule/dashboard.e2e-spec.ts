@@ -249,14 +249,14 @@ describe('DashboardController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
-     const coursesByFrequence = await request(app.getHttpServer())
+    const coursesByFrequence = await request(app.getHttpServer())
       .get(`${dashboardUrl}/course/views`)
       .query({ order: OrderEnum.ASC, limit: 5 })
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
-      .expect(200)
+      .expect(200);
 
     expect(coursesByFrequence.body.length).toBeLessThanOrEqual(5);
-  })
+  });
 
   afterAll(async () => {
     await dbConnection.synchronize(true);
