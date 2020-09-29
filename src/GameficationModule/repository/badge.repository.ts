@@ -1,4 +1,4 @@
-import { Badge } from './../entity/badge.entity';
+import { Badge } from '../entity/badge.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Badge)

@@ -7,10 +7,17 @@ import { CourseRewardsService } from './service/course-rewards.service';
 import { PublisherService } from './service/publisher.service';
 import { Badge } from './entity/badge.entity';
 import { Achievement } from './entity/achievement.entity';
+import { AchievementRepository } from './repository/achievement.repository';
+import { BadgeRepository } from './repository/badge.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Achievement, Badge]),
+    TypeOrmModule.forFeature([
+      Achievement,
+      AchievementRepository,
+      Badge,
+      BadgeRepository,
+    ]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),

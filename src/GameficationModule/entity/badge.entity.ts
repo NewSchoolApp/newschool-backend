@@ -19,9 +19,15 @@ export class Badge extends Audit {
   @Column()
   points: number;
 
-  @Column()
+  private _slug: string;
+
+  @Column({ name: 'slug' })
   get slug(): string {
     return slugify(this.badgeName, { replacement: '-', lower: true });
+  }
+
+  set slug(slug: string) {
+    this._slug = slugify(this.badgeName, { replacement: '-', lower: true });
   }
 
   @OneToMany(() => Achievement, (achievement: Achievement) => achievement.badge)

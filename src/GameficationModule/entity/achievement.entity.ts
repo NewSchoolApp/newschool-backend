@@ -14,6 +14,8 @@ export class Achievement<T = unknown> extends Audit {
   @Expose()
   badge: Badge;
 
+  @ManyToOne(() => User, (user: User) => user.achievements)
+  @Expose()
   user: User;
 
   @Column({ type: 'json' })
