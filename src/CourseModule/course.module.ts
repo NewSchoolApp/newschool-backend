@@ -25,7 +25,7 @@ import { Course } from './entity/course.entity';
 import { LessonService } from './service/lesson.service';
 import { PartMapper } from './mapper/part.mapper';
 import { Test } from './entity/test.entity';
-import { GameficationModule } from 'src/GameficationModule/gamefication.module';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
 
 @Module({
   imports: [
