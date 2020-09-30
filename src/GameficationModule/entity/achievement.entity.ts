@@ -10,6 +10,15 @@ export class Achievement<T = unknown> extends Audit {
   @Expose()
   id: string;
 
+  @Column({ type: 'json' })
+  rule: T;
+
+  @Column()
+  completed: boolean;
+
+  @Column()
+  points: number;
+
   @ManyToOne(() => Badge, (badge: Badge) => badge.achievements)
   @Expose()
   badge: Badge;
@@ -17,10 +26,4 @@ export class Achievement<T = unknown> extends Audit {
   @ManyToOne(() => User, (user: User) => user.achievements)
   @Expose()
   user: User;
-
-  @Column({ type: 'json' })
-  rule: T;
-
-  @Column()
-  completed: boolean;
 }

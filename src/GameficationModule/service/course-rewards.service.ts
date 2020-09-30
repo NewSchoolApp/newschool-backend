@@ -14,9 +14,8 @@ export interface TestOnFirstTake {
 }
 
 interface CheckTestRule {
-  correctAlternative: string;
-  chosenAlternative: string;
   testId: string;
+  try: number;
 }
 
 @Injectable()
@@ -38,26 +37,57 @@ export class CourseRewardsService {
     message: string,
     { chosenAlternative, test, user }: TestOnFirstTake,
   ): Promise<void> {
+    const pontuation = {
+      1: 10,
+      2: 5,
+      3: 2,
+      4: 1,
+    };
     const badge = await this.badgeRepository.findBySlug(slugify('De primeira'));
     let [
       achievement,
     ] = await this.achievementRepository.getTestOnFirstTakeByUserAndBadgeAndRuleTestId<
       CheckTestRule
     >(test, user, badge);
-    if (achievement) return;
+
+    if (achievement?.completed) return;
+    if (achievement?.rule?.try > 4) return;
+
+    if (!achievement) {
+      achievement = {
+        ...achievement,
+        completed: false,
+        points: 0,
+        rule: {
+          testId: test.id,
+          try: 1,
+        },
+        badge,
+        user,
+      };
+    } else {
+      achievement = {
+        ...achievement,
+        completed: false,
+        points: 0,
+        rule: {
+          ...achievement.rule,
+          try: achievement.rule.try + 1,
+        },
+      };
+    }
 
     const answerIsRight =
       chosenAlternative.toLowerCase() === test.correctAlternative.toLowerCase();
 
+    const points = pontuation[achievement.rule.try] ?? 0;
+
     achievement = {
       ...achievement,
       completed: answerIsRight,
-      rule: {
-        testId: test.id,
-        correctAlternative: test.correctAlternative,
-        chosenAlternative,
-      },
+      points: answerIsRight ? points : 0,
     };
+
     await this.achievementRepository.save(achievement);
   }
 }

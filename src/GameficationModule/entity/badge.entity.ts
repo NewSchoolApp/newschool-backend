@@ -16,9 +16,6 @@ export class Badge extends Audit {
   @Column()
   badgeDescription: string;
 
-  @Column()
-  points: number;
-
   private _slug: string;
 
   @Column({ name: 'slug' })
