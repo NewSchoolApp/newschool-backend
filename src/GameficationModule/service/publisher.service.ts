@@ -5,8 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Inject, Injectable } from '@nestjs/common';
 import { TestOnFirstTake } from './course-rewards.service';
 import { EventNameEnum } from '../enum/event-name.enum';
-import { Test } from './../../CourseModule/entity/test.entity';
-import { User } from './../../UserModule/entity/user.entity';
+import { Test } from '../../CourseModule/entity/test.entity';
+import { User } from '../../UserModule/entity/user.entity';
 
 @Injectable()
 export class PublisherService {
