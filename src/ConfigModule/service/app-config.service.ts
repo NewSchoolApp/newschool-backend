@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import Rollbar = require('rollbar');
+import * as Pusher from 'pusher';
 
 @Injectable()
 export class AppConfigService {
@@ -54,6 +55,11 @@ export class AppConfigService {
   logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
   runMigrations: boolean =
     this.configService.get<string>('NODE_ENV') !== 'TEST';
+
+  pusherAppId: string = this.configService.get<string>('PUSHER_APP_ID');
+  pusherKey: string = this.configService.get<string>('PUSHER_KEY');
+  pusherSecret: string = this.configService.get<string>('PUSHER_SECRET');
+  pusherCluster: string = this.configService.get<string>('PUSHER_CLUSTER');
 
   public getRollbarConfiguration(): Rollbar.Configuration {
     return {
@@ -115,6 +121,16 @@ export class AppConfigService {
       password: this.databasePassword,
       synchronize: this.synchronize || false,
       logging: this.logging,
+    };
+  }
+
+  public getPusherOptions(): Pusher.Options {
+    return {
+      appId: this.pusherAppId,
+      key: this.pusherKey,
+      secret: this.pusherSecret,
+      cluster: this.pusherCluster,
+      encrypted: true,
     };
   }
 }

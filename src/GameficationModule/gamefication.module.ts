@@ -9,6 +9,7 @@ import { Badge } from './entity/badge.entity';
 import { Achievement } from './entity/achievement.entity';
 import { AchievementRepository } from './repository/achievement.repository';
 import { BadgeRepository } from './repository/badge.repository';
+import { PusherService } from './service/pusher.service';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { BadgeRepository } from './repository/badge.repository';
     }),
     SecurityModule,
   ],
-  providers: [CourseRewardsService, PublisherService],
+  providers: [CourseRewardsService, PublisherService, PusherService],
   exports: [PublisherService],
 })
 export class GameficationModule {}

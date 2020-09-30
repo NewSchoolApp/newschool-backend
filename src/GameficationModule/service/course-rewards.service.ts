@@ -6,6 +6,8 @@ import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import slugify from 'slugify';
 import * as PubSub from 'pubsub-js';
+import { PusherService } from './pusher.service';
+import { ChannelEventEnum } from '../enum/channel-event.enum';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -23,6 +25,7 @@ export class CourseRewardsService {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
+    private readonly pusherService: PusherService,
   ) {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
@@ -84,9 +87,17 @@ export class CourseRewardsService {
 
     achievement = {
       ...achievement,
-      completed: answerIsRight,
+      completed: true,
       points: answerIsRight ? points : 0,
     };
+
+    if (answerIsRight) {
+      this.pusherService.postMessageToUser(
+        user.id,
+        ChannelEventEnum.GAMEFICATION,
+        achievement,
+      );
+    }
 
     await this.achievementRepository.save(achievement);
   }
