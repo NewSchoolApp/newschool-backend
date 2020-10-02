@@ -1,5 +1,6 @@
 import { GrantTypeEnum } from '../enum/grant-type.enum';
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,

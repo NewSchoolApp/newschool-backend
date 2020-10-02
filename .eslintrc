@@ -21,6 +21,7 @@
   ],
   "rules": {
     "camelcase": "error",
-    "rest-spread-spacing": "error"
+    "rest-spread-spacing": "error",
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }

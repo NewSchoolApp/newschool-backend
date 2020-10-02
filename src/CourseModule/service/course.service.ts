@@ -8,7 +8,6 @@ import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseRepository } from '../repository/course.repository';
 import { CourseMapper } from '../mapper/course.mapper';
 import { CourseDTO } from '../dto/course.dto';
-import { UserService } from '../../UserModule/service/user.service';
 import { CourseUpdateDTO } from '../dto/course-update.dto';
 import { NewCourseDTO } from '../dto/new-course.dto';
 import { Course } from '../entity/course.entity';
@@ -18,7 +17,6 @@ export class CourseService {
   constructor(
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
-    private readonly userService: UserService,
   ) {}
 
   @Transactional()

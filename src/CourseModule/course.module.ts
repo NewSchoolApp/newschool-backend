@@ -25,6 +25,7 @@ import { Course } from './entity/course.entity';
 import { LessonService } from './service/lesson.service';
 import { PartMapper } from './mapper/part.mapper';
 import { Test } from './entity/test.entity';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { Test } from './entity/test.entity';
     MulterModule.register({ dest: './upload' }),
     UserModule,
     SecurityModule,
+    GameficationModule,
   ],
   controllers: [
     CourseController,
