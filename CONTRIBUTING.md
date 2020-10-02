@@ -16,6 +16,10 @@ Somos um movimento de educação que está formando novos protagonistas da quebr
 
 Trabalhamos duro para dar acesso à educação de qualidade na linguagem da quebrada para os jovens das periferias de todo o Brasil através da tecnologia e de um conceito diferenciado de educação.
 
+## Tarefas
+
+Para pegar as tarefas, veja no nosso [Trello](https://trello.com/b/hY1tozEd/ns-squad). Tarefas de backend serão aceitas nesse repositório, enquanto as de frontend devem ser mandadas para [esse repositório](https://github.com/NewSchoolApp/newschool-frontend)
+
 ## Arquitetura
 
 As tecnologias que usamos são:
