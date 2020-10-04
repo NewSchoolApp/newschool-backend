@@ -10,6 +10,8 @@ import { Achievement } from './entity/achievement.entity';
 import { AchievementRepository } from './repository/achievement.repository';
 import { BadgeRepository } from './repository/badge.repository';
 import { PusherService } from './service/pusher.service';
+import { NotificationModule } from '../NotificationModule/notification.module';
+import { AchievementSubscriber } from './subscriber/achievement.subscriber';
 
 @Module({
   imports: [
@@ -29,8 +31,14 @@ import { PusherService } from './service/pusher.service';
       inject: [ConfigService],
     }),
     SecurityModule,
+    NotificationModule,
   ],
-  providers: [CourseRewardsService, PublisherService, PusherService],
+  providers: [
+    CourseRewardsService,
+    PublisherService,
+    PusherService,
+    AchievementSubscriber,
+  ],
   exports: [PublisherService],
 })
 export class GameficationModule {}

@@ -5,7 +5,7 @@ import { ChannelEventEnum } from '../enum/channel-event.enum';
 
 @Injectable()
 export class PusherService {
-  pusher: Pusher = null;
+  private pusher: Pusher = null;
 
   constructor(private readonly configService: ConfigService) {
     this.pusher = new Pusher(this.configService.getPusherOptions());

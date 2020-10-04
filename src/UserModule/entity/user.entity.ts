@@ -17,6 +17,7 @@ import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
+import { Notification } from '../../NotificationModule/entity/notification.entity';
 
 @Entity()
 export class User extends Audit {
@@ -127,6 +128,12 @@ export class User extends Audit {
   @OneToMany(() => Achievement, (achievement: Achievement) => achievement.badge)
   @Expose()
   achievements: Achievement[];
+
+  @OneToMany(
+    () => Notification,
+    (notification: Notification<any>) => notification.user,
+  )
+  notifications: Notification<any>;
 
   validPassword(password: string) {
     const hash = crypto
