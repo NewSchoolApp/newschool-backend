@@ -4,7 +4,7 @@
 
 Se você participar, a gente vai entender que você concordou com o nosso [Código de conduta](CODE_OF_CONDUCT.md), ok?
 
-Se você tiver alguma dúvida que não falamos aqui, você pode falar no nosso [Discord](https://discord.gg/rb5sDG)
+Se você tiver alguma dúvida que não falamos aqui, você pode falar no nosso [Discord](https://discord.gg/RQfzTZr)
 
 ## Glossário
 
