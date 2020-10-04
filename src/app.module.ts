@@ -13,6 +13,7 @@ import { ConfigModule } from './ConfigModule/config.module';
 import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 import { DashboardModule } from './DashboardModule/dashboard.module';
 import { GameficationModule } from './GameficationModule/gamefication.module';
+import { NotificationModule } from './NotificationModule/notification.module';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -44,6 +45,7 @@ const mailerAsyncModule: MailerAsyncOptions = {
     UploadModule,
     DashboardModule,
     GameficationModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
