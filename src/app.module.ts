@@ -6,7 +6,6 @@ import { SecurityModule } from './SecurityModule/security.module';
 import { UserModule } from './UserModule/user.module';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { CourseModule } from './CourseModule/course.module';
-import { CourseTakenModule } from './CourseTakenModule/course.taken.module';
 import { MessageModule } from './MessageModule/message.module';
 import { UploadModule } from './UploadModule/upload.module';
 import { ConfigModule } from './ConfigModule/config.module';
@@ -40,7 +39,6 @@ const mailerAsyncModule: MailerAsyncOptions = {
     SecurityModule,
     UserModule,
     CourseModule,
-    CourseTakenModule,
     MessageModule,
     UploadModule,
     DashboardModule,

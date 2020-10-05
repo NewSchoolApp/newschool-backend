@@ -26,6 +26,11 @@ import { LessonService } from './service/lesson.service';
 import { PartMapper } from './mapper/part.mapper';
 import { Test } from './entity/test.entity';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
+import { CourseTakenService } from './service/course.taken.service';
+import { CourseTakenController } from './controllers/course.taken.controller';
+import { CourseTakenMapper } from './mapper/course-taken.mapper';
+import { CourseTaken } from './entity/course.taken.entity';
+import { CourseTakenRepository } from './repository/course.taken.repository';
 
 @Module({
   imports: [
@@ -38,6 +43,8 @@ import { GameficationModule } from '../GameficationModule/gamefication.module';
       PartRepository,
       Test,
       TestRepository,
+      CourseTaken,
+      CourseTakenRepository,
     ]),
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
@@ -58,6 +65,7 @@ import { GameficationModule } from '../GameficationModule/gamefication.module';
     LessonController,
     PartController,
     TestController,
+    CourseTakenController,
   ],
   providers: [
     CourseService,
@@ -68,7 +76,15 @@ import { GameficationModule } from '../GameficationModule/gamefication.module';
     PartMapper,
     TestService,
     TestMapper,
+    CourseTakenService,
+    CourseTakenMapper,
   ],
-  exports: [CourseService, LessonService, PartService, TestService],
+  exports: [
+    CourseService,
+    LessonService,
+    PartService,
+    TestService,
+    CourseTakenService,
+  ],
 })
 export class CourseModule {}

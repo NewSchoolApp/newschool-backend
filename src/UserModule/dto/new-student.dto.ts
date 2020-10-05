@@ -1,6 +1,6 @@
 import { User } from '../entity/user.entity';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class NewStudentDTO {

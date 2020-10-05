@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Course } from '../../CourseModule/entity/course.entity';
+import { Course } from '../entity/course.entity';
 import { User } from '../../UserModule/entity/user.entity';
 
 export class NewCourseTakenDTO {

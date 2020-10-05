@@ -8,7 +8,7 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { UserQuantityDTO } from '../dto/user-quantity.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CertificateQuantityDTO } from '../dto/certificate-quantity.dto';
-import { CourseTakenStatusEnum } from '../../CourseTakenModule/enum/enum';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { OrderEnum } from '../enum/order.enum';
 import { CourseTakenUsersDTO } from '../dto/course-taken-users.dto';
 import { getCoursesByFinished } from '../interfaces/getCoursesByFinished';

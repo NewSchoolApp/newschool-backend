@@ -3,8 +3,8 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
-  IsString,
   IsOptional,
+  IsString,
 } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
