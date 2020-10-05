@@ -12,7 +12,6 @@ import { ChangePassword } from './change-password.entity';
 import { Expose } from 'class-transformer';
 import { CourseTaken } from '../../CourseTakenModule/entity/course.taken.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
-import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
@@ -114,10 +113,6 @@ export class User extends Audit {
   )
   @Expose()
   changePasswordRequests: ChangePassword[];
-
-  @ManyToMany('Certificate', (certficate: Certificate) => certficate.users)
-  @Expose()
-  certificates: Certificate[];
 
   @OneToMany<CourseTaken>(
     'CourseTaken',

@@ -343,15 +343,6 @@ export class UserController {
     );
   }
 
-  @Post('/:userId/certificate/:certificateId')
-  public async addCertificateToUser(
-    @Param('userId') userId: string,
-    @Param('certificateId') certificateId: string,
-  ): Promise<void> {
-    this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
-    await this.service.addCertificateToUser(userId, certificateId);
-  }
-
   @Get('me/certificate')
   @HttpCode(200)
   @ApiOperation({

@@ -11,7 +11,6 @@ import { UserController } from './controller/user.controller';
 import { UserService } from './service/user.service';
 import { UserMapper } from './mapper/user.mapper';
 import { ChangePasswordService } from './service/change-password.service';
-import { CertificateModule } from '../CertificateModule/certificate.module';
 import { SchoolController } from './controller/school.controller';
 import { SchoolService } from './service/school.service';
 
@@ -33,7 +32,6 @@ import { SchoolService } from './service/school.service';
       inject: [ConfigService],
     }),
     forwardRef(() => SecurityModule),
-    CertificateModule,
     HttpModule,
   ],
   controllers: [UserController, SchoolController],
