@@ -47,7 +47,7 @@
     "reflect-metadata": "0.1.13",
     "remove": "0.1.5",
     "rimraf": "3.0.2",
-    "rollbar": "2.19.3",
+    "rollbar": "2.19.4",
     "rxjs": "6.6.3",
     "slugify": "1.4.5",
     "swagger-ui-express": "4.1.4",
