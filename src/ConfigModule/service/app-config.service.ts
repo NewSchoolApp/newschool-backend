@@ -130,7 +130,7 @@ export class AppConfigService {
       key: this.pusherKey,
       secret: this.pusherSecret,
       cluster: this.pusherCluster,
-      encrypted: true,
+      useTLS: true,
     };
   }
 }
