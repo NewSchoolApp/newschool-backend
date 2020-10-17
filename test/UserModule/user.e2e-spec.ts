@@ -211,7 +211,6 @@ describe('UserController (e2e)', () => {
                   .get(`${userUrl}/${__res.body.id}`)
                   .set('Authorization', `Bearer ${res.body.accessToken}`)
                   .expect((response) => {
-                    console.log(response.body);
                     expect(response.body.name).toBe('updated name');
                   })
                   .then(() => done());
