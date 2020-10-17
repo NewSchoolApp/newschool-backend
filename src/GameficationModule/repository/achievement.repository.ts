@@ -17,7 +17,7 @@ export class AchievementRepository extends Repository<Achievement> {
     ];
     return this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND completed = 0 AND eventName= ? AND rule->>"$.testId" = ? AND rule->>"$.try" = < 4
+        SELECT * from achievement WHERE userId = ? AND eventName= ? AND rule->>"$.testId" = ?
       `,
       params,
     );

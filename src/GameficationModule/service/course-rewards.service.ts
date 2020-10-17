@@ -66,6 +66,9 @@ export class CourseRewardsService {
       CheckTestRule
     >(test, user);
 
+    if (achievement?.completed) return;
+    if (achievement?.rule?.try >= 4) return;
+
     if (!achievement) {
       achievement = {
         ...achievement,
