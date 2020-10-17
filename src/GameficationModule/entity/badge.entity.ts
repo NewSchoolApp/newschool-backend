@@ -3,6 +3,7 @@ import slugify from 'slugify';
 import { Expose } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { EventNameEnum } from '../enum/event-name.enum';
 
 @Entity()
 export class Badge extends Audit {
@@ -10,11 +11,23 @@ export class Badge extends Audit {
   @Expose()
   id: string;
 
+  @Column({
+    type: 'enum',
+    enum: EventNameEnum,
+  })
+  eventName: EventNameEnum;
+
+  @Column()
+  eventOrder: number;
+
   @Column()
   badgeName: string;
 
   @Column()
   badgeDescription: string;
+
+  @Column()
+  points: number;
 
   private _slug: string;
 

@@ -1,20 +1,23 @@
-import { Badge } from '../entity/badge.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { Achievement } from '../entity/achievement.entity';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { EventNameEnum } from '../enum/event-name.enum';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
-  public getTestOnFirstTakeByUserAndBadgeAndRuleTestId<T>(
+  public getTestOnFirstTakeByUserAndRuleTestId<T>(
     test: Test,
     user: User,
-    badge: Badge,
   ): Promise<Achievement<T>[]> {
-    const params = [user.id, badge.id, test.id];
+    const params = [
+      user.id,
+      EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+      test.id,
+    ];
     return this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND badgeId = ? AND rule->>"$.testId" = ?
+        SELECT * from achievement WHERE userId = ? AND completed = 0 AND eventName= ? AND rule->>"$.testId" = ? AND rule->>"$.try" = < 4
       `,
       params,
     );

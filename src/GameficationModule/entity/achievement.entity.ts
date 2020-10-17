@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Badge } from './badge.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { EventNameEnum } from '../enum/event-name.enum';
 
 @Entity()
 export class Achievement<T = unknown> extends Audit {
@@ -10,14 +11,17 @@ export class Achievement<T = unknown> extends Audit {
   @Expose()
   id: string;
 
+  @Column({
+    type: 'enum',
+    enum: EventNameEnum,
+  })
+  eventName: EventNameEnum;
+
   @Column({ type: 'json' })
   rule: T;
 
   @Column()
   completed: boolean;
-
-  @Column()
-  points: number;
 
   @ManyToOne(() => Badge, (badge: Badge) => badge.achievements)
   @Expose()
