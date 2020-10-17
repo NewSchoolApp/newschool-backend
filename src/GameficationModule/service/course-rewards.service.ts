@@ -4,10 +4,8 @@ import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
-import slugify from 'slugify';
 import * as PubSub from 'pubsub-js';
 import { PusherService } from './pusher.service';
-import { ChannelEventEnum } from '../enum/channel-event.enum';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -29,50 +27,63 @@ export class CourseRewardsService {
   ) {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-      (...args) => {
-        // @ts-ignore
-        this.checkTestReward(...args);
+      (message: string, data: TestOnFirstTake) => {
+        this.checkTestReward(data);
       },
     );
   }
 
-  async checkTestReward(
-    message: string,
-    { chosenAlternative, test, user }: TestOnFirstTake,
-  ): Promise<void> {
-    const pontuation = {
-      1: 10,
-      2: 5,
-      3: 2,
-      4: 1,
+  async checkTestReward({
+    chosenAlternative,
+    test,
+    user,
+  }: TestOnFirstTake): Promise<void> {
+    const points = {
+      1: () =>
+        this.badgeRepository.findByEventNameAndOrder(
+          EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+          1,
+        ),
+      2: () =>
+        this.badgeRepository.findByEventNameAndOrder(
+          EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+          2,
+        ),
+      3: () =>
+        this.badgeRepository.findByEventNameAndOrder(
+          EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+          3,
+        ),
+      4: () =>
+        this.badgeRepository.findByEventNameAndOrder(
+          EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+          4,
+        ),
     };
-    const badge = await this.badgeRepository.findBySlug(slugify('De primeira'));
     let [
       achievement,
-    ] = await this.achievementRepository.getTestOnFirstTakeByUserAndBadgeAndRuleTestId<
+    ] = await this.achievementRepository.getTestOnFirstTakeByUserAndRuleTestId<
       CheckTestRule
-    >(test, user, badge);
+    >(test, user);
 
     if (achievement?.completed) return;
-    if (achievement?.rule?.try > 4) return;
+    if (achievement?.rule?.try >= 4) return;
 
     if (!achievement) {
       achievement = {
         ...achievement,
+        eventName: EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
         completed: false,
-        points: 0,
         rule: {
           testId: test.id,
           try: 1,
         },
-        badge,
         user,
       };
     } else {
       achievement = {
         ...achievement,
         completed: false,
-        points: 0,
         rule: {
           ...achievement.rule,
           try: achievement.rule.try + 1,
@@ -83,21 +94,14 @@ export class CourseRewardsService {
     const answerIsRight =
       chosenAlternative.toLowerCase() === test.correctAlternative.toLowerCase();
 
-    const points = pontuation[achievement.rule.try] ?? 0;
+    if (!answerIsRight) return;
 
+    const badge = await points[achievement.rule.try]();
     achievement = {
       ...achievement,
       completed: true,
-      points: answerIsRight ? points : 0,
+      badge,
     };
-
-    if (answerIsRight) {
-      this.pusherService.postMessageToUser(
-        user.id,
-        ChannelEventEnum.GAMEFICATION,
-        achievement,
-      );
-    }
 
     await this.achievementRepository.save(achievement);
   }

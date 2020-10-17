@@ -29,28 +29,28 @@ export class AchievementSubscriber
 
   async afterInsert(event: InsertEvent<Achievement>): Promise<void> {
     if (!event.entity.completed) return;
-    await this.notificationService.create<Achievement>(
-      event.entity.user,
-      NotificationTypeEnum.GAMEFICATION,
-      event.entity,
-    );
     this.pusherService.postMessageToUser(
       event.entity.user.id,
       ChannelEventEnum.GAMEFICATION,
+      event.entity,
+    );
+    await this.notificationService.create<Achievement>(
+      event.entity.user,
+      NotificationTypeEnum.GAMEFICATION,
       event.entity,
     );
   }
 
   async afterUpdate(event: UpdateEvent<Achievement>): Promise<void> {
     if (!event.entity.completed) return;
-    await this.notificationService.create<Achievement>(
-      event.entity.user,
-      NotificationTypeEnum.GAMEFICATION,
-      event.entity,
-    );
     this.pusherService.postMessageToUser(
       event.entity.user.id,
       ChannelEventEnum.GAMEFICATION,
+      event.entity,
+    );
+    await this.notificationService.create<Achievement>(
+      event.entity.user,
+      NotificationTypeEnum.GAMEFICATION,
       event.entity,
     );
   }
