@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsNotEmptyObject } from 'class-validator';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { CourseDTO } from '../../CourseModule/dto/course.dto';
+import { CourseDTO } from './course.dto';
 
 export class CertificateDTO {
   @IsNotEmptyObject()

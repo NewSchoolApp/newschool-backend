@@ -1,4 +1,4 @@
-import { Course } from './../../CourseModule/entity/course.entity';
+import { Course } from '../entity/course.entity';
 import {
   ConflictException,
   Injectable,
@@ -21,13 +21,13 @@ import { AlternativeProgressionDTO } from '../dto/alternative-progression.dto';
 import { VideoProgressionDataDTO } from '../dto/video-progression-data.dto';
 import { CourseTaken } from '../entity/course.taken.entity';
 import { CertificateDTO } from '../dto/certificate.dto';
-import { TestService } from '../../CourseModule/service/test.service';
-import { CourseService } from '../../CourseModule/service/course.service';
-import { Part } from '../../CourseModule/entity/part.entity';
-import { PartService } from '../../CourseModule/service/part.service';
-import { LessonService } from '../../CourseModule/service/lesson.service';
-import { Lesson } from '../../CourseModule/entity/lesson.entity';
-import { Test } from '../../CourseModule/entity/test.entity';
+import { TestService } from './test.service';
+import { CourseService } from './course.service';
+import { Part } from '../entity/part.entity';
+import { PartService } from './part.service';
+import { LessonService } from './lesson.service';
+import { Lesson } from '../entity/lesson.entity';
+import { Test } from '../entity/test.entity';
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
 
 @Injectable()

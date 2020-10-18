@@ -5,37 +5,38 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
+  IsOptional,
   Max,
   Min,
 } from 'class-validator';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { TestDTO } from '../../CourseModule/dto/test.dto';
-import { CourseDTO } from '../../CourseModule/dto/course.dto';
-import { LessonDTO } from '../../CourseModule/dto/lesson.dto';
-import { PartDTO } from '../../CourseModule/dto/part.dto';
+import { CourseDTO } from './course.dto';
+import { Part } from '../entity/part.entity';
+import { Lesson } from '../entity/lesson.entity';
+import { Test } from '../entity/test.entity';
 
-export class MyCoursesDTO {
+export class CourseTakenDTO {
+  @IsNotEmpty()
+  @Type(() => UserDTO)
+  @Expose()
+  user: CourseTaken['user'];
+
   @IsNotEmptyObject()
   @Type(() => CourseDTO)
   @Expose()
   course: CourseTaken['course'];
-
-  @IsNotEmptyObject()
-  @Type(() => UserDTO)
-  @Expose()
-  user: CourseTaken['user'];
 
   @IsNotEmpty()
   @IsDate()
   @Expose()
   courseStartDate: CourseTaken['courseStartDate'];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDate()
   @Expose()
-  courseCompleteDate: CourseTaken['courseCompleteDate'];
+  courseCompleteDate?: CourseTaken['courseCompleteDate'];
 
   @IsNotEmpty()
   @IsEnum(CourseTakenStatusEnum)
@@ -49,18 +50,18 @@ export class MyCoursesDTO {
   @Expose()
   completion: CourseTaken['completion'];
 
+  @Type(() => Lesson)
   @IsNotEmptyObject()
-  @Type(() => LessonDTO)
   @Expose()
   currentLesson: CourseTaken['currentLesson'];
 
+  @Type(() => Part)
   @IsNotEmptyObject()
-  @Type(() => PartDTO)
   @Expose()
   currentPart: CourseTaken['currentPart'];
 
+  @Type(() => Test)
   @IsNotEmptyObject()
-  @Type(() => TestDTO)
   @Expose()
   currentTest: CourseTaken['currentTest'];
 }

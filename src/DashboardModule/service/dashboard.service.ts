@@ -2,8 +2,8 @@ import { OrderEnum } from './../enum/order.enum';
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
-import { CourseTakenService } from '../../CourseTakenModule/service/course.taken.service';
-import { CourseTakenStatusEnum } from '../../CourseTakenModule/enum/enum';
+import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { getCoursesByFinished } from '../interfaces/getCoursesByFinished';
 
 @Injectable()

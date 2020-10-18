@@ -1,5 +1,5 @@
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
-import { OrderEnum } from './../../DashboardModule/enum/order.enum';
+import { OrderEnum } from '../../DashboardModule/enum/order.enum';
 import { EntityRepository, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { User } from '../../UserModule/entity/user.entity';

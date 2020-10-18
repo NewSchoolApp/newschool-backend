@@ -4,11 +4,11 @@ import {
   ConflictException,
   forwardRef,
   GoneException,
+  HttpService,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  HttpService,
 } from '@nestjs/common';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
 

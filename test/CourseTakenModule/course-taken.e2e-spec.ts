@@ -16,7 +16,7 @@ import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
 import { Course } from '../../src/CourseModule/entity/course.entity';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
-import { CourseTaken } from '../../src/CourseTakenModule/entity/course.taken.entity';
+import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
 import { User } from '../../src/UserModule/entity/user.entity';
 import { Lesson } from '../../src/CourseModule/entity/lesson.entity';
 import { Part } from '../../src/CourseModule/entity/part.entity';

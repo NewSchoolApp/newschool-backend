@@ -1,4 +1,4 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { Schools } from '../dto/school.dto';
 
 @Injectable()

@@ -2,10 +2,10 @@ import { Check, Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { User } from '../../UserModule/entity/user.entity';
-import { Part } from '../../CourseModule/entity/part.entity';
-import { Course } from '../../CourseModule/entity/course.entity';
-import { Lesson } from '../../CourseModule/entity/lesson.entity';
-import { Test } from '../../CourseModule/entity/test.entity';
+import { Part } from './part.entity';
+import { Course } from './course.entity';
+import { Lesson } from './lesson.entity';
+import { Test } from './test.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity()

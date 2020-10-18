@@ -3,8 +3,8 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
-import Rollbar = require('rollbar');
 import * as Pusher from 'pusher';
+import Rollbar = require('rollbar');
 
 @Injectable()
 export class AppConfigService {
