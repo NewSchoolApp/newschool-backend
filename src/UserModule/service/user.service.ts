@@ -28,8 +28,6 @@ import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found
 import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
-import { CertificateService } from '../../CertificateModule/service/certificate.service';
-import { Certificate } from '../../CertificateModule/entity/certificate.entity';
 
 @Injectable()
 export class UserService {
@@ -38,7 +36,6 @@ export class UserService {
     private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
-    private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
     @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
@@ -250,21 +247,6 @@ export class UserService {
       user.salt,
     );
     return await this.repository.save(user);
-  }
-
-  @Transactional()
-  public async addCertificateToUser(
-    userId: User['id'],
-    certificateId: Certificate['id'],
-  ) {
-    const [user, certificate]: [User, Certificate] = await Promise.all([
-      this.repository.findByIdWithCertificates(userId),
-      this.certificateService.findById(certificateId),
-    ]);
-    return await this.repository.save({
-      ...user,
-      certificates: [...user.certificates, certificate],
-    });
   }
 
   private createSalt(): string {
