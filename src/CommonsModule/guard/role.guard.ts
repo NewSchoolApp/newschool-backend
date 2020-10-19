@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { User } from '../../UserModule/entity';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../../UserModule/entity/user.entity';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -42,7 +42,9 @@ export class RoleGuard implements CanActivate {
       }
       throw new InternalServerErrorException(e);
     }
-    const hasPermission: boolean = roles.some(role => role === user.role.name);
+    const hasPermission: boolean = roles.some(
+      (role) => role === user.role.name,
+    );
     return user?.role && hasPermission;
   }
 }

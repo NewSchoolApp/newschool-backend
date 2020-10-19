@@ -3,11 +3,14 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
+import * as Pusher from 'pusher';
 import Rollbar = require('rollbar');
 
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
+
+  jwtSecret: string = this.configService.get<string>('JWT_SECRET');
 
   changePasswordExpirationTime: number = this.configService.get<number>(
     'CHANGE_PASSWORD_EXPIRATION_TIME',
@@ -48,8 +51,15 @@ export class AppConfigService {
   databasePassword: string = this.configService.get<string>(
     'DATABASE_PASSWORD',
   );
-  synchronize: boolean = this.configService.get<boolean>('SYNC_DATABASE');
+  synchronize: boolean = this.configService.get<string>('NODE_ENV') === 'TEST';
   logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
+  runMigrations: boolean =
+    this.configService.get<string>('NODE_ENV') !== 'TEST';
+
+  pusherAppId: string = this.configService.get<string>('PUSHER_APP_ID');
+  pusherKey: string = this.configService.get<string>('PUSHER_KEY');
+  pusherSecret: string = this.configService.get<string>('PUSHER_SECRET');
+  pusherCluster: string = this.configService.get<string>('PUSHER_CLUSTER');
 
   public getRollbarConfiguration(): Rollbar.Configuration {
     return {
@@ -90,16 +100,37 @@ export class AppConfigService {
       type: 'mysql',
       multipleStatements: true,
       entities: [
-        path.resolve(path.join(__dirname, '..', '..')) +
-          '/**/*.entity{.ts,.js}',
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/**/*.entity{.ts,.js}`,
       ],
+      migrationsRun: this.runMigrations,
+      migrations: [
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/migration/*{.ts,.js}`,
+      ],
+      migrationsTableName: 'migration',
+      cli: {
+        migrationsDir: 'src/migration',
+      },
       host: this.databaseHost,
       database: this.databaseName,
       port: this.databasePort,
       username: this.databaseUsername,
       password: this.databasePassword,
-      synchronize: false,
+      synchronize: this.synchronize || false,
       logging: this.logging,
+    };
+  }
+
+  public getPusherOptions(): Pusher.Options {
+    return {
+      appId: this.pusherAppId,
+      key: this.pusherKey,
+      secret: this.pusherSecret,
+      cluster: this.pusherCluster,
+      useTLS: true,
     };
   }
 }

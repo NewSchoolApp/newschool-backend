@@ -1,4 +1,3 @@
-import { Audit } from '../../CommonsModule';
 import {
   Column,
   Entity,
@@ -10,7 +9,8 @@ import {
 } from 'typeorm';
 import { Course } from './course.entity';
 import { Part } from './part.entity';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from './course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Unique(['sequenceNumber', 'course'])
 @Entity()

@@ -13,10 +13,9 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CourseService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
-import { CourseMapper } from '../mapper';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -29,12 +28,17 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
+import { CourseMapper } from '../mapper/course.mapper';
+import { User } from '../../UserModule/entity/user.entity';
+import { CourseDTO } from '../dto/course.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { User } from '../../UserModule/entity';
-import { SecurityService } from '../../SecurityModule/service';
-import { NewUserDTO } from '../../UserModule/dto';
-import { Course } from '../entity';
+import { CourseUpdateDTO } from '../dto/course-update.dto';
+import { CourseService } from '../service/course.service';
+import { SecurityService } from '../../SecurityModule/service/security.service';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { NewCourseDTO } from '../dto/new-course.dto';
+import { NewUserDTO } from '../../UserModule/dto/new-user.dto';
+import { Course } from '../entity/course.entity';
 
 @ApiTags('Course')
 @ApiBearerAuth()
@@ -62,9 +66,10 @@ export class CourseController {
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAll(
-    @Query('enabled') enabled: boolean,
     @Headers('authorization') authorization: string,
+    @Query('enabled') enabledString?: string,
   ): Promise<CourseDTO[]> {
+    let enabled = enabledString == null ? null : enabledString == 'true';
     const { role }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
     );
@@ -140,13 +145,14 @@ export class CourseController {
     summary: 'Update course',
     description: 'Update course by id',
   })
+  @ApiBody({ type: CourseUpdateDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
     @Param('id') id: CourseDTO['id'],
     @Body() courseUpdatedInfo: CourseUpdateDTO,
-  ) {
-    return await this.service.update(id, courseUpdatedInfo);
+  ): Promise<CourseDTO> {
+    return this.mapper.toDto(await this.service.update(id, courseUpdatedInfo));
   }
 
   @Delete(':id')

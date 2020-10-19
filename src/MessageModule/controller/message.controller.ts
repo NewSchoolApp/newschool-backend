@@ -8,9 +8,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { MessageService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { ContactUsDTO, EmailDTO } from '../dto';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,10 +23,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { EmailSwagger } from '../swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
 import { TemplateDTO } from '../dto/templates.dto';
 import { SendMessageSwagger } from '../swagger/sendmessage.swagger';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { ContactUsDTO } from '../dto/contactus.dto';
+import { EmailDTO } from '../dto/email.dto';
+import { EmailSwagger } from '../swagger/email.swagger';
+import { MessageService } from '../service/message.service';
 
 @ApiTags('Message')
 @ApiBearerAuth()
@@ -39,7 +42,7 @@ export class MessageController {
   constructor(private readonly service: MessageService) {}
 
   @Post('/email')
-  @HttpCode(201)
+  @HttpCode(200)
   @ApiCreatedResponse({ type: EmailDTO, description: 'Send email' })
   @ApiOperation({
     summary: 'Send email message',
@@ -58,7 +61,7 @@ export class MessageController {
   }
 
   @Post('/email/contactus')
-  @HttpCode(201)
+  @HttpCode(200)
   @ApiCreatedResponse({
     type: ContactUsDTO,
     description: 'Send contact us email',

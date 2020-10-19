@@ -78,3 +78,10 @@ https://github.com/NewSchoolBR/newschool-backend
 Hora de colocar a mão na massa. A parte mais divertida, trabalhar no código-fonte. Depois de concluir e testar, envie e aguarde o PULL REQUEST ser aprovado.
 
 5 MISSÃO CUMPRIDA. VC AJUDOU O PROJETO. ❤️
+
+## 🤝 Como contribuir
+
+Nós precisamos muito de contribuidores! Não importa o seu nível, o que importa é nos ajudar nessa causa.
+
+Se você quer participar, veja nosso [Guia de contribuição](https://github.com/NewSchoolApp/newschool-backend/blob/develop/CONTRIBUTING.md).
+

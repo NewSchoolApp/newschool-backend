@@ -4,12 +4,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PartRepository } from '../repository';
-import { Lesson, Part } from '../entity';
-import { NewPartDTO, PartUpdateDTO } from '../dto';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { MoreThan } from 'typeorm';
 import { LessonService } from './lesson.service';
+import { PartUpdateDTO } from '../dto/part-update.dto';
+import { PartRepository } from '../repository/part.repository';
+import { Part } from '../entity/part.entity';
+import { NewPartDTO } from '../dto/new-part.dto';
+import { Lesson } from '../entity/lesson.entity';
 
 @Injectable()
 export class PartService {
@@ -59,8 +61,10 @@ export class PartService {
     return this.repository.save({ ...part, ...partUpdatedInfo, lesson });
   }
 
-  public async getAll(lesson: Part['lesson']): Promise<Part[]> {
-    return this.repository.find({ lesson });
+  public async getAll(lessonId: string): Promise<Part[]> {
+    return this.repository.find({
+      lesson: await this.lessonService.findById(lessonId),
+    });
   }
 
   public async findById(id: Part['id']): Promise<Part> {
@@ -103,12 +107,10 @@ export class PartService {
     }
   }
 
-  @Transactional()
   public async countByLesson(lesson: Lesson): Promise<number> {
     return await this.repository.count({ lesson });
   }
 
-  @Transactional()
   public async getPartIdByLessonIdAndSeqNum(
     lesson: string,
     sequenceNumber: number,
@@ -121,7 +123,6 @@ export class PartService {
     return part.id;
   }
 
-  @Transactional()
   public async getByLessonAndSequenceNumber(
     lesson: Lesson,
     sequenceNumber: number,

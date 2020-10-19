@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SecurityController } from './controller';
-import { RoleService, SecurityService } from './service';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientCredentials, Role } from './entity';
-import { ClientCredentialsRepository, RoleRepository } from './repository';
-import { UserModule } from '../UserModule';
+import { Role } from './entity/role.entity';
+import { RoleService } from './service/role.service';
+import { SecurityController } from './controller/security.controller';
+import { SecurityService } from './service/security.service';
+import { ClientCredentialsRepository } from './repository/client-credentials.repository';
+import { UserModule } from '../UserModule/user.module';
+import { ClientCredentials } from './entity/client-credentials.entity';
+import { RoleRepository } from './repository/role.repository';
 
 @Module({
   imports: [

@@ -8,10 +8,13 @@ export class Constants {
 
   static COURSE_TAKEN_ENDPOINT = 'course-taken';
 
+  static DASHBOARD_ENDPOINT = 'dashboard';
+
   static COURSE_ENDPOINT = 'course';
   static LESSON_ENDPOINT = 'lesson';
   static PART_ENDPOINT = 'part';
   static TEST_ENDPOINT = 'test';
+  static SCHOOL_ENDPOINT = 'school';
 
   static UPLOAD_ENDPOINT = 'upload';
 

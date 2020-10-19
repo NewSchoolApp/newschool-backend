@@ -7,12 +7,16 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Audit } from '../../CommonsModule';
-import { Role } from '../../SecurityModule';
+import { Role } from '../../SecurityModule/entity/role.entity';
 import { ChangePassword } from './change-password.entity';
-import { Certificate } from '../../CertificateModule/entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseTakenModule/entity';
+import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
+import { UserProfileEnum } from '../enum/user-profile.enum';
+import { Achievement } from '../../GameficationModule/entity/achievement.entity';
+import { Notification } from '../../NotificationModule/entity/notification.entity';
 
 @Entity()
 export class User extends Audit {
@@ -30,9 +34,46 @@ export class User extends Audit {
   @Expose()
   email: string;
 
+  @Column({
+    nullable: false,
+    name: 'profile',
+    type: 'enum',
+    enum: UserProfileEnum,
+  })
+  @Expose()
+  profile: UserProfileEnum;
+
   @Column()
   @Expose()
   password: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  nickname?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  birthday?: Date;
+
+  @Column({ type: 'enum', enum: GenderEnum, nullable: true })
+  @Expose()
+  gender?: GenderEnum;
+
+  @Column({ type: 'enum', enum: EscolarityEnum, nullable: true })
+  @Expose()
+  schooling?: EscolarityEnum;
+
+  @Column({ nullable: true })
+  @Expose()
+  institutionName?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  profession?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  address?: string;
 
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
@@ -48,18 +89,21 @@ export class User extends Audit {
   @Expose()
   salt: string;
 
+  @Column({
+    default: false,
+  })
+  @Expose()
+  enabled: boolean;
+
   @Column({ name: 'facebook_id', nullable: true })
   @Expose()
-  facebookId: string;
+  facebookId?: string;
 
   @Column({ name: 'google_sub', nullable: true })
   @Expose()
-  googleSub: string;
+  googleSub?: string;
 
-  @ManyToOne(
-    () => Role,
-    (role: Role) => role.users,
-  )
+  @ManyToOne(() => Role, (role: Role) => role.users)
   @Expose()
   role: Role;
 
@@ -70,15 +114,21 @@ export class User extends Audit {
   @Expose()
   changePasswordRequests: ChangePassword[];
 
-  @ManyToMany('Certificate', (certficate: Certificate) => certficate.users)
-  @Expose()
-  certificates: Certificate[];
-
   @OneToMany<CourseTaken>(
     'CourseTaken',
     (courseTaken: CourseTaken) => courseTaken.user,
   )
   coursesTaken: CourseTaken[];
+
+  @OneToMany(() => Achievement, (achievement: Achievement) => achievement.badge)
+  @Expose()
+  achievements: Achievement[];
+
+  @OneToMany(
+    () => Notification,
+    (notification: Notification<any>) => notification.user,
+  )
+  notifications: Notification<any>;
 
   validPassword(password: string) {
     const hash = crypto

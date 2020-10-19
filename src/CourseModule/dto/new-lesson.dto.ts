@@ -1,6 +1,6 @@
-import { Lesson } from '../entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Expose } from 'class-transformer';
+import { Lesson } from '../entity/lesson.entity';
 
 export class NewLessonDTO {
   @IsNotEmpty()

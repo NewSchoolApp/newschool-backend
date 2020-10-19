@@ -2,16 +2,18 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
-import {
-  ClientCredentialsEnum,
-  GrantTypeEnum,
-  RoleEnum,
-} from '../../src/SecurityModule/enum';
-import { Constants } from '../../src/CommonsModule';
-import { EmailDTO, ContactUsDTO } from '../../src/MessageModule/dto';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
+import { EmailDTO } from '../../src/MessageModule/dto/email.dto';
+import { ContactUsDTO } from '../../src/MessageModule/dto/contactus.dto';
+import { MailerService } from '@nest-modules/mailer';
+import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
+import { Constants } from '../../src/CommonsModule/constants';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -20,28 +22,32 @@ const stringToBase64 = (string: string) => {
 describe('MessageController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
+  let dbConnection: Connection;
   let authorization: string;
   let adminRole: Role;
   const messageUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.MESSAGE_ENDPOINT}`;
 
+  const mailerServiceMock = {
+    sendMail() {
+      console.log('email sent');
+    },
+  };
+
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(MailerService)
+      .useValue(mailerServiceMock)
+      .compile();
+
+    initializeTransactionalContext();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
+    dbConnection = moduleFixture.get(Connection);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -58,29 +64,24 @@ describe('MessageController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@EXTERNAL'];
     clientCredentials.secret = 'NEWSCHOOL@EXTERNALSECRET';
     clientCredentials.role = savedRole;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
+    clientCredentials.accessTokenValidity = 3600;
+    clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);
     authorization = stringToBase64(
       `${clientCredentials.name}:${clientCredentials.secret}`,
     );
   });
 
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
-  });
-
-  it('should send email', async done => {
+  it('should send email', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
-          .post(messageUrl + '/message/email')
+          .post(`${messageUrl}/email`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .send({
             email: 'my-user1@email.com',
@@ -88,32 +89,34 @@ describe('MessageController (e2e)', () => {
             message: 'lore ypsulum teste',
             name: 'Aluno',
           } as EmailDTO)
-          .expect(201)
+          .expect(200)
           .then(() => done());
       });
   });
 
-  it('should send contact us email', async done => {
+  it('should send contact us email', async (done) => {
     return request(app.getHttpServer())
       .post('/oauth/token')
       .set('Authorization', `Basic ${authorization}`)
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS)
-      .then(res => {
+      .then((res) => {
         return request(app.getHttpServer())
-          .post(messageUrl + '/message/email/contactus')
+          .post(`${messageUrl}/email/contactus`)
           .set('Authorization', `Bearer ${res.body.accessToken}`)
           .send({
             email: 'my-user1@email.com',
             message: 'lore ypsulum teste',
             name: 'Aluno',
+            cellphone: '11900001111',
           } as ContactUsDTO)
-          .expect(201)
+          .expect(200)
           .then(() => done());
       });
   });
 
   afterAll(async () => {
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

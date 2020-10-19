@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UploadController } from './controllers';
-import { UploadService } from './service';
+import { UploadController } from './controllers/upload.controller';
+import { UploadService } from './service/upload.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 

@@ -5,18 +5,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { CourseRepository } from '../repository';
-import { Course } from '../entity';
-import { CourseDTO, CourseUpdateDTO, NewCourseDTO } from '../dto';
-import { CourseMapper } from '../mapper';
-import { UserService } from '../../UserModule';
+import { CourseRepository } from '../repository/course.repository';
+import { CourseMapper } from '../mapper/course.mapper';
+import { CourseDTO } from '../dto/course.dto';
+import { CourseUpdateDTO } from '../dto/course-update.dto';
+import { NewCourseDTO } from '../dto/new-course.dto';
+import { Course } from '../entity/course.entity';
 
 @Injectable()
 export class CourseService {
   constructor(
     private readonly repository: CourseRepository,
     private readonly mapper: CourseMapper,
-    private readonly userService: UserService,
   ) {}
 
   @Transactional()
@@ -63,7 +63,6 @@ export class CourseService {
     return this.repository.find({ enabled: enabled });
   }
 
-  @Transactional()
   public async findById(id: Course['id']): Promise<Course> {
     const course: Course = await this.repository.findOne(id);
     if (!course) {

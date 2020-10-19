@@ -1,19 +1,22 @@
+import { GrantTypeEnum } from './../../src/SecurityModule/enum/grant-type.enum';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from 'supertest';
 import * as fs from 'fs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { Connection, EntityManager, QueryRunner, Repository } from 'typeorm';
-import { ClientCredentials, Role } from '../../src/SecurityModule/entity';
+import { Connection, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ClientCredentialsEnum, RoleEnum } from '../../src/SecurityModule/enum';
-import { Constants } from '../../src/CommonsModule';
+import { Role } from '../../src/SecurityModule/entity/role.entity';
+import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
+import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
+import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
+import { Constants } from '../../src/CommonsModule/constants';
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
-  let queryRunner: QueryRunner;
+  let dbConnection: Connection;
   const uploadUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.UPLOAD_ENDPOINT}`;
 
   beforeAll(async () => {
@@ -25,14 +28,7 @@ describe('UploadController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    const dbConnection = moduleFixture.get(Connection);
-    const manager = moduleFixture.get(EntityManager);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    queryRunner = manager.queryRunner = dbConnection.createQueryRunner(
-      'master',
-    );
+    dbConnection = moduleFixture.get(Connection);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -48,20 +44,14 @@ describe('UploadController (e2e)', () => {
     clientCredentials.name = ClientCredentialsEnum['NEWSCHOOL@FRONT'];
     clientCredentials.secret = 'test2';
     clientCredentials.role = savedRole;
+    clientCredentials.authorizedGrantTypes = [GrantTypeEnum.CLIENT_CREDENTIALS];
+    clientCredentials.accessTokenValidity = 3600;
+    clientCredentials.refreshTokenValidity = 3600;
     await clientCredentialRepository.save(clientCredentials);
   });
 
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
-  });
-
-  afterEach(async () => {
-    await queryRunner.rollbackTransaction();
-  });
-
-  it('should not get a not found file', async done => {
+  it('should not get a not found file', async (done) => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback(new Error('Not Found'));
@@ -69,7 +59,7 @@ describe('UploadController (e2e)', () => {
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-not-found')
       .expect(404)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -79,29 +69,27 @@ describe('UploadController (e2e)', () => {
       .then(() => done());
   });
 
-  it('should return 500 when fail to get the file', async done => {
+  it('should return 404 when fail to get the file', async (done) => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
     });
     return request(app.getHttpServer())
       .get(uploadUrl + '/file-with-error-on-get')
-      .expect(500)
-      .expect(res => {
+      .expect(404)
+      .expect((res) => {
         expect(res.body).toStrictEqual({
-          error: 'Internal Server Error',
+          error: 'Not Found',
           message: expect.any(String),
-          statusCode: 500,
+          statusCode: 404,
         });
       })
       .then(() => done());
   });
 
-  it('should return 200 when get the file with success', async done => {
+  it('should return 200 when get the file with success', async (done) => {
     const mockAccess = jest.spyOn(fs, 'access');
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     mockAccess.mockImplementationOnce((path, mode, callback) => {
       callback();
@@ -110,9 +98,9 @@ describe('UploadController (e2e)', () => {
     const filePath = `${__dirname}/../../upload/${fileName}`;
     fs.writeFileSync(filePath, '1');
     return request(app.getHttpServer())
-      .get(uploadUrl + '/' + fileName)
+      .get(`${uploadUrl}/${fileName}`)
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toBeTruthy();
       })
       .then(() => {
@@ -122,6 +110,7 @@ describe('UploadController (e2e)', () => {
   });
 
   afterAll(async () => {
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

@@ -9,10 +9,9 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { LessonService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import { LessonDTO, LessonUpdateDTO, NewLessonDTO } from '../dto';
-import { LessonMapper } from '../mapper';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,8 +21,13 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { Course } from '../entity';
+import { LessonUpdateDTO } from '../dto/lesson-update.dto';
+import { LessonDTO } from '../dto/lesson.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { NewLessonDTO } from '../dto/new-lesson.dto';
+import { LessonMapper } from '../mapper/lesson.mapper';
+import { Course } from '../entity/course.entity';
+import { LessonService } from '../service/lesson.service';
 
 @ApiTags('Lesson')
 @ApiBearerAuth()
