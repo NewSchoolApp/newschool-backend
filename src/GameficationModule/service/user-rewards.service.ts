@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { AchievementRepository } from '../repository/achievement.repository';
 import { StartEventShareCourseRuleDTO } from '../dto/start-event-share-course.dto';
-import { Achievement } from '../entity/achievement.entity';
-import { UserRepository } from '../../UserModule/repository/user.repository';
-import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
-import { CourseRepository } from '../../CourseModule/repository/course.repository';
-import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
-import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { BadgeRepository } from '../repository/badge.repository';
-import PubSub from 'pubsub-js';
-import { TestOnFirstTake } from './course-rewards.service';
+import * as PubSub from 'pubsub-js';
+import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
+import { Achievement } from '../entity/achievement.entity';
+import { UserService } from '../../UserModule/service/user.service';
+import { CourseService } from '../../CourseModule/service/course.service';
+import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 
-interface SharedCourseRule {
+export interface SharedCourseRule {
   courseId: string;
 }
 
@@ -21,9 +20,9 @@ export class UserRewardsService {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly userRepository: UserRepository,
-    private readonly courseRepository: CourseRepository,
-    private readonly courseTakenRepository: CourseTakenRepository,
+    private readonly userService: UserService,
+    private readonly courseService: CourseService,
+    private readonly courseTakenService: CourseTakenService,
   ) {
     PubSub.subscribe(
       EventNameEnum.USER_REWARD_SHARE_COURSE,
@@ -37,14 +36,14 @@ export class UserRewardsService {
     courseId,
     userId,
   }: StartEventShareCourseRuleDTO): Promise<void> {
-    const [[user], [course]] = await Promise.all([
-      this.userRepository.find({ where: { id: userId } }),
-      this.courseRepository.find({ where: { id: courseId } }),
+    const [user, course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
     ]);
     if (!user || !course) return;
-    const courseTaken: CourseTaken = await this.courseTakenRepository.findByUserIdAndCourseId(
-      user,
-      course,
+    const courseTaken: CourseTaken = await this.courseTakenService.findByUserIdAndCourseId(
+      user.id,
+      course.id,
     );
     if (!courseTaken) return;
 
@@ -71,6 +70,8 @@ export class UserRewardsService {
       user,
       badge,
       rule: { courseId },
+      completed: true,
+      eventName: EventNameEnum.USER_REWARD_SHARE_COURSE,
     });
   }
 }

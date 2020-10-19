@@ -9,6 +9,7 @@ import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
+import { SharedCourseRule } from './user-rewards.service';
 
 @Injectable()
 export class PublisherService {
@@ -23,7 +24,7 @@ export class PublisherService {
     };
     const event = events[eventName];
     if (!event) return;
-    PubSub.publish(eventName, rule);
+    PubSub.publish(event, rule);
   }
 
   public emitCheckTestReward(test: Test, chosenAlternative: string): void {
