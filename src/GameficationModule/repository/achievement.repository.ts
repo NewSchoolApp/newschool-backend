@@ -42,4 +42,13 @@ export class AchievementRepository extends Repository<Achievement> {
       params,
     );
   }
+
+  findByUserIdAndBadgeId(
+    userId: string,
+    badgeId: string,
+  ): Promise<Achievement> {
+    return this.findOne({
+      where: { user: { id: userId }, badge: { id: badgeId } },
+    });
+  }
 }

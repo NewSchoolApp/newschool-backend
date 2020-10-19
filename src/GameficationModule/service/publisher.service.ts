@@ -9,7 +9,6 @@ import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
-import { SharedCourseRule } from './user-rewards.service';
 
 @Injectable()
 export class PublisherService {
@@ -21,6 +20,7 @@ export class PublisherService {
   public startEvent(eventName: StartEventEnum, rule: StartEventRules): void {
     const events = {
       [StartEventEnum.SHARE_COURSE]: EventNameEnum.USER_REWARD_SHARE_COURSE,
+      [StartEventEnum.RATE_APP]: EventNameEnum.USER_REWARD_RATE_APP,
     };
     const event = events[eventName];
     if (!event) return;
