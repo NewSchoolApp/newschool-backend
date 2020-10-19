@@ -35,6 +35,7 @@ export class UserRewardsService {
   private async shareCourseReward({
     courseId,
     userId,
+    platform,
   }: StartEventShareCourseRuleDTO): Promise<void> {
     const [user, course] = await Promise.all([
       this.userService.findById(userId),
@@ -55,9 +56,9 @@ export class UserRewardsService {
 
     const [
       sharedCourse,
-    ] = await this.achievementRepository.getSharedCourseByCourseIdAndUserId<
+    ] = await this.achievementRepository.getSharedCourseByCourseIdAndUserIdAndSocialMedia<
       Achievement<SharedCourseRule>
-    >(courseId, userId);
+    >(courseId, userId, platform);
     if (sharedCourse) return;
 
     const badge = await this.badgeRepository.findByEventNameAndOrder(
@@ -69,7 +70,7 @@ export class UserRewardsService {
       ...sharedCourse,
       user,
       badge,
-      rule: { courseId },
+      rule: { courseId, platform },
       completed: true,
       eventName: EventNameEnum.USER_REWARD_SHARE_COURSE,
     });
