@@ -23,7 +23,6 @@ export class CourseRewardsService implements OnModuleInit {
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
   ) {
-    console.log('CourseRewardsService');
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       async (message: string, data: TestOnFirstTake) => {
@@ -33,7 +32,6 @@ export class CourseRewardsService implements OnModuleInit {
   }
 
   onModuleInit(): void {
-    console.log('CourseRewardsService');
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       async (message: string, data: TestOnFirstTake) => {
