@@ -10,6 +10,7 @@ import { Achievement } from '../entity/achievement.entity';
 import { UserService } from '../../UserModule/service/user.service';
 import { CourseService } from '../../CourseModule/service/course.service';
 import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
+import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 
 export interface SharedCourseRule {
   courseId: string;
@@ -28,6 +29,12 @@ export class UserRewardsService {
       EventNameEnum.USER_REWARD_SHARE_COURSE,
       async (message: string, data: StartEventShareCourseRuleDTO) => {
         await this.shareCourseReward(data);
+      },
+    );
+    PubSub.subscribe(
+      EventNameEnum.USER_REWARD_RATE_APP,
+      async (message: string, data: StartEventRateAppRuleDTO) => {
+        await this.rateAppReward(data);
       },
     );
   }
@@ -73,6 +80,28 @@ export class UserRewardsService {
       rule: { courseId, platform },
       completed: true,
       eventName: EventNameEnum.USER_REWARD_SHARE_COURSE,
+    });
+  }
+
+  private async rateAppReward({ userId, rate }: StartEventRateAppRuleDTO) {
+    const user = await this.userService.findById(userId);
+    const badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.USER_REWARD_RATE_APP,
+      1,
+    );
+    if (!badge) return;
+    const achievement = await this.achievementRepository.findByUserIdAndBadgeId(
+      user.id,
+      badge.id,
+    );
+    if (achievement) return;
+    await this.achievementRepository.save({
+      ...achievement,
+      badge,
+      user,
+      eventName: EventNameEnum.USER_REWARD_RATE_APP,
+      completed: true,
+      rule: { rate },
     });
   }
 }
