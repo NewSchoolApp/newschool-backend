@@ -17,7 +17,20 @@ export class AchievementRepository extends Repository<Achievement> {
     ];
     return this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND eventName= ? AND rule->>"$.testId" = ?
+        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.testId" = ?
+      `,
+      params,
+    );
+  }
+
+  public async getSharedCourseByCourseIdAndUserId<T>(
+    courseId: string,
+    userId: string,
+  ): Promise<Achievement<T>[]> {
+    const params = [userId, EventNameEnum.USER_REWARD_SHARE_COURSE, courseId];
+    return this.query(
+      `
+        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.courseId" = ?
       `,
       params,
     );

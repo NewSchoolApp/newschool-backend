@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,8 +12,14 @@ import { BadgeRepository } from './repository/badge.repository';
 import { PusherService } from './service/pusher.service';
 import { NotificationModule } from '../NotificationModule/notification.module';
 import { AchievementSubscriber } from './subscriber/achievement.subscriber';
+import { UserModule } from '../UserModule/user.module';
+import { CourseModule } from '../CourseModule/course.module';
+import { GameficationController } from './controller/gamefication.controller';
+import { GameficationService } from './service/gamefication.service';
+import { UserRewardsService } from './service/user-rewards.service';
 
 @Module({
+  controllers: [GameficationController],
   imports: [
     TypeOrmModule.forFeature([
       Achievement,
@@ -32,12 +38,16 @@ import { AchievementSubscriber } from './subscriber/achievement.subscriber';
     }),
     SecurityModule,
     NotificationModule,
+    UserModule,
+    forwardRef(() => CourseModule),
   ],
   providers: [
     CourseRewardsService,
+    UserRewardsService,
     PublisherService,
     PusherService,
     AchievementSubscriber,
+    GameficationService,
   ],
   exports: [PublisherService],
 })

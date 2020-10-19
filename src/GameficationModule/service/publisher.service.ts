@@ -7,6 +7,9 @@ import { TestOnFirstTake } from './course-rewards.service';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { StartEventEnum } from '../enum/start-event.enum';
+import { StartEventRules } from '../dto/start-event-rules.dto';
+import { SharedCourseRule } from './user-rewards.service';
 
 @Injectable()
 export class PublisherService {
@@ -14,6 +17,15 @@ export class PublisherService {
     @Inject(REQUEST) private readonly request: Request,
     private readonly jwtService: JwtService,
   ) {}
+
+  public startEvent(eventName: StartEventEnum, rule: StartEventRules): void {
+    const events = {
+      [StartEventEnum.SHARE_COURSE]: EventNameEnum.USER_REWARD_SHARE_COURSE,
+    };
+    const event = events[eventName];
+    if (!event) return;
+    PubSub.publish(event, rule);
+  }
 
   public emitCheckTestReward(test: Test, chosenAlternative: string): void {
     const authorizationHeader = this.request.headers.authorization;
