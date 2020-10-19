@@ -27,13 +27,13 @@ export class CourseRewardsService {
   ) {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-      (message: string, data: TestOnFirstTake) => {
-        this.checkTestReward(data);
+      async (message: string, data: TestOnFirstTake) => {
+        await this.checkTestReward(data);
       },
     );
   }
 
-  async checkTestReward({
+  private async checkTestReward({
     chosenAlternative,
     test,
     user,
