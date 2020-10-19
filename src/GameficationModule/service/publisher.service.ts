@@ -9,6 +9,7 @@ import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 @Injectable()
 export class PublisherService {
@@ -18,6 +19,10 @@ export class PublisherService {
   ) {}
 
   public startEvent(eventName: StartEventEnum, rule: StartEventRules): void {
+    const authorizationHeader = this.request.headers.authorization;
+    const userStringToken = this.getUserStringToken(authorizationHeader);
+    const user: User = this.getUserFromToken(userStringToken);
+    if (user.role.name !== RoleEnum.STUDENT) return;
     const events = {
       [StartEventEnum.SHARE_COURSE]: EventNameEnum.USER_REWARD_SHARE_COURSE,
       [StartEventEnum.RATE_APP]: EventNameEnum.USER_REWARD_RATE_APP,
@@ -31,6 +36,7 @@ export class PublisherService {
     const authorizationHeader = this.request.headers.authorization;
     const userStringToken = this.getUserStringToken(authorizationHeader);
     const user: User = this.getUserFromToken(userStringToken);
+    if (user.role.name !== RoleEnum.STUDENT) return;
 
     const data: TestOnFirstTake = {
       chosenAlternative: chosenAlternative.toLowerCase(),
