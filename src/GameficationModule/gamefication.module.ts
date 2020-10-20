@@ -17,6 +17,7 @@ import { CourseModule } from '../CourseModule/course.module';
 import { GameficationController } from './controller/gamefication.controller';
 import { GameficationService } from './service/gamefication.service';
 import { UserRewardsService } from './service/user-rewards.service';
+import { AchievementService } from './service/achievement.service';
 
 @Module({
   controllers: [GameficationController],
@@ -36,10 +37,10 @@ import { UserRewardsService } from './service/user-rewards.service';
       }),
       inject: [ConfigService],
     }),
-    SecurityModule,
-    NotificationModule,
-    UserModule,
+    forwardRef(() => SecurityModule),
+    forwardRef(() => UserModule),
     forwardRef(() => CourseModule),
+    NotificationModule,
   ],
   providers: [
     CourseRewardsService,
@@ -48,7 +49,8 @@ import { UserRewardsService } from './service/user-rewards.service';
     PusherService,
     AchievementSubscriber,
     GameficationService,
+    AchievementService,
   ],
-  exports: [PublisherService],
+  exports: [PublisherService, AchievementService],
 })
 export class GameficationModule {}

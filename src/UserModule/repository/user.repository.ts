@@ -12,7 +12,7 @@ export class UserRepository extends Repository<User> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async getCertificateByUser(userId): Promise<any[]> {
+  public async getCertificateByUser(userId: string): Promise<any[]> {
     return createQueryBuilder('user', 'user')
       .innerJoinAndSelect(
         'certificate_users_user',

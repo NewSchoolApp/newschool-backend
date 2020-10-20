@@ -45,6 +45,8 @@ import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Constants } from '../../CommonsModule/constants';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
+import { Achievement } from '../../GameficationModule/entity/achievement.entity';
+import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -151,6 +153,30 @@ export class UserController {
     return this.mapper.toDto(
       await this.service.changePassword(id, changePassword),
     );
+  }
+
+  @Get('/me/achievement')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({
+    summary: 'Find user by jwt id',
+    description: 'Decodes de jwt and finds the user by the jwt id',
+  })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role',
+  })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findBadgesWithQuantityByUserId(
+    @Headers('authorization') authorization: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findBadgesWithQuantityByUserId(id);
   }
 
   @Get(':id')
