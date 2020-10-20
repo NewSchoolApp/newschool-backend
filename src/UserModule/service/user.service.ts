@@ -50,17 +50,21 @@ export class UserService {
   }
 
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id, {
+    console.log('findById', id);
+    const user: User[] = await this.repository.find({
+      where: { id },
       relations: ['role'],
     });
-    if (!user) {
+    if (!user.length) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return user[0];
   }
 
   @Transactional()
-  public async getCertificateByUser(userId): Promise<CertificateUserDTO[]> {
+  public async getCertificateByUser(
+    userId: string,
+  ): Promise<CertificateUserDTO[]> {
     const certificates = await this.repository.getCertificateByUser(userId);
 
     return certificates.map<CertificateUserDTO>((certificate) => {
@@ -175,7 +179,9 @@ export class UserService {
   }
 
   @Transactional()
-  public async validateChangePassword(changePasswordRequestId: string) {
+  public async validateChangePassword(
+    changePasswordRequestId: string,
+  ): Promise<void> {
     const changePassword: ChangePassword = await this.changePasswordService.findById(
       changePasswordRequestId,
     );
