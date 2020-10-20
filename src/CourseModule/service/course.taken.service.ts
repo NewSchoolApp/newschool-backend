@@ -143,7 +143,10 @@ export class CourseTakenService {
     return alternativeProgression;
   }
 
-  public async advanceOnCourse(userId: string, courseId): Promise<void> {
+  public async advanceOnCourse(
+    userId: string,
+    courseId: string,
+  ): Promise<void> {
     const [user, course]: [User, Course] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),

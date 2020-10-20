@@ -28,6 +28,9 @@ import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found
 import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { AchievementService } from '../../GameficationModule/service/achievement.service';
+import { Achievement } from '../../GameficationModule/entity/achievement.entity';
+import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
 
 @Injectable()
 export class UserService {
@@ -37,8 +40,8 @@ export class UserService {
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
-    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
+    private readonly achievementService: AchievementService,
   ) {}
 
   @Transactional()
@@ -279,5 +282,12 @@ export class UserService {
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
+  }
+
+  async findBadgesWithQuantityByUserId(
+    id: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
+    const user = await this.findById(id);
+    return this.achievementService.findBadgesWithQuantityByUser(user);
   }
 }

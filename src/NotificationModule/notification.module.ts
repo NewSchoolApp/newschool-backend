@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,7 +19,7 @@ import { NotificationService } from './service/notification.service';
       }),
       inject: [ConfigService],
     }),
-    SecurityModule,
+    forwardRef(() => SecurityModule),
   ],
   providers: [NotificationService],
   exports: [NotificationService],

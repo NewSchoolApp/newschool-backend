@@ -13,6 +13,7 @@ import { UserMapper } from './mapper/user.mapper';
 import { ChangePasswordService } from './service/change-password.service';
 import { SchoolController } from './controller/school.controller';
 import { SchoolService } from './service/school.service';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { SchoolService } from './service/school.service';
       }),
       inject: [ConfigService],
     }),
-    forwardRef(() => SecurityModule),
     HttpModule,
+    forwardRef(() => SecurityModule),
+    forwardRef(() => GameficationModule),
   ],
   controllers: [UserController, SchoolController],
   providers: [UserService, UserMapper, ChangePasswordService, SchoolService],

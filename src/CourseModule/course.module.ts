@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
@@ -56,9 +56,9 @@ import { CourseTakenRepository } from './repository/course.taken.repository';
       inject: [ConfigService],
     }),
     MulterModule.register({ dest: './upload' }),
-    UserModule,
-    SecurityModule,
-    GameficationModule,
+    forwardRef(() => SecurityModule),
+    forwardRef(() => UserModule),
+    forwardRef(() => GameficationModule),
   ],
   controllers: [
     CourseController,
