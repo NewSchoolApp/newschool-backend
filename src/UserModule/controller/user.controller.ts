@@ -11,6 +11,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
@@ -155,12 +156,12 @@ export class UserController {
     );
   }
 
-  @Get('/me/achievement')
+  @Get('/me/badge')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({
-    summary: 'Find user by jwt id',
-    description: 'Decodes de jwt and finds the user by the jwt id',
+    summary: 'Find badges by jwt id',
+    description: 'Decodes de jwt and finds the user badges by the jwt id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({
@@ -169,12 +170,33 @@ export class UserController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async findBadgesWithQuantityByUserId(
+  public async findBadgesWithQuantityByUserToken(
     @Headers('authorization') authorization: string,
   ): Promise<BadgeWithQuantityDTO[]> {
     const { id }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
     );
+    this.logger.log(`user id: ${id}`);
+    return await this.service.findBadgesWithQuantityByUserId(id);
+  }
+
+  @Get('/:id/badge')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({
+    summary: 'Find user badges by user id',
+    description: 'Decodes de jwt and finds the user badges by the user id',
+  })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+  })
+  @NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  public async findBadgesWithQuantityByUserId(
+    @Param('id') id: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
     this.logger.log(`user id: ${id}`);
     return await this.service.findBadgesWithQuantityByUserId(id);
   }
