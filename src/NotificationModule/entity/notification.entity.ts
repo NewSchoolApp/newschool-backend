@@ -12,7 +12,7 @@ export class Notification<T> extends Audit {
   user: User;
 
   @Column({
-    default: true
+    default: true,
   })
   seen: boolean;
 
