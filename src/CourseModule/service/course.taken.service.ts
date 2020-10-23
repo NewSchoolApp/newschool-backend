@@ -1,6 +1,8 @@
 import { Course } from '../entity/course.entity';
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -36,6 +38,7 @@ export class CourseTakenService {
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
     private readonly userMapper: UserMapper,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly lessonService: LessonService,

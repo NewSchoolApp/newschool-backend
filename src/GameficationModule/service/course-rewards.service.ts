@@ -1,5 +1,5 @@
 import { BadgeRepository } from '../repository/badge.repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
@@ -18,11 +18,16 @@ interface CheckTestRule {
 }
 
 @Injectable()
-export class CourseRewardsService {
+export class CourseRewardsService implements OnModuleInit {
+  private readonly logger = new Logger(CourseRewardsService.name);
+
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-  ) {
+  ) {}
+
+  onModuleInit(): void {
+    this.logger.log('me inscrevendo nos métodos do CourseRewardsService');
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       async (message: string, data: TestOnFirstTake) => {

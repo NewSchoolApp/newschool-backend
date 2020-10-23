@@ -4,7 +4,6 @@ import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
-import { Badge } from '../entity/badge.entity';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 
 @EntityRepository(Achievement)
@@ -45,7 +44,7 @@ export class AchievementRepository extends Repository<Achievement> {
     );
   }
 
-  findByUserIdAndBadgeId(
+  public async findByUserIdAndBadgeId(
     userId: string,
     badgeId: string,
   ): Promise<Achievement> {
@@ -54,7 +53,9 @@ export class AchievementRepository extends Repository<Achievement> {
     });
   }
 
-  findBadgesCountByUserId(userId: string): Promise<BadgeWithQuantityDTO[]> {
+  public async findBadgesCountByUserId(
+    userId: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
     console.log('userId', userId);
     const params = [userId];
     return this.query(
@@ -76,5 +77,15 @@ export class AchievementRepository extends Repository<Achievement> {
       b.id`,
       params,
     );
+  }
+
+  public async countAchievementsByBadgeId(badgeId: string): Promise<number> {
+    return this.count({ where: { badge: { id: badgeId } } });
+  }
+
+  public async countAchievementsByEventName(
+    eventName: EventNameEnum,
+  ): Promise<number> {
+    return this.count({ where: { eventName } });
   }
 }

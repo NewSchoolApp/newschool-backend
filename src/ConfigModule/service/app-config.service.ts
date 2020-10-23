@@ -69,7 +69,7 @@ export class AppConfigService {
     };
   }
 
-  public getChangePasswordFrontUrl(changePasswordRequestId): string {
+  public getChangePasswordFrontUrl(changePasswordRequestId: string): string {
     return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
   }
 

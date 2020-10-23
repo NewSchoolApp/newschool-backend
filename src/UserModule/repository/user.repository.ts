@@ -52,4 +52,13 @@ export class UserRepository extends Repository<User> {
   getInactiveUsersQuantity(): Promise<number> {
     return this.count();
   }
+
+  async findByInviteKey(inviteKey: string): Promise<User> {
+    const response = await this.find({ where: { inviteKey } });
+    return response[0];
+  }
+
+  public async countUsersInvitedByUserId(id: string): Promise<number> {
+    return this.count({ where: { invitedByUserId: { id } } });
+  }
 }

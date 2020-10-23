@@ -29,8 +29,8 @@ import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { AchievementService } from '../../GameficationModule/service/achievement.service';
-import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class UserService {
@@ -40,8 +40,12 @@ export class UserService {
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
+    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
+    @Inject(forwardRef(() => AchievementService))
     private readonly achievementService: AchievementService,
+    @Inject(forwardRef(() => PublisherService))
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
@@ -83,6 +87,36 @@ export class UserService {
     return this.repository.getUsersQuantity();
   }
 
+  public async findByInviteKey(inviteKey: string): Promise<User> {
+    const user: User = await this.repository.findByInviteKey(inviteKey);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  public async countUsersInvitedByUserId(id: string): Promise<number> {
+    return this.repository.countUsersInvitedByUserId(id);
+  }
+
+  public async addStudent(user: NewUserDTO, inviteKey: string): Promise<User> {
+    let invitedByUserId: string | null;
+    if (inviteKey) {
+      const invitedByUser: User = await this.repository.findByInviteKey(
+        inviteKey,
+      );
+      invitedByUserId = invitedByUser ? invitedByUser.id : null;
+    }
+
+    const newStudent = await this.add({ ...user, invitedByUserId });
+
+    if (inviteKey) {
+      // iniciar gameficação
+      this.publisherService.emitInviteUserReward(inviteKey);
+    }
+    return newStudent;
+  }
+
   public async add(user: NewUserDTO): Promise<User> {
     const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
@@ -100,12 +134,6 @@ export class UserService {
       }
       throw new InternalServerErrorException(e.message);
     }
-  }
-
-  @Transactional()
-  public async delete(id: User['id']): Promise<void> {
-    await this.findById(id);
-    await this.repository.delete(id);
   }
 
   @Transactional()
