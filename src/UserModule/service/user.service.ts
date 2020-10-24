@@ -34,18 +34,17 @@ import { PublisherService } from '../../GameficationModule/service/publisher.ser
 
 @Injectable()
 export class UserService {
+  @Inject(PublisherService)
+  private readonly publisherService: PublisherService;
+
   constructor(
     private readonly repository: UserRepository,
     private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
-    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
-    @Inject(forwardRef(() => AchievementService))
     private readonly achievementService: AchievementService,
-    @Inject(forwardRef(() => PublisherService))
-    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
@@ -54,7 +53,6 @@ export class UserService {
   }
 
   public async findById(id: User['id']): Promise<User> {
-    console.log('findById', id);
     const user: User[] = await this.repository.find({
       where: { id },
       relations: ['role'],

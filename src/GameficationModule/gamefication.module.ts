@@ -1,8 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SecurityModule } from '../SecurityModule/security.module';
 import { CourseRewardsService } from './service/course-rewards.service';
 import { PublisherService } from './service/publisher.service';
 import { Badge } from './entity/badge.entity';
@@ -28,16 +25,6 @@ import { AchievementService } from './service/achievement.service';
       Badge,
       BadgeRepository,
     ]),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    forwardRef(() => SecurityModule),
     forwardRef(() => UserModule),
     forwardRef(() => CourseModule),
     NotificationModule,

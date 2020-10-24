@@ -56,7 +56,6 @@ export class AchievementRepository extends Repository<Achievement> {
   public async findBadgesCountByUserId(
     userId: string,
   ): Promise<BadgeWithQuantityDTO[]> {
-    console.log('userId', userId);
     const params = [userId];
     return this.query(
       `

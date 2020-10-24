@@ -30,8 +30,6 @@ export interface InviteUserRewardData {
 
 @Injectable()
 export class UserRewardsService implements OnModuleInit {
-  private readonly logger = new Logger(UserRewardsService.name);
-
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
@@ -41,7 +39,6 @@ export class UserRewardsService implements OnModuleInit {
   ) {}
 
   onModuleInit(): void {
-    this.logger.log('me inscrevendo nos métodos do UserRewardsService');
     PubSub.subscribe(
       EventNameEnum.USER_REWARD_SHARE_COURSE,
       async (message: string, data: StartEventShareCourseRuleDTO) => {
@@ -57,7 +54,6 @@ export class UserRewardsService implements OnModuleInit {
     PubSub.subscribe(
       EventNameEnum.USER_REWARD_INVITE_USER,
       async (message: string, data: InviteUserRewardData) => {
-        console.log('to aqui no subscribe');
         await this.inviteUserReward(data);
       },
     );
@@ -129,14 +125,15 @@ export class UserRewardsService implements OnModuleInit {
     });
   }
 
-  private async inviteUserReward({ inviteKey }: InviteUserRewardData) {
+  private async inviteUserReward({
+    inviteKey,
+  }: InviteUserRewardData): Promise<void> {
     // 1 - Pegar usuário com essa inviteKey
     // 2 - Se tiver usuário com essa inviteKey, pegar a quantidade todos os usuários que foram convidados por esse usuário
     // 3 - Calcular quantos achievements o cara precisa ter baseado na quantidade de usuários que foram convidados por ele
     // e.g: o cara convidou 3 pessoas, então ele precisa ter 1 achievement
     // e.g: O cara convidou 4 pessoas, ele ainda vai ter 1 achievement
     // e.g: o cara convidou 6 pessoas, ele vai ter 2 achievements
-    console.log('to aqui no método', inviteKey);
     const userWithGivenInviteKey: User = await this.userService.findByInviteKey(
       inviteKey,
     );

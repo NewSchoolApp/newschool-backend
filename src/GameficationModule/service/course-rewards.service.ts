@@ -19,15 +19,12 @@ interface CheckTestRule {
 
 @Injectable()
 export class CourseRewardsService implements OnModuleInit {
-  private readonly logger = new Logger(CourseRewardsService.name);
-
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
   ) {}
 
   onModuleInit(): void {
-    this.logger.log('me inscrevendo nos métodos do CourseRewardsService');
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       async (message: string, data: TestOnFirstTake) => {
