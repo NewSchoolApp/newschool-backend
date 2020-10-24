@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -84,10 +85,24 @@ export class User extends Audit {
   urlInstagram?: string;
 
   @Column({
-    default: '',
+    nullable: false,
   })
   @Expose()
   salt: string;
+
+  @Column({
+    default: Math.random().toString(36).substr(2, 20),
+  })
+  @Expose()
+  inviteKey: string;
+
+  @Column({ nullable: true })
+  public invitedByUserId?: string;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'invitedByUserId' })
+  @Expose()
+  invitedBy?: User;
 
   @Column({
     default: false,

@@ -10,6 +10,7 @@ import { User } from '../../UserModule/entity/user.entity';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { InviteUserRewardData } from './user-rewards.service';
 
 @Injectable()
 export class PublisherService {
@@ -30,6 +31,13 @@ export class PublisherService {
     const event = events[eventName];
     if (!event) return;
     PubSub.publish(event, rule);
+  }
+
+  public emitInviteUserReward(inviteKey: string): void {
+    const data: InviteUserRewardData = {
+      inviteKey,
+    };
+    PubSub.publish(EventNameEnum.USER_REWARD_INVITE_USER, data);
   }
 
   public emitCheckTestReward(test: Test, chosenAlternative: string): void {

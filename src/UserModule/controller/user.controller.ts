@@ -48,6 +48,7 @@ import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
+import { NewUserSwagger } from '../swagger/new-user.swagger';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -226,7 +227,7 @@ export class UserController {
   @Post()
   @HttpCode(201)
   @Transactional()
-  @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
+  @ApiCreatedResponse({ type: NewUserSwagger, description: 'User created' })
   @ApiOperation({ summary: 'Add user', description: 'Creates a new user' })
   @ApiBody({ type: NewUserDTO })
   @ApiUnauthorizedResponse({
@@ -255,10 +256,16 @@ export class UserController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async addStudent(@Body() user: NewStudentDTO): Promise<UserDTO> {
+  public async addStudent(
+    @Body() user: NewStudentDTO,
+    @Query('inviteKey') inviteKey?: string,
+  ): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
     return this.mapper.toDto(
-      await this.service.add({ ...user, role: RoleEnum.STUDENT }),
+      await this.service.addStudent(
+        { ...user, role: RoleEnum.STUDENT },
+        inviteKey,
+      ),
     );
   }
 
@@ -438,27 +445,5 @@ export class UserController {
     @Param('id') id: string,
   ): Promise<CertificateUserDTO[]> {
     return await this.service.getCertificateByUser(id);
-  }
-
-  @Delete(':id')
-  @HttpCode(200)
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    required: true,
-    description: 'User id',
-  })
-  @ApiOperation({ summary: 'Delete user', description: 'Delete user by id' })
-  @ApiOkResponse({ type: null })
-  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({
-    description:
-      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
-  })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
-  public async delete(@Param('id') id: UserDTO['id']): Promise<void> {
-    this.logger.log(`user id: ${id}`);
-    await this.service.delete(id);
   }
 }
