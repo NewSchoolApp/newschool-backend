@@ -40,11 +40,11 @@ const mailerAsyncModule: MailerAsyncOptions = {
     SecurityModule,
     UserModule,
     CourseModule,
-    // MessageModule,
-    // UploadModule,
-    // DashboardModule,
-    // GameficationModule,
-    // NotificationModule,
+    MessageModule,
+    UploadModule,
+    DashboardModule,
+    GameficationModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

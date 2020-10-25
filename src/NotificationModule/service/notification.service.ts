@@ -16,17 +16,21 @@ export class NotificationService {
     return this.repository.save({ user, type, content });
   }
 
-  public async getNotificationsByUser(
-    user: User,
-  ): Promise<Notification<unknown>[]> {
+  public async getNotificationsByUser(user: User): Promise<Notification[]> {
     return this.repository.find({ where: user });
   }
 
-  public async getNotificationById(id: string): Promise<Notification<unknown>> {
-    const notification = this.repository.findOne({ id });
-    if (!notification) {
+  public async getNotificationsByUserId(
+    userId: string,
+  ): Promise<Notification[]> {
+    return this.repository.getNotificationsByUserId(userId);
+  }
+
+  public async findNotificationById(id: string): Promise<Notification> {
+    const response: Notification[] = await this.repository.find({ id });
+    if (!response.length) {
       throw new NotFoundException('Notification not found');
     }
-    return notification;
+    return response[0];
   }
 }
