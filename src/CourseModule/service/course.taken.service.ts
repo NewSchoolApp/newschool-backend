@@ -1,12 +1,14 @@
 import { Course } from '../entity/course.entity';
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenStatusEnum } from '../enum/enum';
-import { OrderEnum } from '../enum/order.enum';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { User } from '../../UserModule/entity/user.entity';
 import { UserService } from '../../UserModule/service/user.service';
@@ -36,6 +38,7 @@ export class CourseTakenService {
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
     private readonly userMapper: UserMapper,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly lessonService: LessonService,
@@ -143,7 +146,10 @@ export class CourseTakenService {
     return alternativeProgression;
   }
 
-  public async advanceOnCourse(userId: string, courseId): Promise<void> {
+  public async advanceOnCourse(
+    userId: string,
+    courseId: string,
+  ): Promise<void> {
     const [user, course]: [User, Course] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),

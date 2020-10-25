@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,10 +17,12 @@ import { PublisherService } from '../../GameficationModule/service/publisher.ser
 
 @Injectable()
 export class TestService {
+  @Inject(PublisherService)
+  private readonly publisherService: PublisherService;
+
   constructor(
     private readonly partService: PartService,
     private readonly repository: TestRepository,
-    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()

@@ -1,8 +1,5 @@
 import { forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { SecurityModule } from '../SecurityModule/security.module';
 import { User } from './entity/user.entity';
 import { UserRepository } from './repository/user.repository';
 import { ChangePassword } from './entity/change-password.entity';
@@ -13,6 +10,7 @@ import { UserMapper } from './mapper/user.mapper';
 import { ChangePasswordService } from './service/change-password.service';
 import { SchoolController } from './controller/school.controller';
 import { SchoolService } from './service/school.service';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
 
 @Module({
   imports: [
@@ -22,17 +20,8 @@ import { SchoolService } from './service/school.service';
       ChangePassword,
       ChangePasswordRepository,
     ]),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    forwardRef(() => SecurityModule),
     HttpModule,
+    forwardRef(() => GameficationModule),
   ],
   controllers: [UserController, SchoolController],
   providers: [UserService, UserMapper, ChangePasswordService, SchoolService],

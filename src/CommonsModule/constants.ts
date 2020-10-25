@@ -4,7 +4,6 @@ export class Constants {
   static OAUTH_ENDPOINT = 'oauth';
 
   static USER_ENDPOINT = 'user';
-  static CERTIFICATE_ENDPOINT = 'certificate';
 
   static COURSE_TAKEN_ENDPOINT = 'course-taken';
 
@@ -15,8 +14,11 @@ export class Constants {
   static PART_ENDPOINT = 'part';
   static TEST_ENDPOINT = 'test';
   static SCHOOL_ENDPOINT = 'school';
+  static GAMEFICATION_ENDPOINT = 'gamefication';
 
   static UPLOAD_ENDPOINT = 'upload';
 
   static MESSAGE_ENDPOINT = 'message';
+
+  static NOTIFICATION_ENDPOINT = 'user';
 }

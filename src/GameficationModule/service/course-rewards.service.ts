@@ -1,11 +1,10 @@
 import { BadgeRepository } from '../repository/badge.repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import * as PubSub from 'pubsub-js';
-import { PusherService } from './pusher.service';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -19,21 +18,22 @@ interface CheckTestRule {
 }
 
 @Injectable()
-export class CourseRewardsService {
+export class CourseRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly pusherService: PusherService,
-  ) {
+  ) {}
+
+  onModuleInit(): void {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-      (message: string, data: TestOnFirstTake) => {
-        this.checkTestReward(data);
+      async (message: string, data: TestOnFirstTake) => {
+        await this.checkTestReward(data);
       },
     );
   }
 
-  async checkTestReward({
+  private async checkTestReward({
     chosenAlternative,
     test,
     user,

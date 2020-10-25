@@ -3,6 +3,7 @@ import { NotificationRepository } from '../repository/notification.repository';
 import { NotificationTypeEnum } from '../enum/notification-type.enum';
 import { Notification } from '../entity/notification.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 
 @Injectable()
 export class NotificationService {
@@ -16,17 +17,22 @@ export class NotificationService {
     return this.repository.save({ user, type, content });
   }
 
-  public async getNotificationsByUser(
-    user: User,
-  ): Promise<Notification<unknown>[]> {
+  public async getNotificationsByUser(user: User): Promise<Notification[]> {
     return this.repository.find({ where: user });
   }
 
-  public async getNotificationById(id: string): Promise<Notification<unknown>> {
-    const notification = this.repository.findOne({ id });
-    if (!notification) {
+  public async getNotificationsByUserId(
+    userId: string,
+    order: OrderEnum,
+  ): Promise<Notification[]> {
+    return this.repository.getNotificationsByUserId(userId, order);
+  }
+
+  public async findNotificationById(id: string): Promise<Notification> {
+    const response: Notification[] = await this.repository.find({ id });
+    if (!response.length) {
       throw new NotFoundException('Notification not found');
     }
-    return notification;
+    return response[0];
   }
 }

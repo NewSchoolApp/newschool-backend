@@ -1,7 +1,5 @@
-import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { LessonRepository } from './repository/lesson.repository';
 import { TestRepository } from './repository/test.repository';
@@ -15,7 +13,6 @@ import { PartService } from './service/part.service';
 import { LessonController } from './controllers/lesson.controller';
 import { Lesson } from './entity/lesson.entity';
 import { PartController } from './controllers/part.controller';
-import { SecurityModule } from '../SecurityModule/security.module';
 import { TestMapper } from './mapper/test.mapper';
 import { PartRepository } from './repository/part.repository';
 import { Part } from './entity/part.entity';
@@ -46,19 +43,9 @@ import { CourseTakenRepository } from './repository/course.taken.repository';
       CourseTaken,
       CourseTakenRepository,
     ]),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
     MulterModule.register({ dest: './upload' }),
-    UserModule,
-    SecurityModule,
-    GameficationModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => GameficationModule),
   ],
   controllers: [
     CourseController,

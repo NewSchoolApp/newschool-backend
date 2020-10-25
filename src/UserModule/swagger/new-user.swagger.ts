@@ -1,13 +1,35 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entity/user.entity';
+import { UserProfileEnum } from '../enum/user-profile.enum';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 export class NewUserSwagger {
-  @ApiProperty({ type: String })
-  name: User['name'];
+  name: string;
 
-  @ApiProperty({ type: String })
-  email: User['email'];
+  email: string;
 
-  @ApiProperty({ type: String })
-  password: User['password'];
+  profile: UserProfileEnum;
+
+  password: string;
+
+  nickname?: string;
+
+  birthday?: Date;
+
+  gender?: GenderEnum;
+
+  schooling?: EscolarityEnum;
+
+  institutionName?: string;
+
+  profession?: string;
+
+  address?: string;
+
+  urlFacebook?: User['urlFacebook'];
+
+  urlInstagram?: User['urlInstagram'];
+
+  role: RoleEnum;
 }

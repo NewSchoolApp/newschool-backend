@@ -28,17 +28,23 @@ import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found
 import { NewUserDTO } from '../dto/new-user.dto';
 import { UserUpdateDTO } from '../dto/user-update.dto';
 import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { AchievementService } from '../../GameficationModule/service/achievement.service';
+import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class UserService {
+  @Inject(PublisherService)
+  private readonly publisherService: PublisherService;
+
   constructor(
     private readonly repository: UserRepository,
     private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
-    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
+    private readonly achievementService: AchievementService,
   ) {}
 
   @Transactional()
@@ -47,17 +53,20 @@ export class UserService {
   }
 
   public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id, {
+    const user: User[] = await this.repository.find({
+      where: { id },
       relations: ['role'],
     });
-    if (!user) {
+    if (!user.length) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return user[0];
   }
 
   @Transactional()
-  public async getCertificateByUser(userId): Promise<CertificateUserDTO[]> {
+  public async getCertificateByUser(
+    userId: string,
+  ): Promise<CertificateUserDTO[]> {
     const certificates = await this.repository.getCertificateByUser(userId);
 
     return certificates.map<CertificateUserDTO>((certificate) => {
@@ -74,6 +83,36 @@ export class UserService {
 
   public async getUsersQuantity(): Promise<number> {
     return this.repository.getUsersQuantity();
+  }
+
+  public async findByInviteKey(inviteKey: string): Promise<User> {
+    const user: User = await this.repository.findByInviteKey(inviteKey);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  public async countUsersInvitedByUserId(id: string): Promise<number> {
+    return this.repository.countUsersInvitedByUserId(id);
+  }
+
+  public async addStudent(user: NewUserDTO, inviteKey: string): Promise<User> {
+    let invitedByUserId: string | null;
+    if (inviteKey) {
+      const invitedByUser: User = await this.repository.findByInviteKey(
+        inviteKey,
+      );
+      invitedByUserId = invitedByUser ? invitedByUser.id : null;
+    }
+
+    const newStudent = await this.add({ ...user, invitedByUserId });
+
+    if (inviteKey) {
+      // iniciar gameficação
+      this.publisherService.emitInviteUserReward(inviteKey);
+    }
+    return newStudent;
   }
 
   public async add(user: NewUserDTO): Promise<User> {
@@ -99,6 +138,15 @@ export class UserService {
   public async delete(id: User['id']): Promise<void> {
     await this.findById(id);
     await this.repository.delete(id);
+  }
+
+  public async updateStudent(
+    id: User['id'],
+    userUpdatedInfo: UserUpdateDTO,
+  ): Promise<User> {
+    const user = await this.update(id, userUpdatedInfo);
+    this.publisherService.emitupdateStudent(id);
+    return user;
   }
 
   @Transactional()
@@ -172,7 +220,9 @@ export class UserService {
   }
 
   @Transactional()
-  public async validateChangePassword(changePasswordRequestId: string) {
+  public async validateChangePassword(
+    changePasswordRequestId: string,
+  ): Promise<void> {
     const changePassword: ChangePassword = await this.changePasswordService.findById(
       changePasswordRequestId,
     );
@@ -279,5 +329,12 @@ export class UserService {
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
+  }
+
+  async findBadgesWithQuantityByUserId(
+    id: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
+    const user = await this.findById(id);
+    return this.achievementService.findBadgesWithQuantityByUser(user);
   }
 }

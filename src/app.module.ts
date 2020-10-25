@@ -13,6 +13,7 @@ import { AppConfigService as ConfigService } from './ConfigModule/service/app-co
 import { DashboardModule } from './DashboardModule/dashboard.module';
 import { GameficationModule } from './GameficationModule/gamefication.module';
 import { NotificationModule } from './NotificationModule/notification.module';
+import { JwtModule } from '@nestjs/jwt';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
