@@ -55,14 +55,13 @@ export class UserRewardsService implements OnModuleInit {
       EventNameEnum.USER_REWARD_INVITE_USER,
       async (message: string, data: InviteUserRewardData) => {
         await this.inviteUserReward(data);
-      },
-    );
+      });
     PubSub.subscribe(
       EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION,
       async (message: string, data) => {
         await this.completeRegistrationReward(data);
       },
-    );
+    )
   }
 
   private async shareCourseReward({
@@ -181,32 +180,25 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async completeRegistrationReward({ id }) {
+
     const user: User = await this.userService.findById(id);
-    const propertiesToCheck: string[] = [
-      'address',
-      'profession',
-      'institutionName',
-      'gender',
-      'birthday',
-      'nickname',
-    ];
+    const propertiesToCheck: string[] = ['address', 'profession', 'institutionName', 'gender', 'birthday', 'nickname'];
     let isProfileComplete: boolean = true;
+
 
     propertiesToCheck.forEach((propertyName: string) => {
       if (user[propertyName] == null) isProfileComplete = false;
     });
 
     if (!isProfileComplete) return;
-
+  
+    
     const completeRegistrationBadge: Badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION,
       1,
     );
 
-    const achievement: Achievement = await this.achievementRepository.findCompletedByUserIdAndBadgeId(
-      user.id,
-      completeRegistrationBadge.id,
-    );
+    const achievement: Achievement = await this.achievementRepository.findCompletedByUserIdAndBadgeId(user.id, completeRegistrationBadge.id);
 
     if (achievement) return;
 
