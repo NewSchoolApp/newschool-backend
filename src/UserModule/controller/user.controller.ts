@@ -126,7 +126,7 @@ export class UserController {
     );
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDto(
-      await this.service.update(id, selfUpdatedInfo as UserUpdateDTO),
+      await this.service.updateStudent(id, selfUpdatedInfo as UserUpdateDTO),
     );
   }
 

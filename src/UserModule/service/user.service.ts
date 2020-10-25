@@ -135,6 +135,21 @@ export class UserService {
   }
 
   @Transactional()
+  public async delete(id: User['id']): Promise<void> {
+    await this.findById(id);
+    await this.repository.delete(id);
+  }
+
+  public async updateStudent(
+    id: User['id'],
+    userUpdatedInfo: UserUpdateDTO,
+  ): Promise<User> {
+    const user = await this.update(id, userUpdatedInfo);
+    this.publisherService.emitupdateStudent(id);
+    return user;
+  }
+
+  @Transactional()
   public async update(
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,

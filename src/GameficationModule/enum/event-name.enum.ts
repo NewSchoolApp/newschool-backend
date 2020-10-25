@@ -3,4 +3,5 @@ export enum EventNameEnum {
   USER_REWARD_SHARE_COURSE = 'UserReward::ShareCourse',
   USER_REWARD_RATE_APP = 'UserReward::RateApp',
   USER_REWARD_INVITE_USER = 'UserReward::InviteUser',
+  USER_REWARD_COMPLETE_REGISTRATION = 'UserReward::CompleteRegistration',
 }
