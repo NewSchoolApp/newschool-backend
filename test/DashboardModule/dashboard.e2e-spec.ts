@@ -21,7 +21,7 @@ import { CourseService } from '../../src/CourseModule/service/course.service';
 import { CourseTakenService } from '../../src/CourseModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
-import { OrderEnum } from '../../src/DashboardModule/enum/order.enum';
+import { OrderEnum } from '../../src/CommonsModule/enum/order.enum';
 import { REQUEST } from '@nestjs/core';
 
 const stringToBase64 = (string: string) => {

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { CourseTakenStatusEnum } from '../enum/enum';
-import { OrderEnum } from '../enum/order.enum';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { User } from '../../UserModule/entity/user.entity';
 import { UserService } from '../../UserModule/service/user.service';

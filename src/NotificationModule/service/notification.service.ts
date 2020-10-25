@@ -3,6 +3,7 @@ import { NotificationRepository } from '../repository/notification.repository';
 import { NotificationTypeEnum } from '../enum/notification-type.enum';
 import { Notification } from '../entity/notification.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 
 @Injectable()
 export class NotificationService {
@@ -22,8 +23,9 @@ export class NotificationService {
 
   public async getNotificationsByUserId(
     userId: string,
+    order: OrderEnum,
   ): Promise<Notification[]> {
-    return this.repository.getNotificationsByUserId(userId);
+    return this.repository.getNotificationsByUserId(userId, order);
   }
 
   public async findNotificationById(id: string): Promise<Notification> {
