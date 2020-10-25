@@ -144,11 +144,10 @@ export class UserService {
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
   ): Promise<User> {
-    const user = await this.update(id, userUpdatedInfo)    
+    const user = await this.update(id, userUpdatedInfo);
     this.publisherService.emitupdateStudent(id);
     return user;
-    }
-
+  }
 
   @Transactional()
   public async update(

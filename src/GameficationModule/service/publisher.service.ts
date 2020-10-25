@@ -54,7 +54,7 @@ export class PublisherService {
     PubSub.publish(EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE, data);
   }
   public emitupdateStudent(id: string): void {
-    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION, {id});
+    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION, { id });
   }
 
   private getUserStringToken(authorizationHeader: string): string {
