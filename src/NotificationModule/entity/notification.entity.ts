@@ -4,7 +4,7 @@ import { User } from '../../UserModule/entity/user.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity()
-export class Notification<T> extends Audit {
+export class Notification<T = unknown> extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

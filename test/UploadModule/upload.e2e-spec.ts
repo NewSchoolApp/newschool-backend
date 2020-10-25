@@ -1,4 +1,4 @@
-import { GrantTypeEnum } from './../../src/SecurityModule/enum/grant-type.enum';
+import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as request from 'supertest';
 import * as fs from 'fs';
