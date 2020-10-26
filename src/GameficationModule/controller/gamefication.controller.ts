@@ -13,7 +13,7 @@ import { GameficationService } from '../service/gamefication.service';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
-import { OrderEnum } from 'src/CommonsModule/enum/order.enum';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
 
 @Controller(
