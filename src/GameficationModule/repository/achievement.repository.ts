@@ -5,6 +5,8 @@ import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
+import { getRankingUser } from '../interfaces/getRankingUser';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -95,5 +97,20 @@ export class AchievementRepository extends Repository<Achievement> {
     eventName: EventNameEnum,
   ): Promise<number> {
     return this.count({ where: { eventName } });
+  }
+
+  public async getRanking(order: OrderEnum): Promise<getRankingUser[]> {
+    return this.query(
+      `
+    SELECT c.name as 'user_name', b.points * count(a.badgeId) as 'points' FROM achievement a
+    inner join badge b 
+    on a.badgeId = b.id 
+    inner join user c
+    on a.userId = c.id
+    WHERE a.completed = 1
+    GROUP by a.badgeId 
+    order by points ${order}
+    `,
+    );
   }
 }
