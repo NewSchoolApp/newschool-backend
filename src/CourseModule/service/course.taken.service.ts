@@ -45,7 +45,7 @@ export class CourseTakenService {
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
-    private readonly publisherService: PublisherService
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
