@@ -101,7 +101,7 @@ export class AchievementRepository extends Repository<Achievement> {
 
   public async getRanking(order: OrderEnum): Promise<getRankingUser[]> {
     return this.query(
-    `
+      `
     SELECT c.name as 'user_name', b.points * count(a.badgeId) as 'points' FROM achievement a
     inner join badge b 
     on a.badgeId = b.id 
@@ -110,7 +110,7 @@ export class AchievementRepository extends Repository<Achievement> {
     WHERE a.completed = 1
     GROUP by a.badgeId 
     order by points ${order}
-    `
-    )
+    `,
+    );
   }
 }

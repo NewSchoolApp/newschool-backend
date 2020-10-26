@@ -1,4 +1,4 @@
 export interface getRankingUser {
-  userName: string;
+  user_name: string;
   points: string;
 }

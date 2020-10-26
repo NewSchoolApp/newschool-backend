@@ -8,14 +8,16 @@ import { getRankingUser } from '../interfaces/getRankingUser';
 
 @Injectable()
 export class GameficationService {
-  constructor(private readonly publisherService: PublisherService, 
-  private readonly achivementRepository: AchievementRepository) {}
+  constructor(
+    private readonly publisherService: PublisherService,
+    private readonly achivementRepository: AchievementRepository,
+  ) {}
 
-  startEvent(event: StartEventEnum, rule: StartEventRules) {
+  startEvent(event: StartEventEnum, rule: StartEventRules): void {
     this.publisherService.startEvent(event, rule);
   }
 
   getRanking(order: OrderEnum): Promise<getRankingUser[]> {
-    return this.achivementRepository.getRanking(order)
+    return this.achivementRepository.getRanking(order);
   }
 }
