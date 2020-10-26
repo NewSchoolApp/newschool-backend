@@ -58,8 +58,12 @@ export class PublisherService {
     PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION, { id });
   }
 
-  public emitCouseCompleted(course: CourseTaken): void {
-    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, course);
+  public emitCourseCompleted(courseTaken: CourseTaken): void {
+    const data = {
+      userId: courseTaken.user.id,
+      courseId: courseTaken.course.id
+    }
+    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, data);
   }
 
   private getUserStringToken(authorizationHeader: string): string {

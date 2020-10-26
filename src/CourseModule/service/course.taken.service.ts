@@ -221,7 +221,7 @@ export class CourseTakenService {
       status: CourseTakenStatusEnum.COMPLETED,
       courseCompleteDate: new Date(Date.now()),
     });
-    this.publisherService.emitCouseCompleted(courseTaken);
+    this.publisherService.emitCourseCompleted(courseTaken);
   }
 
   private getNextSequenceNumber(step: Lesson | Part | Test): number {
