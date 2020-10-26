@@ -67,14 +67,11 @@ export class UserRewardsService implements OnModuleInit {
       EventNameEnum.USER_REWARD_COMPLETE_COURSE,
       async (message: string, data) => {
         this.completeCourseReward(data);
-      }
+      },
     );
   }
 
-  private async completeCourseReward({
-    courseId,
-    userId
-  }):Promise<void>{
+  private async completeCourseReward({ courseId, userId }): Promise<void> {
     const [user, course] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),
@@ -102,7 +99,6 @@ export class UserRewardsService implements OnModuleInit {
       completed: true,
       eventName: EventNameEnum.USER_REWARD_COMPLETE_COURSE,
     });
-
   }
 
   private async shareCourseReward({
