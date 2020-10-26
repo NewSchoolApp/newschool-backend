@@ -61,8 +61,8 @@ export class PublisherService {
   public emitCourseCompleted(courseTaken: CourseTaken): void {
     const data = {
       userId: courseTaken.user.id,
-      courseId: courseTaken.course.id
-    }
+      courseId: courseTaken.course.id,
+    };
     PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, data);
   }
 
