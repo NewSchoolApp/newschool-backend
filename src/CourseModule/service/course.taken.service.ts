@@ -31,6 +31,7 @@ import { LessonService } from './lesson.service';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
+import { PublisherService } from 'src/GameficationModule/service/publisher.service';
 
 @Injectable()
 export class CourseTakenService {
@@ -44,6 +45,7 @@ export class CourseTakenService {
     private readonly lessonService: LessonService,
     private readonly partService: PartService,
     private readonly testService: TestService,
+    private readonly publisherService: PublisherService
   ) {}
 
   @Transactional()
@@ -219,6 +221,7 @@ export class CourseTakenService {
       status: CourseTakenStatusEnum.COMPLETED,
       courseCompleteDate: new Date(Date.now()),
     });
+    this.publisherService.emitCouseCompleted(courseTaken);
   }
 
   private getNextSequenceNumber(step: Lesson | Part | Test): number {
