@@ -30,8 +30,8 @@ import { PartService } from './part.service';
 import { LessonService } from './lesson.service';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
-import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
-import { PublisherService } from 'src/GameficationModule/service/publisher.service';
+import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class CourseTakenService {
