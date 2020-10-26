@@ -63,6 +63,46 @@ export class UserRewardsService implements OnModuleInit {
         await this.completeRegistrationReward(data);
       },
     );
+    PubSub.subscribe(
+      EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+      async (message: string, data) => {
+        this.completeCourseReward(data);
+      }
+    );
+  }
+
+  private async completeCourseReward({
+    courseId,
+    userId
+  }):Promise<void>{
+    const [user, course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+    if (!user || !course) return;
+    const courseTaken: CourseTaken = await this.courseTakenService.findByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+    if (!courseTaken) return;
+    if (
+      courseTaken.status !== CourseTakenStatusEnum.COMPLETED ||
+      courseTaken.completion !== 100
+    )
+      return;
+    const badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+      1,
+    );
+
+    await this.achievementRepository.save({
+      user,
+      badge,
+      rule: { courseId },
+      completed: true,
+      eventName: EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+    });
+
   }
 
   private async shareCourseReward({
