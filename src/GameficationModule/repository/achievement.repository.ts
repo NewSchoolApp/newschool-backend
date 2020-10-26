@@ -5,7 +5,7 @@ import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
-import { OrderEnum } from 'src/CommonsModule/enum/order.enum';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
 
 @EntityRepository(Achievement)
