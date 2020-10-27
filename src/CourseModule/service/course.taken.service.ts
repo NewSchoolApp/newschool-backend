@@ -31,6 +31,7 @@ import { LessonService } from './lesson.service';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
+import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
 
 @Injectable()
 export class CourseTakenService {
@@ -295,9 +296,9 @@ export class CourseTakenService {
       this.userService.findById(userId),
       this.courseService.findById(courseId),
     ]);
-    const courseTaken: CourseTaken = await this.repository.findOne(
-      { user, course },
-      { relations: ['user', 'course'] },
+    const courseTaken = this.repository.findByUserIdAndCourseId(
+      user.id,
+      course.id,
     );
     if (!courseTaken) {
       throw new NotFoundException('Course not taken by user');
@@ -385,5 +386,23 @@ export class CourseTakenService {
     //executar query que rotorna o array de cursos de acordo com a ordem levando em consideração a coluna que armazena o array dos alunos que terminaram
 
     return this.repository.getDistinctCourses(order, limit);
+  }
+
+  async avaliateCourse(
+    userId: string,
+    courseId: string,
+    { rating, feedback }: NpsCourseTakenDTO,
+  ): Promise<void> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+
+    await this.repository.save({ ...courseTaken, rating, feedback });
   }
 }

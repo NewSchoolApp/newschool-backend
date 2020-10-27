@@ -87,10 +87,14 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async findByUserIdAndCourseId(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+    userId: string,
+    courseId: string,
   ): Promise<CourseTaken | undefined> {
-    return this.findOne({ user, course }, { relations: ['user', 'course'] });
+    const response = await this.find({
+      where: { user: { id: userId }, course: { id: courseId } },
+      relations: ['user', 'course'],
+    });
+    return response[0];
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {

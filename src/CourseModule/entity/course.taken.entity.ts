@@ -70,6 +70,16 @@ export class CourseTaken extends Audit {
   @Expose()
   completion: number;
 
+  @Column({
+    nullable: true,
+  })
+  @Expose()
+  rating: number;
+
+  @Column()
+  @Expose()
+  feedback: string;
+
   @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken, {
     nullable: true,
   })
