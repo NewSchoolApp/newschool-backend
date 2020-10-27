@@ -28,7 +28,7 @@ export class CourseRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly courseTakenService: CourseTakenService
+    private readonly courseTakenService: CourseTakenService,
   ) {}
 
   onModuleInit(): void {
@@ -56,17 +56,23 @@ export class CourseRewardsService implements OnModuleInit {
     courseId,
     userId,
   }: CompleteCourseRewardDTO): Promise<void> {
-    const {user} = await this.courseTakenService.findByUserIdAndCourseId(userId,courseId);
-    
-    const completeCourse = this.courseTakenService.isCompletedByUserIdAndCourseId(userId,courseId);
-    
-    if(!completeCourse) return;
+    const { user } = await this.courseTakenService.findByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+
+    const completeCourse = this.courseTakenService.isCompletedByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+
+    if (!completeCourse) return;
 
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       1,
     );
-    
+
     await this.achievementRepository.save({
       user,
       badge,
@@ -75,7 +81,7 @@ export class CourseRewardsService implements OnModuleInit {
       eventName: EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
     });
   }
-  
+
   private async checkTestReward({
     chosenAlternative,
     test,
