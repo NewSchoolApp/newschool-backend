@@ -63,7 +63,7 @@ export class CourseRewardsService implements OnModuleInit {
       courseId,
     );
 
-    const completeCourse = this.courseTakenService.isCompletedByUserIdAndCourseId(
+    const completeCourse = this.courseTakenService.getCompletedByUserIdAndCourseId(
       userId,
       courseId,
     );

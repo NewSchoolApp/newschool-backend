@@ -225,7 +225,7 @@ export class CourseTakenService {
       return;
     }
 
-    const completedCouse = this.isCompletedByUserIdAndCourseId(
+    const completedCouse = this.getCompletedByUserIdAndCourseId(
       user.id,
       course.id,
     );
@@ -362,11 +362,11 @@ export class CourseTakenService {
     return courseTaken;
   }
 
-  public async isCompletedByUserIdAndCourseId(
+  public async getCompletedByUserIdAndCourseId(
     userId,
     courseId,
-  ): Promise<boolean> {
-    return this.repository.isCompletedByUserIdAndCourseId(userId, courseId);
+  ): Promise<CourseTaken> {
+    return this.repository.getCompletedByUserIdAndCourseId(userId, courseId);
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {
