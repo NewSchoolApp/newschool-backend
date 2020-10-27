@@ -11,6 +11,7 @@ import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { InviteUserRewardData } from './user-rewards.service';
+import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 
 @Injectable()
 export class PublisherService {
@@ -55,6 +56,14 @@ export class PublisherService {
   }
   public emitupdateStudent(id: string): void {
     PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION, { id });
+  }
+
+  public emitNpsReward(userId: string, courseId: string): void {
+    const data: CourseNpsRewardDTO = {
+      userId,
+      courseId,
+    };
+    PubSub.publish(EventNameEnum.COURSE_REWARD_COURSE_NPS, data);
   }
 
   private getUserStringToken(authorizationHeader: string): string {

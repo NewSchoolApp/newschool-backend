@@ -1,10 +1,13 @@
 import { BadgeRepository } from '../repository/badge.repository';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import * as PubSub from 'pubsub-js';
+import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
+import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
+import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -22,6 +25,7 @@ export class CourseRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
+    private readonly courseTakenService: CourseTakenService,
   ) {}
 
   onModuleInit(): void {
@@ -29,6 +33,12 @@ export class CourseRewardsService implements OnModuleInit {
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       async (message: string, data: TestOnFirstTake) => {
         await this.checkTestReward(data);
+      },
+    );
+    PubSub.subscribe(
+      EventNameEnum.COURSE_REWARD_COURSE_NPS,
+      async (message: string, data: CourseNpsRewardDTO) => {
+        await this.courseNpsReward(data);
       },
     );
   }
@@ -104,5 +114,43 @@ export class CourseRewardsService implements OnModuleInit {
     };
 
     await this.achievementRepository.save(achievement);
+  }
+
+  async courseNpsReward({
+    userId,
+    courseId,
+  }: CourseNpsRewardDTO): Promise<void> {
+    /*
+     * Evento para verificar se o usuário avaliou o curso
+     * Ele deve ganhar os pontos apenas se:
+     * 1- Se ele está no curso
+     * 2- Se ele finalizou o curso
+     * 3- Se ele ainda não ganhou os pontos dessa gameficação
+     * */
+    const badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.COURSE_REWARD_COURSE_NPS,
+      1,
+    );
+
+    const achievement = await this.achievementRepository.findByUserIdAndBadgeId(
+      userId,
+      badge.id,
+    );
+
+    if (achievement) return;
+
+    const courseTaken: CourseTaken = await this.courseTakenService.findCompletedWithRatingByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+
+    if (!courseTaken.rating) return;
+
+    await this.achievementRepository.save({
+      user: { id: userId },
+      badge,
+      eventName: EventNameEnum.COURSE_REWARD_COURSE_NPS,
+      completed: true,
+    });
   }
 }

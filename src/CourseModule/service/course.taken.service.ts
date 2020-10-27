@@ -1,5 +1,6 @@
 import { Course } from '../entity/course.entity';
 import {
+  BadRequestException,
   ConflictException,
   forwardRef,
   Inject,
@@ -31,9 +32,14 @@ import { LessonService } from './lesson.service';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
+import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class CourseTakenService {
+  @Inject(PublisherService)
+  private readonly publisherService: PublisherService;
+
   constructor(
     private readonly repository: CourseTakenRepository,
     private readonly mapper: CourseTakenMapper,
@@ -295,9 +301,47 @@ export class CourseTakenService {
       this.userService.findById(userId),
       this.courseService.findById(courseId),
     ]);
-    const courseTaken: CourseTaken = await this.repository.findOne(
-      { user, course },
-      { relations: ['user', 'course'] },
+    const courseTaken = this.repository.findByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+    if (!courseTaken) {
+      throw new NotFoundException('Course not taken by user');
+    }
+    return courseTaken;
+  }
+
+  @Transactional()
+  public async findCompletedByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+    const courseTaken = this.repository.findCompletedByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+    if (!courseTaken) {
+      throw new NotFoundException('Course not taken by user');
+    }
+    return courseTaken;
+  }
+
+  @Transactional()
+  public async findCompletedWithRatingByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+    const courseTaken = this.repository.findCompletedWithRatingByUserIdAndCourseId(
+      user.id,
+      course.id,
     );
     if (!courseTaken) {
       throw new NotFoundException('Course not taken by user');
@@ -385,5 +429,31 @@ export class CourseTakenService {
     //executar query que rotorna o array de cursos de acordo com a ordem levando em consideração a coluna que armazena o array dos alunos que terminaram
 
     return this.repository.getDistinctCourses(order, limit);
+  }
+
+  async avaliateCourse(
+    userId: string,
+    courseId: string,
+    { rating, feedback }: NpsCourseTakenDTO,
+  ): Promise<void> {
+    const [user, course]: [User, Course] = await Promise.all([
+      this.userService.findById(userId),
+      this.courseService.findById(courseId),
+    ]);
+
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+
+    if (
+      courseTaken.status !== CourseTakenStatusEnum.COMPLETED ||
+      courseTaken.completion !== 100
+    ) {
+      throw new BadRequestException('Course not finished by user');
+    }
+
+    this.publisherService.emitNpsReward(userId, courseId);
+    await this.repository.save({ ...courseTaken, rating, feedback });
   }
 }

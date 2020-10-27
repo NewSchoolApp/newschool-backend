@@ -33,6 +33,7 @@ import { AlternativeProgressionDTO } from '../dto/alternative-progression.dto';
 import { CourseTakenDTO } from '../dto/course.taken.dto';
 import { VideoProgressionDTO } from '../dto/video-progression.dto';
 import { CertificateDTO } from '../dto/certificate.dto';
+import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
 
 @ApiExtraModels(VideoProgressionDTO, AlternativeProgressionDTO)
 @ApiTags('CourseTaken')
@@ -124,6 +125,22 @@ export class CourseTakenController {
     return this.mapper.toDto(
       await this.service.findByUserIdAndCourseId(userId, courseId),
     );
+  }
+
+  @Post('/user/:userId/course/:courseId')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: 'Find course taken',
+    description: 'Find course taken by user id and course id',
+  })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async avaliateCourse(
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
+    @Body() avaliation: NpsCourseTakenDTO,
+  ): Promise<void> {
+    await this.service.avaliateCourse(userId, courseId, avaliation);
   }
 
   @Post('/start-course')
