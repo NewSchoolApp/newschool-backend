@@ -8,6 +8,9 @@ import * as PubSub from 'pubsub-js';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
+import { Course } from 'src/CourseModule/entity/course.entity';
+import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
+import { CourseTakenStatusEnum } from 'src/CourseModule/enum/enum';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -25,7 +28,7 @@ export class CourseRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly courseTakenService: CourseTakenService,
+    private readonly courseTakenService: CourseTakenService
   ) {}
 
   onModuleInit(): void {
@@ -41,8 +44,38 @@ export class CourseRewardsService implements OnModuleInit {
         await this.courseNpsReward(data);
       },
     );
+    PubSub.subscribe(
+      EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
+      async (message: string, data) => {
+        this.completeCourseReward(data);
+      },
+    );
   }
 
+  private async completeCourseReward({
+    courseId,
+    userId,
+  }: CompleteCourseRewardDTO): Promise<void> {
+    const {user} = await this.courseTakenService.findByUserIdAndCourseId(userId,courseId);
+    
+    const completeCourse = this.courseTakenService.isCompletedByUserIdAndCourseId(userId,courseId);
+    
+    if(!completeCourse) return;
+
+    const badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
+      1,
+    );
+    
+    await this.achievementRepository.save({
+      user,
+      badge,
+      rule: { completion: 100, status: CourseTakenStatusEnum.COMPLETED },
+      completed: true,
+      eventName: EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
+    });
+  }
+  
   private async checkTestReward({
     chosenAlternative,
     test,
