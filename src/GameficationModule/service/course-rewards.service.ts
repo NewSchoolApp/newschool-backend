@@ -58,17 +58,18 @@ export class CourseRewardsService implements OnModuleInit {
     courseId,
     userId,
   }: CompleteCourseRewardDTO): Promise<void> {
-    const { user } = await this.courseTakenService.findByUserIdAndCourseId(
-      userId,
-      courseId,
-    );
-
+    
     const completeCourse = this.courseTakenService.getCompletedByUserIdAndCourseId(
       userId,
       courseId,
     );
 
     if (!completeCourse) return;
+
+    const { user } = await this.courseTakenService.findByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
 
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
