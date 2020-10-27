@@ -19,15 +19,17 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     userId: string,
     courseId: string,
   ): Promise<CourseTaken> {
-    return this.findOne({
-      user: { id: userId },
-      course: { id: courseId },
-      completion: 100,
-      status: CourseTakenStatusEnum.COMPLETED
-    },
-    {
-      relations: ['user','course']
-    })
+    return this.findOne(
+      {
+        user: { id: userId },
+        course: { id: courseId },
+        completion: 100,
+        status: CourseTakenStatusEnum.COMPLETED,
+      },
+      {
+        relations: ['user', 'course'],
+      },
+    );
   }
 
   public async findByUser(
