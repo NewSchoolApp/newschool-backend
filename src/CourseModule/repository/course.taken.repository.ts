@@ -1,6 +1,6 @@
 import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { User } from '../../UserModule/entity/user.entity';
 import { CourseTaken } from '../entity/course.taken.entity';
@@ -92,6 +92,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
       where: { user: { id: userId }, course: { id: courseId } },
+      take: 1,
       relations: ['user', 'course'],
     });
     return response[0];
@@ -138,5 +139,40 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.query(
       `SELECT COUNT(*) AS 'frequency', c.title FROM course_taken LEFT JOIN course c ON course_taken.course_id = c.id GROUP BY course_id ORDER BY course_id ${order} LIMIT ${limit}`,
     );
+  }
+
+  async findCompletedByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken | undefined> {
+    const response = await this.find({
+      where: {
+        user: { id: userId },
+        course: { id: courseId },
+        status: CourseTakenStatusEnum.COMPLETED,
+        completion: 100,
+      },
+      take: 1,
+      relations: ['user', 'course'],
+    });
+    return response[0];
+  }
+
+  async findCompletedWithRatingByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken | undefined> {
+    const response = await this.find({
+      where: {
+        user: { id: userId },
+        course: { id: courseId },
+        status: CourseTakenStatusEnum.COMPLETED,
+        completion: 100,
+        rating: Not(IsNull()),
+      },
+      take: 1,
+      relations: ['user', 'course'],
+    });
+    return response[0];
   }
 }
