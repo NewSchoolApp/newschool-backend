@@ -19,6 +19,7 @@ import { CourseTakenService } from '../../CourseModule/service/course.taken.serv
 import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 import { User } from '../../UserModule/entity/user.entity';
 import { Badge } from '../entity/badge.entity';
+import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 
 export interface SharedCourseRule {
   courseId: string;
@@ -71,7 +72,7 @@ export class UserRewardsService implements OnModuleInit {
     );
   }
 
-  private async completeCourseReward({ courseId, userId }): Promise<void> {
+  private async completeCourseReward({ courseId, userId }:CompleteCourseRewardDTO): Promise<void> {
     const [user, course] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),
