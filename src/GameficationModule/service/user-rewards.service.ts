@@ -65,7 +65,7 @@ export class UserRewardsService implements OnModuleInit {
       },
     );
     PubSub.subscribe(
-      EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+      EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       async (message: string, data) => {
         this.completeCourseReward(data);
       },
@@ -92,7 +92,7 @@ export class UserRewardsService implements OnModuleInit {
     )
       return;
     const badge = await this.badgeRepository.findByEventNameAndOrder(
-      EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+      EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       1,
     );
 
@@ -101,7 +101,7 @@ export class UserRewardsService implements OnModuleInit {
       badge,
       rule: { courseId },
       completed: true,
-      eventName: EventNameEnum.USER_REWARD_COMPLETE_COURSE,
+      eventName: EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
     });
   }
 
