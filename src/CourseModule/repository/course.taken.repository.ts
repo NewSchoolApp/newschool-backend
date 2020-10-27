@@ -16,24 +16,25 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async isCompletedByUserIdAndCourseId(
-    userId:string,
-    courseId:string
-  ):Promise<boolean> {
+    userId: string,
+    courseId: string,
+  ): Promise<boolean> {
     const courseTaken: any = await this.createQueryBuilder('coursetaken')
       .where('coursetaken.status = :courseTakenStatus', {
         courseTakenStatus: CourseTakenStatusEnum.COMPLETED,
       })
-      .where('coursetaken.completion = :courseTakenCompletion',{
+      .where('coursetaken.completion = :courseTakenCompletion', {
         courseTakenCompletion: 100,
       })
-      .where('coursetaken.userd_id = :userId',{
-        'user_id': userId,
+      .where('coursetaken.userd_id = :userId', {
+        user_id: userId,
       })
-      .where('coursetaken.course_id = :courseId',{
-        'course_id': courseId
-      }).getOne();
-      if(courseTaken) return true;
-      return false;
+      .where('coursetaken.course_id = :courseId', {
+        course_id: courseId,
+      })
+      .getOne();
+    if (courseTaken) return true;
+    return false;
   }
 
   public async findByUser(

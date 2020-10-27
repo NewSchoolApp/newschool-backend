@@ -72,7 +72,10 @@ export class UserRewardsService implements OnModuleInit {
     );
   }
 
-  private async completeCourseReward({ courseId, userId }:CompleteCourseRewardDTO): Promise<void> {
+  private async completeCourseReward({
+    courseId,
+    userId,
+  }: CompleteCourseRewardDTO): Promise<void> {
     const [user, course] = await Promise.all([
       this.userService.findById(userId),
       this.courseService.findById(courseId),
