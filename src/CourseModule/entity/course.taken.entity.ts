@@ -74,11 +74,13 @@ export class CourseTaken extends Audit {
     nullable: true,
   })
   @Expose()
-  rating: number;
+  rating?: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @Expose()
-  feedback: string;
+  feedback?: string;
 
   @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken, {
     nullable: true,
