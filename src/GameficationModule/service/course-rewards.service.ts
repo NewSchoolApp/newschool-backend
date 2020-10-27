@@ -58,7 +58,6 @@ export class CourseRewardsService implements OnModuleInit {
     courseId,
     userId,
   }: CompleteCourseRewardDTO): Promise<void> {
-    
     const completeCourse = this.courseTakenService.getCompletedByUserIdAndCourseId(
       userId,
       courseId,
