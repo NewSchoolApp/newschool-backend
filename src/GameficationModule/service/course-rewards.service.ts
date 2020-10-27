@@ -11,6 +11,8 @@ import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { Course } from 'src/CourseModule/entity/course.entity';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 import { CourseTakenStatusEnum } from 'src/CourseModule/enum/enum';
+import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
+import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
