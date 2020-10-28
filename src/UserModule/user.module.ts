@@ -24,7 +24,13 @@ import { GameficationModule } from '../GameficationModule/gamefication.module';
     forwardRef(() => GameficationModule),
   ],
   controllers: [UserController, SchoolController],
-  providers: [UserService, UserMapper, ChangePasswordService, SchoolService],
-  exports: [UserService, UserMapper],
+  providers: [
+    UserService,
+    UserMapper,
+    ChangePasswordService,
+    SchoolService,
+    UserRepository,
+  ],
+  exports: [UserService, UserMapper, UserRepository],
 })
 export class UserModule {}

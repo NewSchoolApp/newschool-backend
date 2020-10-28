@@ -65,6 +65,8 @@ import { CourseTakenRepository } from './repository/course.taken.repository';
     TestMapper,
     CourseTakenService,
     CourseTakenMapper,
+    CourseTakenRepository,
+    CourseRepository,
   ],
   exports: [
     CourseService,
@@ -72,6 +74,8 @@ import { CourseTakenRepository } from './repository/course.taken.repository';
     PartService,
     TestService,
     CourseTakenService,
+    CourseTakenRepository,
+    CourseRepository,
   ],
 })
 export class CourseModule {}

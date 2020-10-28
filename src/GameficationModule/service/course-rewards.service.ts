@@ -10,6 +10,7 @@ import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
+import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -27,7 +28,7 @@ export class CourseRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly courseTakenService: CourseTakenService,
+    private readonly courseTakenRepository: CourseTakenRepository,
   ) {}
 
   onModuleInit(): void {
@@ -46,7 +47,7 @@ export class CourseRewardsService implements OnModuleInit {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       async (message: string, data) => {
-        this.completeCourseReward(data);
+        await this.completeCourseReward(data);
       },
     );
   }
@@ -55,20 +56,19 @@ export class CourseRewardsService implements OnModuleInit {
     courseId,
     userId,
   }: CompleteCourseRewardDTO): Promise<void> {
-    const completeCourse = await this.courseTakenService.getCompletedByUserIdAndCourseId(
+    const completedCourse = await this.courseTakenRepository.getCompletedByUserIdAndCourseId(
       userId,
       courseId,
     );
+    if (!completedCourse) return;
 
-    if (!completeCourse) return;
-    const user: User = completeCourse.user;
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       1,
     );
 
     await this.achievementRepository.save({
-      user,
+      user: completedCourse.user,
       badge,
       rule: { completion: 100, status: CourseTakenStatusEnum.COMPLETED },
       completed: true,
@@ -172,7 +172,7 @@ export class CourseRewardsService implements OnModuleInit {
 
     if (achievement) return;
 
-    const courseTaken: CourseTaken = await this.courseTakenService.findCompletedWithRatingByUserIdAndCourseId(
+    const courseTaken: CourseTaken = await this.courseTakenRepository.findCompletedWithRatingByUserIdAndCourseId(
       userId,
       courseId,
     );

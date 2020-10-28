@@ -13,12 +13,12 @@ import * as PubSub from 'pubsub-js';
 import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { Achievement } from '../entity/achievement.entity';
-import { UserService } from '../../UserModule/service/user.service';
-import { CourseService } from '../../CourseModule/service/course.service';
-import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 import { User } from '../../UserModule/entity/user.entity';
 import { Badge } from '../entity/badge.entity';
+import { UserRepository } from '../../UserModule/repository/user.repository';
+import { CourseRepository } from '../../CourseModule/repository/course.repository';
+import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 export interface SharedCourseRule {
   courseId: string;
 }
@@ -32,9 +32,9 @@ export class UserRewardsService implements OnModuleInit {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
-    private readonly userService: UserService,
-    private readonly courseService: CourseService,
-    private readonly courseTakenService: CourseTakenService,
+    private readonly userRepository: UserRepository,
+    private readonly courseRepository: CourseRepository,
+    private readonly courseTakenRepository: CourseTakenRepository,
   ) {}
 
   onModuleInit(): void {
@@ -69,14 +69,9 @@ export class UserRewardsService implements OnModuleInit {
     userId,
     platform,
   }: StartEventShareCourseRuleDTO): Promise<void> {
-    const [user, course] = await Promise.all([
-      this.userService.findById(userId),
-      this.courseService.findById(courseId),
-    ]);
-    if (!user || !course) return;
-    const courseTaken: CourseTaken = await this.courseTakenService.findByUserIdAndCourseId(
-      user.id,
-      course.id,
+    const courseTaken: CourseTaken = await this.courseTakenRepository.findByUserIdAndCourseId(
+      userId,
+      courseId,
     );
     if (!courseTaken) return;
 
@@ -100,7 +95,7 @@ export class UserRewardsService implements OnModuleInit {
 
     await this.achievementRepository.save({
       ...sharedCourse,
-      user,
+      user: courseTaken.user,
       badge,
       rule: { courseId, platform },
       completed: true,
@@ -109,7 +104,11 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async rateAppReward({ userId, rate }: StartEventRateAppRuleDTO) {
-    const user = await this.userService.findById(userId);
+    const response: User[] = await this.userRepository.find({
+      where: { id: userId },
+    });
+    const user = response[0];
+    if (!user) return;
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.USER_REWARD_RATE_APP,
       1,
@@ -139,11 +138,11 @@ export class UserRewardsService implements OnModuleInit {
     // e.g: o cara convidou 3 pessoas, então ele precisa ter 1 achievement
     // e.g: O cara convidou 4 pessoas, ele ainda vai ter 1 achievement
     // e.g: o cara convidou 6 pessoas, ele vai ter 2 achievements
-    const userWithGivenInviteKey: User = await this.userService.findByInviteKey(
+    const userWithGivenInviteKey: User = await this.userRepository.findByInviteKey(
       inviteKey,
     );
 
-    const usersInvitedCount: number = await this.userService.countUsersInvitedByUserId(
+    const usersInvitedCount: number = await this.userRepository.countUsersInvitedByUserId(
       userWithGivenInviteKey.id,
     );
 
@@ -180,7 +179,9 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async completeRegistrationReward({ id }) {
-    const user: User = await this.userService.findById(id);
+    const response: User[] = await this.userRepository.find({ where: { id } });
+    const user = response[0];
+    if (!user) return;
     const propertiesToCheck: string[] = [
       'address',
       'profession',
@@ -189,7 +190,7 @@ export class UserRewardsService implements OnModuleInit {
       'birthday',
       'nickname',
     ];
-    let isProfileComplete: boolean = true;
+    let isProfileComplete = true;
 
     propertiesToCheck.forEach((propertyName: string) => {
       if (user[propertyName] == null) isProfileComplete = false;

@@ -2,7 +2,7 @@ import * as PubSub from 'pubsub-js';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { TestOnFirstTake } from './course-rewards.service';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { Test } from '../../CourseModule/entity/test.entity';
@@ -43,6 +43,7 @@ export class PublisherService {
   }
 
   public emitCheckTestReward(test: Test, chosenAlternative: string): void {
+    console.log('to aqui');
     const authorizationHeader = this.request.headers.authorization;
     const userStringToken = this.getUserStringToken(authorizationHeader);
     const user: User = this.getUserFromToken(userStringToken);

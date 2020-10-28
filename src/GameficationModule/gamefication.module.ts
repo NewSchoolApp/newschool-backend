@@ -15,6 +15,7 @@ import { GameficationController } from './controller/gamefication.controller';
 import { GameficationService } from './service/gamefication.service';
 import { UserRewardsService } from './service/user-rewards.service';
 import { AchievementService } from './service/achievement.service';
+import { CourseTakenRepository } from '../CourseModule/repository/course.taken.repository';
 
 @Module({
   controllers: [GameficationController],
@@ -24,6 +25,7 @@ import { AchievementService } from './service/achievement.service';
       AchievementRepository,
       Badge,
       BadgeRepository,
+      CourseTakenRepository,
     ]),
     forwardRef(() => UserModule),
     forwardRef(() => CourseModule),
