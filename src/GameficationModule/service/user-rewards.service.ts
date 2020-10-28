@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { AchievementRepository } from '../repository/achievement.repository';
 import { StartEventShareCourseRuleDTO } from '../dto/start-event-share-course.dto';
 import { EventNameEnum } from '../enum/event-name.enum';

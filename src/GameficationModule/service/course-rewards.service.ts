@@ -5,7 +5,6 @@ import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import * as PubSub from 'pubsub-js';
-import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
