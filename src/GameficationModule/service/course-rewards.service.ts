@@ -8,8 +8,7 @@ import * as PubSub from 'pubsub-js';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
-import { Course } from 'src/CourseModule/entity/course.entity';
-import { CourseTakenStatusEnum } from 'src/CourseModule/enum/enum';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 
 export interface TestOnFirstTake {
