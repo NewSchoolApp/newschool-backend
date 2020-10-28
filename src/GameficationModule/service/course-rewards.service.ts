@@ -59,9 +59,9 @@ export class CourseRewardsService implements OnModuleInit {
       userId,
       courseId,
     );
-    
+
     if (!completeCourse) return;
-    const user:User = completeCourse.user;
+    const user: User = completeCourse.user;
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
       1,

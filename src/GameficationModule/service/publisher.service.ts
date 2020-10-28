@@ -67,8 +67,8 @@ export class PublisherService {
     PubSub.publish(EventNameEnum.COURSE_REWARD_COURSE_NPS, data);
   }
 
-  public emitCourseCompleted(course:CourseTaken): void {
-    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, course );
+  public emitCourseCompleted(course: CourseTaken): void {
+    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, course);
   }
 
   private getUserStringToken(authorizationHeader: string): string {
