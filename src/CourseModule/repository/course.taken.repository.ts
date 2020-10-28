@@ -15,6 +15,23 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.find({ relations: ['user', 'course'], where: { user: user } });
   }
 
+  public async getCompletedByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken> {
+    return this.findOne(
+      {
+        user: { id: userId },
+        course: { id: courseId },
+        completion: 100,
+        status: CourseTakenStatusEnum.COMPLETED,
+      },
+      {
+        relations: ['user', 'course'],
+      },
+    );
+  }
+
   public async findByUser(
     user: CourseTaken['user'],
   ): Promise<CourseTaken[] | undefined> {

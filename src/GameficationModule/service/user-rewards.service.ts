@@ -19,7 +19,6 @@ import { CourseTakenService } from '../../CourseModule/service/course.taken.serv
 import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 import { User } from '../../UserModule/entity/user.entity';
 import { Badge } from '../entity/badge.entity';
-
 export interface SharedCourseRule {
   courseId: string;
 }

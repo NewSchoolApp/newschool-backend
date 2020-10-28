@@ -162,7 +162,11 @@ export class CourseTakenService {
     ]);
 
     const courseTaken = await this.findByUserAndCourse(user, course);
-
+    if (
+      courseTaken.completion === 100 &&
+      courseTaken.status === CourseTakenStatusEnum.COMPLETED
+    )
+      return;
     const nextTest: Test = await this.testService.getByPartAndSequenceNumber(
       courseTaken.currentPart,
       this.getNextSequenceNumber(courseTaken.currentTest),
@@ -212,6 +216,7 @@ export class CourseTakenService {
         currentPart: nextPart,
         currentLesson: nextLesson,
       };
+
       updatedCourseTaken.completion = await this.calculateCompletion(
         updatedCourseTaken,
       );
@@ -219,12 +224,19 @@ export class CourseTakenService {
       return;
     }
 
+    const completedCouse = this.getCompletedByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+    if (!completedCouse) return;
+
     await this.repository.save({
       ...courseTaken,
       completion: 100,
       status: CourseTakenStatusEnum.COMPLETED,
       courseCompleteDate: new Date(Date.now()),
     });
+    this.publisherService.emitCourseCompleted(courseTaken);
   }
 
   private getNextSequenceNumber(step: Lesson | Part | Test): number {
@@ -347,6 +359,13 @@ export class CourseTakenService {
       throw new NotFoundException('Course not taken by user');
     }
     return courseTaken;
+  }
+
+  public async getCompletedByUserIdAndCourseId(
+    userId,
+    courseId,
+  ): Promise<CourseTaken> {
+    return this.repository.getCompletedByUserIdAndCourseId(userId, courseId);
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {
