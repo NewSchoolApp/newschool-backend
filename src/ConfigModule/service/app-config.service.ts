@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import * as Pusher from 'pusher';
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 
 @Injectable()
 export class AppConfigService {
