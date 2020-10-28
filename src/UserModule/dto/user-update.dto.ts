@@ -69,6 +69,16 @@ export class UserUpdateDTO {
   @Expose()
   address?: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  city: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  state: string;
+
   @IsOptional()
   @IsString()
   @Expose()
