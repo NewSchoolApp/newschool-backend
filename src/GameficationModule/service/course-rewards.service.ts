@@ -59,6 +59,7 @@ export class CourseRewardsService implements OnModuleInit {
       userId,
       courseId,
     );
+
     if (!completedCourse) return;
 
     const badge = await this.badgeRepository.findByEventNameAndOrder(
@@ -176,7 +177,7 @@ export class CourseRewardsService implements OnModuleInit {
       courseId,
     );
 
-    if (!courseTaken.rating) return;
+    if (!courseTaken) return;
 
     await this.achievementRepository.save({
       user: { id: userId },

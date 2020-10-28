@@ -63,23 +63,18 @@ export class UserRewardsService implements OnModuleInit {
     userId,
     platform,
   }: StartEventShareCourseRuleDTO): Promise<void> {
-    const courseTaken: CourseTaken = await this.courseTakenRepository.findByUserIdAndCourseId(
+    const courseTaken: CourseTaken = await this.courseTakenRepository.findCompletedByUserIdAndCourseId(
       userId,
       courseId,
     );
     if (!courseTaken) return;
-
-    if (
-      courseTaken.status !== CourseTakenStatusEnum.COMPLETED ||
-      courseTaken.completion !== 100
-    )
-      return;
 
     const [
       sharedCourse,
     ] = await this.achievementRepository.getSharedCourseByCourseIdAndUserIdAndSocialMedia<
       Achievement<SharedCourseRule>
     >(courseId, userId, platform);
+
     if (sharedCourse) return;
 
     const badge = await this.badgeRepository.findByEventNameAndOrder(
@@ -135,6 +130,8 @@ export class UserRewardsService implements OnModuleInit {
     const userWithGivenInviteKey: User = await this.userRepository.findByInviteKey(
       inviteKey,
     );
+
+    if (!userWithGivenInviteKey) return;
 
     const usersInvitedCount: number = await this.userRepository.countUsersInvitedByUserId(
       userWithGivenInviteKey.id,
