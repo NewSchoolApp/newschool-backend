@@ -33,7 +33,6 @@ describe('CourseController (e2e)', () => {
   let dbConnection: Connection;
   let authorization: string;
   const courseUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COURSE_ENDPOINT}`;
-  const userUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.USER_ENDPOINT}`;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -95,8 +94,8 @@ describe('CourseController (e2e)', () => {
           .field('description', newCourse.description)
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
-          .expect(201)
           .expect((res) => {
+            console.log(res.body);
             expect(res.body.id).not.toBeUndefined();
             expect(res.body.slug).toBe('teste-e3e-to-add');
           })
