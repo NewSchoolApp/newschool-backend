@@ -15,6 +15,7 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
+import { TimeFilterEnum } from '../enum/time-filter.enum';
 
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.GAMEFICATION_ENDPOINT}`,
@@ -33,8 +34,18 @@ export class GameficationController {
   @Get('ranking')
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
+    @Query('timeFilter') timeFilter: TimeFilterEnum = TimeFilterEnum.MONTH,
+    @Query('institutionName') institutionName?: string,
+    @Query('city') city?: string,
+    @Query('state') state?: string,
   ): Promise<getRankingUser[]> {
-    const result = await this.service.getRanking(order);
+    const result = await this.service.getRanking(
+      order,
+      timeFilter,
+      institutionName,
+      city,
+      state,
+    );
     return result;
   }
 }

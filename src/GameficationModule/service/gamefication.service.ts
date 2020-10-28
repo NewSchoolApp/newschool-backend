@@ -5,6 +5,7 @@ import { StartEventEnum } from '../enum/start-event.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
+import { TimeFilterEnum } from '../enum/time-filter.enum';
 
 @Injectable()
 export class GameficationService {
@@ -17,7 +18,19 @@ export class GameficationService {
     this.publisherService.startEvent(event, rule);
   }
 
-  getRanking(order: OrderEnum): Promise<getRankingUser[]> {
-    return this.achivementRepository.getRanking(order);
+  getRanking(
+    order: OrderEnum,
+    timeFilter: TimeFilterEnum,
+    institutionName?: string,
+    city?: string,
+    state?: string,
+  ): Promise<getRankingUser[]> {
+    return this.achivementRepository.getRanking(
+      order,
+      timeFilter,
+      institutionName,
+      city,
+      state,
+    );
   }
 }
