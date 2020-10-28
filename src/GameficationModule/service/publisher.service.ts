@@ -2,7 +2,7 @@ import * as PubSub from 'pubsub-js';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { TestOnFirstTake } from './course-rewards.service';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { Test } from '../../CourseModule/entity/test.entity';
@@ -17,7 +17,7 @@ import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 @Injectable()
 export class PublisherService {
   constructor(
-    @Inject(REQUEST) private readonly request: Request,
+    @Inject(REQUEST) private request: Request,
     private readonly jwtService: JwtService,
   ) {}
 

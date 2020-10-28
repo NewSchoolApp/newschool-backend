@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,6 +13,8 @@ import { Part } from '../entity/part.entity';
 import { TestUpdateDTO } from '../dto/test-update.dto';
 import { Test } from '../entity/test.entity';
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 @Injectable()
 export class TestService {
@@ -23,6 +24,7 @@ export class TestService {
   constructor(
     private readonly partService: PartService,
     private readonly repository: TestRepository,
+    @Inject(REQUEST) private request: Request,
   ) {}
 
   @Transactional()
