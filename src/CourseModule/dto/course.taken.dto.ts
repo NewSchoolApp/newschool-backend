@@ -6,6 +6,7 @@ import {
   IsNotEmptyObject,
   IsNumber,
   IsOptional,
+  IsString,
   Max,
   Min,
 } from 'class-validator';
@@ -64,4 +65,17 @@ export class CourseTakenDTO {
   @IsNotEmptyObject()
   @Expose()
   currentTest: CourseTaken['currentTest'];
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  @Expose()
+  rating?: CourseTaken['rating'];
+
+  @IsOptional()
+  @IsString()
+  @Expose()
+  feedback?: CourseTaken['feedback'];
 }
