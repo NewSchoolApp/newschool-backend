@@ -7,6 +7,7 @@ import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
+import { TimeFilterEnum } from '../enum/time-filter.enum';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -99,7 +100,44 @@ export class AchievementRepository extends Repository<Achievement> {
     return this.count({ where: { eventName } });
   }
 
-  public async getRanking(order: OrderEnum): Promise<getRankingUser[]> {
+  public async getRanking(
+    order: OrderEnum,
+    timeFilter: TimeFilterEnum,
+    institutionName?: string,
+    city?: string,
+    state?: string,
+  ): Promise<getRankingUser[]> {
+    let institutionQuery = ``;
+    const filterMethod = timeFilter === TimeFilterEnum.MONTH ? 'MONTH' : 'YEAR';
+    const filterQuery = `
+      AND ${filterMethod}(a.updatedAt) = ${filterMethod}(CURRENT_DATE())
+    `;
+    let cityQuery = ``;
+    let stateQuery = ``;
+
+    const params: string[] = [];
+
+    if (institutionName) {
+      institutionQuery = `
+      and c.institutionName = ? 
+      `;
+      params.push(institutionName);
+    }
+
+    if (city) {
+      cityQuery = `
+      and c.city = ? 
+      `;
+      params.push(city);
+    }
+
+    if (state) {
+      stateQuery = `
+      and c.state = ? 
+      `;
+      params.push(state);
+    }
+
     return this.query(
       `
     SELECT c.name as 'user_name', b.points * count(a.badgeId) as 'points' FROM achievement a
@@ -107,10 +145,11 @@ export class AchievementRepository extends Repository<Achievement> {
     on a.badgeId = b.id 
     inner join user c
     on a.userId = c.id
-    WHERE a.completed = 1
+    WHERE a.completed = 1 ${filterQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
     GROUP by a.badgeId 
     order by points ${order}
     `,
+      params,
     );
   }
 }
