@@ -9,6 +9,7 @@ import {
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
 import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
+import * as Sentry from '@sentry/node';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -34,7 +35,9 @@ async function bootstrap() {
 
   const appConfigService = app.get<ConfigService>(ConfigService);
 
-  app.useGlobalFilters(new HttpExceptionFilter(appConfigService));
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  Sentry.init(appConfigService.getSentryConfiguration());
 
   await app.listen(appConfigService.port || 8080);
 }

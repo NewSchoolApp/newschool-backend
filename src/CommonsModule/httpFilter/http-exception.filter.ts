@@ -5,12 +5,11 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as Rollbar from 'rollbar';
-import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import * as Sentry from '@sentry/node'
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly configService: ConfigService) {}
+  constructor() {}
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -18,13 +17,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const error = exception.getResponse();
 
-    const env = this.configService.nodeEnv;
-
-    if (env === 'TEST' || env === 'PROD') {
-      const rollbar = new Rollbar(this.configService.getRollbarConfiguration());
-
-      rollbar.warning(JSON.stringify(error));
-    }
+    Sentry.captureException(error);
 
     response.status(status).json(error);
   }

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import * as Pusher from 'pusher';
-import Rollbar = require('rollbar');
+import * as Sentry from '@sentry/node'
 
 @Injectable()
 export class AppConfigService {
@@ -61,11 +61,13 @@ export class AppConfigService {
   pusherSecret: string = this.configService.get<string>('PUSHER_SECRET');
   pusherCluster: string = this.configService.get<string>('PUSHER_CLUSTER');
 
-  public getRollbarConfiguration(): Rollbar.Configuration {
+  public getSentryConfiguration(): Sentry.NodeOptions {
     return {
-      accessToken: this.configService.get<string>('ROLLBAR_TOKEN'),
-      captureUncaught: true,
-      captureUnhandledRejections: true,
+      dsn: this.configService.get<string>('SENTRY_URL'),
+      tracesSampleRate: 1.0,
+      enabled: this.nodeEnv !== 'TEST',
+      environment: this.nodeEnv,
+      attachStacktrace: true,
     };
   }
 
