@@ -119,34 +119,34 @@ export class AchievementRepository extends Repository<Achievement> {
 
     if (institutionName) {
       institutionQuery = `
-      and c.institutionName = ? 
+      and c.institutionName = ?
       `;
       params.push(institutionName);
     }
 
     if (city) {
       cityQuery = `
-      and c.city = ? 
+      and c.city = ?
       `;
       params.push(city);
     }
 
     if (state) {
       stateQuery = `
-      and c.state = ? 
+      and c.state = ?
       `;
       params.push(state);
     }
 
     return this.query(
       `
-    SELECT c.name as 'user_name', b.points * count(a.badgeId) as 'points' FROM achievement a
-    inner join badge b 
-    on a.badgeId = b.id 
+    SELECT c.id as 'userId', c.name as 'userName', b.points * count(a.badgeId) as 'points' FROM achievement a
+    inner join badge b
+    on a.badgeId = b.id
     inner join user c
     on a.userId = c.id
     WHERE a.completed = 1 ${filterQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
-    GROUP by a.badgeId 
+    GROUP by a.badgeId
     order by points ${order}
     `,
       params,
