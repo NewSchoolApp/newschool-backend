@@ -38,38 +38,48 @@ export class UserDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  nickname: string;
+  nickname?: string;
 
   @Transform((date) => date && new Date(date))
   @IsNotEmpty()
   @IsDate()
   @Expose()
-  birthday: Date;
+  birthday?: Date;
 
   @IsNotEmpty()
   @IsEnum(GenderEnum)
   @Expose()
-  gender: GenderEnum;
+  gender?: GenderEnum;
 
   @IsNotEmpty()
   @IsEnum(EscolarityEnum)
   @Expose()
-  schooling: EscolarityEnum;
+  schooling?: EscolarityEnum;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
-  institutionName: string;
+  institutionName?: string;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
-  profession: string;
+  profession?: string;
 
   @IsNotEmpty()
   @IsString()
   @Expose()
-  address: string;
+  address?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  city?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  state?: string;
 
   @IsOptional()
   @IsString()
