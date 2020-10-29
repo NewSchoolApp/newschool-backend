@@ -16,7 +16,10 @@ import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { getRankingUser } from '../interfaces/getRankingUser';
 import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Gamefication')
+@ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.GAMEFICATION_ENDPOINT}`,
 )
@@ -32,6 +35,8 @@ export class GameficationController {
   }
 
   @Get('ranking')
+  @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
     @Query('timeFilter') timeFilter: TimeFilterEnum = TimeFilterEnum.MONTH,
@@ -39,13 +44,12 @@ export class GameficationController {
     @Query('city') city?: string,
     @Query('state') state?: string,
   ): Promise<getRankingUser[]> {
-    const result = await this.service.getRanking(
+    return await this.service.getRanking(
       order,
       timeFilter,
       institutionName,
       city,
       state,
     );
-    return result;
   }
 }
