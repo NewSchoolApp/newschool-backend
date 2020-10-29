@@ -76,6 +76,14 @@ export class User extends Audit {
   @Expose()
   address?: string;
 
+  @Column({ nullable: true })
+  @Expose()
+  city?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  state?: string;
+
   @Column({ name: 'url_facebook', nullable: true })
   @Expose()
   urlFacebook?: string;

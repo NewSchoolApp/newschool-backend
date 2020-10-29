@@ -72,6 +72,16 @@ export class UserUpdateDTO {
   @IsOptional()
   @IsString()
   @Expose()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  @Expose()
+  state?: string;
+
+  @IsOptional()
+  @IsString()
+  @Expose()
   urlFacebook?: User['urlFacebook'];
 
   @IsOptional()
