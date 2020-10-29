@@ -6,8 +6,8 @@ import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { getRankingUser } from '../interfaces/getRankingUser';
 import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { RankingDTO } from '../dto/ranking.dto';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -106,7 +106,7 @@ export class AchievementRepository extends Repository<Achievement> {
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<getRankingUser[]> {
+  ): Promise<RankingDTO[]> {
     let institutionQuery = ``;
     const filterMethod = timeFilter === TimeFilterEnum.MONTH ? 'MONTH' : 'YEAR';
     const filterQuery = `

@@ -4,8 +4,8 @@ import { StartEventRules } from '../dto/start-event-rules.dto';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { getRankingUser } from '../interfaces/getRankingUser';
 import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { RankingDTO } from '../dto/ranking.dto';
 
 @Injectable()
 export class GameficationService {
@@ -24,7 +24,7 @@ export class GameficationService {
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<getRankingUser[]> {
+  ): Promise<RankingDTO[]> {
     return this.achivementRepository.getRanking(
       order,
       timeFilter,

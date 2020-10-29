@@ -14,9 +14,9 @@ import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { getRankingUser } from '../interfaces/getRankingUser';
 import { TimeFilterEnum } from '../enum/time-filter.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RankingDTO } from '../dto/ranking.dto';
 
 @ApiTags('Gamefication')
 @ApiBearerAuth()
@@ -43,7 +43,7 @@ export class GameficationController {
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
-  ): Promise<getRankingUser[]> {
+  ): Promise<RankingDTO[]> {
     return await this.service.getRanking(
       order,
       timeFilter,
