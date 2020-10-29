@@ -5,7 +5,10 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { Constants } from '../../CommonsModule/constants';
 import { Schools } from '../dto/school.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('School')
+@ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.SCHOOL_ENDPOINT}`,
 )

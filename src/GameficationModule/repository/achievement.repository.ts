@@ -6,8 +6,8 @@ import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { getRankingUser } from '../interfaces/getRankingUser';
 import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { RankingDTO } from '../dto/ranking.dto';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -106,7 +106,7 @@ export class AchievementRepository extends Repository<Achievement> {
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<getRankingUser[]> {
+  ): Promise<RankingDTO[]> {
     let institutionQuery = ``;
     const filterMethod = timeFilter === TimeFilterEnum.MONTH ? 'MONTH' : 'YEAR';
     const filterQuery = `
@@ -119,34 +119,34 @@ export class AchievementRepository extends Repository<Achievement> {
 
     if (institutionName) {
       institutionQuery = `
-      and c.institutionName = ? 
+      and c.institutionName = ?
       `;
       params.push(institutionName);
     }
 
     if (city) {
       cityQuery = `
-      and c.city = ? 
+      and c.city = ?
       `;
       params.push(city);
     }
 
     if (state) {
       stateQuery = `
-      and c.state = ? 
+      and c.state = ?
       `;
       params.push(state);
     }
 
     return this.query(
       `
-    SELECT c.name as 'user_name', b.points * count(a.badgeId) as 'points' FROM achievement a
-    inner join badge b 
-    on a.badgeId = b.id 
+    SELECT c.id as 'userId', c.name as 'userName', b.points * count(a.badgeId) as 'points' FROM achievement a
+    inner join badge b
+    on a.badgeId = b.id
     inner join user c
     on a.userId = c.id
     WHERE a.completed = 1 ${filterQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
-    GROUP by a.badgeId 
+    GROUP by a.badgeId
     order by points ${order}
     `,
       params,
