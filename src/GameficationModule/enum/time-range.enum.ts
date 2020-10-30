@@ -1,4 +1,4 @@
-export enum TimeFilterEnum {
+export enum TimeRangeEnum {
   MONTH = 'MONTH',
   YEAR = 'YEAR',
 }

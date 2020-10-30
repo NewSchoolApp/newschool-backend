@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Param,
   Post,
   Query,
   UseGuards,
@@ -14,7 +15,7 @@ import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { TimeRangeEnum } from '../enum/time-range.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
 
@@ -39,17 +40,27 @@ export class GameficationController {
   @UseGuards(RoleGuard)
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
-    @Query('timeFilter') timeFilter: TimeFilterEnum = TimeFilterEnum.MONTH,
+    @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
   ): Promise<RankingDTO[]> {
     return await this.service.getRanking(
       order,
-      timeFilter,
+      timeRange,
       institutionName,
       city,
       state,
     );
+  }
+
+  @Get('ranking/user/:userId')
+  // @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  // @UseGuards(RoleGuard)
+  public async getUserRanking(
+    @Param('userId') userId: string,
+    @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
+  ): Promise<RankingDTO> {
+    return await this.service.getUserRanking(userId, timeRange);
   }
 }

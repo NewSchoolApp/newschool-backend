@@ -6,7 +6,7 @@ import { EventNameEnum } from '../enum/event-name.enum';
 import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { TimeFilterEnum } from '../enum/time-filter.enum';
+import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 
 @EntityRepository(Achievement)
@@ -102,54 +102,118 @@ export class AchievementRepository extends Repository<Achievement> {
 
   public async getRanking(
     order: OrderEnum,
-    timeFilter: TimeFilterEnum,
+    timeRange: TimeRangeEnum,
     institutionName?: string,
     city?: string,
     state?: string,
   ): Promise<RankingDTO[]> {
     let institutionQuery = ``;
-    const filterMethod = timeFilter === TimeFilterEnum.MONTH ? 'MONTH' : 'YEAR';
-    const filterQuery = `
-      AND ${filterMethod}(a.updatedAt) = ${filterMethod}(CURRENT_DATE())
+    const timeRangeMethod =
+      timeRange === TimeRangeEnum.MONTH ? 'MONTH' : 'YEAR';
+    const timeRangeQuery = `
+      AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
     `;
     let cityQuery = ``;
     let stateQuery = ``;
 
-    const params: string[] = [];
-
     if (institutionName) {
       institutionQuery = `
-      and c.institutionName = ?
+      and c2.institutionName = ${city}
       `;
-      params.push(institutionName);
     }
 
     if (city) {
       cityQuery = `
-      and c.city = ?
+      and c2.city = ${city}
       `;
-      params.push(city);
     }
 
     if (state) {
       stateQuery = `
-      and c.state = ?
+      and c2.state = ${state}
       `;
-      params.push(state);
     }
+
+    const derivedTable = `
+    SELECT c2.id as 'userId', c2.name as 'userName', SUM(b2.points) as 'points' FROM achievement a2
+      inner join badge b2
+      on a2.badgeId = b2.id
+      inner join user c2
+      on a2.userId = c2.id
+      WHERE a2.completed = 1 ${timeRangeQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
+      GROUP by a2.userId
+    `;
 
     return this.query(
       `
-    SELECT c.id as 'userId', c.name as 'userName', b.points * count(a.badgeId) as 'points' FROM achievement a
-    inner join badge b
-    on a.badgeId = b.id
-    inner join user c
-    on a.userId = c.id
-    WHERE a.completed = 1 ${filterQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
-    GROUP by a.badgeId
-    order by points ${order}
+    SELECT
+      t.userId,
+      t.userName,
+      t.points,
+      1 + (
+        SELECT
+          count( * )
+        FROM
+          (${derivedTable})
+        AS
+          t2
+        WHERE
+          t2.points > t.points
+      )
+    AS
+      rank
+    FROM
+      (${derivedTable})
+    AS t ORDER BY t.points ${order}
+    `,
+    );
+  }
+
+  public async getUserRanking(
+    userId: string,
+    timeRange: TimeRangeEnum,
+  ): Promise<RankingDTO> {
+    const timeRangeMethod =
+      timeRange === TimeRangeEnum.MONTH ? 'MONTH' : 'YEAR';
+    const timeRangeQuery = `
+      AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
+    `;
+    const params = [userId];
+    const derivedTable = `
+    SELECT c2.id as 'userId', c2.name as 'userName', SUM(b2.points) as 'points' FROM achievement a2
+      inner join badge b2
+      on a2.badgeId = b2.id
+      inner join user c2
+      on a2.userId = c2.id
+      WHERE a2.completed = 1 ${timeRangeQuery}
+      GROUP by a2.userId
+      order by points DESC
+    `;
+
+    const response: RankingDTO[] = await this.query(
+      `
+    SELECT
+      t.userId,
+      t.userName,
+      t.points,
+      1 + (
+        SELECT
+          count( * )
+        FROM
+          (${derivedTable})
+        AS
+          t2
+        WHERE
+          t2.points > t.points
+      )
+    AS
+      rank
+    FROM
+      (${derivedTable})
+    AS t WHERE t.userId = ?
     `,
       params,
     );
+    return response[0];
   }
 }
