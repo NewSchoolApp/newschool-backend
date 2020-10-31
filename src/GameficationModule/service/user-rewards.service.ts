@@ -5,7 +5,6 @@ import { EventNameEnum } from '../enum/event-name.enum';
 import { BadgeRepository } from '../repository/badge.repository';
 import * as PubSub from 'pubsub-js';
 import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
-import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { Achievement } from '../entity/achievement.entity';
 import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 import { User } from '../../UserModule/entity/user.entity';
@@ -13,6 +12,7 @@ import { Badge } from '../entity/badge.entity';
 import { UserRepository } from '../../UserModule/repository/user.repository';
 import { CourseRepository } from '../../CourseModule/repository/course.repository';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
+import { ShareAppRewardDataDTO } from '../dto/share-app-reward-data.dto';
 export interface SharedCourseRule {
   courseId: string;
 }
@@ -54,6 +54,12 @@ export class UserRewardsService implements OnModuleInit {
       EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION,
       async (message: string, data) => {
         await this.completeRegistrationReward(data);
+      },
+    );
+    PubSub.subscribe(
+      EventNameEnum.USER_REWARD_SHARE_APP,
+      async (message: string, data: ShareAppRewardDataDTO) => {
+        await this.shareAppReward(data);
       },
     );
   }
@@ -205,6 +211,30 @@ export class UserRewardsService implements OnModuleInit {
       badge: completeRegistrationBadge,
       user,
       eventName: EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION,
+      completed: true,
+    });
+  }
+
+  private async shareAppReward({
+    userId,
+  }: ShareAppRewardDataDTO): Promise<void> {
+    const queryResponse: User[] = await this.userRepository.find({
+      where: { id: userId },
+    });
+    const user = queryResponse[0];
+    if (!user) return;
+
+    const shareAppBadge: Badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.USER_REWARD_SHARE_APP,
+      1,
+    );
+
+    if (!shareAppBadge) return;
+
+    await this.achievementRepository.save({
+      badge: shareAppBadge,
+      user,
+      eventName: EventNameEnum.USER_REWARD_SHARE_APP,
       completed: true,
     });
   }
