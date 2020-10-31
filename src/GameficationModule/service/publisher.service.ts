@@ -29,6 +29,7 @@ export class PublisherService {
     const events = {
       [StartEventEnum.SHARE_COURSE]: EventNameEnum.USER_REWARD_SHARE_COURSE,
       [StartEventEnum.RATE_APP]: EventNameEnum.USER_REWARD_RATE_APP,
+      [StartEventEnum.SHARE_APP]: EventNameEnum.USER_REWARD_SHARE_APP,
     };
     const event = events[eventName];
     if (!event) return;
