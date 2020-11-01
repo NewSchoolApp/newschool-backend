@@ -11,7 +11,10 @@ export class UploadController {
   constructor(private readonly service: UploadService) {}
 
   @Get(':fileName')
-  async serveFile(@Param('fileName') fileName, @Res() response): Promise<void> {
+  async serveFile(
+    @Param('fileName') fileName: string,
+    @Res() response,
+  ): Promise<void> {
     return this.service.sendFile(fileName, response);
   }
 }

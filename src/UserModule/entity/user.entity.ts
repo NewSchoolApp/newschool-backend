@@ -50,6 +50,10 @@ export class User extends Audit {
 
   @Column({ nullable: true })
   @Expose()
+  photoPath?: string;
+
+  @Column({ nullable: true })
+  @Expose()
   nickname?: string;
 
   @Column({ nullable: true })

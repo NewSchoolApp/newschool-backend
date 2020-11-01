@@ -12,6 +12,12 @@ export class Mapper<E, D> {
     });
   }
 
+  async toDtoAsync(entityObject: Partial<E>): Promise<D> {
+    return plainToClass<D, Partial<E>>(this.dtoClass, entityObject, {
+      excludeExtraneousValues: true,
+    });
+  }
+
   toDtoList(entityArray: E[]): D[] {
     return plainToClass<D, E>(this.dtoClass, entityArray, {
       excludeExtraneousValues: true,

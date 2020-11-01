@@ -96,6 +96,9 @@ export class UserDTO {
   @Expose()
   role: RoleDTO;
 
+  @Expose()
+  photo: string;
+
   @ApiProperty({ type: () => CourseDTO, isArray: true })
   @Type(() => CourseDTO)
   @Expose()

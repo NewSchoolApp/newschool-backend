@@ -8,6 +8,7 @@ import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -106,7 +107,7 @@ export class AchievementRepository extends Repository<Achievement> {
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<RankingDTO[]> {
+  ): Promise<RankingQueryDTO[]> {
     let institutionQuery = ``;
     const timeRangeMethod =
       timeRange === TimeRangeEnum.MONTH ? 'MONTH' : 'YEAR';
@@ -135,7 +136,7 @@ export class AchievementRepository extends Repository<Achievement> {
     }
 
     const derivedTable = `
-    SELECT c2.id as 'userId', c2.name as 'userName', SUM(b2.points) as 'points' FROM achievement a2
+    SELECT c2.id as 'userId', c2.name as 'userName', c2.photoPath as 'photoPath', SUM(b2.points) as 'points' FROM achievement a2
       inner join badge b2
       on a2.badgeId = b2.id
       inner join user c2
@@ -149,6 +150,7 @@ export class AchievementRepository extends Repository<Achievement> {
     SELECT
       t.userId,
       t.userName,
+      t.photoPath,
       t.points,
       1 + (
         SELECT

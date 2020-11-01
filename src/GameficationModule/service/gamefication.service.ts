@@ -7,6 +7,8 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserService } from '../../UserModule/service/user.service';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
+import { UploadService } from '../../UploadModule/service/upload.service';
 
 @Injectable()
 export class GameficationService {
@@ -14,26 +16,42 @@ export class GameficationService {
     private readonly publisherService: PublisherService,
     private readonly achivementRepository: AchievementRepository,
     private readonly userService: UserService,
+    private readonly uploadService: UploadService,
   ) {}
 
   startEvent(event: StartEventEnum, rule: StartEventRules): void {
     this.publisherService.startEvent(event, rule);
   }
 
-  getRanking(
+  async getRanking(
     order: OrderEnum,
     timeRange: TimeRangeEnum,
     institutionName?: string,
     city?: string,
     state?: string,
   ): Promise<RankingDTO[]> {
-    return this.achivementRepository.getRanking(
+    const result = await this.achivementRepository.getRanking(
       order,
       timeRange,
       institutionName,
       city,
       state,
     );
+
+    let rankedUsers = [];
+
+    for (const rankedUser of result) {
+      const { photoPath, ...rankedUserInfo } = rankedUser;
+      const user: RankingDTO = {
+        ...rankedUserInfo,
+        photo: photoPath
+          ? await this.uploadService.getUserPhoto(photoPath)
+          : null,
+      };
+      rankedUsers = [...rankedUsers, user];
+    }
+
+    return rankedUsers;
   }
 
   public async getUserRanking(
