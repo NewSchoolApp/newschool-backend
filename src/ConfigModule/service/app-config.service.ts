@@ -66,7 +66,9 @@ export class AppConfigService {
   awsAccessKeySecret: string = this.configService.get<string>(
     'AWS_ACCESS_KEY_SECRET',
   );
-
+  awsBucketEndpoint: string = this.configService.get<string>(
+    'AWS_BUCKET_ENDPOINT',
+  );
   awsUserBucket: string = this.configService.get<string>('AWS_USER_BUCKET');
 
   public getSentryConfiguration(): Sentry.NodeOptions {
@@ -148,7 +150,7 @@ export class AppConfigService {
     return {
       accessKeyId: this.awsAccessKey,
       secretAccessKey: this.awsAccessKeySecret,
-      region: 'us-east-2',
+      endpoint: this.awsBucketEndpoint,
       signatureVersion: 'v4',
     };
   }
