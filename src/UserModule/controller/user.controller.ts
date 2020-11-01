@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   forwardRef,
   Get,
   Headers,
@@ -12,7 +11,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { UserService } from '../service/user.service';
@@ -46,9 +47,9 @@ import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { Constants } from '../../CommonsModule/constants';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
-import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
 import { NewUserSwagger } from '../swagger/new-user.swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -100,7 +101,7 @@ export class UserController {
       authorization.split(' ')[1],
     );
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.findById(id));
+    return this.mapper.toDtoAsync(await this.service.findById(id));
   }
 
   @Put('/me')
@@ -202,6 +203,26 @@ export class UserController {
     return await this.service.findBadgesWithQuantityByUserId(id);
   }
 
+  @Get(':id/photo')
+  @HttpCode(200)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async getUserPhoto(@Param('id') id: string): Promise<string> {
+    return this.service.getUserPhoto(id);
+  }
+
+  @Post(':id/photo')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(200)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async uploadUserPhoto(
+    @UploadedFile('file') file: Express.Multer.File,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.service.uploadUserPhoto(file, id);
+  }
+
   @Get(':id')
   @HttpCode(200)
   @ApiOkResponse({ type: NewUserDTO })
@@ -221,7 +242,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: UserDTO['id']): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.findById(id));
+    return this.mapper.toDtoAsync(await this.service.findById(id));
   }
 
   @Post()

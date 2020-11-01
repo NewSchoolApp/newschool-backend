@@ -11,6 +11,7 @@ import { ChangePasswordService } from './service/change-password.service';
 import { SchoolController } from './controller/school.controller';
 import { SchoolService } from './service/school.service';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
+import { UploadModule } from '../UploadModule/upload.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GameficationModule } from '../GameficationModule/gamefication.module';
       ChangePasswordRepository,
     ]),
     HttpModule,
+    UploadModule,
     forwardRef(() => GameficationModule),
   ],
   controllers: [UserController, SchoolController],

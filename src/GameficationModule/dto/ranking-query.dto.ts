@@ -1,7 +1,7 @@
-export class RankingDTO {
+export class RankingQueryDTO {
   userId: string;
   userName: string;
   points: string;
-  photo?: string;
+  photoPath: string;
   rank: string;
 }

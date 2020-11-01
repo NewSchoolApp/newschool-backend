@@ -31,6 +31,7 @@ import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { AchievementService } from '../../GameficationModule/service/achievement.service';
 import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
+import { UploadService } from '../../UploadModule/service/upload.service';
 
 @Injectable()
 export class UserService {
@@ -45,6 +46,7 @@ export class UserService {
     private readonly configService: ConfigService,
     private readonly roleService: RoleService,
     private readonly achievementService: AchievementService,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Transactional()
@@ -52,15 +54,16 @@ export class UserService {
     return this.repository.find();
   }
 
-  public async findById(id: User['id']): Promise<User> {
-    const user: User[] = await this.repository.find({
+  public async findById(id: string): Promise<User> {
+    const response: User[] = await this.repository.find({
       where: { id },
       relations: ['role'],
     });
-    if (!user.length) {
+    const user = response[0];
+    if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user[0];
+    return user;
   }
 
   @Transactional()
@@ -83,14 +86,6 @@ export class UserService {
 
   public async getUsersQuantity(): Promise<number> {
     return this.repository.getUsersQuantity();
-  }
-
-  public async findByInviteKey(inviteKey: string): Promise<User> {
-    const user: User = await this.repository.findByInviteKey(inviteKey);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
   }
 
   public async countUsersInvitedByUserId(id: string): Promise<number> {
@@ -299,6 +294,18 @@ export class UserService {
     return await this.repository.save(user);
   }
 
+  async uploadUserPhoto(
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<void> {
+    const user: User = await this.findById(userId);
+
+    const photoPath = `${user.id}/${file.originalname}`;
+
+    await this.uploadService.uploadUserPhoto(photoPath, file.buffer);
+    await this.repository.save({ ...user, photoPath });
+  }
+
   private createSalt(): string {
     return crypto.randomBytes(16).toString('hex');
   }
@@ -336,5 +343,10 @@ export class UserService {
   ): Promise<BadgeWithQuantityDTO[]> {
     const user = await this.findById(id);
     return this.achievementService.findBadgesWithQuantityByUser(user);
+  }
+
+  async getUserPhoto(id: string): Promise<string> {
+    const user = await this.findById(id);
+    return this.uploadService.getUserPhoto(user.photoPath);
   }
 }

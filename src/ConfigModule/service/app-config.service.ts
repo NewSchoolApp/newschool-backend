@@ -5,6 +5,7 @@ import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
 import * as Pusher from 'pusher';
 import * as Sentry from '@sentry/node';
+import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class AppConfigService {
@@ -60,6 +61,13 @@ export class AppConfigService {
   pusherKey: string = this.configService.get<string>('PUSHER_KEY');
   pusherSecret: string = this.configService.get<string>('PUSHER_SECRET');
   pusherCluster: string = this.configService.get<string>('PUSHER_CLUSTER');
+
+  awsAccessKey: string = this.configService.get<string>('AWS_ACCESS_KEY');
+  awsAccessKeySecret: string = this.configService.get<string>(
+    'AWS_ACCESS_KEY_SECRET',
+  );
+
+  awsUserBucket: string = this.configService.get<string>('AWS_USER_BUCKET');
 
   public getSentryConfiguration(): Sentry.NodeOptions {
     return {
@@ -133,6 +141,15 @@ export class AppConfigService {
       secret: this.pusherSecret,
       cluster: this.pusherCluster,
       useTLS: true,
+    };
+  }
+
+  getAwsConfiguration(): S3.Types.ClientConfiguration {
+    return {
+      accessKeyId: this.awsAccessKey,
+      secretAccessKey: this.awsAccessKeySecret,
+      region: 'us-east-2',
+      signatureVersion: 'v4',
     };
   }
 }
