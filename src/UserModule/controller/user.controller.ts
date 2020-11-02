@@ -81,6 +81,30 @@ export class UserController {
     return this.mapper.toDtoList(await this.service.getAll());
   }
 
+  @Get('/me')
+  @HttpCode(200)
+  @ApiOkResponse({ type: UserDTO })
+  @ApiOperation({
+    summary: 'Find user by jwt id',
+    description: 'Decodes de jwt and finds the user by the jwt id',
+  })
+  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
+  @ApiUnauthorizedResponse({
+    description:
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role',
+  })
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findUserByJwtId(
+    @Headers('authorization') authorization: string,
+  ): Promise<UserDTO> {
+    const { id }: User = this.securityService.getUserFromToken(
+      authorization.split(' ')[1],
+    );
+    this.logger.log(`user id: ${id}`);
+    return this.mapper.toDtoAsync(await this.service.findById(id));
+  }
+
   @Get('/:id/badge')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
