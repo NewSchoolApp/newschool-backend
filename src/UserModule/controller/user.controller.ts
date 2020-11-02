@@ -50,6 +50,7 @@ import { NewUserSwagger } from '../swagger/new-user.swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
+import { PhotoDTO } from '../dto/photo.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -109,8 +110,8 @@ export class UserController {
   @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getUserPhoto(@Param('id') id: string): Promise<string> {
-    return this.service.getUserPhoto(id);
+  public async getUserPhoto(@Param('id') id: string): Promise<PhotoDTO> {
+    return { photo: await this.service.getUserPhoto(id) };
   }
 
   @Post(':id/photo')
