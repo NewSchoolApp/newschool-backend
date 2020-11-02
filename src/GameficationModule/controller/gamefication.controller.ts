@@ -18,6 +18,8 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
+import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
+import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 
 @ApiTags('Gamefication')
 @ApiBearerAuth()
@@ -55,8 +57,10 @@ export class GameficationController {
   }
 
   @Get('ranking/user/:userId')
-  // @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
-  // @UseGuards(RoleGuard)
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
   public async getUserRanking(
     @Param('userId') userId: string,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,

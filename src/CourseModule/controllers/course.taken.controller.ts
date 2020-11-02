@@ -34,6 +34,8 @@ import { CourseTakenDTO } from '../dto/course.taken.dto';
 import { VideoProgressionDTO } from '../dto/video-progression.dto';
 import { CertificateDTO } from '../dto/certificate.dto';
 import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
+import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
+import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 
 @ApiExtraModels(VideoProgressionDTO, AlternativeProgressionDTO)
 @ApiTags('CourseTaken')
@@ -64,6 +66,8 @@ export class CourseTakenController {
     isArray: true,
     description: 'All courses by User id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getAllByUserId(
@@ -116,6 +120,8 @@ export class CourseTakenController {
     summary: 'Find course taken',
     description: 'Find course taken by user id and course id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findByUserIdAndCourseId(
@@ -127,12 +133,14 @@ export class CourseTakenController {
     );
   }
 
-  @Post('/user/:userId/course/:courseId')
+  @Post('nps/user/:userId/course/:courseId')
   @HttpCode(200)
   @ApiOperation({
-    summary: 'Find course taken',
-    description: 'Find course taken by user id and course id',
+    summary: 'Rate Course',
+    description: 'Rate course taken by user id and course id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async avaliateCourse(
@@ -205,7 +213,9 @@ export class CourseTakenController {
     summary: 'Delete course taken',
     description: 'Delete course taken by user id and course id',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(
     @Param('userId') userId: string,
@@ -221,6 +231,8 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Advance user on course',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async updateCourseStatus(
@@ -238,6 +250,8 @@ export class CourseTakenController {
     summary: 'Update course taken',
     description: 'Update course taken by user id and course id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async currentCourseProgression(
@@ -266,6 +280,8 @@ export class CourseTakenController {
     summary: 'Find certificates by user and course',
     description: 'Find certificates by user id and course id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificate(
@@ -288,6 +304,8 @@ export class CourseTakenController {
     summary: 'Find certificates by user',
     description: 'Find certificates by user id',
   })
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   public async getCertificates(
