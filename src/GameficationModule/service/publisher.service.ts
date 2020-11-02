@@ -70,7 +70,7 @@ export class PublisherService {
   }
 
   public emitCourseCompleted(course: CourseTaken): void {
-    PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_COURSE, course);
+    PubSub.publish(EventNameEnum.COURSE_REWARD_COMPLETE_COURSE, course);
   }
 
   private getUserStringToken(authorizationHeader: string): string {

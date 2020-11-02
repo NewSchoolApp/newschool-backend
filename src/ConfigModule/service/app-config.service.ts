@@ -73,7 +73,8 @@ export class AppConfigService {
 
   public getSentryConfiguration(): Sentry.NodeOptions {
     return {
-      dsn: this.configService.get<string>('SENTRY_URL'),
+      dsn:
+        'https://fd1aea93e15c4692b1d827e31850a3d0@o468568.ingest.sentry.io/5496578',
       tracesSampleRate: 1.0,
       enabled: this.nodeEnv !== 'TEST',
       environment: this.nodeEnv,
