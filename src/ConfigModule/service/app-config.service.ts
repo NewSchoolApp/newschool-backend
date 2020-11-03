@@ -12,6 +12,9 @@ export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
 
   jwtSecret: string = this.configService.get<string>('JWT_SECRET');
+  refreshTokenSecret: string = this.configService.get<string>(
+    'REFRESH_TOKEN_SECRET',
+  );
 
   changePasswordExpirationTime: number = this.configService.get<number>(
     'CHANGE_PASSWORD_EXPIRATION_TIME',
@@ -150,7 +153,7 @@ export class AppConfigService {
     return {
       accessKeyId: this.awsAccessKey,
       secretAccessKey: this.awsAccessKeySecret,
-      endpoint: this.awsBucketEndpoint,
+      region: 'us-east-2',
       signatureVersion: 'v4',
     };
   }
