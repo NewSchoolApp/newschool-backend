@@ -7,7 +7,6 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserService } from '../../UserModule/service/user.service';
-import { RankingQueryDTO } from '../dto/ranking-query.dto';
 import { UploadService } from '../../UploadModule/service/upload.service';
 
 @Injectable()

@@ -1,10 +1,10 @@
 import { GrantTypeEnum } from '../enum/grant-type.enum';
 import {
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
 import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
 import { ClientCredentials } from '../entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
@@ -18,7 +18,6 @@ import { FacebookAuthUserDTO } from '../dto/facebook-auth-user.dto';
 import { ClientCredentialsRepository } from '../repository/client-credentials.repository';
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
-import { RefreshTokenUserDTO } from '../dto/refresh-token-user.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 interface GenerateLoginObjectOptions {
@@ -171,28 +170,29 @@ export class SecurityService {
       secret,
       GrantTypeEnum.REFRESH_TOKEN,
     );
-    let refreshTokenUser: RefreshTokenUserDTO;
+    let refreshTokenUser: User;
     try {
       refreshTokenUser = this.getUserFromToken(refreshToken);
     } catch (error) {
+      Sentry.captureException(error);
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Refresh Token expired');
       }
-      throw error;
+      throw new UnauthorizedException();
     }
-    const { email, isRefreshToken } = refreshTokenUser;
-    if (!isRefreshToken) {
-      throw new UnauthorizedException('The given token is not a Refresh Token');
-    }
-    const user: User = await this.userService.findByEmail(email);
+    const user: User = await this.userService.findByEmail(
+      refreshTokenUser.email,
+    );
     return this.generateLoginObject(user, {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
   }
 
-  public getUserFromToken<T extends User>(jwt: string): T {
-    return this.jwtService.verify<T>(jwt);
+  public getUserFromToken(jwt: string): User {
+    return this.jwtService.verify<User>(jwt, {
+      secret: this.configService.refreshTokenSecret,
+    });
   }
 
   private generateLoginObject(
@@ -212,7 +212,7 @@ export class SecurityService {
         ...loginObject,
         refreshToken: this.jwtService.sign(classToPlain(authenticatedUser), {
           expiresIn: refreshTokenValidity,
-          secret: this.configService.jwtSecret,
+          secret: this.configService.refreshTokenSecret,
         }),
       };
     }
