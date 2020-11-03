@@ -172,7 +172,7 @@ export class SecurityService {
     );
     let refreshTokenUser: User;
     try {
-      refreshTokenUser = this.getUserFromToken(refreshToken);
+      refreshTokenUser = this.getUserFromToken(refreshToken, secret);
     } catch (error) {
       Sentry.captureException(error);
       if (error instanceof TokenExpiredError) {
@@ -189,9 +189,9 @@ export class SecurityService {
     });
   }
 
-  public getUserFromToken(jwt: string): User {
+  public getUserFromToken(jwt: string, secret: string): User {
     return this.jwtService.verify<User>(jwt, {
-      secret: this.configService.refreshTokenSecret,
+      secret,
     });
   }
 

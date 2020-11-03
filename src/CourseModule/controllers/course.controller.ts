@@ -39,6 +39,7 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { NewCourseDTO } from '../dto/new-course.dto';
 import { NewUserDTO } from '../../UserModule/dto/new-user.dto';
 import { Course } from '../entity/course.entity';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 @ApiTags('Course')
 @ApiBearerAuth()
@@ -50,6 +51,7 @@ export class CourseController {
     private readonly service: CourseService,
     private readonly mapper: CourseMapper,
     private readonly securityService: SecurityService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -72,6 +74,7 @@ export class CourseController {
     let enabled = enabledString == null ? null : enabledString == 'true';
     const { role }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
+      this.configService.jwtSecret,
     );
     if (role.name === RoleEnum.STUDENT) enabled = true;
     return this.mapper.toDtoList(await this.service.getAll(enabled));

@@ -51,6 +51,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 import { PhotoDTO } from '../dto/photo.dto';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -65,6 +66,7 @@ export class UserController {
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -100,6 +102,7 @@ export class UserController {
   ): Promise<UserDTO> {
     const { id }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
+      this.configService.jwtSecret,
     );
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDtoAsync(await this.service.findById(id));
