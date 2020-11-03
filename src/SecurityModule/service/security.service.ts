@@ -172,7 +172,10 @@ export class SecurityService {
     );
     let refreshTokenUser: User;
     try {
-      refreshTokenUser = this.getUserFromToken(refreshToken, secret);
+      refreshTokenUser = this.getUserFromToken(
+        refreshToken,
+        this.configService.refreshTokenSecret,
+      );
     } catch (error) {
       Sentry.captureException(error);
       if (error instanceof TokenExpiredError) {
