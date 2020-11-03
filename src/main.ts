@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.f
 import 'reflect-metadata';
 import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 import * as Sentry from '@sentry/node';
+import { RavenInterceptor } from 'nest-raven';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -35,6 +36,7 @@ async function bootstrap() {
 
   const appConfigService = app.get<ConfigService>(ConfigService);
 
+  app.useGlobalInterceptors(new RavenInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
   Sentry.init(appConfigService.getSentryConfiguration());
