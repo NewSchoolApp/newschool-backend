@@ -9,6 +9,7 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
+import * as mysql from 'mysql';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -119,19 +120,19 @@ export class AchievementRepository extends Repository<Achievement> {
 
     if (institutionName) {
       institutionQuery = `
-      and c2.institutionName = ${city}
+      and c2.institutionName = ${mysql.escape(city)}
       `;
     }
 
     if (city) {
       cityQuery = `
-      and c2.city = ${city}
+      and c2.city = ${mysql.escape(city)}
       `;
     }
 
     if (state) {
       stateQuery = `
-      and c2.state = ${state}
+      and c2.state = ${mysql.escape(state)}
       `;
     }
 
