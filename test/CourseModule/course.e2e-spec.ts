@@ -95,7 +95,6 @@ describe('CourseController (e2e)', () => {
           .field('workload', newCourse.workload)
           .attach('photo', fileToUpload)
           .expect((res) => {
-            console.log(res.body);
             expect(res.body.id).not.toBeUndefined();
             expect(res.body.slug).toBe('teste-e3e-to-add');
           })

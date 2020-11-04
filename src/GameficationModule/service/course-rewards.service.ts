@@ -10,6 +10,7 @@ import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
+import { Achievement } from '../entity/achievement.entity';
 
 export interface TestOnFirstTake {
   chosenAlternative: string;
@@ -115,18 +116,14 @@ export class CourseRewardsService implements OnModuleInit {
     if (!achievement) {
       achievement = {
         ...achievement,
-        eventName: EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-        completed: false,
         rule: {
           testId: test.id,
           try: 1,
         },
-        user,
       };
     } else {
       achievement = {
         ...achievement,
-        completed: false,
         rule: {
           ...achievement.rule,
           try: achievement.rule.try + 1,
@@ -137,13 +134,13 @@ export class CourseRewardsService implements OnModuleInit {
     const answerIsRight =
       chosenAlternative.toLowerCase() === test.correctAlternative.toLowerCase();
 
-    if (!answerIsRight) return;
-
     const badge = await points[achievement.rule.try]();
     achievement = {
       ...achievement,
-      completed: true,
-      badge,
+      eventName: EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
+      completed: answerIsRight,
+      badge: answerIsRight ? badge : null,
+      user,
     };
 
     await this.achievementRepository.save(achievement);
