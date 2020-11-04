@@ -13,7 +13,7 @@ import * as mysql from 'mysql';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
-  public getTestOnFirstTakeByUserAndRuleTestId<T>(
+  public async getTestOnFirstTakeByUserAndRuleTestId<T>(
     test: Test,
     user: User,
   ): Promise<Achievement<T>[]> {
@@ -22,12 +22,17 @@ export class AchievementRepository extends Repository<Achievement> {
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       test.id,
     ];
-    return this.query(
+    const response: any[] = await this.query(
       `
         SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.testId" = ?
       `,
       params,
     );
+
+    return response.map((achievement) => ({
+      ...achievement,
+      rule: JSON.parse(achievement.rule),
+    }));
   }
 
   public async getSharedCourseByCourseIdAndUserIdAndSocialMedia<T>(
@@ -41,12 +46,17 @@ export class AchievementRepository extends Repository<Achievement> {
       courseId,
       socialMedia,
     ];
-    return this.query(
+    const response: any[] = await this.query(
       `
         SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.courseId" = ? AND AND rule->>"$.platform" = ?
       `,
       params,
     );
+
+    return response.map((achievement) => ({
+      ...achievement,
+      rule: JSON.parse(achievement.rule),
+    }));
   }
 
   public async findByUserIdAndBadgeId(
