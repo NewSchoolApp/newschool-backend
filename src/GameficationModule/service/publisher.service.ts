@@ -44,7 +44,6 @@ export class PublisherService {
   }
 
   public emitCheckTestReward(test: Test, chosenAlternative: string): void {
-    console.log('to aqui');
     const authorizationHeader = this.request.headers.authorization;
     const userStringToken = this.getUserStringToken(authorizationHeader);
     const user: User = this.getUserFromToken(userStringToken);

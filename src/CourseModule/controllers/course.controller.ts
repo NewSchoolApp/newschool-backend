@@ -132,7 +132,6 @@ export class CourseController {
     @Body() course: NewCourseDTO,
     @UploadedFile() file,
   ): Promise<CourseDTO> {
-    console.log('to aqui');
     return this.mapper.toDto(await this.service.add(course, file));
   }
 

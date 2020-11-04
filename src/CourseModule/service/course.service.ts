@@ -21,7 +21,6 @@ export class CourseService {
 
   @Transactional()
   public async add(newCourse: NewCourseDTO, file): Promise<Course> {
-    console.log('repository', this.repository.save);
     const course = this.mapper.toEntity(newCourse);
     course.photoName = file.filename;
     try {
