@@ -1,9 +1,15 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 
+@ApiBearerAuth()
+@ApiTags('Notification')
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.NOTIFICATION_ENDPOINT}`,
 )
