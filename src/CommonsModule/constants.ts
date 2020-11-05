@@ -20,5 +20,5 @@ export class Constants {
 
   static MESSAGE_ENDPOINT = 'message';
 
-  static NOTIFICATION_ENDPOINT = 'user';
+  static NOTIFICATION_ENDPOINT = 'notification';
 }
