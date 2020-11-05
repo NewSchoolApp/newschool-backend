@@ -36,7 +36,7 @@
     "@nestjs/typeorm": "7.1.4",
     "@sentry/node": "5.27.3",
     "@sentry/tracing": "5.27.3",
-    "aws-sdk": "2.784.0",
+    "aws-sdk": "2.786.0",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "dotenv": "8.2.0",
