@@ -76,7 +76,10 @@ export class UserRewardsService implements OnModuleInit {
         this.topRankingMonthlyReward();
       };
       const timeout = setTimeout(callback, tenSecondsInMilliseconds);
-      this.schedulerRegistry.addTimeout('TOP_RANKING_MONTHLY', timeout);
+      this.schedulerRegistry.addTimeout(
+        `TOP_RANKING_MONTHLY${new Date().getTime()}`,
+        timeout,
+      );
     });
   }
 
