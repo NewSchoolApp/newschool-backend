@@ -157,17 +157,22 @@ export class CourseRewardsService implements OnModuleInit {
      * 2- Se ele finalizou o curso
      * 3- Se ele ainda não ganhou os pontos dessa gameficação
      * */
+
+    const [
+      achievement,
+    ] = await this.achievementRepository.getNpsCourseAchievementByCourseIdAndUserIdAndBadgeId(
+      userId,
+      courseId,
+    );
+
+    if (achievement) return;
+
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.COURSE_REWARD_COURSE_NPS,
       1,
     );
 
-    const achievement = await this.achievementRepository.findByUserIdAndBadgeId(
-      userId,
-      badge.id,
-    );
-
-    if (achievement) return;
+    if (!badge) return;
 
     const courseTaken: CourseTaken = await this.courseTakenRepository.findCompletedWithRatingByUserIdAndCourseId(
       userId,
@@ -179,6 +184,7 @@ export class CourseRewardsService implements OnModuleInit {
     await this.achievementRepository.save({
       user: { id: userId },
       badge,
+      rule: { courseId: courseTaken.course.id },
       eventName: EventNameEnum.COURSE_REWARD_COURSE_NPS,
       completed: true,
     });

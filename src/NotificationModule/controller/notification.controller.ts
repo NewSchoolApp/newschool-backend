@@ -1,8 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';

@@ -24,7 +24,7 @@ export class AchievementRepository extends Repository<Achievement> {
     ];
     const response: any[] = await this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.testId" = ?
+        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.testId" = ? ORDER BY version DESC
       `,
       params,
     );
@@ -48,7 +48,40 @@ export class AchievementRepository extends Repository<Achievement> {
     ];
     const response: any[] = await this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.courseId" = ? AND AND rule->>"$.platform" = ?
+        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.courseId" = ? AND rule->>"$.platform" = ? ORDER BY version DESC
+      `,
+      params,
+    );
+
+    return response.map((achievement) => ({
+      ...achievement,
+      rule: JSON.parse(achievement.rule),
+    }));
+  }
+
+  public async getNpsCourseAchievementByCourseIdAndUserIdAndBadgeId<T>(
+    courseId: string,
+    userId: string,
+  ): Promise<Achievement<T>[]> {
+    const params = [userId, EventNameEnum.COURSE_REWARD_COURSE_NPS, courseId];
+    const response: any[] = await this.query(
+      `
+        SELECT
+          *
+        FROM
+          achievement a
+        INNER JOIN
+          badge b
+          ON
+            a.badgeId = b.id
+        WHERE
+          a.userId = ?
+        AND
+          a.eventName = ?
+        AND
+          a.rule->>"$.courseId" = ?
+        ORDER BY
+          a.version DESC
       `,
       params,
     );
