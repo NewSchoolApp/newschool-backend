@@ -189,7 +189,7 @@ export class AchievementRepository extends Repository<Achievement> {
       AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
     `;
     const limitQuery = `LIMIT ${mysql.escape(limit)} OFFSET ${mysql.escape(
-      limit * page,
+      limit * (page - 1),
     )}`;
     let cityQuery = ``;
     let stateQuery = ``;
