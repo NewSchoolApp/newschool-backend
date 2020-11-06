@@ -16,10 +16,10 @@ import { StateDTO } from '../dto/state.dto';
 
 const secondsInADay = 86400;
 
-@ApiTags('City')
+@ApiTags('State')
 @ApiBearerAuth()
 @Controller(
-  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.CITY_ENDPOINT}`,
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.STATE_ENDPOINT}`,
 )
 export class StateController {
   constructor(private service: StateService) {}
@@ -29,7 +29,7 @@ export class StateController {
   @UseGuards(RoleGuard)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)
-  public async getCitiesByUf(): Promise<StateDTO[]> {
+  public async getStates(): Promise<StateDTO[]> {
     return await this.service.getStates();
   }
 }

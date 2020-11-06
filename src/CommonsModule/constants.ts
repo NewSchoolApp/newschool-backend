@@ -22,4 +22,5 @@ export class Constants {
 
   static NOTIFICATION_ENDPOINT = 'notification';
   static CITY_ENDPOINT = 'city';
+  static STATE_ENDPOINT = 'state';
 }

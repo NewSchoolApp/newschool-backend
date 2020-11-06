@@ -12,7 +12,7 @@ import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { Constants } from '../../CommonsModule/constants';
-import { School, Schools } from '../dto/school.dto';
+import { School } from '../dto/school.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 const secondsInADay = 86400;
