@@ -8,7 +8,7 @@ import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserService } from '../../UserModule/service/user.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
-import { PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @Injectable()
@@ -32,8 +32,8 @@ export class GameficationService {
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<PageableDTO<RankingQueryDTO>> {
-    const result: PageableDTO<RankingQueryDTO> = await this.achivementRepository.getRankingPaginated(
+  ): Promise<Pageable<RankingQueryDTO>> {
+    const result: Pageable<RankingQueryDTO> = await this.achivementRepository.getRankingPaginated(
       order,
       timeRange,
       limit,

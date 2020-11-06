@@ -21,6 +21,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
+import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @ApiTags('Gamefication')
 @ApiBearerAuth()
@@ -49,7 +51,7 @@ export class GameficationController {
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
-  ): Promise<RankingDTO[]> {
+  ): Promise<Pageable<RankingQueryDTO>> {
     return await this.service.getRanking(
       order,
       timeRange,
