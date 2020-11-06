@@ -4,7 +4,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -17,12 +16,14 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
+import { NewUserDTO } from '../../UserModule/dto/new-user.dto';
+import { PageableRankingSwagger } from '../swagger/pageable-ranking.swagger';
 
 @ApiTags('Gamefication')
 @ApiBearerAuth()
@@ -41,6 +42,7 @@ export class GameficationController {
   }
 
   @Get('ranking')
+  @ApiOkResponse({ type: PageableRankingSwagger })
   @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async getRanking(
