@@ -24,11 +24,23 @@ export class NotificationService {
   public async getNotificationsByUserId(
     userId: string,
     order: OrderEnum,
+    enabled: boolean,
+    seen: boolean,
   ): Promise<Notification[]> {
-    return this.repository.getNotificationsByUserId(userId, order);
+    return this.repository.getNotificationsByUserId(
+      userId,
+      order,
+      enabled,
+      seen,
+    );
   }
 
-  public async findNotificationById(id: string): Promise<Notification> {
+  public async setSeeNotification(id: string): Promise<void> {
+    const notification = await this.findById(id);
+    await this.repository.save({ ...notification, enabled: false, seen: true });
+  }
+
+  public async findById(id: string): Promise<Notification> {
     const response: Notification[] = await this.repository.find({ id });
     if (!response.length) {
       throw new NotFoundException('Notification not found');
