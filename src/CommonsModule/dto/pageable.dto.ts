@@ -5,6 +5,7 @@ export class PageableDTO<T> {
   totalPages: number;
   limit: number;
   page: number;
+  offset: number;
 
   constructor({
     content,
@@ -23,6 +24,7 @@ export class PageableDTO<T> {
     this.page = page;
     this.size = content.length;
     this.totalPages = Math.floor(totalElements / page);
+    this.offset = limit * (page - 1);
   }
 }
 
