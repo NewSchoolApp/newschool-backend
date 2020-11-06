@@ -13,6 +13,11 @@ import { UserRepository } from '../../UserModule/repository/user.repository';
 import { CourseRepository } from '../../CourseModule/repository/course.repository';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 import { ShareAppRewardDataDTO } from '../dto/share-app-reward-data.dto';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
+import { TimeRangeEnum } from '../enum/time-range.enum';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
+
 export interface SharedCourseRule {
   courseId: string;
 }
@@ -29,6 +34,7 @@ export class UserRewardsService implements OnModuleInit {
     private readonly userRepository: UserRepository,
     private readonly courseRepository: CourseRepository,
     private readonly courseTakenRepository: CourseTakenRepository,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
   onModuleInit(): void {
@@ -62,6 +68,19 @@ export class UserRewardsService implements OnModuleInit {
         await this.shareAppReward(data);
       },
     );
+    PubSub.subscribe('*', async () => {
+      const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingThisMonth();
+      if (alreadyRanTopRankingThisMonth) return;
+      const tenSecondsInMilliseconds = 60000;
+      const callback = () => {
+        this.topRankingMonthlyReward();
+      };
+      const timeout = setTimeout(callback, tenSecondsInMilliseconds);
+      this.schedulerRegistry.addTimeout(
+        `TOP_RANKING_MONTHLY${new Date().getTime()}`,
+        timeout,
+      );
+    });
   }
 
   private async shareCourseReward({
@@ -237,5 +256,41 @@ export class UserRewardsService implements OnModuleInit {
       eventName: EventNameEnum.USER_REWARD_SHARE_APP,
       completed: true,
     });
+  }
+
+  private async topRankingMonthlyReward() {
+    const topMonthyRank: RankingQueryDTO[] = await this.achievementRepository.getRanking(
+      OrderEnum.DESC,
+      TimeRangeEnum.MONTH,
+      10,
+      1,
+    );
+
+    const badge = await this.badgeRepository.findByEventNameAndOrder(
+      EventNameEnum.USER_REWARD_TOP_MONTH,
+      1,
+    );
+
+    const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingThisMonth();
+    if (alreadyRanTopRankingThisMonth) return;
+
+    topMonthyRank.forEach(({ userId }: RankingQueryDTO) => {
+      this.achievementRepository.save({
+        eventName: EventNameEnum.USER_REWARD_TOP_MONTH,
+        badge,
+        user: { id: userId },
+        completed: true,
+      });
+    });
+  }
+
+  private async alreadyRanTopRankingThisMonth() {
+    const response = await this.achievementRepository.getRanking(
+      OrderEnum.DESC,
+      TimeRangeEnum.MONTH,
+      10,
+      1,
+    );
+    return response.length;
   }
 }

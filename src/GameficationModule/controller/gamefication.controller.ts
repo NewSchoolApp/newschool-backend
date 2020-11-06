@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -20,6 +21,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
+import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @ApiTags('Gamefication')
 @ApiBearerAuth()
@@ -43,13 +46,17 @@ export class GameficationController {
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
+    @Query('limit', ParseIntPipe) limit = 10,
+    @Query('page', ParseIntPipe) page = 1,
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
-  ): Promise<RankingDTO[]> {
+  ): Promise<Pageable<RankingQueryDTO>> {
     return await this.service.getRanking(
       order,
       timeRange,
+      limit,
+      page,
       institutionName,
       city,
       state,

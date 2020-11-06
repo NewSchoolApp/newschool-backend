@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { CacheModule, forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { LessonRepository } from './repository/lesson.repository';
@@ -31,6 +31,7 @@ import { CourseTakenRepository } from './repository/course.taken.repository';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([
       Course,
       CourseRepository,
