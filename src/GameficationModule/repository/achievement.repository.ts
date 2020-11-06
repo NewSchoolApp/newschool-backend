@@ -10,6 +10,7 @@ import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
 import * as mysql from 'mysql';
+import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
@@ -145,9 +146,38 @@ export class AchievementRepository extends Repository<Achievement> {
     return this.count({ where: { eventName } });
   }
 
+  public async getRankingPaginated(
+    order: OrderEnum,
+    timeRange: TimeRangeEnum,
+    limit: number,
+    page: number,
+    institutionName?: string,
+    city?: string,
+    state?: string,
+  ): Promise<Pageable<RankingQueryDTO>> {
+    const data = await this.getRanking(
+      order,
+      timeRange,
+      limit,
+      page,
+      institutionName,
+      city,
+      state,
+    );
+    const totalElementsCount = await this.count();
+    return new PageableDTO<RankingQueryDTO>({
+      content: data,
+      totalElements: totalElementsCount,
+      limit,
+      page,
+    });
+  }
+
   public async getRanking(
     order: OrderEnum,
     timeRange: TimeRangeEnum,
+    limit: number,
+    page: number,
     institutionName?: string,
     city?: string,
     state?: string,
@@ -158,6 +188,9 @@ export class AchievementRepository extends Repository<Achievement> {
     const timeRangeQuery = `
       AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
     `;
+    const limitQuery = `LIMIT ${mysql.escape(limit)} OFFSET ${mysql.escape(
+      limit * page,
+    )}`;
     let cityQuery = ``;
     let stateQuery = ``;
 
@@ -169,13 +202,13 @@ export class AchievementRepository extends Repository<Achievement> {
 
     if (city) {
       cityQuery = `
-      and c2.city = ${mysql.escape(city)}
+      AND c2.city = ${mysql.escape(city)}
       `;
     }
 
     if (state) {
       stateQuery = `
-      and c2.state = ${mysql.escape(state)}
+      AND c2.state = ${mysql.escape(state)}
       `;
     }
 
@@ -187,6 +220,7 @@ export class AchievementRepository extends Repository<Achievement> {
       on a2.userId = c2.id
       WHERE a2.completed = 1 ${timeRangeQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
       GROUP by a2.userId
+      ${limitQuery}
     `;
 
     return this.query(
@@ -261,5 +295,22 @@ export class AchievementRepository extends Repository<Achievement> {
       params,
     );
     return response[0];
+  }
+
+  public async getAchievementTopMonthtlyRanking(): Promise<any[]> {
+    return this.query(
+      `
+    SELECT
+      *
+    FROM
+      achievement a
+    WHERE
+      MONTH(a.createdAt) = MONTH((CURRENT_DATE())
+    AND
+      a.eventName = 1
+    GROUP BY
+      b.id`,
+      [EventNameEnum.USER_REWARD_TOP_MONTH],
+    );
   }
 }

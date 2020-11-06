@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseGuards,
@@ -43,6 +44,8 @@ export class GameficationController {
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
+    @Query('limit', ParseIntPipe) limit = 10,
+    @Query('page', ParseIntPipe) page = 1,
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
@@ -50,6 +53,8 @@ export class GameficationController {
     return await this.service.getRanking(
       order,
       timeRange,
+      limit,
+      page,
       institutionName,
       city,
       state,

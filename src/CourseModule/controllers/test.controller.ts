@@ -1,5 +1,7 @@
 import {
   Body,
+  CacheInterceptor,
+  CacheTTL,
   Controller,
   Delete,
   Get,
@@ -8,6 +10,7 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Constants } from '../../CommonsModule/constants';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
@@ -27,6 +30,8 @@ import { TestService } from '../service/test.service';
 import { NewTestDTO } from '../dto/new-test.dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { TestUpdateDTO } from '../dto/test-update.dto';
+
+const secondsInADay = 86400;
 
 @ApiTags('Test')
 @ApiBearerAuth()
@@ -142,6 +147,8 @@ export class TestController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(secondsInADay)
   public async checkTest(
     @Param('id') id: TestDTO['id'],
     @Param('chosenAlternative') chosenAlternative: string,

@@ -14,6 +14,7 @@ import { DashboardModule } from './DashboardModule/dashboard.module';
 import { GameficationModule } from './GameficationModule/gamefication.module';
 import { NotificationModule } from './NotificationModule/notification.module';
 import { RavenModule } from 'nest-raven';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -33,6 +34,7 @@ const mailerAsyncModule: MailerAsyncOptions = {
   imports: [
     RavenModule,
     ConfigModule,
+    ScheduleModule.forRoot(),
     NestConfigModule.forRoot({
       isGlobal: true,
     }),

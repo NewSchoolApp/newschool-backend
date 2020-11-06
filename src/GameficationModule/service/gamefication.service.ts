@@ -8,6 +8,8 @@ import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserService } from '../../UserModule/service/user.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
+import { PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @Injectable()
 export class GameficationService {
@@ -25,13 +27,17 @@ export class GameficationService {
   async getRanking(
     order: OrderEnum,
     timeRange: TimeRangeEnum,
+    limit: number,
+    page: number,
     institutionName?: string,
     city?: string,
     state?: string,
-  ): Promise<RankingDTO[]> {
-    const result = await this.achivementRepository.getRanking(
+  ): Promise<PageableDTO<RankingQueryDTO>> {
+    const result: PageableDTO<RankingQueryDTO> = await this.achivementRepository.getRankingPaginated(
       order,
       timeRange,
+      limit,
+      page,
       institutionName,
       city,
       state,
@@ -39,7 +45,7 @@ export class GameficationService {
 
     let rankedUsers = [];
 
-    for (const rankedUser of result) {
+    for (const rankedUser of result.content) {
       const { photoPath, ...rankedUserInfo } = rankedUser;
       const user: RankingDTO = {
         ...rankedUserInfo,
@@ -50,7 +56,7 @@ export class GameficationService {
       rankedUsers = [...rankedUsers, user];
     }
 
-    return rankedUsers;
+    return { ...result, content: rankedUsers };
   }
 
   public async getUserRanking(
