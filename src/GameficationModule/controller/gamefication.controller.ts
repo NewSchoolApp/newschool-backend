@@ -46,8 +46,8 @@ export class GameficationController {
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
-    @Query('limit', ParseIntPipe) limit = 10,
-    @Query('page', ParseIntPipe) page = 1,
+    @Query('limit') limit = 10,
+    @Query('page') page = 1,
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
