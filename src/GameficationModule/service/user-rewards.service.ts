@@ -259,10 +259,12 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async topRankingMonthlyReward() {
-    const topMonthyRank: RankingQueryDTO[] = await this.achievementRepository.getRanking(
+    const [
+      user,
+    ]: RankingQueryDTO[] = await this.achievementRepository.getRanking(
       OrderEnum.DESC,
       TimeRangeEnum.MONTH,
-      10,
+      1,
       1,
     );
 
@@ -274,13 +276,11 @@ export class UserRewardsService implements OnModuleInit {
     const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingThisMonth();
     if (alreadyRanTopRankingThisMonth) return;
 
-    topMonthyRank.forEach(({ userId }: RankingQueryDTO) => {
-      this.achievementRepository.save({
-        eventName: EventNameEnum.USER_REWARD_TOP_MONTH,
-        badge,
-        user: { id: userId },
-        completed: true,
-      });
+    await this.achievementRepository.save({
+      eventName: EventNameEnum.USER_REWARD_TOP_MONTH,
+      badge,
+      user,
+      completed: true,
     });
   }
 
