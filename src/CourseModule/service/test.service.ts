@@ -1,8 +1,11 @@
 import {
+  CacheInterceptor,
+  CacheTTL,
   ConflictException,
   Inject,
   Injectable,
   NotFoundException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { MoreThan } from 'typeorm';
@@ -15,6 +18,8 @@ import { Test } from '../entity/test.entity';
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+
+const secondsInADay = 86400;
 
 @Injectable()
 export class TestService {
@@ -71,6 +76,8 @@ export class TestService {
   }
 
   @Transactional()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(secondsInADay)
   public async findById(id: Test['id']): Promise<Test> {
     const test: Test = await this.repository.findOne({ id });
     if (!test) {
@@ -158,10 +165,9 @@ export class TestService {
     sequenceNumber: number,
   ): Promise<Test> {
     Test['part'] = part;
-    const test = await this.repository.findOne({
+    return await this.repository.findOne({
       part: Test['part'],
       sequenceNumber,
     });
-    return test;
   }
 }
