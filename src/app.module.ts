@@ -1,6 +1,6 @@
 import { MailerModule } from '@nest-modules/mailer';
 import { MailerAsyncOptions } from '@nest-modules/mailer/dist/interfaces/mailer-async-options.interface';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { SecurityModule } from './SecurityModule/security.module';
 import { UserModule } from './UserModule/user.module';

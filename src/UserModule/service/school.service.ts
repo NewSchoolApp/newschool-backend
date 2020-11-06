@@ -1,14 +1,17 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { Schools } from '../dto/school.dto';
+import { School, Schools } from '../dto/school.dto';
 
 @Injectable()
 export class SchoolService {
   constructor(private http: HttpService) {}
 
-  public async getUserSchool(name: string): Promise<Schools> {
+  public async getUserSchool(name: string, cityId: string): Promise<School[]> {
     const response = await this.http
-      .get(`http://educacao.dadosabertosbr.com/api/escolas?nome=${name}`)
+      .get<Schools>(
+        `http://educacao.dadosabertosbr.com/api/escolas/buscaavancada?nome=${name}&cidade=${cityId}`,
+      )
       .toPromise();
-    return response.data;
+    const [id, schoolsArray] = response.data;
+    return schoolsArray;
   }
 }
