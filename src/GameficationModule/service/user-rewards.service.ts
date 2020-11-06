@@ -282,7 +282,12 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async alreadyRanTopRankingThisMonth() {
-    const response = await this.achievementRepository.getAchievementTopMonthtlyRanking();
+    const response = await this.achievementRepository.getRanking(
+      OrderEnum.DESC,
+      TimeRangeEnum.MONTH,
+      10,
+      1,
+    );
     return response.length;
   }
 }

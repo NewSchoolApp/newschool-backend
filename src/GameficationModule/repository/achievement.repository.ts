@@ -296,21 +296,4 @@ export class AchievementRepository extends Repository<Achievement> {
     );
     return response[0];
   }
-
-  public async getAchievementTopMonthtlyRanking(): Promise<any[]> {
-    return this.query(
-      `
-    SELECT
-      *
-    FROM
-      achievement a
-    WHERE
-      MONTH(a.createdAt) = MONTH((CURRENT_DATE())
-    AND
-      a.eventName = 1
-    GROUP BY
-      b.id`,
-      [EventNameEnum.USER_REWARD_TOP_MONTH],
-    );
-  }
 }
