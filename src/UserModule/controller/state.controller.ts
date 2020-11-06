@@ -25,7 +25,7 @@ export class StateController {
   constructor(private service: StateService) {}
 
   @Get()
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)

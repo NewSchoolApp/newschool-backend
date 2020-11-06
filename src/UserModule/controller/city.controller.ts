@@ -26,7 +26,7 @@ export class CityController {
   constructor(private service: CityService) {}
 
   @Get('/:uf')
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)

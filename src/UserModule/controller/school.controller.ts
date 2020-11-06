@@ -26,7 +26,7 @@ export class SchoolController {
   constructor(private service: SchoolService) {}
 
   @Get()
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)
