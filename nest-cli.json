@@ -6,7 +6,7 @@
       {
         "name": "@nestjs/swagger/plugin",
         "options": {
-          "dtoFileNameSuffix": [".dto.ts"],
+          "dtoFileNameSuffix": [".dto.ts", ".swagger.ts"],
           "controllerFileNameSuffix": [".controller.ts"],
           "classValidatorShim": true
         }
