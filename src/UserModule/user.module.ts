@@ -1,4 +1,4 @@
-import { forwardRef, HttpModule, Module } from '@nestjs/common';
+import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { UserRepository } from './repository/user.repository';
@@ -12,9 +12,14 @@ import { SchoolController } from './controller/school.controller';
 import { SchoolService } from './service/school.service';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
 import { UploadModule } from '../UploadModule/upload.module';
+import { CityController } from './controller/city.controller';
+import { CityService } from './service/city.service';
+import { StateService } from './service/state.service';
+import { StateController } from './controller/state.controller';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([
       User,
       UserRepository,
@@ -25,8 +30,20 @@ import { UploadModule } from '../UploadModule/upload.module';
     UploadModule,
     forwardRef(() => GameficationModule),
   ],
-  controllers: [UserController, SchoolController],
-  providers: [UserService, UserMapper, ChangePasswordService, SchoolService],
+  controllers: [
+    UserController,
+    SchoolController,
+    CityController,
+    StateController,
+  ],
+  providers: [
+    UserService,
+    UserMapper,
+    ChangePasswordService,
+    SchoolService,
+    CityService,
+    StateService,
+  ],
   exports: [UserService, UserMapper],
 })
 export class UserModule {}
