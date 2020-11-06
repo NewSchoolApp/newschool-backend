@@ -471,7 +471,7 @@ export class CourseTakenService {
       throw new BadRequestException('Course not finished by user');
     }
 
-    this.publisherService.emitNpsReward(userId, courseId);
     await this.repository.save({ ...courseTaken, rating, feedback });
+    this.publisherService.emitNpsReward(userId, courseId);
   }
 }
