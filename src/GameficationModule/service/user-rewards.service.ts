@@ -261,10 +261,9 @@ export class UserRewardsService implements OnModuleInit {
   private async topRankingMonthlyReward() {
     const [
       user,
-    ]: RankingQueryDTO[] = await this.achievementRepository.getRanking(
+    ]: RankingQueryDTO[] = await this.achievementRepository.getLastTimeRangeRanking(
       OrderEnum.DESC,
       TimeRangeEnum.MONTH,
-      1,
       1,
     );
 
@@ -285,10 +284,9 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async alreadyRanTopRankingThisMonth() {
-    const response = await this.achievementRepository.getRanking(
+    const response = await this.achievementRepository.getLastTimeRangeRanking(
       OrderEnum.DESC,
       TimeRangeEnum.MONTH,
-      10,
       1,
     );
     return response.length;
