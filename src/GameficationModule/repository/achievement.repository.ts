@@ -249,6 +249,55 @@ export class AchievementRepository extends Repository<Achievement> {
     );
   }
 
+  public async getLastTimeRangeRanking(
+    order: OrderEnum,
+    timeRange: TimeRangeEnum,
+    limit: number,
+  ): Promise<RankingQueryDTO[]> {
+    const timeRangeMethod =
+      timeRange === TimeRangeEnum.MONTH ? 'MONTH' : 'YEAR';
+    const timeRangeQuery = `
+      AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE() - INTERVAL 1 ${timeRangeMethod})
+    `;
+    const limitQuery = `LIMIT ${mysql.escape(limit)}`;
+
+    const derivedTable = `
+    SELECT c2.id as 'userId', c2.name as 'userName', c2.photoPath as 'photoPath', SUM(b2.points) as 'points' FROM achievement a2
+      inner join badge b2
+      on a2.badgeId = b2.id
+      inner join user c2
+      on a2.userId = c2.id
+      WHERE a2.completed = 1 ${timeRangeQuery}
+      GROUP by a2.userId
+      ${limitQuery}
+    `;
+
+    return this.query(
+      `
+    SELECT
+      t.userId,
+      t.userName,
+      t.photoPath,
+      t.points,
+      1 + (
+        SELECT
+          count( * )
+        FROM
+          (${derivedTable})
+        AS
+          t2
+        WHERE
+          t2.points > t.points
+      )
+    AS
+      rank
+    FROM
+      (${derivedTable})
+    AS t ORDER BY t.points ${order}
+    `,
+    );
+  }
+
   public async getUserRanking(
     userId: string,
     timeRange: TimeRangeEnum,
