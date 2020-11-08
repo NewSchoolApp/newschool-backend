@@ -345,4 +345,34 @@ export class AchievementRepository extends Repository<Achievement> {
     );
     return response[0];
   }
+
+  public checkIfHasTopRankForLastMonth(): Promise<any[]> {
+    const lastTopMonthRankMonth =
+      new Date().getMonth() === 0 ? 12 : new Date().getMonth();
+    const lastTopMonthRankYear =
+      new Date().getMonth() === 0
+        ? new Date().getFullYear() - 1
+        : new Date().getFullYear();
+    return this.query(
+      `
+      SELECT
+        *
+      FROM
+        achievement a
+      WHERE
+        eventName = ?
+      AND
+        a.completed = 1
+      AND
+        rule->>"$.month" = ?
+      AND
+        rule->>"$.year"
+    `,
+      [
+        EventNameEnum.USER_REWARD_TOP_MONTH,
+        lastTopMonthRankMonth,
+        lastTopMonthRankYear,
+      ],
+    );
+  }
 }

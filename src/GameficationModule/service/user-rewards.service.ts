@@ -69,7 +69,7 @@ export class UserRewardsService implements OnModuleInit {
       },
     );
     PubSub.subscribe('*', async () => {
-      const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingThisMonth();
+      const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingLastMonth();
       if (alreadyRanTopRankingThisMonth) return;
       const tenSecondsInMilliseconds = 60000;
       const callback = () => {
@@ -81,6 +81,7 @@ export class UserRewardsService implements OnModuleInit {
         timeout,
       );
     });
+    PubSub.publish('qualquercoisa');
   }
 
   private async shareCourseReward({
@@ -272,23 +273,20 @@ export class UserRewardsService implements OnModuleInit {
       1,
     );
 
-    const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingThisMonth();
+    const alreadyRanTopRankingThisMonth = await this.alreadyRanTopRankingLastMonth();
     if (alreadyRanTopRankingThisMonth) return;
 
     await this.achievementRepository.save({
       eventName: EventNameEnum.USER_REWARD_TOP_MONTH,
       badge,
-      user,
+      user: { id: user.userId },
+      rule: { month: new Date().getMonth(), year: new Date().getFullYear() },
       completed: true,
     });
   }
 
-  private async alreadyRanTopRankingThisMonth() {
-    const response = await this.achievementRepository.getLastTimeRangeRanking(
-      OrderEnum.DESC,
-      TimeRangeEnum.MONTH,
-      1,
-    );
-    return response.length;
+  private async alreadyRanTopRankingLastMonth(): Promise<boolean> {
+    const response = await this.achievementRepository.checkIfHasTopRankForLastMonth();
+    return response.length > 0;
   }
 }
