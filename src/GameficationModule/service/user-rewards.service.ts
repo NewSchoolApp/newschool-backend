@@ -81,7 +81,6 @@ export class UserRewardsService implements OnModuleInit {
         timeout,
       );
     });
-    PubSub.publish('qualquercoisa');
   }
 
   private async shareCourseReward({
