@@ -243,6 +243,12 @@ export class UserRewardsService implements OnModuleInit {
     const user = queryResponse[0];
     if (!user) return;
 
+    const responses: any[] = await this.achievementRepository.sharedAppThisWeek(
+      userId,
+    );
+
+    if (responses.length > 3) return;
+
     const shareAppBadge: Badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.USER_REWARD_SHARE_APP,
       1,

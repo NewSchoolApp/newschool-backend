@@ -375,4 +375,26 @@ export class AchievementRepository extends Repository<Achievement> {
       ],
     );
   }
+
+  public sharedAppThisWeek(userId: string): Promise<any[]> {
+    return this.query(
+      `
+      SELECT
+        *
+      FROM
+        achievement a
+      WHERE
+        a.userId = ?
+      AND
+        eventName = ?
+      AND
+        a.completed = 1
+      AND
+        YEAR(a.updatedAt) = YEAR(CURRENT_DATE())
+      AND
+        WEEK(a.updatedAt) = WEEK(CURRENT_DATE())
+    `,
+      [userId, EventNameEnum.USER_REWARD_SHARE_APP],
+    );
+  }
 }
