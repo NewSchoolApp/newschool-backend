@@ -7,12 +7,14 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
+import { Column } from 'typeorm';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -50,6 +52,16 @@ export class UserDTO {
   @IsEnum(GenderEnum)
   @Expose()
   gender?: GenderEnum;
+
+  @IsOptional()
+  @IsNumber()
+  @Expose()
+  inviteKey: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Expose()
+  invitedByUserId: string;
 
   @IsNotEmpty()
   @IsEnum(EscolarityEnum)
