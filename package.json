@@ -45,7 +45,7 @@
     "dotenv-flow": "3.2.0",
     "mysql": "2.18.1",
     "nest-raven": "7.0.0",
-    "nodemailer": "6.4.15",
+    "nodemailer": "6.4.16",
     "passport-facebook-token": "4.0.0",
     "passport-jwt": "4.0.0",
     "pubsub-js": "1.9.0",
