@@ -33,7 +33,7 @@
     "@nestjs/jwt": "7.2.0",
     "@nestjs/platform-express": "7.5.2",
     "@nestjs/schedule": "0.4.1",
-    "@nestjs/swagger": "4.7.2",
+    "@nestjs/swagger": "4.7.3",
     "@nestjs/typeorm": "7.1.4",
     "@sentry/node": "5.27.4",
     "@sentry/tracing": "5.27.4",
