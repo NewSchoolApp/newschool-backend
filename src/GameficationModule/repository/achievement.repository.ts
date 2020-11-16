@@ -196,7 +196,7 @@ export class AchievementRepository extends Repository<Achievement> {
 
     if (institutionName) {
       institutionQuery = `
-      and c2.institutionName = ${mysql.escape(city)}
+      and c2.institutionName = ${mysql.escape(institutionName)}
       `;
     }
 
