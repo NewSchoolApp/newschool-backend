@@ -49,7 +49,20 @@ export class AchievementRepository extends Repository<Achievement> {
     ];
     const response: any[] = await this.query(
       `
-        SELECT * from achievement WHERE userId = ? AND eventName = ? AND rule->>"$.courseId" = ? AND rule->>"$.platform" = ? ORDER BY version DESC
+        SELECT
+          *
+        FROM
+          achievement
+        WHERE
+          userId = ?
+        AND
+          eventName = ?
+        AND
+          rule->>"$.courseId" = ?
+        AND
+          rule->>"$.platform" = ?
+        ORDER BY
+          version DESC
       `,
       params,
     );
@@ -376,7 +389,10 @@ export class AchievementRepository extends Repository<Achievement> {
     );
   }
 
-  public sharedAppThisWeek(userId: string): Promise<any[]> {
+  public sharedAppThisWeekOnPlatform(
+    userId: string,
+    platform: SocialMediaEnum,
+  ): Promise<any[]> {
     return this.query(
       `
       SELECT
@@ -393,8 +409,10 @@ export class AchievementRepository extends Repository<Achievement> {
         YEAR(a.updatedAt) = YEAR(CURRENT_DATE())
       AND
         WEEK(a.updatedAt) = WEEK(CURRENT_DATE())
+      AND
+        rule->>"$.platform" = ?
     `,
-      [userId, EventNameEnum.USER_REWARD_SHARE_APP],
+      [userId, EventNameEnum.USER_REWARD_SHARE_APP, platform],
     );
   }
 }

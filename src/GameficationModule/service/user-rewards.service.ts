@@ -236,6 +236,7 @@ export class UserRewardsService implements OnModuleInit {
 
   private async shareAppReward({
     userId,
+    platform,
   }: ShareAppRewardDataDTO): Promise<void> {
     const queryResponse: User[] = await this.userRepository.find({
       where: { id: userId },
@@ -243,8 +244,9 @@ export class UserRewardsService implements OnModuleInit {
     const user = queryResponse[0];
     if (!user) return;
 
-    const responses: any[] = await this.achievementRepository.sharedAppThisWeek(
+    const responses: any[] = await this.achievementRepository.sharedAppThisWeekOnPlatform(
       userId,
+      platform,
     );
 
     if (responses.length > 3) return;
