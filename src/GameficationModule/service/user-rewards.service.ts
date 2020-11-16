@@ -260,6 +260,7 @@ export class UserRewardsService implements OnModuleInit {
     await this.achievementRepository.save({
       badge: shareAppBadge,
       user,
+      rule: { platform },
       eventName: EventNameEnum.USER_REWARD_SHARE_APP,
       completed: true,
     });

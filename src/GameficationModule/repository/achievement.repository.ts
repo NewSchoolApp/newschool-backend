@@ -389,9 +389,7 @@ export class AchievementRepository extends Repository<Achievement> {
     );
   }
 
-  public sharedAppThisWeek(
-    userId: string,
-  ): Promise<any[]> {
+  public sharedAppThisWeek(userId: string): Promise<any[]> {
     return this.query(
       `
       SELECT

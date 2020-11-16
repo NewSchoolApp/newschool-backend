@@ -1,13 +1,8 @@
 import { StartEventDTO } from './start-event.dto';
 
-export enum SocialMediaEnum {
-  TWITTER = 'TWITTER',
-  FACEBOOK = 'FACEBOOK',
-}
-
 export class StartEventShareAppRuleDTO {
   userId: string;
-  platform: SocialMediaEnum;
+  platform: string;
 }
 
 export class StartEventShareAppDTO extends StartEventDTO {
