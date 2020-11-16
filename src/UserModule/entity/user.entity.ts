@@ -68,9 +68,9 @@ export class User extends Audit {
   @Expose()
   schooling?: EscolarityEnum;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   @Expose()
-  institutionName?: string;
+  institutionName: string;
 
   @Column({ nullable: true })
   @Expose()

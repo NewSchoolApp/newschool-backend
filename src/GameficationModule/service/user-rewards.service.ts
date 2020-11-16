@@ -236,6 +236,7 @@ export class UserRewardsService implements OnModuleInit {
 
   private async shareAppReward({
     userId,
+    platform,
   }: ShareAppRewardDataDTO): Promise<void> {
     const queryResponse: User[] = await this.userRepository.find({
       where: { id: userId },
@@ -259,6 +260,7 @@ export class UserRewardsService implements OnModuleInit {
     await this.achievementRepository.save({
       badge: shareAppBadge,
       user,
+      rule: { platform },
       eventName: EventNameEnum.USER_REWARD_SHARE_APP,
       completed: true,
     });
