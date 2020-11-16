@@ -407,7 +407,7 @@ export class AchievementRepository extends Repository<Achievement> {
       AND
         WEEK(a.updatedAt) = WEEK(CURRENT_DATE())
     `,
-      [userId, EventNameEnum.USER_REWARD_SHARE_APP, platform],
+      [userId, EventNameEnum.USER_REWARD_SHARE_APP],
     );
   }
 }
