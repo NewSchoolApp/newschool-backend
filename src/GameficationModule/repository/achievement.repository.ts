@@ -3,7 +3,6 @@ import { Achievement } from '../entity/achievement.entity';
 import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
-import { SocialMediaEnum } from '../dto/start-event-share-course.dto';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { TimeRangeEnum } from '../enum/time-range.enum';
@@ -39,7 +38,7 @@ export class AchievementRepository extends Repository<Achievement> {
   public async getSharedCourseByCourseIdAndUserIdAndSocialMedia<T>(
     courseId: string,
     userId: string,
-    socialMedia: SocialMediaEnum,
+    socialMedia: string,
   ): Promise<Achievement<T>[]> {
     const params = [
       userId,
