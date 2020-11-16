@@ -244,9 +244,8 @@ export class UserRewardsService implements OnModuleInit {
     const user = queryResponse[0];
     if (!user) return;
 
-    const responses: any[] = await this.achievementRepository.sharedAppThisWeekOnPlatform(
+    const responses: any[] = await this.achievementRepository.sharedAppThisWeek(
       userId,
-      platform,
     );
 
     if (responses.length > 3) return;

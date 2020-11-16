@@ -389,9 +389,8 @@ export class AchievementRepository extends Repository<Achievement> {
     );
   }
 
-  public sharedAppThisWeekOnPlatform(
+  public sharedAppThisWeek(
     userId: string,
-    platform: SocialMediaEnum,
   ): Promise<any[]> {
     return this.query(
       `
@@ -409,8 +408,6 @@ export class AchievementRepository extends Repository<Achievement> {
         YEAR(a.updatedAt) = YEAR(CURRENT_DATE())
       AND
         WEEK(a.updatedAt) = WEEK(CURRENT_DATE())
-      AND
-        rule->>"$.platform" = ?
     `,
       [userId, EventNameEnum.USER_REWARD_SHARE_APP, platform],
     );
