@@ -195,6 +195,7 @@ export class UserRewardsService implements OnModuleInit {
   }
 
   private async completeRegistrationReward({ id }) {
+    console.log('to aqui');
     const response: User[] = await this.userRepository.find({ where: { id } });
     const user = response[0];
     if (!user) return;

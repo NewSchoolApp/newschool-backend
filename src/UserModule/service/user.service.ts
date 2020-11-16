@@ -2,7 +2,6 @@ import * as crypto from 'crypto';
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
   GoneException,
   HttpService,
   Inject,
@@ -32,6 +31,7 @@ import { AchievementService } from '../../GameficationModule/service/achievement
 import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 @Injectable()
 export class UserService {
@@ -135,36 +135,26 @@ export class UserService {
     await this.repository.delete(id);
   }
 
-  public async updateStudent(
-    id: User['id'],
-    userUpdatedInfo: UserUpdateDTO,
-  ): Promise<User> {
-    const user = await this.update(id, userUpdatedInfo);
-    this.publisherService.emitupdateStudent(id);
-    return user;
-  }
-
   @Transactional()
   public async update(
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
   ): Promise<User> {
     const user: User = await this.findById(id);
+    let role = user.role;
     if (userUpdatedInfo.role) {
-      const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-      return this.repository.save({
-        ...user,
-        ...userUpdatedInfo,
-        role,
-        id: user.id,
-      });
+      role = await this.roleService.findByRoleName(userUpdatedInfo.role);
     }
-    return await this.repository.save({
+    const updatedUser = await this.repository.save({
       ...user,
       ...userUpdatedInfo,
-      role: user.role,
+      role,
       id: user.id,
     });
+    if (updatedUser.role.name === RoleEnum.STUDENT) {
+      this.publisherService.emitupdateStudent(id);
+    }
+    return updatedUser;
   }
 
   public async forgotPassword(
