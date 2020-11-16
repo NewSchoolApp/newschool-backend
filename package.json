@@ -60,7 +60,7 @@
     "typeorm-transactional-cls-hooked": "0.1.12"
   },
   "devDependencies": {
-    "@nestjs/cli": "7.5.2",
+    "@nestjs/cli": "7.5.3",
     "@nestjs/schematics": "7.2.1",
     "@nestjs/testing": "7.5.2",
     "@types/dotenv": "8.2.0",
