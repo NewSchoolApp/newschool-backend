@@ -12,6 +12,7 @@ import { Test } from './test.entity';
 import { Expose } from 'class-transformer';
 import { CourseTaken } from './course.taken.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { Comment } from './comment.entity';
 
 @Unique(['sequenceNumber', 'lesson'])
 @Entity()
@@ -67,4 +68,7 @@ export class Part extends Audit {
     (courseTaken: CourseTaken) => courseTaken.currentPart,
   )
   currentCoursesTaken: CourseTaken[];
+
+  @OneToMany<Comment>(() => Comment, (comment: Comment) => comment.part)
+  comments: Comment[];
 }

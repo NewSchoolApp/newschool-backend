@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -18,6 +19,9 @@ import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { Notification } from '../../NotificationModule/entity/notification.entity';
+import { Comment } from '../../CourseModule/entity/comment.entity';
+import { UserHasComment } from '../../CourseModule/entity/user-has-comment.entity';
+import { UserLikedComment } from '../../CourseModule/entity/user-liked-comment.entity';
 
 @Entity()
 export class User extends Audit {
@@ -155,7 +159,21 @@ export class User extends Audit {
     () => Notification,
     (notification: Notification<any>) => notification.user,
   )
-  notifications: Notification<any>;
+  notifications: Notification;
+
+  @OneToMany<UserHasComment>(
+    () => UserHasComment,
+    (userHasComment: UserHasComment) => userHasComment.user,
+  )
+  @JoinTable()
+  comments: UserHasComment[];
+
+  @OneToMany<UserLikedComment>(
+    () => UserLikedComment,
+    (userLikedComment: UserLikedComment) => userLikedComment.user,
+  )
+  @JoinTable()
+  likedComments: User[];
 
   validPassword(password: string) {
     const hash = crypto
