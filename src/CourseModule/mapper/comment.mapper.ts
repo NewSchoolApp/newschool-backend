@@ -10,7 +10,13 @@ export class CommentMapper extends Mapper<Comment, CommentDTO> {
   }
 
   toDto(entityObject: Partial<Comment>): CommentDTO {
-    return super.toDto(entityObject);
+    let dto: CommentDTO = super.toDto(entityObject);
+    dto.likes = entityObject.likedBy.length;
+    dto = {
+      ...dto,
+      likes: entityObject.likedBy.length,
+    };
+    return dto;
   }
 
   toDtoList(entityArray: Comment[]): CommentDTO[] {

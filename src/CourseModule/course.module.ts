@@ -37,6 +37,7 @@ import { CommentService } from './service/comment.service';
 import { Comment } from './entity/comment.entity';
 import { UserHasComment } from './entity/user-has-comment.entity';
 import { UserLikedComment } from './entity/user-liked-comment.entity';
+import { UploadModule } from '../UploadModule/upload.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UserLikedComment } from './entity/user-liked-comment.entity';
     MulterModule.register({ dest: './upload' }),
     forwardRef(() => UserModule),
     forwardRef(() => GameficationModule),
+    UploadModule,
   ],
   controllers: [
     CourseController,

@@ -24,13 +24,11 @@ export class CommentController {
   @Post()
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async addComment(@Body() comment: AddCommentDTO): Promise<CommentDTO> {
-    return this.mapper.toDto(
-      await this.service.addComment(
-        comment.partId,
-        comment.userId,
-        comment.text,
-      ),
+  public async addComment(@Body() comment: AddCommentDTO): Promise<any> {
+    return await this.service.addComment(
+      comment.partId,
+      comment.userId,
+      comment.text,
     );
   }
 

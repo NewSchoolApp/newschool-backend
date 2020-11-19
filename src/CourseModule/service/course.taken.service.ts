@@ -2,7 +2,6 @@ import { Course } from '../entity/course.entity';
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,

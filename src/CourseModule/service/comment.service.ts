@@ -11,6 +11,8 @@ import { User } from '../../UserModule/entity/user.entity';
 import { Part } from '../entity/part.entity';
 import { UserHasCommentRepository } from '../repository/user-has-comment.repository';
 import { UserLikedCommentRepository } from '../repository/user-liked-comment.repository';
+import { UploadService } from '../../UploadModule/service/upload.service';
+import { UserMapper } from '../../UserModule/mapper/user.mapper';
 
 @Injectable()
 export class CommentService {
@@ -20,6 +22,8 @@ export class CommentService {
     private readonly userLikedCommentRepository: UserLikedCommentRepository,
     private readonly userService: UserService,
     private readonly partService: PartService,
+    private readonly uploadService: UploadService,
+    private readonly userMapper: UserMapper,
   ) {}
 
   public async findById(id: string): Promise<Comment> {
@@ -66,7 +70,11 @@ export class CommentService {
 
     await this.userHasCommentRepository.save({ user, comment });
 
-    return comment;
+    // return this.repository.findOne({
+    //   where: { id: comment.id },
+    //   relations: ['users', 'likedBy'],
+    // });
+    return this.mapComment(comment.id, user.id);
   }
 
   public async likeComment(id: string, userId: string): Promise<void> {
@@ -102,5 +110,17 @@ export class CommentService {
     await this.userHasCommentRepository.save({ user, comment: response });
 
     return response;
+  }
+
+  async mapComment(commentId: string, userId: string): Promise<any> {
+    const teste = await this.userHasCommentRepository.findOne({
+      where: { comment: { id: commentId }, user: { id: userId } },
+      relations: ['user', 'comment'],
+      loadEagerRelations: true,
+    });
+    return {
+      ...teste.comment,
+      user: await this.userMapper.toDtoAsync(teste.user),
+    };
   }
 }
