@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { CommentService } from '../service/comment.service';
@@ -6,6 +6,9 @@ import { AddCommentDTO } from '../dto/add-comment.dto';
 import { LikeCommentDTO } from '../dto/like-comment.dto';
 import { CommentMapper } from '../mapper/comment.mapper';
 import { CommentDTO } from '../dto/comment.dto';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 
 @ApiTags('Comment')
 @ApiBearerAuth()
@@ -19,6 +22,8 @@ export class CommentController {
   ) {}
 
   @Post()
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
   public async addComment(@Body() comment: AddCommentDTO): Promise<CommentDTO> {
     return this.mapper.toDto(
       await this.service.addComment(
@@ -30,6 +35,8 @@ export class CommentController {
   }
 
   @Get(':id/response')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
   public async getCommentResponses(
     @Param('id') id: string,
   ): Promise<CommentDTO[]> {
@@ -37,6 +44,8 @@ export class CommentController {
   }
 
   @Post(':id/response')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
   public async addCommentResponse(
     @Param('id') id: string,
     @Body() response: AddCommentDTO,
@@ -52,6 +61,8 @@ export class CommentController {
   }
 
   @Get('part/:partId')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
   public async getCommentsByPartId(
     @Param('partId') partId: string,
   ): Promise<CommentDTO[]> {
@@ -59,6 +70,8 @@ export class CommentController {
   }
 
   @Post(':id/like')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
   public async likeComment(
     @Param('id') id: string,
     @Body() body: LikeCommentDTO,
