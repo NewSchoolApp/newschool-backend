@@ -29,13 +29,11 @@ import { CourseTakenMapper } from './mapper/course-taken.mapper';
 import { CourseTaken } from './entity/course.taken.entity';
 import { CourseTakenRepository } from './repository/course.taken.repository';
 import { CommentRepository } from './repository/comment.repository';
-import { UserHasCommentRepository } from './repository/user-has-comment.repository';
 import { UserLikedCommentRepository } from './repository/user-liked-comment.repository';
 import { CommentController } from './controllers/comment.controller';
 import { CommentMapper } from './mapper/comment.mapper';
 import { CommentService } from './service/comment.service';
 import { Comment } from './entity/comment.entity';
-import { UserHasComment } from './entity/user-has-comment.entity';
 import { UserLikedComment } from './entity/user-liked-comment.entity';
 import { UploadModule } from '../UploadModule/upload.module';
 
@@ -55,8 +53,6 @@ import { UploadModule } from '../UploadModule/upload.module';
       CourseTakenRepository,
       Comment,
       CommentRepository,
-      UserHasComment,
-      UserHasCommentRepository,
       UserLikedComment,
       UserLikedCommentRepository,
     ]),

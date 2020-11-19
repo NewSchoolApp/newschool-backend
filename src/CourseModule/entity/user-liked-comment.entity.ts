@@ -8,7 +8,7 @@ export class UserLikedComment extends Audit {
   @ManyToOne<User>(() => User, (user: User) => user.comments, { primary: true })
   user: User;
 
-  @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.users, {
+  @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.likedBy, {
     primary: true,
   })
   comment: Comment;

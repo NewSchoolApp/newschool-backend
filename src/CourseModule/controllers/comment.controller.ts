@@ -35,10 +35,8 @@ export class CommentController {
   @Get(':id/response')
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getCommentResponses(
-    @Param('id') id: string,
-  ): Promise<CommentDTO[]> {
-    return this.mapper.toDtoList(await this.service.getCommentResponses(id));
+  public async getCommentResponses(@Param('id') id: string): Promise<any> {
+    return this.service.getCommentResponses(id);
   }
 
   @Post(':id/response')
@@ -47,14 +45,12 @@ export class CommentController {
   public async addCommentResponse(
     @Param('id') id: string,
     @Body() response: AddCommentDTO,
-  ): Promise<CommentDTO> {
-    return this.mapper.toDto(
-      await this.service.addCommentResponse(
-        id,
-        response.partId,
-        response.userId,
-        response.text,
-      ),
+  ): Promise<any> {
+    return await this.service.addCommentResponse(
+      id,
+      response.partId,
+      response.userId,
+      response.text,
     );
   }
 
@@ -63,8 +59,8 @@ export class CommentController {
   @UseGuards(RoleGuard)
   public async getCommentsByPartId(
     @Param('partId') partId: string,
-  ): Promise<CommentDTO[]> {
-    return this.mapper.toDtoList(await this.service.findPartComments(partId));
+  ): Promise<any> {
+    return await this.service.findPartComments(partId);
   }
 
   @Post(':id/like')

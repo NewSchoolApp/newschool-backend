@@ -5,6 +5,11 @@ export class VideoProgressionDataDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
+  id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   videoUrl: string;
 
   @IsOptional()

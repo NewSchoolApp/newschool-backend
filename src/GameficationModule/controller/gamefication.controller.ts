@@ -20,9 +20,8 @@ import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
-import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { Pageable } from '../../CommonsModule/dto/pageable.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
-import { NewUserDTO } from '../../UserModule/dto/new-user.dto';
 import { PageableRankingSwagger } from '../swagger/pageable-ranking.swagger';
 
 @ApiTags('Gamefication')
@@ -57,8 +56,8 @@ export class GameficationController {
     return await this.service.getRanking(
       order,
       timeRange,
-      limit,
-      page,
+      Number(limit),
+      Number(page),
       institutionName,
       city,
       state,

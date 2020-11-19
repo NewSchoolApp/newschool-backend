@@ -28,6 +28,8 @@ import { PartService } from '../../src/CourseModule/service/part.service';
 import { LessonService } from '../../src/CourseModule/service/lesson.service';
 import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
+import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
+import { filter } from 'rxjs/operators';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -62,7 +64,7 @@ describe('CommentController (e2e)', () => {
       })
       .overrideProvider(UploadService)
       .useValue({
-        getUserPhoto(x: string) {
+        getUserPhoto() {
           return Promise.resolve('photo url');
         },
       })
@@ -200,12 +202,102 @@ describe('CommentController (e2e)', () => {
       userId: addedUser.id,
     };
 
-    const commentRequest = await request(app.getHttpServer())
+    const addCommentRequest = await request(app.getHttpServer())
       .post(commentUrl)
       .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
       .send(addComentBody);
 
-    console.log(commentRequest.body);
+    expect(addCommentRequest.body.user.id).toBe(addedUser.id);
+    expect(addCommentRequest.body.responses).toStrictEqual([]);
+    expect(addCommentRequest.body.likedBy).toStrictEqual([]);
+    expect(addCommentRequest.body.part.id).toBe(addedPart.id);
+    expect(addCommentRequest.body.text).toBe(addComentBody.text);
+    done();
+  });
+
+  it('should like comment', async (done) => {
+    const oauthRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const addComentBody: AddCommentDTO = {
+      partId: addedPart.id,
+      text: 'random text',
+      userId: addedUser.id,
+    };
+
+    const addCommentRequest = await request(app.getHttpServer())
+      .post(commentUrl)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addComentBody);
+
+    const likeComentBody: LikeCommentDTO = {
+      userId: addedUser.id,
+    };
+
+    await request(app.getHttpServer())
+      .post(`${commentUrl}/${addCommentRequest.body.id}/like`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(likeComentBody);
+
+    const getCommentRequest = await request(app.getHttpServer())
+      .get(`${commentUrl}/part/${addedPart.id}`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`);
+
+    const filterComments = getCommentRequest.body.filter(
+      (comment) => comment.id === addCommentRequest.body.id,
+    );
+    const comment = filterComments[0];
+
+    expect(comment.likedBy.length).toBe(1);
+    expect(comment.likedBy[0].id).toBe(addedUser.id);
+    done();
+  });
+
+  it('should add a response to a comment', async (done) => {
+    const oauthRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const addComentBody: AddCommentDTO = {
+      partId: addedPart.id,
+      text: 'random text',
+      userId: addedUser.id,
+    };
+
+    const addCommentRequest = await request(app.getHttpServer())
+      .post(commentUrl)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addComentBody);
+
+    const addCommentResponseBody: AddCommentDTO = {
+      partId: addedPart.id,
+      text: 'random text',
+      userId: addedUser.id,
+    };
+
+    const addCommentResponseRequest = await request(app.getHttpServer())
+      .post(`${commentUrl}/${addCommentRequest.body.id}/response`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addCommentResponseBody);
+
+    expect(addCommentResponseRequest.body.parentComment.responses.length).toBe(
+      0,
+    );
+    expect(addCommentResponseRequest.body.parentComment.id).toBe(
+      addCommentRequest.body.id,
+    );
+
+    const getParentCommentResponsesRequest = await request(app.getHttpServer())
+      .get(`${commentUrl}/${addCommentRequest.body.id}/response`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`);
+
+    expect(getParentCommentResponsesRequest.body.responses.length).toBe(1);
+
     done();
   });
 

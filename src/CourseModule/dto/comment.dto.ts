@@ -16,5 +16,5 @@ export class CommentDTO {
 
   user: UserDTO;
 
-  likes: number;
+  likedBy: UserDTO[];
 }
