@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { PartDTO } from './part.dto';
-import { CommentDTO } from './comment.dto';
+import { UserDTO } from '../../UserModule/dto/user.dto';
 
 export class ResponseDTO {
   id: string;
@@ -10,8 +10,23 @@ export class ResponseDTO {
   @Type(() => PartDTO)
   part: PartDTO;
 
-  @Type(() => CommentDTO)
-  parentComment: CommentDTO;
+  @Type(() => CommentInsideResponseDTO)
+  parentComment: CommentInsideResponseDTO;
 
-  likes: number;
+  user: UserDTO;
+
+  likedBy: UserDTO[];
+}
+
+class CommentInsideResponseDTO {
+  id: string;
+
+  text: string;
+
+  user: UserDTO;
+
+  @Type(() => ResponseDTO)
+  responses: Omit<ResponseDTO, 'parentComment' | 'part'>[];
+
+  likedBy: UserDTO[];
 }

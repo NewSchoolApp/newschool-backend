@@ -12,10 +12,12 @@ export class UserMapper extends Mapper<User, UserDTO> {
 
   async toDtoAsync(entityObject: User): Promise<UserDTO> {
     const user = super.toDto(entityObject);
-    user.photo = entityObject.photoPath
-      ? await this.uploadService.getUserPhoto(entityObject.photoPath)
-      : null;
-    return user;
+    return {
+      ...user,
+      photo: entityObject.photoPath
+        ? await this.uploadService.getUserPhoto(entityObject.photoPath)
+        : null,
+    };
   }
 
   toDto(entityObject: User): UserDTO {

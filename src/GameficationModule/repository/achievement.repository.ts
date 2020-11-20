@@ -232,7 +232,6 @@ export class AchievementRepository extends Repository<Achievement> {
       on a2.userId = c2.id
       WHERE a2.completed = 1 ${timeRangeQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
       GROUP by a2.userId
-      ${limitQuery}
     `;
 
     return this.query(
@@ -251,12 +250,14 @@ export class AchievementRepository extends Repository<Achievement> {
           t2
         WHERE
           t2.points > t.points
+        ${limitQuery}
       )
     AS
       rank
     FROM
       (${derivedTable})
     AS t ORDER BY t.points ${order}
+    ${limitQuery}
     `,
     );
   }

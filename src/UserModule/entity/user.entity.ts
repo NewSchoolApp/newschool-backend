@@ -20,7 +20,6 @@ import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { Notification } from '../../NotificationModule/entity/notification.entity';
 import { Comment } from '../../CourseModule/entity/comment.entity';
-import { UserHasComment } from '../../CourseModule/entity/user-has-comment.entity';
 import { UserLikedComment } from '../../CourseModule/entity/user-liked-comment.entity';
 
 @Entity()
@@ -161,12 +160,9 @@ export class User extends Audit {
   )
   notifications: Notification;
 
-  @OneToMany<UserHasComment>(
-    () => UserHasComment,
-    (userHasComment: UserHasComment) => userHasComment.user,
-  )
+  @OneToMany<Comment>(() => Comment, (comment: Comment) => comment.user)
   @JoinTable()
-  comments: UserHasComment[];
+  comments: Comment[];
 
   @OneToMany<UserLikedComment>(
     () => UserLikedComment,

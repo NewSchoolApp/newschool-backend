@@ -2,7 +2,6 @@ import { Course } from '../entity/course.entity';
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -130,10 +129,12 @@ export class CourseTakenService {
       const videoProgressionData = new VideoProgressionDataDTO();
       videoProgressionData.videoUrl =
         courseTaken.currentPart.youtubeUrl || courseTaken.currentPart.vimeoUrl;
+      videoProgressionData.id = courseTaken.currentPart.id;
       videoProgression.type = StepEnum.NEW_PART;
       if (courseTaken.currentPart.sequenceNumber === 1) {
         videoProgression.type = StepEnum.NEW_LESSON;
         videoProgressionData.lessonTitle = courseTaken.currentLesson.title;
+        videoProgressionData.id = courseTaken.currentLesson.id;
       }
       videoProgression.data = videoProgressionData;
       return videoProgression;

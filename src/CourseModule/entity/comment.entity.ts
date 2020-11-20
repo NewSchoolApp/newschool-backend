@@ -1,28 +1,27 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Part } from './part.entity';
-import { User } from '../../UserModule/entity/user.entity';
 import { Expose } from 'class-transformer';
-import { UserHasComment } from './user-has-comment.entity';
 import { UserLikedComment } from './user-liked-comment.entity';
+import { User } from '../../UserModule/entity/user.entity';
 
 @Entity()
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: false })
   text: string;
 
-  @ManyToOne<Part>(() => Part, (part: Part) => part.comments)
+  @ManyToOne<Part>(() => Part, (part: Part) => part.comments, {
+    nullable: false,
+  })
   part: Part;
 
   @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.responses)
@@ -36,17 +35,15 @@ export class Comment {
   @Expose()
   responses: Comment[];
 
-  @OneToMany<UserHasComment>(
-    () => UserHasComment,
-    (userHasComment: UserHasComment) => userHasComment.comment,
-  )
-  @JoinTable()
-  users: UserHasComment[];
+  @ManyToOne<User>(() => User, (user: User) => user.comments, {
+    nullable: false,
+  })
+  user: User;
 
   @OneToMany<UserLikedComment>(
     () => UserLikedComment,
     (userLikedComment: UserLikedComment) => userLikedComment.comment,
   )
   @JoinTable()
-  likedBy: User[];
+  likedBy: UserLikedComment[];
 }
