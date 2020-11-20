@@ -110,7 +110,7 @@ export class CommentService {
   async mapComment(commentId: string): Promise<any> {
     const comment = await this.repository.findOne({
       where: { id: commentId },
-      relations: ['user'],
+      relations: ['user', 'part'],
     });
     const likes = await this.userLikedCommentRepository.find({
       where: { comment, user: comment.user },
