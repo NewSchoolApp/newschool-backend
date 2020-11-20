@@ -16,10 +16,7 @@ import { RoleGuard } from '../../CommonsModule/guard/role.guard';
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COMMENT_ENDPOINT}`,
 )
 export class CommentController {
-  constructor(
-    private readonly service: CommentService,
-    private readonly mapper: CommentMapper,
-  ) {}
+  constructor(private readonly service: CommentService) {}
 
   @Post()
   @NeedRole(RoleEnum.STUDENT)

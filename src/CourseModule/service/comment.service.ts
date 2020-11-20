@@ -30,7 +30,7 @@ export class CommentService {
   public async findById(id: string): Promise<Comment> {
     const response: Comment[] = await this.repository.find({
       where: { id },
-      relations: ['user', 'likedBy', 'part'],
+      relations: ['user', 'likedBy', 'part', 'parentComment'],
     });
     if (!response.length) {
       throw new NotFoundException('Comment not found');

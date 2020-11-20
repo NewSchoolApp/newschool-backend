@@ -11,10 +11,8 @@ import { ClientCredentials } from '../../src/SecurityModule/entity/client-creden
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
-import { Course } from '../../src/CourseModule/entity/course.entity';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
-import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
 import { User } from '../../src/UserModule/entity/user.entity';
 import { Part } from '../../src/CourseModule/entity/part.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
@@ -29,7 +27,6 @@ import { LessonService } from '../../src/CourseModule/service/lesson.service';
 import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
 import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
-import { filter } from 'rxjs/operators';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -41,10 +38,6 @@ describe('CommentController (e2e)', () => {
   let authorization: string;
   const commentUrl = `/${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.COMMENT_ENDPOINT}`;
   const studentRoleEnum: RoleEnum = RoleEnum.STUDENT;
-
-  let courseTakenRepository: Repository<CourseTaken>;
-  let courseRepository: Repository<Course>;
-  let userRepository: Repository<User>;
 
   let dbConnection: Connection;
 
@@ -76,16 +69,6 @@ describe('CommentController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-
-    courseRepository = moduleFixture.get<Repository<Course>>(
-      getRepositoryToken(Course),
-    );
-    userRepository = moduleFixture.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
-    courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
-      getRepositoryToken(CourseTaken),
-    );
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -297,6 +280,45 @@ describe('CommentController (e2e)', () => {
       .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`);
 
     expect(getParentCommentResponsesRequest.body.responses.length).toBe(1);
+
+    done();
+  });
+
+  it('should not be able to add a response to a response', async (done) => {
+    const oauthRequest = await request(app.getHttpServer())
+      .post('/oauth/token')
+      .set('Authorization', `Basic ${authorization}`)
+      .set('Content-Type', 'multipart/form-data')
+      .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
+
+    const addComentBody: AddCommentDTO = {
+      partId: addedPart.id,
+      text: 'random text',
+      userId: addedUser.id,
+    };
+
+    const addCommentRequest = await request(app.getHttpServer())
+      .post(commentUrl)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addComentBody);
+
+    const addCommentResponseBody: AddCommentDTO = {
+      partId: addedPart.id,
+      text: 'random text',
+      userId: addedUser.id,
+    };
+
+    const addCommentResponseRequest = await request(app.getHttpServer())
+      .post(`${commentUrl}/${addCommentRequest.body.id}/response`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addCommentResponseBody);
+
+    const addResponseToResponseRequest = await request(app.getHttpServer())
+      .post(`${commentUrl}/${addCommentResponseRequest.body.id}/response`)
+      .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
+      .send(addCommentResponseBody);
+
+    expect(addResponseToResponseRequest.status).toBe(400);
 
     done();
   });
