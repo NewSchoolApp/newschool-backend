@@ -174,7 +174,11 @@ export class CourseTakenService {
     );
 
     if (nextTest) {
-      const updatedCourseTaken = { ...courseTaken, currentTest: nextTest };
+      const updatedCourseTaken = {
+        ...courseTaken,
+        currentTest: nextTest,
+        currentTestId: nextTest.id,
+      };
       updatedCourseTaken.completion = await this.calculateCompletion(
         updatedCourseTaken,
       );
@@ -192,6 +196,7 @@ export class CourseTakenService {
         ...courseTaken,
         currentTest: null,
         currentPart: nextPart,
+        currentPartId: nextPart.id,
       };
       updatedCourseTaken.completion = await this.calculateCompletion(
         updatedCourseTaken,
@@ -214,8 +219,11 @@ export class CourseTakenService {
       const updatedCourseTaken = {
         ...courseTaken,
         currentTest: null,
+        currentTestId: null,
         currentPart: nextPart,
+        currentPartId: nextPart.id,
         currentLesson: nextLesson,
+        currentLessonId: nextLesson.id,
       };
 
       updatedCourseTaken.completion = await this.calculateCompletion(
