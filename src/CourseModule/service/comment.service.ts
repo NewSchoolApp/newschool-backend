@@ -32,7 +32,7 @@ export class CommentService {
   public async findById(id: string): Promise<Comment> {
     const response: Comment[] = await this.repository.find({
       where: { id },
-      relations: ['user', 'likedBy', 'part', 'parentComment'],
+      relations: ['user', 'likedBy', 'parentComment'],
     });
     if (!response.length) {
       throw new NotFoundException('Comment not found');
@@ -43,7 +43,7 @@ export class CommentService {
   public async findPartComments(partId: string): Promise<CommentDTO[]> {
     const comments = await this.repository.find({
       where: { partId },
-      relations: ['user', 'likedBy', 'part'],
+      relations: ['user', 'likedBy'],
     });
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }

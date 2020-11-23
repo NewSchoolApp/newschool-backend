@@ -68,7 +68,4 @@ export class Part extends Audit {
     (courseTaken: CourseTaken) => courseTaken.currentPart,
   )
   currentCoursesTaken: CourseTaken[];
-
-  @OneToMany<Comment>(() => Comment, (comment: Comment) => comment.part)
-  comments: Comment[];
 }

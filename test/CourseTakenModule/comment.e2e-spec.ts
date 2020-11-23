@@ -42,7 +42,6 @@ describe('CommentController (e2e)', () => {
   let dbConnection: Connection;
 
   let addedUser: User;
-  let addedPart: Part;
 
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
@@ -150,27 +149,6 @@ describe('CommentController (e2e)', () => {
       courseId: addedCourse.id,
     };
     await courseTakenService.add(newCourseTaken);
-
-    const lessonService: LessonService = moduleFixture.get<LessonService>(
-      LessonService,
-    );
-
-    const addedLesson = await lessonService.add({
-      title: 'lesson test1',
-      description: 'lesson test1 description',
-      courseId: addedCourse.id,
-    });
-
-    const partService: PartService = moduleFixture.get<PartService>(
-      PartService,
-    );
-
-    addedPart = await partService.add({
-      vimeoUrl: 'randomUrl',
-      title: 'new part1',
-      description: 'new part1 description',
-      lessonId: addedLesson.id,
-    });
   });
 
   it('should add comment', async (done) => {
@@ -180,8 +158,10 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
+    const partId = String(new Date().getTime());
+
     const addComentBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };
@@ -194,7 +174,7 @@ describe('CommentController (e2e)', () => {
     expect(addCommentRequest.body.user.id).toBe(addedUser.id);
     expect(addCommentRequest.body.responses).toStrictEqual([]);
     expect(addCommentRequest.body.likedBy).toStrictEqual([]);
-    expect(addCommentRequest.body.part.id).toBe(addedPart.id);
+    expect(addCommentRequest.body.partId).toBe(partId);
     expect(addCommentRequest.body.text).toBe(addComentBody.text);
     done();
   });
@@ -206,8 +186,10 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
+    const partId = String(new Date().getTime());
+
     const addComentBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };
@@ -227,7 +209,7 @@ describe('CommentController (e2e)', () => {
       .send(likeComentBody);
 
     const getCommentRequest = await request(app.getHttpServer())
-      .get(`${commentUrl}/part/${addedPart.id}`)
+      .get(`${commentUrl}/part/${partId}`)
       .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`);
 
     const filterComments = getCommentRequest.body.filter(
@@ -247,8 +229,10 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
+    const partId = String(new Date().getTime());
+
     const addComentBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };
@@ -259,7 +243,7 @@ describe('CommentController (e2e)', () => {
       .send(addComentBody);
 
     const addCommentResponseBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };
@@ -292,8 +276,10 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
+    const partId = String(new Date().getTime());
+
     const addComentBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };
@@ -304,7 +290,7 @@ describe('CommentController (e2e)', () => {
       .send(addComentBody);
 
     const addCommentResponseBody: AddCommentDTO = {
-      partId: addedPart.id,
+      partId,
       text: 'random text',
       userId: addedUser.id,
     };

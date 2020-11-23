@@ -85,9 +85,7 @@ export class CourseTaken extends Audit {
   @Expose()
   feedback?: string;
 
-  @ManyToOne<Lesson>('Lesson', (lesson: Lesson) => lesson.currentCoursesTaken, {
-    nullable: true,
-  })
+  @ManyToOne<Lesson>(() => Lesson)
   @JoinColumn({
     name: 'current_lesson_id',
     referencedColumnName: 'id',
@@ -98,9 +96,7 @@ export class CourseTaken extends Audit {
   @Column({ name: 'current_lesson_id', nullable: true })
   public currentLessonId?: string;
 
-  @ManyToOne<Part>('Part', (part: Part) => part.currentCoursesTaken, {
-    nullable: true,
-  })
+  @ManyToOne<Part>(() => Part)
   @JoinColumn({
     name: 'current_part_id',
     referencedColumnName: 'id',
@@ -111,9 +107,7 @@ export class CourseTaken extends Audit {
   @Column({ name: 'current_part_id', nullable: true })
   public currentPartId?: string;
 
-  @ManyToOne<Test>('Test', (test: Test) => test.currentCoursesTaken, {
-    nullable: true,
-  })
+  @ManyToOne<Test>(() => Test)
   @JoinColumn({
     name: 'current_test_id',
     referencedColumnName: 'id',

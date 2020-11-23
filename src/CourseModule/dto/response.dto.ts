@@ -20,8 +20,7 @@ export class ResponseDTO {
 
   text: string;
 
-  @Type(() => PartDTO)
-  part: PartDTO;
+  partId: string;
 
   @Type(() => CommentInsideResponseDTO)
   parentComment: CommentInsideResponseDTO;
