@@ -8,8 +8,6 @@ import {
 } from '@nestjs/common';
 import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
-import { PartV2Service } from '../../service/v2/part-v2.service';
 import {
   CheckTestBodyDTO,
   CheckTestResponseDTO,
@@ -26,22 +24,20 @@ export class TestV2Controller {
   constructor(private readonly service: TestV2Service) {}
 
   @Get('part/:partId')
-  public async getAll(
-    @Param('partId', ParseIntPipe) partId: number,
-  ): Promise<CMSTestDTO[]> {
+  public async getAll(@Param('partId') partId: string): Promise<CMSTestDTO[]> {
     return this.service.getAll(partId);
   }
 
   @Get(':id')
   public async findById(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
   ): Promise<CMSTestDTO> {
     return this.service.findById(id);
   }
 
   @Post(':id/check-test')
   public async checkTest(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() checkTest: CheckTestBodyDTO,
   ): Promise<CheckTestResponseDTO> {
     return {

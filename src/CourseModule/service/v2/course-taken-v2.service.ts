@@ -25,7 +25,7 @@ export class CourseTakenV2Service {
 
   public async advanceOnCourse(
     userId: string,
-    courseId: number,
+    courseId: string,
   ): Promise<void> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
       userId,
@@ -123,7 +123,7 @@ export class CourseTakenV2Service {
 
   private async findByUserIdAndCourseId(
     userId: string,
-    courseId: number,
+    courseId: string,
   ): Promise<CourseTaken> {
     const courseTaken = await this.repository.findByUserIdAndCourseId(
       userId,
@@ -135,7 +135,7 @@ export class CourseTakenV2Service {
     return courseTaken;
   }
 
-  public async currentStep(userId: string, courseId: number) {
+  public async currentStep(userId: string, courseId: string) {
     const courseTaken = await this.findByUserIdAndCourseId(userId, courseId);
     if (!courseTaken.currentTestId) {
       const { data: part } = await this.cmsIntegration.findPartById(

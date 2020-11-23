@@ -4,7 +4,7 @@ export class CMSLoginDTO {
 }
 
 export class CmsUserDTO {
-  id: number;
+  id: string;
   username: string;
   email: string;
   provider: string;

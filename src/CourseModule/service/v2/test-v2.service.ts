@@ -13,12 +13,12 @@ import { CMSPartDTO } from '../../dto/cms-part.dto';
 export class TestV2Service {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
-  public async getAll(partId: number): Promise<CMSTestDTO[]> {
+  public async getAll(partId: string): Promise<CMSTestDTO[]> {
     const { data } = await this.cmsIntegration.getTestsByPartId(partId);
     return data;
   }
 
-  public async findById(id: number): Promise<CMSTestDTO> {
+  public async findById(id: string): Promise<CMSTestDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');
@@ -36,7 +36,7 @@ export class TestV2Service {
   }
 
   public async checkTest(
-    id: number,
+    id: string,
     chosenAlternative: ChosenAlternativeEnum,
   ): Promise<boolean> {
     const test: CMSTestDTO = await this.findById(id);

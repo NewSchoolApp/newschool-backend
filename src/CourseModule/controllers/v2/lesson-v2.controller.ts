@@ -14,15 +14,13 @@ export class LessonV2Controller {
 
   @Get('course/:courseId')
   public async getAll(
-    @Param('courseId', ParseIntPipe) courseId: number,
+    @Param('courseId') courseId: string,
   ): Promise<CMSLessonDTO[]> {
     return this.service.getAll(courseId);
   }
 
   @Get(':id')
-  public async findById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<CMSLessonDTO> {
+  public async findById(@Param('id') id: string): Promise<CMSLessonDTO> {
     return this.service.findById(id);
   }
 }

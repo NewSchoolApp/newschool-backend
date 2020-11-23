@@ -38,8 +38,8 @@ export class CourseTaken extends Audit {
   @Expose()
   course: Course;
 
-  @Column({ name: 'course_id' })
-  public courseId: number;
+  @Column({ name: 'course_id', primary: true })
+  public courseId: string;
 
   @Column({
     nullable: false,
@@ -96,7 +96,7 @@ export class CourseTaken extends Audit {
   currentLesson: Lesson;
 
   @Column({ name: 'current_lesson_id', nullable: true })
-  public currentLessonId?: number;
+  public currentLessonId?: string;
 
   @ManyToOne<Part>('Part', (part: Part) => part.currentCoursesTaken, {
     nullable: true,
@@ -109,7 +109,7 @@ export class CourseTaken extends Audit {
   currentPart: Part;
 
   @Column({ name: 'current_part_id', nullable: true })
-  public currentPartId?: number;
+  public currentPartId?: string;
 
   @ManyToOne<Test>('Test', (test: Test) => test.currentCoursesTaken, {
     nullable: true,
@@ -122,5 +122,5 @@ export class CourseTaken extends Audit {
   currentTest: Test;
 
   @Column({ name: 'current_test_id', nullable: true })
-  public currentTestId?: number;
+  public currentTestId?: string;
 }

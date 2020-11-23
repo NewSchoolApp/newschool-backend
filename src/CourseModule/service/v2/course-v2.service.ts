@@ -16,7 +16,7 @@ export class CourseV2Service {
     return data;
   }
 
-  public async findById(id: number): Promise<CMSCourseDTO> {
+  public async findById(id: string): Promise<CMSCourseDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');

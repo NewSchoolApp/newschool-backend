@@ -16,15 +16,13 @@ export class PartV2Controller {
 
   @Get('lesson/:lessonId')
   public async getAll(
-    @Param('lessonId', ParseIntPipe) lessonId: number,
+    @Param('lessonId') lessonId: string,
   ): Promise<CMSPartDTO[]> {
     return this.service.getAll(lessonId);
   }
 
   @Get(':id')
-  public async findById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<CMSPartDTO> {
+  public async findById(@Param('id') id: string): Promise<CMSPartDTO> {
     return this.service.findById(id);
   }
 }

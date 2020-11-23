@@ -18,9 +18,7 @@ export class CourseV2Controller {
   }
 
   @Get(':id')
-  public async findById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<CMSCourseDTO> {
+  public async findById(@Param('id') id: string): Promise<CMSCourseDTO> {
     return this.service.findById(id);
   }
 }
