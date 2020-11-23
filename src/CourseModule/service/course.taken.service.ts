@@ -224,6 +224,12 @@ export class CourseTakenService {
       return;
     }
 
+    const completedCourse = this.getCompletedByUserIdAndCourseId(
+      user.id,
+      course.id,
+    );
+    if (!completedCourse) return;
+
     await this.repository.save({
       ...courseTaken,
       completion: 100,
