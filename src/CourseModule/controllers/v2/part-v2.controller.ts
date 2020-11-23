@@ -3,6 +3,8 @@ import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { PartV2Service } from '../../service/v2/part-v2.service';
+import { CMSTestDTO } from '../../dto/cms-test.dto';
+import { CMSPartDTO } from '../../dto/cms-part.dto';
 
 @ApiTags('PartV2')
 @ApiBearerAuth()
@@ -15,14 +17,14 @@ export class PartV2Controller {
   @Get('lesson/:lessonId')
   public async getAll(
     @Param('lessonId', ParseIntPipe) lessonId: number,
-  ): Promise<CMSLessonDTO[]> {
+  ): Promise<CMSPartDTO[]> {
     return this.service.getAll(lessonId);
   }
 
   @Get(':id')
   public async findById(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<CMSLessonDTO> {
+  ): Promise<CMSPartDTO> {
     return this.service.findById(id);
   }
 }

@@ -16,7 +16,7 @@ export class CMSLessonDTO {
 
 export class Curso {
   id: number;
-  Titulo: null;
+  Titulo: string;
   descricao: string;
   'published_at': Date;
   'created_at': Date;

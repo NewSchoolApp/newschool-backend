@@ -5,6 +5,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { CMSCourseDTO } from '../dto/cms-course.dto';
 import { CMSLessonDTO } from '../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../dto/cms-test.dto';
+import { CMSPartDTO } from '../dto/cms-part.dto';
 
 @Injectable()
 export class CmsIntegration implements OnModuleInit {
@@ -91,7 +92,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getPartsByLessonId(
     courseId: number,
-  ): Promise<AxiosResponse<CMSLessonDTO[]>> {
+  ): Promise<AxiosResponse<CMSPartDTO[]>> {
     const { data }: AxiosResponse<CMSLoginDTO> = await this.login();
     const url = `${this.cmsUrl}/partes`;
     const headers = {
@@ -102,17 +103,17 @@ export class CmsIntegration implements OnModuleInit {
       'aula.id': courseId,
     };
     const config: AxiosRequestConfig = { headers, params };
-    return this.httpService.get<CMSLessonDTO[]>(url, config).toPromise();
+    return this.httpService.get<CMSPartDTO[]>(url, config).toPromise();
   }
 
-  public async findPartById(id: number): Promise<AxiosResponse<CMSTestDTO>> {
+  public async findPartById(id: number): Promise<AxiosResponse<CMSPartDTO>> {
     const { data }: AxiosResponse<CMSLoginDTO> = await this.login();
     const url = `${this.cmsUrl}/partes/${id}`;
     const headers = {
       authorization: `Bearer ${data.jwt}`,
     };
     const config: AxiosRequestConfig = { headers };
-    return this.httpService.get<CMSTestDTO>(url, config).toPromise();
+    return this.httpService.get<CMSPartDTO>(url, config).toPromise();
   }
 
   public async getTestsByPartId(

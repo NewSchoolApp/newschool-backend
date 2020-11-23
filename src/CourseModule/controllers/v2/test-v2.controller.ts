@@ -15,6 +15,7 @@ import {
   CheckTestResponseDTO,
 } from '../../dto/check-test.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
+import { TestV2Service } from '../../service/v2/test-v2.service';
 
 @ApiTags('TestV2')
 @ApiBearerAuth()
@@ -22,12 +23,12 @@ import { CMSTestDTO } from '../../dto/cms-test.dto';
   `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.TEST_ENDPOINT}`,
 )
 export class TestV2Controller {
-  constructor(private readonly service: PartV2Service) {}
+  constructor(private readonly service: TestV2Service) {}
 
   @Get('part/:partId')
   public async getAll(
     @Param('partId', ParseIntPipe) partId: number,
-  ): Promise<CMSLessonDTO[]> {
+  ): Promise<CMSTestDTO[]> {
     return this.service.getAll(partId);
   }
 

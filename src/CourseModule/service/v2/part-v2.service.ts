@@ -4,20 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
-import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
-import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { ChosenAlternativeEnum } from '../../dto/check-test.dto';
+import { CMSPartDTO } from '../../dto/cms-part.dto';
 
 @Injectable()
 export class PartV2Service {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
-  public async getAll(lessonId: number): Promise<CMSLessonDTO[]> {
+  public async getAll(lessonId: number): Promise<CMSPartDTO[]> {
     const { data } = await this.cmsIntegration.getPartsByLessonId(lessonId);
     return data;
   }
 
-  public async findById(id: number): Promise<CMSTestDTO> {
+  public async findById(id: number): Promise<CMSPartDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');
@@ -32,13 +31,5 @@ export class PartV2Service {
       if (!error) throw new InternalServerErrorException();
       error();
     }
-  }
-
-  public async checkTest(
-    id: number,
-    chosenAlternative: ChosenAlternativeEnum,
-  ): Promise<boolean> {
-    const test = await this.findById(id);
-    return chosenAlternative === test.alternativa_certa.toUpperCase();
   }
 }

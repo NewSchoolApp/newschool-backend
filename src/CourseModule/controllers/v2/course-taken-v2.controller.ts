@@ -1,6 +1,4 @@
 import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { CourseV2Service } from '../../service/v2/course-v2.service';
-import { CMSCourseDTO } from '../../dto/cms-course.dto';
 import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CourseTakenV2Service } from '../../service/v2/course-taken-v2.service';
@@ -31,7 +29,7 @@ export class CourseTakenV2Controller {
   public async currentStep(
     @Param('userId') userId: string,
     @Param('courseId', ParseIntPipe) courseId: number,
-  ): Promise<void> {
+  ) {
     return await this.service.currentStep(userId, courseId);
   }
 }

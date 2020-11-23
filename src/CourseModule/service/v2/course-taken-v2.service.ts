@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios';
 import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
+import { CMSPartDTO } from '../../dto/cms-part.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -60,14 +61,14 @@ export class CourseTakenV2Service {
     const {
       data: parts,
     }: AxiosResponse<
-      CMSLessonDTO[]
+      CMSPartDTO[]
     > = await this.cmsIntegration.getPartsByLessonId(
       courseTaken.currentLessonId,
     );
 
-    const currentPart: CMSLessonDTO = parts.find((part) => part.id);
+    const currentPart: CMSPartDTO = parts.find((part) => part.id);
     const nextPartOrderNumber = currentPart.ordem + 1;
-    const nextPart: CMSLessonDTO = parts.find(
+    const nextPart: CMSPartDTO = parts.find(
       (part) => part.ordem === nextPartOrderNumber,
     );
 
