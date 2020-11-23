@@ -43,6 +43,10 @@ import { LessonV2Controller } from './controllers/v2/lesson-v2.controller';
 import { LessonV2Service } from './service/v2/lesson-v2.service';
 import { PartV2Service } from './service/v2/part-v2.service';
 import { PartV2Controller } from './controllers/v2/part-v2.controller';
+import { TestV2Service } from './service/v2/test-v2.service';
+import { TestV2Controller } from './controllers/v2/test-v2.controller';
+import { CourseTakenV2Controller } from './controllers/v2/course-taken-v2.controller';
+import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
 
 @Module({
   imports: [
@@ -79,6 +83,8 @@ import { PartV2Controller } from './controllers/v2/part-v2.controller';
     CourseV2Controller,
     LessonV2Controller,
     PartV2Controller,
+    TestV2Controller,
+    CourseTakenV2Controller,
   ],
   providers: [
     CourseService,
@@ -97,6 +103,8 @@ import { PartV2Controller } from './controllers/v2/part-v2.controller';
     CourseV2Service,
     LessonV2Service,
     PartV2Service,
+    TestV2Service,
+    CourseTakenV2Service,
   ],
   exports: [
     CourseService,

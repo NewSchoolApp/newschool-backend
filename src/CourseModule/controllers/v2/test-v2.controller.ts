@@ -21,7 +21,7 @@ import { CMSTestDTO } from '../../dto/cms-test.dto';
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.TEST_ENDPOINT}`,
 )
-export class PartV2Controller {
+export class TestV2Controller {
   constructor(private readonly service: PartV2Service) {}
 
   @Get('part/:partId')
