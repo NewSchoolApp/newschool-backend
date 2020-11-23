@@ -27,7 +27,6 @@ export class CommentService {
     private readonly partService: PartService,
     private readonly uploadService: UploadService,
     private readonly userMapper: UserMapper,
-    private readonly partMapper: PartMapper,
   ) {}
 
   public async findById(id: string): Promise<Comment> {
@@ -42,9 +41,8 @@ export class CommentService {
   }
 
   public async findPartComments(partId: string): Promise<CommentDTO[]> {
-    const part: Part = await this.partService.findById(partId);
     const comments = await this.repository.find({
-      where: { part },
+      where: { partId },
       relations: ['user', 'likedBy', 'part'],
     });
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
@@ -60,13 +58,10 @@ export class CommentService {
     userId: string,
     text: string,
   ): Promise<CommentDTO> {
-    const [user, part]: [User, Part] = await Promise.all([
-      this.userService.findById(userId),
-      this.partService.findById(partId),
-    ]);
+    const user: User = await this.userService.findById(userId);
 
     const comment: Comment = await this.repository.save({
-      part,
+      partId,
       text,
       user,
     });
@@ -89,9 +84,8 @@ export class CommentService {
     userId: string,
     text: string,
   ): Promise<ResponseDTO> {
-    const [user, part, comment]: [User, Part, Comment] = await Promise.all([
+    const [user, comment]: [User, Comment] = await Promise.all([
       this.userService.findById(userId),
-      this.partService.findById(partId),
       this.findById(id),
     ]);
 
@@ -100,7 +94,7 @@ export class CommentService {
 
     const savedResponse = await this.repository.save({
       user,
-      part,
+      partId,
       text,
       parentComment: comment,
     });
@@ -111,7 +105,7 @@ export class CommentService {
   async mapComment(commentId: string): Promise<CommentDTO> {
     const comment = await this.repository.findOne({
       where: { id: commentId },
-      relations: ['user', 'part'],
+      relations: ['user'],
     });
     const likes = await this.userLikedCommentRepository.find({
       where: { comment, user: comment.user },
@@ -125,7 +119,6 @@ export class CommentService {
       responses.map(async (response) => {
         return {
           ...response,
-          part: this.partMapper.toDto(comment.part),
           likedBy: await Promise.all(
             response.likedBy.map(({ user }) =>
               this.userMapper.toDtoAsync(user),
@@ -136,7 +129,6 @@ export class CommentService {
     );
     return {
       ...comment,
-      part: this.partMapper.toDto(comment.part),
       user: await this.userMapper.toDtoAsync(comment.user),
       responses: mappedResponses,
       likedBy: await Promise.all(
@@ -166,7 +158,6 @@ export class CommentService {
                 this.userMapper.toDtoAsync(user),
               ),
             ),
-            part: this.partMapper.toDto(response.part),
           };
         }),
     );

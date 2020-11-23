@@ -24,6 +24,9 @@ export class Comment {
   })
   part: Part;
 
+  @Column({ nullable: false })
+  public partId: string;
+
   @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.responses)
   @Expose()
   parentComment: Comment;
