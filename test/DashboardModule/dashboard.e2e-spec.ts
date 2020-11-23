@@ -58,6 +58,7 @@ describe('DashboardController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
 
     courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
       getRepositoryToken(CourseTaken),
@@ -268,7 +269,6 @@ describe('DashboardController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await dbConnection.synchronize(true);
     await app.close();
   });
 });

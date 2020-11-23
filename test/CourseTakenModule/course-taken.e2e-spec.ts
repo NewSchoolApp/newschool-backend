@@ -64,6 +64,7 @@ describe('CourseTakenController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
 
     courseRepository = moduleFixture.get<Repository<Course>>(
       getRepositoryToken(Course),
@@ -814,7 +815,6 @@ describe('CourseTakenController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await dbConnection.synchronize(true);
     await app.close();
   });
 });
