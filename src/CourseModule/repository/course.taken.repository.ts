@@ -10,9 +10,11 @@ import { MoreThanOrEqual } from 'typeorm/index';
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
   public async findByUserId(
-    user: CourseTaken['user'],
+    userId: string,
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ relations: ['user', 'course'], where: { user: user } });
+    return this.find({
+      where: { user: { id: userId } },
+    });
   }
 
   public async getCompletedByUserIdAndCourseId(
@@ -105,7 +107,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
 
   public async findByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: string | number,
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
       where: { user: { id: userId }, course: { id: courseId } },

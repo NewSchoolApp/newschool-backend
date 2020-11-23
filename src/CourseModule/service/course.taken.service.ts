@@ -224,12 +224,6 @@ export class CourseTakenService {
       return;
     }
 
-    const completedCouse = this.getCompletedByUserIdAndCourseId(
-      user.id,
-      course.id,
-    );
-    if (!completedCouse) return;
-
     await this.repository.save({
       ...courseTaken,
       completion: 100,
