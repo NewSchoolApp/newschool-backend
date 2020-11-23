@@ -8,6 +8,9 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
+import { Lesson } from '../../entity/lesson.entity';
+import { Part } from '../../entity/part.entity';
+import { Test } from '../../entity/test.entity';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -44,7 +47,7 @@ export class CourseTakenV2Service {
     );
 
     const currentTest: CMSTestDTO = tests.find((test) => test.id);
-    const nextTestOrderNumber = currentTest.ordem + 1;
+    const nextTestOrderNumber = this.getNextSequenceNumber(currentTest);
     const nextTest: CMSTestDTO = tests.find(
       (test) => test.ordem === nextTestOrderNumber,
     );
@@ -67,7 +70,7 @@ export class CourseTakenV2Service {
     );
 
     const currentPart: CMSPartDTO = parts.find((part) => part.id);
-    const nextPartOrderNumber = currentPart.ordem + 1;
+    const nextPartOrderNumber = this.getNextSequenceNumber(currentPart);
     const nextPart: CMSPartDTO = parts.find(
       (part) => part.ordem === nextPartOrderNumber,
     );
@@ -92,7 +95,7 @@ export class CourseTakenV2Service {
     > = await this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId);
 
     const currentLesson: CMSLessonDTO = lessons.find((lesson) => lesson.id);
-    const nextLessonOrderNumber = currentLesson.ordem + 1;
+    const nextLessonOrderNumber = this.getNextSequenceNumber(currentLesson);
     const nextLesson: CMSLessonDTO = lessons.find(
       (lesson) => lesson.ordem === nextLessonOrderNumber,
     );
@@ -163,14 +166,14 @@ export class CourseTakenV2Service {
       return 100;
     }
 
-    const [
-      { data: lessons },
-      { data: parts },
-      { data: tests },
-    ] = await Promise.all([
+    const [{ data: lessons }, { data: parts }, { data: tests }]: (
+      | AxiosResponse<CMSLessonDTO[]>
+      | AxiosResponse<CMSPartDTO[]>
+      | AxiosResponse<CMSTestDTO[]>
+    )[] = await Promise.all([
       this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId),
       this.cmsIntegration.getPartsByLessonId(courseTaken.currentLessonId),
-      this.cmsIntegration.getLessonsByCourseId(courseTaken.currentPartId),
+      this.cmsIntegration.getTestsByPartId(courseTaken.currentPartId),
     ]);
 
     const lessonsQuantity = lessons.length;
@@ -202,5 +205,12 @@ export class CourseTakenV2Service {
     completion += percentualPerTest * currentTestSequenceNumber;
 
     return completion > 100 ? 100 : completion;
+  }
+
+  private getNextSequenceNumber(step): number {
+    if (!step) {
+      return 1;
+    }
+    return step.ordem + 1;
   }
 }
