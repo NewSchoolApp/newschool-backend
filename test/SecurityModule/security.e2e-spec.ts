@@ -48,6 +48,7 @@ describe('SecurityController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -171,7 +172,6 @@ describe('SecurityController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await dbConnection.synchronize(true);
     await app.close();
   });
 });

@@ -74,6 +74,10 @@ export class AppConfigService {
   );
   awsUserBucket: string = this.configService.get<string>('AWS_USER_BUCKET');
 
+  cmsUrl: string = this.configService.get<string>('CMS_URL');
+  cmsIdentifier: string = this.configService.get<string>('CMS_IDENTIFIER');
+  cmsPassword: string = this.configService.get<string>('CMS_PASSWORD');
+
   public getSentryConfiguration(): Sentry.NodeOptions {
     return {
       dsn: this.configService.get<string>('SENTRY_URL'),
@@ -155,6 +159,14 @@ export class AppConfigService {
       secretAccessKey: this.awsAccessKeySecret,
       region: 'us-east-2',
       signatureVersion: 'v4',
+    };
+  }
+
+  getCmsConfiguration() {
+    return {
+      cmsUrl: this.cmsUrl,
+      cmsIdentifier: this.cmsIdentifier,
+      cmsPassword: this.cmsPassword,
     };
   }
 }

@@ -23,6 +23,7 @@ import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 import { OrderEnum } from '../../src/CommonsModule/enum/order.enum';
 import { REQUEST } from '@nestjs/core';
+import { CourseTakenRepository } from '../../src/CourseModule/repository/course.taken.repository';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -58,8 +59,9 @@ describe('DashboardController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
+    await dbConnection.synchronize(true);
 
-    courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
+    const courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
       getRepositoryToken(CourseTaken),
     );
 
@@ -78,6 +80,7 @@ describe('DashboardController (e2e)', () => {
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
     >(getRepositoryToken(Role));
+
     let roleAdmin = await roleRepository.findOne({ name: RoleEnum.ADMIN });
     if (!roleAdmin) {
       const role: Role = new Role();
@@ -268,7 +271,6 @@ describe('DashboardController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await dbConnection.synchronize(true);
     await app.close();
   });
 });

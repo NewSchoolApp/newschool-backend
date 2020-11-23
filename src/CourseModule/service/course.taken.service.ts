@@ -78,13 +78,14 @@ export class CourseTakenService {
     const newCourseTaken = new CourseTaken();
     newCourseTaken.user = user;
     newCourseTaken.course = course;
-    newCourseTaken.course = course;
+    newCourseTaken.courseId = course.id;
     newCourseTaken.currentLesson = lesson;
+    newCourseTaken.currentLessonId = lesson?.id;
     newCourseTaken.currentPart = part;
+    newCourseTaken.currentPartId = part?.id;
     newCourseTaken.currentTest = null;
     newCourseTaken.status = CourseTakenStatusEnum.TAKEN;
     newCourseTaken.courseStartDate = new Date(Date.now());
-
     await this.repository.save(newCourseTaken);
   }
 
@@ -224,11 +225,11 @@ export class CourseTakenService {
       return;
     }
 
-    const completedCouse = this.getCompletedByUserIdAndCourseId(
+    const completedCourse = this.getCompletedByUserIdAndCourseId(
       user.id,
       course.id,
     );
-    if (!completedCouse) return;
+    if (!completedCourse) return;
 
     await this.repository.save({
       ...courseTaken,

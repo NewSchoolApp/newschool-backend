@@ -1,4 +1,4 @@
-import { CacheModule, forwardRef, Module } from '@nestjs/common';
+import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { LessonRepository } from './repository/lesson.repository';
@@ -36,9 +36,21 @@ import { CommentService } from './service/comment.service';
 import { Comment } from './entity/comment.entity';
 import { UserLikedComment } from './entity/user-liked-comment.entity';
 import { UploadModule } from '../UploadModule/upload.module';
+import { CmsIntegration } from './integration/cms.integration';
+import { CourseV2Service } from './service/v2/course-v2.service';
+import { CourseV2Controller } from './controllers/v2/course-v2.controller';
+import { LessonV2Controller } from './controllers/v2/lesson-v2.controller';
+import { LessonV2Service } from './service/v2/lesson-v2.service';
+import { PartV2Service } from './service/v2/part-v2.service';
+import { PartV2Controller } from './controllers/v2/part-v2.controller';
+import { TestV2Service } from './service/v2/test-v2.service';
+import { TestV2Controller } from './controllers/v2/test-v2.controller';
+import { CourseTakenV2Controller } from './controllers/v2/course-taken-v2.controller';
+import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
 
 @Module({
   imports: [
+    HttpModule,
     CacheModule.register(),
     TypeOrmModule.forFeature([
       Course,
@@ -68,6 +80,11 @@ import { UploadModule } from '../UploadModule/upload.module';
     TestController,
     CourseTakenController,
     CommentController,
+    CourseV2Controller,
+    LessonV2Controller,
+    PartV2Controller,
+    TestV2Controller,
+    CourseTakenV2Controller,
   ],
   providers: [
     CourseService,
@@ -82,6 +99,12 @@ import { UploadModule } from '../UploadModule/upload.module';
     CourseTakenMapper,
     CommentMapper,
     CommentService,
+    CmsIntegration,
+    CourseV2Service,
+    LessonV2Service,
+    PartV2Service,
+    TestV2Service,
+    CourseTakenV2Service,
   ],
   exports: [
     CourseService,
