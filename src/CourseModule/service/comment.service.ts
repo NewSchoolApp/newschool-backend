@@ -45,6 +45,7 @@ export class CommentService {
       where: { partId },
       relations: ['user', 'likedBy'],
     });
+    console.log(comments);
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }
 
@@ -108,8 +109,8 @@ export class CommentService {
       relations: ['user'],
     });
     const likes = await this.userLikedCommentRepository.find({
-      where: { comment, user: comment.user },
-      relations: ['user', 'comment'],
+      where: { comment },
+      relations: ['user'],
     });
     const responses = await this.repository.find({
       where: { parentComment: { id: commentId } },
