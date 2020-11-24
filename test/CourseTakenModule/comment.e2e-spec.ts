@@ -254,7 +254,7 @@ describe('CommentController (e2e)', () => {
       .send(addCommentResponseBody);
 
     expect(addCommentResponseRequest.body.parentComment.responses.length).toBe(
-      0,
+      1,
     );
     expect(addCommentResponseRequest.body.parentComment.id).toBe(
       addCommentRequest.body.id,

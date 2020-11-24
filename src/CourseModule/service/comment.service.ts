@@ -144,7 +144,7 @@ export class CommentService {
     });
     const parentComment = await this.repository.findOne({
       where: { id: response.parentComment.id },
-      relations: ['user', 'responses', 'likedBy'],
+      relations: ['user', 'responses', 'likedBy', 'responses.user', 'responses.likedBy'],
     });
     const parentCommentResponses = await Promise.all(
       parentComment.responses.map(async (response) => {

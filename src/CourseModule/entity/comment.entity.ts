@@ -1,12 +1,19 @@
 import { User } from '../../UserModule/entity/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserLikedComment } from './user-liked-comment.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { Expose } from 'class-transformer';
 
 @Entity()
 export class Comment extends Audit {
-  @Column('varchar', { primary: true, name: 'id', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column('varchar', { name: 'text', length: 255 })
