@@ -119,6 +119,7 @@ export class UserService {
         ...user,
         salt,
         password: hashPassword,
+        inviteKey: Math.random().toString(36).substr(2, 20),
         role,
       });
     } catch (e) {

@@ -104,7 +104,8 @@ export class User extends Audit {
   salt: string;
 
   @Column({
-    default: Math.random().toString(36).substr(2, 20),
+    nullable: false,
+    unique: true,
   })
   @Expose()
   inviteKey: string;
