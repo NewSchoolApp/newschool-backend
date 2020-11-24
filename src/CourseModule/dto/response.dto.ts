@@ -1,5 +1,4 @@
 import { Type } from 'class-transformer';
-import { PartDTO } from './part.dto';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 
 class CommentInsideResponseDTO {
