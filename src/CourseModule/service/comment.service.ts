@@ -144,20 +144,28 @@ export class CommentService {
     });
     const parentComment = await this.repository.findOne({
       where: { id: response.parentComment.id },
-      relations: ['user', 'responses', 'likedBy', 'responses.user', 'responses.likedBy'],
+      relations: [
+        'user',
+        'responses',
+        'likedBy',
+        'responses.user',
+        'responses.likedBy',
+      ],
     });
     const parentCommentResponses = await Promise.all(
-      parentComment.responses.map(async (response) => {
-        return {
-          ...response,
-          user: await this.userMapper.toDtoAsync(response.user),
-          likedBy: await Promise.all(
-            response.likedBy.map(({ user }) =>
-              this.userMapper.toDtoAsync(user),
+      parentComment.responses
+        .filter((response) => response.id !== response.id)
+        .map(async (response) => {
+          return {
+            ...response,
+            user: await this.userMapper.toDtoAsync(response.user),
+            likedBy: await Promise.all(
+              response.likedBy.map(({ user }) =>
+                this.userMapper.toDtoAsync(user),
+              ),
             ),
-          ),
-        };
-      }),
+          };
+        }),
     );
     const likes = await this.userLikedCommentRepository.find({
       where: { comment: response, user: response.user },
