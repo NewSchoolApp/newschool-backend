@@ -41,10 +41,4 @@ export class Lesson extends Audit {
 
   @OneToMany<Part>('Part', (part: Part) => part.lesson)
   parts: Part[];
-
-  @OneToMany<CourseTaken>(
-    'CourseTaken',
-    (courseTaken: CourseTaken) => courseTaken.currentLesson,
-  )
-  currentCoursesTaken: CourseTaken[];
 }

@@ -74,10 +74,4 @@ export class Test extends Audit {
     name: 'part_id',
   })
   part: Part;
-
-  @OneToMany<CourseTaken>(
-    'CourseTaken',
-    (courseTaken: CourseTaken) => courseTaken.currentTest,
-  )
-  currentCoursesTaken: CourseTaken[];
 }

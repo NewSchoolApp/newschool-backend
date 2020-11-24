@@ -5,7 +5,9 @@ import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity()
 export class UserLikedComment extends Audit {
-  @ManyToOne<User>(() => User, (user: User) => user.comments, { primary: true })
+  @ManyToOne<User>(() => User, (user: User) => user.likedComments, {
+    primary: true,
+  })
   user: User;
 
   @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.likedBy, {

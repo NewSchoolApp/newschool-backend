@@ -30,7 +30,7 @@ import { PartService } from './part.service';
 import { LessonService } from './lesson.service';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
-import { getCoursesByFinished } from 'src/DashboardModule/interfaces/getCoursesByFinished';
+import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
 import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 
@@ -195,6 +195,7 @@ export class CourseTakenService {
       const updatedCourseTaken = {
         ...courseTaken,
         currentTest: null,
+        currentTestId: null,
         currentPart: nextPart,
         currentPartId: nextPart.id,
       };
@@ -219,11 +220,8 @@ export class CourseTakenService {
       const updatedCourseTaken = {
         ...courseTaken,
         currentTest: null,
-        currentTestId: null,
         currentPart: nextPart,
-        currentPartId: nextPart.id,
         currentLesson: nextLesson,
-        currentLessonId: nextLesson.id,
       };
 
       updatedCourseTaken.completion = await this.calculateCompletion(

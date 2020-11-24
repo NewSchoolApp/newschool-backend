@@ -11,7 +11,7 @@ import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { InviteUserRewardData } from './user-rewards.service';
-import { CourseTaken } from 'src/CourseModule/entity/course.taken.entity';
+import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 
 @Injectable()

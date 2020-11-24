@@ -64,7 +64,6 @@ describe('CourseTakenController (e2e)', () => {
     await app.init();
 
     dbConnection = moduleFixture.get(Connection);
-    await dbConnection.synchronize(true);
 
     courseRepository = moduleFixture.get<Repository<Course>>(
       getRepositoryToken(Course),
@@ -689,11 +688,13 @@ describe('CourseTakenController (e2e)', () => {
       description: 'new lesson description 4',
       title: 'new lesson title 4',
     };
+
     const lessonRes = await request(app.getHttpServer())
       .post(lessonUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .send(newLesson)
       .expect(201);
+
     const lessonRes2 = await request(app.getHttpServer())
       .post(lessonUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
@@ -720,6 +721,7 @@ describe('CourseTakenController (e2e)', () => {
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .send(newPart)
       .expect(201);
+
     const partRes2 = await request(app.getHttpServer())
       .post(partUrl)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
@@ -761,6 +763,7 @@ describe('CourseTakenController (e2e)', () => {
       userId: userRes.body.id,
       courseId: courseRes.body.id,
     };
+
     await request(app.getHttpServer())
       .post(`${courseTakenUrl}/start-course`)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
@@ -775,8 +778,8 @@ describe('CourseTakenController (e2e)', () => {
 
     const addedCourseTaken = await courseTakenRepository.findOne(
       {
-        user: await userRepository.findOneOrFail(newCourseTaken.userId),
-        course: await courseRepository.findOneOrFail(newCourseTaken.courseId),
+        userId: newCourseTaken.userId,
+        courseId: newCourseTaken.courseId,
       },
       {
         relations: [
@@ -788,6 +791,8 @@ describe('CourseTakenController (e2e)', () => {
         ],
       },
     );
+    console.log(addedCourseTaken.currentLesson.id);
+    console.log(lessonRes.body.id);
     expect(addedCourseTaken.currentLesson.id).toEqual(lessonRes.body.id);
 
     await request(app.getHttpServer())
@@ -796,25 +801,27 @@ describe('CourseTakenController (e2e)', () => {
       )
       .set('Authorization', `Bearer ${authRes.body.accessToken}`);
 
-    const addedCourseTaken2 = await courseTakenRepository.findOne(
-      {
-        user: await userRepository.findOneOrFail(newCourseTaken.userId),
-        course: await courseRepository.findOneOrFail(newCourseTaken.courseId),
+    const addedCourseTaken2 = await courseTakenRepository.find({
+      where: {
+        userId: userRes.body.id,
+        courseId: courseRes.body.id,
       },
-      {
-        relations: [
-          'user',
-          'course',
-          'currentLesson',
-          'currentPart',
-          'currentTest',
-        ],
-      },
-    );
-    expect(addedCourseTaken2.currentLesson.id).toEqual(lessonRes2.body.id);
+      relations: [
+        'user',
+        'course',
+        'currentLesson',
+        'currentPart',
+        'currentTest',
+      ],
+    });
+    console.log(addedCourseTaken2[0].currentLessonId);
+    console.log(lessonRes2.body.id);
+    expect(addedCourseTaken2[0].currentLessonId).toEqual(lessonRes2.body.id);
+    // expect(addedCourseTaken2.currentLesson.id).toEqual(lessonRes2.body.id);
   });
 
   afterAll(async () => {
+    await dbConnection.synchronize(true);
     await app.close();
   });
 });

@@ -4,7 +4,6 @@ import {
   Entity,
   JoinColumn,
   JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,7 +11,6 @@ import {
 import { Role } from '../../SecurityModule/entity/role.entity';
 import { ChangePassword } from './change-password.entity';
 import { Expose } from 'class-transformer';
-import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
@@ -144,12 +142,6 @@ export class User extends Audit {
   @Expose()
   changePasswordRequests: ChangePassword[];
 
-  @OneToMany<CourseTaken>(
-    'CourseTaken',
-    (courseTaken: CourseTaken) => courseTaken.user,
-  )
-  coursesTaken: CourseTaken[];
-
   @OneToMany(() => Achievement, (achievement: Achievement) => achievement.badge)
   @Expose()
   achievements: Achievement[];
@@ -160,16 +152,12 @@ export class User extends Audit {
   )
   notifications: Notification;
 
-  @OneToMany<Comment>(() => Comment, (comment: Comment) => comment.user)
-  @JoinTable()
-  comments: Comment[];
-
   @OneToMany<UserLikedComment>(
     () => UserLikedComment,
     (userLikedComment: UserLikedComment) => userLikedComment.user,
   )
   @JoinTable()
-  likedComments: User[];
+  likedComments: UserLikedComment[];
 
   validPassword(password: string) {
     const hash = crypto

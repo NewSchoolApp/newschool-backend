@@ -3,7 +3,6 @@ import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { Lesson } from './lesson.entity';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
-import { CourseTaken } from './course.taken.entity';
 
 @Entity()
 export class Course extends Audit {
@@ -53,12 +52,6 @@ export class Course extends Audit {
 
   @OneToMany<Lesson>('Lesson', (lesson: Lesson) => lesson.course)
   lessons: Lesson[];
-
-  @OneToMany<CourseTaken>(
-    'CourseTaken',
-    (takenCourses: CourseTaken) => takenCourses.course,
-  )
-  takenCourses: CourseTaken[];
 
   @Column()
   @Expose()

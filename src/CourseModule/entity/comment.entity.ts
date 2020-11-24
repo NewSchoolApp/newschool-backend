@@ -1,49 +1,44 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Part } from './part.entity';
-import { Expose } from 'class-transformer';
-import { UserLikedComment } from './user-liked-comment.entity';
 import { User } from '../../UserModule/entity/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { UserLikedComment } from './user-liked-comment.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { Expose } from 'class-transformer';
 
 @Entity()
 export class Comment extends Audit {
-  @PrimaryGeneratedColumn('uuid')
+  @Column('varchar', { primary: true, name: 'id', length: 36 })
   id: string;
 
-  @Column({ nullable: false })
+  @Column('varchar', { name: 'text', length: 255 })
   text: string;
 
-  @Column({ nullable: false })
-  partId: string;
-
-  @ManyToOne<Comment>(() => Comment, (comment: Comment) => comment.responses)
-  @Expose()
-  parentComment: Comment;
-
-  @OneToMany<Comment>(
-    () => Comment,
-    (comment: Comment) => comment.parentComment,
-  )
-  @Expose()
-  responses: Comment[];
-
-  @ManyToOne<User>(() => User, (user: User) => user.comments, {
-    nullable: false,
+  @ManyToOne<User>('User')
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'id',
   })
+  @Expose()
   user: User;
 
-  @OneToMany<UserLikedComment>(
+  @Column('varchar', { name: 'userId', length: 36 })
+  userId: string;
+
+  @Column('varchar', { name: 'partId', length: 36 })
+  partId: string;
+
+  @ManyToOne(() => Comment, (comment) => comment.comments, {
+    onDelete: 'NO ACTION',
+    onUpdate: 'NO ACTION',
+  })
+  @JoinColumn([{ name: 'parentCommentId', referencedColumnName: 'id' }])
+  parentComment: Comment;
+
+  @OneToMany(() => Comment, (comment) => comment.parentComment)
+  comments: Comment[];
+
+  @OneToMany(
     () => UserLikedComment,
-    (userLikedComment: UserLikedComment) => userLikedComment.comment,
+    (userLikedComment) => userLikedComment.comment,
   )
-  @JoinTable()
   likedBy: UserLikedComment[];
 }
