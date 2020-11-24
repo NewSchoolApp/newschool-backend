@@ -56,7 +56,7 @@ export class AppConfigService {
     'DATABASE_PASSWORD',
   );
   synchronize: boolean = this.configService.get<string>('NODE_ENV') === 'TEST';
-  logging: boolean = true;
+  logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
   runMigrations: boolean =
     this.configService.get<string>('NODE_ENV') !== 'TEST';
 
