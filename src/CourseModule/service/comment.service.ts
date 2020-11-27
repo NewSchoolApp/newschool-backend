@@ -45,7 +45,6 @@ export class CommentService {
       where: { partId },
       relations: ['user', 'likedBy'],
     });
-    console.log(comments);
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }
 
@@ -77,6 +76,36 @@ export class CommentService {
     ]);
 
     await this.userLikedCommentRepository.save({ user, comment });
+  }
+
+  public async clapComment(
+    id: string,
+    userId: string,
+    claps: number,
+  ): Promise<void> {
+    const userLikedCommentResponse = await this.userLikedCommentRepository.find(
+      {
+        where: { userId, commentId: id },
+      },
+    );
+
+    let userLikedComment = userLikedCommentResponse[0];
+
+    if (!userLikedComment) {
+      userLikedComment = {
+        ...userLikedComment,
+        userId,
+        commentId: id,
+      };
+    }
+
+    const allClaps =
+      claps + userLikedComment.claps > 50 ? 50 : claps + userLikedComment.claps;
+
+    await this.userLikedCommentRepository.save({
+      ...userLikedComment,
+      clap: allClaps,
+    });
   }
 
   public async addCommentResponse(

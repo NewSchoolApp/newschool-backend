@@ -12,6 +12,7 @@ export class CMSCourseDTO {
   workload: number;
   enabled: boolean;
   titulo: string;
+  slug: string;
   nomeDoAutor: string;
   descricaoDoAutor: string;
   horas: number;

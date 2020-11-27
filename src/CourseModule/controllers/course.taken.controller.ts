@@ -36,6 +36,7 @@ import { CertificateDTO } from '../dto/certificate.dto';
 import { NpsCourseTakenDTO } from '../dto/nps-course-taken.dto';
 import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
+import { CourseTakenV2Service } from '../service/v2/course-taken-v2.service';
 
 @ApiExtraModels(VideoProgressionDTO, AlternativeProgressionDTO)
 @ApiTags('CourseTaken')
@@ -47,6 +48,7 @@ export class CourseTakenController {
   constructor(
     private readonly service: CourseTakenService,
     private readonly mapper: CourseTakenMapper,
+    private readonly serviceV2: CourseTakenV2Service,
   ) {}
 
   @Get('/user/:userId')
@@ -165,34 +167,34 @@ export class CourseTakenController {
     await this.service.add(courseTaken);
   }
 
-  @Put('user/:userId/course/:courseId')
-  @HttpCode(200)
-  @ApiOkResponse({ type: CourseTakenDTO })
-  @ApiParam({
-    name: 'user',
-    type: String,
-    required: true,
-    description: 'User id',
-  })
-  @ApiParam({
-    name: 'course',
-    type: String,
-    required: true,
-    description: 'Course id',
-  })
-  @ApiOperation({
-    summary: 'Update course taken',
-    description: 'Update course taken by user id and course id',
-  })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
-  public async update(
-    @Param('userId') userId: string,
-    @Param('courseId') courseId: string,
-    @Body() courseTakenUpdatedInfo: CourseTakenUpdateDTO,
-  ): Promise<CourseTakenDTO> {
-    return await this.service.update(userId, courseId, courseTakenUpdatedInfo);
-  }
+  // @Put('user/:userId/course/:courseId')
+  // @HttpCode(200)
+  // @ApiOkResponse({ type: CourseTakenDTO })
+  // @ApiParam({
+  //   name: 'user',
+  //   type: String,
+  //   required: true,
+  //   description: 'User id',
+  // })
+  // @ApiParam({
+  //   name: 'course',
+  //   type: String,
+  //   required: true,
+  //   description: 'Course id',
+  // })
+  // @ApiOperation({
+  //   summary: 'Update course taken',
+  //   description: 'Update course taken by user id and course id',
+  // })
+  // @NeedRole(RoleEnum.ADMIN)
+  // @UseGuards(RoleGuard)
+  // public async update(
+  //   @Param('userId') userId: string,
+  //   @Param('courseId') courseId: string,
+  //   @Body() courseTakenUpdatedInfo: CourseTakenUpdateDTO,
+  // ): Promise<CourseTakenDTO> {
+  //   return await this.service.update(userId, courseId, courseTakenUpdatedInfo);
+  // }
 
   @Delete('user/:userId/course/:courseId')
   @HttpCode(200)
@@ -239,7 +241,7 @@ export class CourseTakenController {
     @Param('userId') userId: string,
     @Param('courseId') courseId: string,
   ): Promise<void> {
-    await this.service.advanceOnCourse(userId, courseId);
+    await this.serviceV2.advanceOnCourse(userId, courseId);
   }
 
   @Get('current-step/user/:userId/course/:courseId')

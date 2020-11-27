@@ -24,12 +24,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.findOne(
       {
         user: { id: userId },
-        course: { id: courseId },
+        courseId,
         completion: 100,
         status: CourseTakenStatusEnum.COMPLETED,
       },
       {
-        relations: ['user', 'course'],
+        relations: ['user'],
       },
     );
   }
@@ -37,7 +37,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   public async findByUser(
     user: CourseTaken['user'],
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ relations: ['user', 'course'], where: { user } });
+    return this.find({ relations: ['user'], where: { user } });
   }
 
   public async getActiveUsersQuantity(): Promise<number> {
@@ -56,53 +56,67 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
   }
 
-  public async findByUserAndCourseWithAllRelations(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+  // public async findByUserAndCourseWithAllRelations(
+  //   user: CourseTaken['user'],
+  //   course: CourseTaken['course'],
+  // ): Promise<CourseTaken> {
+  //   return this.findOne(
+  //     { user, course },
+  //     {
+  //       relations: [
+  //         'user',
+  //       ],
+  //     },
+  //   );
+  // }
+
+  public async findByUserIdAndCourseIdWithAllRelations(
+    userId: string,
+    courseId: string,
   ): Promise<CourseTaken> {
     return this.findOne(
-      { user, course },
+      { user: { id: userId }, courseId },
       {
         relations: [
           'user',
-          'course',
-          'currentLesson',
-          'currentPart',
-          'currentTest',
         ],
       },
     );
   }
 
-  public async findCertificateByUserAndCourse(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
-  ): Promise<CertificateDTO> {
+  // public async findCertificateByUserAndCourse(
+  //   user: CourseTaken['user'],
+  //   course: CourseTaken['course'],
+  // ): Promise<CourseTaken> {
+  //   return this.findOne(
+  //     { user, course, status: CourseTakenStatusEnum.COMPLETED },
+  //     { relations: ['user'] },
+  //   );
+  // }
+
+  public async findCertificateByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<CourseTaken> {
     return this.findOne(
-      { user, course, status: CourseTakenStatusEnum.COMPLETED },
-      { relations: ['user', 'course'] },
+      { user: { id: userId }, courseId, status: CourseTakenStatusEnum.COMPLETED },
+      { relations: ['user'] },
     );
   }
 
   public async findCertificatesByUserId(
     user: User['id'],
-  ): Promise<CertificateDTO[]> {
+  ): Promise<CourseTaken[]> {
     return this.find({
-      relations: ['user', 'course'],
+      relations: ['user'],
       where: { user: user, status: CourseTakenStatusEnum.COMPLETED },
     });
   }
 
   public async findByCourseId(
-    course: CourseTaken['course'],
+    courseId: string,
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ course });
-  }
-
-  public async findByCourse(
-    course: CourseTaken['course'],
-  ): Promise<CourseTaken[] | undefined> {
-    return this.find({ course });
+    return this.find({ courseId });
   }
 
   public async findByUserIdAndCourseId(
@@ -110,9 +124,9 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     courseId: string | number,
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
-      where: { user: { id: userId }, course: { id: courseId } },
+      where: { user: { id: userId }, courseId },
       take: 1,
-      relations: ['user', 'course'],
+      relations: ['user'],
     });
     return response[0];
   }
@@ -184,13 +198,13 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     const response = await this.find({
       where: {
         user: { id: userId },
-        course: { id: courseId },
+        courseId,
         status: CourseTakenStatusEnum.COMPLETED,
         completion: 100,
         rating: Not(IsNull()),
       },
       take: 1,
-      relations: ['user', 'course'],
+      relations: ['user'],
     });
     return response[0];
   }

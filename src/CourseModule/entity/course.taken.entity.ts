@@ -42,46 +42,14 @@ export class CourseTaken {
   @Column('varchar', { primary: true, name: 'user_id', length: 36 })
   userId: string;
 
-  @ManyToOne<Course>('Course')
-  @JoinColumn({
-    name: 'course_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  course: Course;
-
   @Column('varchar', { primary: true, name: 'course_id', length: 36 })
   courseId: string;
-
-  @ManyToOne<Lesson>('Lesson')
-  @JoinColumn({
-    name: 'current_lesson_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentLesson: Lesson;
 
   @Column('varchar', { name: 'current_lesson_id', nullable: true, length: 36 })
   currentLessonId: string | null;
 
-  @ManyToOne<Part>('Part')
-  @JoinColumn({
-    name: 'current_part_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentPart: Part;
-
   @Column('varchar', { name: 'current_part_id', nullable: true, length: 36 })
   currentPartId: string | null;
-
-  @ManyToOne<Test>('Test')
-  @JoinColumn({
-    name: 'current_test_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentTest: Test;
 
   @Column('varchar', { name: 'current_test_id', nullable: true, length: 36 })
   currentTestId: string | null;

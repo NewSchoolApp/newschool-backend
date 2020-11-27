@@ -20,7 +20,6 @@ export class SchoolService {
         `http://educacao.dadosabertosbr.com/api/escolas/buscaavancada${query}`,
       )
       .toPromise();
-    console.log(response);
     const [id, schoolsArray] = response.data;
     return schoolsArray;
   }

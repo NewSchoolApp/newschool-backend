@@ -77,6 +77,7 @@ export class AppConfigService {
   cmsUrl: string = this.configService.get<string>('CMS_URL');
   cmsIdentifier: string = this.configService.get<string>('CMS_IDENTIFIER');
   cmsPassword: string = this.configService.get<string>('CMS_PASSWORD');
+  cmsJwt: string = this.configService.get<string>('CMS_JWT');
 
   public getSentryConfiguration(): Sentry.NodeOptions {
     return {
