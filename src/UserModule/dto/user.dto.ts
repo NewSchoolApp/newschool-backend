@@ -1,8 +1,6 @@
 import { User } from '../entity/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto/role.dto';
-import { CourseDTO } from '../../CourseModule/dto/course.dto';
 import {
   IsDate,
   IsEnum,
@@ -14,7 +12,6 @@ import {
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
-import { Column } from 'typeorm';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -110,9 +107,4 @@ export class UserDTO {
 
   @Expose()
   photo: string;
-
-  @ApiProperty({ type: () => CourseDTO, isArray: true })
-  @Type(() => CourseDTO)
-  @Expose()
-  createdCourses: CourseDTO[];
 }

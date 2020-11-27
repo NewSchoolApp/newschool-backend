@@ -1,4 +1,3 @@
-import { PartDTO } from './part.dto';
 import { Type } from 'class-transformer';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 
