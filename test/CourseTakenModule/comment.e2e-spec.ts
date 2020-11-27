@@ -21,7 +21,7 @@ import { UserService } from '../../src/UserModule/service/user.service';
 import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
 import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
-import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
+import { CourseTaken } from '../../src/CourseModule/entity/course-taken.entity';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');

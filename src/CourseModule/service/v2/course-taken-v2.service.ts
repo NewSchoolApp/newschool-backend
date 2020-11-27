@@ -1,8 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
 import { CourseTakenRepository } from '../../repository/course.taken.repository';
-import { CourseTaken } from '../../entity/course.taken.entity';
-import { CourseTakenStatusEnum } from '../../enum/enum';
+import { CourseTaken } from '../../entity/course-taken.entity';
+import { CourseTakenStatusEnum } from '../../enum/course-taken-status.enum';
 import { AxiosResponse } from 'axios';
 import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
@@ -12,6 +17,7 @@ import {
   CurrentStepDoingEnum,
   CurrentStepDTO,
 } from '../../dto/current-step.dto';
+import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -153,6 +159,27 @@ export class CourseTakenV2Service {
       courseCompleteDate: new Date(Date.now()),
     });
     this.publisherService.emitCourseCompleted(courseTaken);
+  }
+
+  async avaliateCourse(
+    userId: string,
+    courseId: number,
+    { rating, feedback }: NpsCourseTakenDTO,
+  ): Promise<void> {
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+
+    if (
+      courseTaken.status !== CourseTakenStatusEnum.COMPLETED ||
+      courseTaken.completion !== 100
+    ) {
+      throw new BadRequestException('Course not finished by user');
+    }
+
+    await this.repository.save({ ...courseTaken, rating, feedback });
+    this.publisherService.emitNpsReward(userId, courseId);
   }
 
   private async findByUserIdAndCourseId(

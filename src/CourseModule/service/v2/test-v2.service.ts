@@ -4,14 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
-import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { ChosenAlternativeEnum } from '../../dto/check-test.dto';
-import { CMSPartDTO } from '../../dto/cms-part.dto';
+import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 
 @Injectable()
 export class TestV2Service {
-  constructor(private readonly cmsIntegration: CmsIntegration) {}
+  constructor(
+    private readonly cmsIntegration: CmsIntegration,
+    private readonly publisherService: PublisherService,
+  ) {}
 
   public async getAll(partId: number): Promise<CMSTestDTO[]> {
     const { data } = await this.cmsIntegration.getTestsByPartId(partId);
@@ -40,6 +42,7 @@ export class TestV2Service {
     chosenAlternative: ChosenAlternativeEnum,
   ): Promise<boolean> {
     const test: CMSTestDTO = await this.findById(id);
+    this.publisherService.emitCheckTestReward(test, chosenAlternative);
     return chosenAlternative === test.alternativa_certa.toUpperCase();
   }
 }

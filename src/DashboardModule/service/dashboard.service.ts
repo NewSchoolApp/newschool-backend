@@ -2,7 +2,7 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
-import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/course-taken-status.enum';
 import { getCoursesByFinished } from '../interfaces/getCoursesByFinished';
 import { CourseTakenService } from '../../CourseModule/service/v1/course-taken.service';
 

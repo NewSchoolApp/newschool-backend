@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CourseTakenDTO } from '../dto/course.taken.dto';
-import { CourseTaken } from '../entity/course.taken.entity';
+import { CourseTaken } from '../entity/course-taken.entity';
 import { Mapper } from '../../CommonsModule/mapper/mapper';
 
 @Injectable()

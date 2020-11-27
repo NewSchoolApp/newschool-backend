@@ -8,7 +8,7 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { UserQuantityDTO } from '../dto/user-quantity.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CertificateQuantityDTO } from '../dto/certificate-quantity.dto';
-import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/course-taken-status.enum';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { CourseTakenUsersDTO } from '../dto/course-taken-users.dto';
 import { getCoursesByFinished } from '../interfaces/getCoursesByFinished';
@@ -48,13 +48,12 @@ export class DashboardController {
   }
 
   @Get('/course/views')
-  //@UseGuards(RoleGuard)
-  //@NeedRole(RoleEnum.ADMIN)
+  @UseGuards(RoleGuard)
+  @NeedRole(RoleEnum.ADMIN)
   public async getCoursesByViews(
     @Query('order') order: OrderEnum = OrderEnum.ASC, // Indica que order precisa ter um dos tipos presentes no enum. Se não, recebe o valor 'ASC'
     @Query('limit') limit = 10,
   ): Promise<getCoursesByFinished> {
-    const result = await this.service.getCoursesByFinished(order, limit);
-    return result;
+    return await this.service.getCoursesByFinished(order, limit);
   }
 }

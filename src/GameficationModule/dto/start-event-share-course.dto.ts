@@ -1,7 +1,7 @@
 import { StartEventDTO } from './start-event.dto';
 
 export class StartEventShareCourseRuleDTO {
-  courseId: string;
+  courseId: number;
   userId: string;
   platform: string;
 }

@@ -1,7 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Achievement } from '../entity/achievement.entity';
-import { Test } from '../../CourseModule/entity/test.entity';
-import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { BadgeWithQuantityDTO } from '../dto/badge-with-quantity.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
@@ -13,14 +11,14 @@ import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
 
 @EntityRepository(Achievement)
 export class AchievementRepository extends Repository<Achievement> {
-  public async getTestOnFirstTakeByUserAndRuleTestId<T>(
-    test: Test,
-    user: User,
+  public async getTestOnFirstTakeByUserIdAndRuleTestId<T>(
+    testId: number,
+    userId: string,
   ): Promise<Achievement<T>[]> {
     const params = [
-      user.id,
+      userId,
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-      test.id,
+      testId,
     ];
     const response: any[] = await this.query(
       `
@@ -36,7 +34,7 @@ export class AchievementRepository extends Repository<Achievement> {
   }
 
   public async getSharedCourseByCourseIdAndUserIdAndSocialMedia<T>(
-    courseId: string,
+    courseId: number,
     userId: string,
     socialMedia: string,
   ): Promise<Achievement<T>[]> {
@@ -73,7 +71,7 @@ export class AchievementRepository extends Repository<Achievement> {
   }
 
   public async getNpsCourseAchievementByCourseIdAndUserIdAndBadgeId<T>(
-    courseId: string,
+    courseId: number,
     userId: string,
   ): Promise<Achievement<T>[]> {
     const params = [userId, EventNameEnum.COURSE_REWARD_COURSE_NPS, courseId];
