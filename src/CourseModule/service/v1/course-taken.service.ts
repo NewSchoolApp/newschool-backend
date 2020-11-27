@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CourseTakenStatusEnum } from '../../enum/enum';
+import { CourseTakenStatusEnum } from '../../enum/course-taken-status.enum';
 import { OrderEnum } from '../../../CommonsModule/enum/order.enum';
 import { CourseTakenRepository } from '../../repository/course.taken.repository';
-import { CourseTaken } from '../../entity/course.taken.entity';
+import { CourseTaken } from '../../entity/course-taken.entity';
 import { getCoursesByFinished } from '../../../DashboardModule/interfaces/getCoursesByFinished';
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
@@ -50,7 +50,7 @@ export class CourseTakenService {
 
   public async findByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     const courseTaken = this.repository.findByUserIdAndCourseId(
       userId,
@@ -64,7 +64,7 @@ export class CourseTakenService {
 
   async avaliateCourse(
     userId: string,
-    courseId: string,
+    courseId: number,
     { rating, feedback }: NpsCourseTakenDTO,
   ): Promise<void> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(

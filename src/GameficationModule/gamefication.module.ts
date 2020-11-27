@@ -16,7 +16,6 @@ import { GameficationService } from './service/gamefication.service';
 import { UserRewardsService } from './service/user-rewards.service';
 import { AchievementService } from './service/achievement.service';
 import { CourseTakenRepository } from '../CourseModule/repository/course.taken.repository';
-import { CourseRepository } from '../CourseModule/repository/course.repository';
 import { UserRepository } from '../UserModule/repository/user.repository';
 import { UploadModule } from '../UploadModule/upload.module';
 
@@ -29,7 +28,6 @@ import { UploadModule } from '../UploadModule/upload.module';
       Badge,
       BadgeRepository,
       CourseTakenRepository,
-      CourseRepository,
       UserRepository,
     ]),
     forwardRef(() => UserModule),

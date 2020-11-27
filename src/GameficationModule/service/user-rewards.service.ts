@@ -4,13 +4,12 @@ import { StartEventShareCourseRuleDTO } from '../dto/start-event-share-course.dt
 import { EventNameEnum } from '../enum/event-name.enum';
 import { BadgeRepository } from '../repository/badge.repository';
 import * as PubSub from 'pubsub-js';
-import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
+import { CourseTaken } from '../../CourseModule/entity/course-taken.entity';
 import { Achievement } from '../entity/achievement.entity';
 import { StartEventRateAppRuleDTO } from '../dto/start-event-rate-app.dto';
 import { User } from '../../UserModule/entity/user.entity';
 import { Badge } from '../entity/badge.entity';
 import { UserRepository } from '../../UserModule/repository/user.repository';
-import { CourseRepository } from '../../CourseModule/repository/course.repository';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 import { ShareAppRewardDataDTO } from '../dto/share-app-reward-data.dto';
 import { SchedulerRegistry } from '@nestjs/schedule';
@@ -19,7 +18,7 @@ import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 export interface SharedCourseRule {
-  courseId: string;
+  courseId: number;
 }
 
 export interface InviteUserRewardData {
@@ -32,7 +31,6 @@ export class UserRewardsService implements OnModuleInit {
     private readonly achievementRepository: AchievementRepository,
     private readonly badgeRepository: BadgeRepository,
     private readonly userRepository: UserRepository,
-    private readonly courseRepository: CourseRepository,
     private readonly courseTakenRepository: CourseTakenRepository,
     private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
@@ -244,7 +242,7 @@ export class UserRewardsService implements OnModuleInit {
     const user = queryResponse[0];
     if (!user) return;
 
-    const responses: any[] = await this.achievementRepository.sharedAppThisWeek(
+    const responses = await this.achievementRepository.sharedAppThisWeek(
       userId,
     );
 

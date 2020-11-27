@@ -1,22 +1,10 @@
 import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
-import { LessonRepository } from './repository/lesson.repository';
-import { TestRepository } from './repository/test.repository';
-import { CourseRepository } from './repository/course.repository';
-import { CourseMapper } from './mapper/course.mapper';
-import { LessonMapper } from './mapper/lesson.mapper';
-import { Lesson } from './entity/lesson.entity';
-import { TestMapper } from './mapper/test.mapper';
-import { PartRepository } from './repository/part.repository';
-import { Part } from './entity/part.entity';
 import { UserModule } from '../UserModule/user.module';
-import { Course } from './entity/course.entity';
-import { PartMapper } from './mapper/part.mapper';
-import { Test } from './entity/test.entity';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
 import { CourseTakenMapper } from './mapper/course-taken.mapper';
-import { CourseTaken } from './entity/course.taken.entity';
+import { CourseTaken } from './entity/course-taken.entity';
 import { CourseTakenRepository } from './repository/course.taken.repository';
 import { CommentRepository } from './repository/comment.repository';
 import { UserLikedCommentRepository } from './repository/user-liked-comment.repository';
@@ -44,14 +32,6 @@ import { CourseTakenService } from './service/v1/course-taken.service';
     HttpModule,
     CacheModule.register(),
     TypeOrmModule.forFeature([
-      Course,
-      CourseRepository,
-      Lesson,
-      LessonRepository,
-      Part,
-      PartRepository,
-      Test,
-      TestRepository,
       CourseTaken,
       CourseTakenRepository,
       Comment,
@@ -73,10 +53,6 @@ import { CourseTakenService } from './service/v1/course-taken.service';
     CourseTakenV2Controller,
   ],
   providers: [
-    CourseMapper,
-    LessonMapper,
-    PartMapper,
-    TestMapper,
     CourseTakenMapper,
     CommentMapper,
     CommentService,

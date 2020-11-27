@@ -9,8 +9,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { CourseTakenStatusEnum } from '../enum/enum';
-import { CourseTaken } from '../entity/course.taken.entity';
+import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
+import { CourseTaken } from '../entity/course-taken.entity';
 
 export class CourseTakenDTO {
   @IsNotEmpty()

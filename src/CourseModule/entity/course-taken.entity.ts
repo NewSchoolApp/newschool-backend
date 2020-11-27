@@ -1,11 +1,7 @@
-import { Part } from './part.entity';
-import { Lesson } from './lesson.entity';
-import { Course } from './course.entity';
-import { CourseTakenStatusEnum } from './../enum/enum';
+import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { User } from '../../UserModule/entity/user.entity';
-import { Test } from './test.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity('course_taken')

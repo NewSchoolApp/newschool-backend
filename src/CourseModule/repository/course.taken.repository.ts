@@ -1,9 +1,9 @@
 import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
-import { CourseTakenStatusEnum } from '../enum/enum';
+import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
 import { User } from '../../UserModule/entity/user.entity';
-import { CourseTaken } from '../entity/course.taken.entity';
+import { CourseTaken } from '../entity/course-taken.entity';
 import { MoreThanOrEqual } from 'typeorm';
 
 @EntityRepository(CourseTaken)
@@ -80,8 +80,8 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
 
   public async findByUserIdAndCourseId(
     userId: string,
-    courseId: string | number,
-  ): Promise<CourseTaken | undefined> {
+    courseId: number,
+  ): Promise<CourseTaken> {
     const response = await this.find({
       where: { user: { id: userId }, courseId },
       take: 1,
@@ -129,13 +129,23 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     limit: number,
   ): Promise<getCoursesByFinished> {
     return this.query(
-      `SELECT COUNT(*) AS 'frequency', c.title FROM course_taken LEFT JOIN course c ON course_taken.course_id = c.id GROUP BY course_id ORDER BY course_id ${order} LIMIT ${limit}`,
+      `
+      SELECT
+        COUNT(*)
+      AS
+        'frequency'
+      FROM
+        course_taken
+      GROUP BY
+        course_id
+      ORDER BY course_id
+        ${order} LIMIT ${limit}`,
     );
   }
 
   async findCompletedByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
       where: {
@@ -152,7 +162,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
 
   async findCompletedWithRatingByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
       where: {

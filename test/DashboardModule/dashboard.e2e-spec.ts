@@ -12,11 +12,11 @@ import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-cred
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
-import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
+import { CourseTaken } from '../../src/CourseModule/entity/course-taken.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 import { UserService } from '../../src/UserModule/service/user.service';
-import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/enum';
+import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/course-taken-status.enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 import { OrderEnum } from '../../src/CommonsModule/enum/order.enum';
 import { REQUEST } from '@nestjs/core';
@@ -244,6 +244,7 @@ describe('DashboardController (e2e)', () => {
 
     expect(dashboardRes.body.totalElements).toEqual(2);
   });
+
   it('should return courses by views', async () => {
     const authRes = await request(app.getHttpServer())
       .post('/oauth/token')

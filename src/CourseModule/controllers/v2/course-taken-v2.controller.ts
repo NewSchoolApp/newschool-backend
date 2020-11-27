@@ -9,7 +9,7 @@ import {
 import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CourseTakenV2Service } from '../../service/v2/course-taken-v2.service';
-import { CourseTaken } from '../../entity/course.taken.entity';
+import { CourseTaken } from '../../entity/course-taken.entity';
 import { CurrentStepDTO } from '../../dto/current-step.dto';
 import { NewCourseTakenDTO } from '../../dto/new-course.taken.dto';
 
@@ -41,7 +41,7 @@ export class CourseTakenV2Controller {
     await this.service.advanceOnCourse(userId, courseId);
   }
 
-  @Post('current-step/user/:userId/course/:courseId')
+  @Get('current-step/user/:userId/course/:courseId')
   public async currentStep(
     @Param('userId') userId: string,
     @Param('courseId', ParseIntPipe) courseId: number,

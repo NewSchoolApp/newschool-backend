@@ -1,25 +1,24 @@
 import { BadgeRepository } from '../repository/badge.repository';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Test } from '../../CourseModule/entity/test.entity';
-import { User } from '../../UserModule/entity/user.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 import { AchievementRepository } from '../repository/achievement.repository';
 import * as PubSub from 'pubsub-js';
-import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
-import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
+import { CourseTaken } from '../../CourseModule/entity/course-taken.entity';
+import { CourseTakenStatusEnum } from '../../CourseModule/enum/course-taken-status.enum';
 import { CompleteCourseRewardDTO } from '../dto/complete-course-reward.dto';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 import { Achievement } from '../entity/achievement.entity';
+import { CMSTestDTO } from '../../CourseModule/dto/cms-test.dto';
 
-export interface TestOnFirstTake {
+export interface TestTry {
   chosenAlternative: string;
-  user: User;
-  test: Test;
+  userId: string;
+  test: CMSTestDTO;
 }
 
 interface CheckTestRule {
-  testId: string;
+  testId: number;
   try: number;
 }
 
@@ -34,7 +33,7 @@ export class CourseRewardsService implements OnModuleInit {
   onModuleInit(): void {
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
-      async (message: string, data: TestOnFirstTake) => {
+      async (message: string, data: TestTry) => {
         await this.checkTestReward(data);
       },
     );
@@ -46,7 +45,7 @@ export class CourseRewardsService implements OnModuleInit {
     );
     PubSub.subscribe(
       EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
-      async (message: string, data) => {
+      async (message: string, data: CompleteCourseRewardDTO) => {
         await this.completeCourseReward(data);
       },
     );
@@ -80,8 +79,8 @@ export class CourseRewardsService implements OnModuleInit {
   private async checkTestReward({
     chosenAlternative,
     test,
-    user,
-  }: TestOnFirstTake): Promise<void> {
+    userId,
+  }: TestTry): Promise<void> {
     const points = {
       1: () =>
         this.badgeRepository.findByEventNameAndOrder(
@@ -104,11 +103,11 @@ export class CourseRewardsService implements OnModuleInit {
           4,
         ),
     };
-    let [
-      achievement,
-    ] = await this.achievementRepository.getTestOnFirstTakeByUserAndRuleTestId<
+    let [achievement]: Achievement<
       CheckTestRule
-    >(test, user);
+    >[] = await this.achievementRepository.getTestOnFirstTakeByUserIdAndRuleTestId<
+      CheckTestRule
+    >(test.id, userId);
 
     if (achievement?.completed) return;
     if (achievement?.rule?.try >= 4) return;
@@ -132,18 +131,17 @@ export class CourseRewardsService implements OnModuleInit {
     }
 
     const answerIsRight =
-      chosenAlternative.toLowerCase() === test.correctAlternative.toLowerCase();
+      chosenAlternative.toLowerCase() === test.alternativa_certa.toLowerCase();
 
     const badge = await points[achievement.rule.try]();
-    achievement = {
+
+    await this.achievementRepository.save({
       ...achievement,
       eventName: EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE,
       completed: answerIsRight,
       badge: answerIsRight ? badge : null,
-      user,
-    };
-
-    await this.achievementRepository.save(achievement);
+      user: { id: userId },
+    });
   }
 
   async courseNpsReward({
@@ -161,8 +159,8 @@ export class CourseRewardsService implements OnModuleInit {
     const [
       achievement,
     ] = await this.achievementRepository.getNpsCourseAchievementByCourseIdAndUserIdAndBadgeId(
-      userId,
       courseId,
+      userId,
     );
 
     if (achievement) return;

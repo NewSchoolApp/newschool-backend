@@ -3,16 +3,16 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Inject, Injectable } from '@nestjs/common';
-import { TestOnFirstTake } from './course-rewards.service';
+import { TestTry } from './course-rewards.service';
 import { EventNameEnum } from '../enum/event-name.enum';
-import { Test } from '../../CourseModule/entity/test.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { StartEventEnum } from '../enum/start-event.enum';
 import { StartEventRules } from '../dto/start-event-rules.dto';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { InviteUserRewardData } from './user-rewards.service';
-import { CourseTaken } from '../../CourseModule/entity/course.taken.entity';
+import { CourseTaken } from '../../CourseModule/entity/course-taken.entity';
 import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
+import { CMSTestDTO } from '../../CourseModule/dto/cms-test.dto';
 
 @Injectable()
 export class PublisherService {
@@ -43,15 +43,18 @@ export class PublisherService {
     PubSub.publish(EventNameEnum.USER_REWARD_INVITE_USER, data);
   }
 
-  public emitCheckTestReward(test: Test, chosenAlternative: string): void {
+  public emitCheckTestReward(
+    test: CMSTestDTO,
+    chosenAlternative: string,
+  ): void {
     const authorizationHeader = this.request.headers.authorization;
     const userStringToken = this.getUserStringToken(authorizationHeader);
     const user: User = this.getUserFromToken(userStringToken);
     if (user.role.name !== RoleEnum.STUDENT) return;
 
-    const data: TestOnFirstTake = {
+    const data: TestTry = {
       chosenAlternative: chosenAlternative.toLowerCase(),
-      user,
+      userId: user.id,
       test,
     };
     PubSub.publish(EventNameEnum.COURSE_REWARD_TEST_ON_FIRST_TAKE, data);
@@ -60,7 +63,7 @@ export class PublisherService {
     PubSub.publish(EventNameEnum.USER_REWARD_COMPLETE_REGISTRATION, { id });
   }
 
-  public emitNpsReward(userId: string, courseId: string): void {
+  public emitNpsReward(userId: string, courseId: number): void {
     const data: CourseNpsRewardDTO = {
       userId,
       courseId,
