@@ -23,6 +23,6 @@ export class UserLikedComment extends Audit {
   @Column({ primary: true })
   commentId: string;
 
-  @Column()
+  @Column({ default: 0 })
   claps: number;
 }
