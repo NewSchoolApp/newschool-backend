@@ -1,9 +1,17 @@
-import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CourseTakenV2Service } from '../../service/v2/course-taken-v2.service';
 import { CourseTaken } from '../../entity/course.taken.entity';
 import { CurrentStepDTO } from '../../dto/current-step.dto';
+import { NewCourseTakenDTO } from '../../dto/new-course.taken.dto';
 
 @ApiTags('CourseTakenV2')
 @ApiBearerAuth()
@@ -18,10 +26,9 @@ export class CourseTakenV2Controller {
     return this.service.getAllByUserId(userId);
   }
 
-  @Post('start-course/user/:userId/course/:courseId')
+  @Post('start-course')
   public async startCourse(
-    @Param('userId') userId: string,
-    @Param('courseId', ParseIntPipe) courseId: number,
+    @Body() { userId, courseId }: NewCourseTakenDTO,
   ): Promise<void> {
     await this.service.startCourse(userId, courseId);
   }

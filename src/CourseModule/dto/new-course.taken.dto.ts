@@ -1,16 +1,5 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Course } from '../entity/course.entity';
-import { User } from '../../UserModule/entity/user.entity';
-
 export class NewCourseTakenDTO {
-  @IsNotEmpty()
-  @IsString()
-  @Expose()
-  userId: User['id'];
+  userId: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Expose()
-  courseId: Course['id'];
+  courseId: number;
 }
