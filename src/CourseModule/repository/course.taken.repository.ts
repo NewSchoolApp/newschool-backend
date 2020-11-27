@@ -4,8 +4,7 @@ import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { User } from '../../UserModule/entity/user.entity';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { CertificateDTO } from '../dto/certificate.dto';
-import { MoreThanOrEqual } from 'typeorm/index';
+import { MoreThanOrEqual } from 'typeorm';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
@@ -19,17 +18,17 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
 
   public async getCompletedByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     return this.findOne(
       {
         user: { id: userId },
-        course: { id: courseId },
+        courseId,
         completion: 100,
         status: CourseTakenStatusEnum.COMPLETED,
       },
       {
-        relations: ['user', 'course'],
+        relations: ['user'],
       },
     );
   }
@@ -37,7 +36,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   public async findByUser(
     user: CourseTaken['user'],
   ): Promise<CourseTaken[] | undefined> {
-    return this.find({ relations: ['user', 'course'], where: { user } });
+    return this.find({ relations: ['user'], where: { user } });
   }
 
   public async getActiveUsersQuantity(): Promise<number> {
@@ -56,53 +55,27 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
   }
 
-  public async findByUserAndCourseWithAllRelations(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
+  public async findCertificateByUserIdAndCourseId(
+    userId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     return this.findOne(
-      { user, course },
       {
-        relations: [
-          'user',
-          'course',
-          'currentLesson',
-          'currentPart',
-          'currentTest',
-        ],
+        user: { id: userId },
+        courseId,
+        status: CourseTakenStatusEnum.COMPLETED,
       },
-    );
-  }
-
-  public async findCertificateByUserAndCourse(
-    user: CourseTaken['user'],
-    course: CourseTaken['course'],
-  ): Promise<CertificateDTO> {
-    return this.findOne(
-      { user, course, status: CourseTakenStatusEnum.COMPLETED },
-      { relations: ['user', 'course'] },
+      { relations: ['user'] },
     );
   }
 
   public async findCertificatesByUserId(
     user: User['id'],
-  ): Promise<CertificateDTO[]> {
+  ): Promise<CourseTaken[]> {
     return this.find({
-      relations: ['user', 'course'],
+      relations: ['user'],
       where: { user: user, status: CourseTakenStatusEnum.COMPLETED },
     });
-  }
-
-  public async findByCourseId(
-    course: CourseTaken['course'],
-  ): Promise<CourseTaken[] | undefined> {
-    return this.find({ course });
-  }
-
-  public async findByCourse(
-    course: CourseTaken['course'],
-  ): Promise<CourseTaken[] | undefined> {
-    return this.find({ course });
   }
 
   public async findByUserIdAndCourseId(
@@ -110,9 +83,9 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     courseId: string | number,
   ): Promise<CourseTaken | undefined> {
     const response = await this.find({
-      where: { user: { id: userId }, course: { id: courseId } },
+      where: { user: { id: userId }, courseId },
       take: 1,
-      relations: ['user', 'course'],
+      relations: ['user'],
     });
     return response[0];
   }
@@ -184,13 +157,13 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     const response = await this.find({
       where: {
         user: { id: userId },
-        course: { id: courseId },
+        courseId,
         status: CourseTakenStatusEnum.COMPLETED,
         completion: 100,
         rating: Not(IsNull()),
       },
       take: 1,
-      relations: ['user', 'course'],
+      relations: ['user'],
     });
     return response[0];
   }

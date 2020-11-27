@@ -1,5 +1,5 @@
 export class CMSPartDTO {
-  id: string;
+  id: number;
   titulo: string;
   descricao: string;
   ordem: number;

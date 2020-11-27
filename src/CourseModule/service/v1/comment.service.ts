@@ -3,19 +3,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommentRepository } from '../repository/comment.repository';
-import { UserService } from '../../UserModule/service/user.service';
-import { PartService } from './part.service';
-import { Comment } from '../entity/comment.entity';
-import { User } from '../../UserModule/entity/user.entity';
-import { Part } from '../entity/part.entity';
-import { UserLikedCommentRepository } from '../repository/user-liked-comment.repository';
-import { UploadService } from '../../UploadModule/service/upload.service';
-import { UserMapper } from '../../UserModule/mapper/user.mapper';
-import { CommentDTO } from '../dto/comment.dto';
-import { CommentMapper } from '../mapper/comment.mapper';
-import { PartMapper } from '../mapper/part.mapper';
-import { ResponseDTO } from '../dto/response.dto';
+import { CommentRepository } from '../../repository/comment.repository';
+import { UserService } from '../../../UserModule/service/user.service';
+import { Comment } from '../../entity/comment.entity';
+import { User } from '../../../UserModule/entity/user.entity';
+import { UserLikedCommentRepository } from '../../repository/user-liked-comment.repository';
+import { UploadService } from '../../../UploadModule/service/upload.service';
+import { UserMapper } from '../../../UserModule/mapper/user.mapper';
+import { CommentDTO } from '../../dto/comment.dto';
+import { CommentMapper } from '../../mapper/comment.mapper';
+import { ResponseDTO } from '../../dto/response.dto';
 
 @Injectable()
 export class CommentService {
@@ -24,7 +21,6 @@ export class CommentService {
     private readonly mapper: CommentMapper,
     private readonly userLikedCommentRepository: UserLikedCommentRepository,
     private readonly userService: UserService,
-    private readonly partService: PartService,
     private readonly uploadService: UploadService,
     private readonly userMapper: UserMapper,
   ) {}
@@ -45,7 +41,6 @@ export class CommentService {
       where: { partId },
       relations: ['user', 'likedBy'],
     });
-    console.log(comments);
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }
 
@@ -77,6 +72,36 @@ export class CommentService {
     ]);
 
     await this.userLikedCommentRepository.save({ user, comment });
+  }
+
+  public async clapComment(
+    id: string,
+    userId: string,
+    claps: number,
+  ): Promise<void> {
+    const userLikedCommentResponse = await this.userLikedCommentRepository.find(
+      {
+        where: { userId, commentId: id },
+      },
+    );
+
+    let userLikedComment = userLikedCommentResponse[0];
+
+    if (!userLikedComment) {
+      userLikedComment = {
+        ...userLikedComment,
+        userId,
+        commentId: id,
+      };
+    }
+
+    const allClaps =
+      claps + userLikedComment.claps > 50 ? 50 : claps + userLikedComment.claps;
+
+    await this.userLikedCommentRepository.save({
+      ...userLikedComment,
+      clap: allClaps,
+    });
   }
 
   public async addCommentResponse(

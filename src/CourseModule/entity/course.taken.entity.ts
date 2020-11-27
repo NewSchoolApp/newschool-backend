@@ -6,6 +6,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { User } from '../../UserModule/entity/user.entity';
 import { Test } from './test.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity('course_taken')
 @Index(
@@ -14,10 +15,7 @@ import { Test } from './test.entity';
     unique: true,
   },
 )
-export class CourseTaken {
-  @Column('datetime', { name: 'course_start_date' })
-  courseStartDate: Date;
-
+export class CourseTaken extends Audit {
   @Column('datetime', { name: 'course_complete_date', nullable: true })
   courseCompleteDate: Date | null;
 
@@ -42,53 +40,21 @@ export class CourseTaken {
   @Column('varchar', { primary: true, name: 'user_id', length: 36 })
   userId: string;
 
-  @ManyToOne<Course>('Course')
-  @JoinColumn({
-    name: 'course_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  course: Course;
-
   @Column('varchar', { primary: true, name: 'course_id', length: 36 })
-  courseId: string;
+  courseId: number;
 
-  @ManyToOne<Lesson>('Lesson')
-  @JoinColumn({
-    name: 'current_lesson_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentLesson: Lesson;
+  @Column('int', { name: 'current_lesson_id', nullable: false })
+  currentLessonId: number;
 
-  @Column('varchar', { name: 'current_lesson_id', nullable: true, length: 36 })
-  currentLessonId: string | null;
+  @Column('int', { name: 'current_part_id', nullable: false })
+  currentPartId: number;
 
-  @ManyToOne<Part>('Part')
-  @JoinColumn({
-    name: 'current_part_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentPart: Part;
-
-  @Column('varchar', { name: 'current_part_id', nullable: true, length: 36 })
-  currentPartId: string | null;
-
-  @ManyToOne<Test>('Test')
-  @JoinColumn({
-    name: 'current_test_id',
-    referencedColumnName: 'id',
-  })
-  @Expose()
-  currentTest: Test;
-
-  @Column('varchar', { name: 'current_test_id', nullable: true, length: 36 })
-  currentTestId: string | null;
+  @Column('int', { name: 'current_test_id', nullable: true })
+  currentTestId?: number;
 
   @Column('int', { name: 'rating', nullable: true })
-  rating: number | null;
+  rating?: number;
 
   @Column('varchar', { name: 'feedback', nullable: true, length: 255 })
-  feedback: string | null;
+  feedback?: string;
 }

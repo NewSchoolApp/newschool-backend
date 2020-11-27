@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
-import { CommentService } from '../service/comment.service';
+import { CommentService } from '../service/v1/comment.service';
 import { AddCommentDTO } from '../dto/add-comment.dto';
 import { LikeCommentDTO } from '../dto/like-comment.dto';
-import { CommentMapper } from '../mapper/comment.mapper';
 import { CommentDTO } from '../dto/comment.dto';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { ResponseDTO } from '../dto/response.dto';
+import { ClapCommentDTO } from '../dto/clap-comment.dto';
 
 @ApiTags('Comment')
 @ApiBearerAuth()
@@ -71,5 +71,15 @@ export class CommentController {
     @Body() body: LikeCommentDTO,
   ): Promise<void> {
     await this.service.likeComment(id, body.userId);
+  }
+
+  @Post(':id/clap')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async clapComment(
+    @Param('id') id: string,
+    @Body() body: ClapCommentDTO,
+  ): Promise<void> {
+    await this.service.clapComment(id, body.userId, body.claps);
   }
 }

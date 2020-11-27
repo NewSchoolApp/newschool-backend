@@ -1,5 +1,5 @@
 export class CMSTestDTO {
-  id: string;
+  id: number;
   titulo: string;
   pergunta: string;
   'primeira_alternativa': string;

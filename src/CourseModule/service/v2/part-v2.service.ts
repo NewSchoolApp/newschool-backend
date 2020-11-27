@@ -10,12 +10,12 @@ import { CMSPartDTO } from '../../dto/cms-part.dto';
 export class PartV2Service {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
-  public async getAll(lessonId: string): Promise<CMSPartDTO[]> {
+  public async getAll(lessonId: number): Promise<CMSPartDTO[]> {
     const { data } = await this.cmsIntegration.getPartsByLessonId(lessonId);
     return data;
   }
 
-  public async findById(id: string): Promise<CMSPartDTO> {
+  public async findById(id: number): Promise<CMSPartDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');

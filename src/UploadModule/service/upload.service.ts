@@ -66,7 +66,7 @@ export class UploadService implements OnModuleInit {
   ): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sendFile: (path: string, options: any) => Promise<void> = promisify(
-      response.sendfile.bind(response),
+      response.sendFile.bind(response),
     );
     try {
       await sendFile(fileName, { root: 'upload' });

@@ -147,6 +147,7 @@ describe('SecurityController (e2e)', () => {
     user.urlFacebook = 'facebook';
     user.urlInstagram = 'instagram';
     user.role = adminRole;
+    user.inviteKey = Math.random().toString(36).substr(2, 20);
     await userRepository.save(user);
     return request(app.getHttpServer())
       .post('/oauth/token')

@@ -184,7 +184,7 @@ export class CourseRewardsService implements OnModuleInit {
     await this.achievementRepository.save({
       user: { id: userId },
       badge,
-      rule: { courseId: courseTaken.course.id },
+      rule: { courseId },
       eventName: EventNameEnum.COURSE_REWARD_COURSE_NPS,
       completed: true,
     });

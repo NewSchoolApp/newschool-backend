@@ -2,9 +2,9 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
 import { UserService } from '../../UserModule/service/user.service';
-import { CourseTakenService } from '../../CourseModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../CourseModule/enum/enum';
 import { getCoursesByFinished } from '../interfaces/getCoursesByFinished';
+import { CourseTakenService } from '../../CourseModule/service/v1/course-taken.service';
 
 @Injectable()
 export class DashboardService {

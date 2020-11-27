@@ -10,12 +10,12 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 export class LessonV2Service {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
-  public async getAll(courseId: string): Promise<CMSLessonDTO[]> {
+  public async getAll(courseId: number): Promise<CMSLessonDTO[]> {
     const { data } = await this.cmsIntegration.getLessonsByCourseId(courseId);
     return data;
   }
 
-  public async findById(id: string): Promise<CMSLessonDTO> {
+  public async findById(id: number): Promise<CMSLessonDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');

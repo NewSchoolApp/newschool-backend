@@ -8,9 +8,6 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
-import { Lesson } from '../../entity/lesson.entity';
-import { Part } from '../../entity/part.entity';
-import { Test } from '../../entity/test.entity';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -28,7 +25,7 @@ export class CourseTakenV2Service {
 
   public async advanceOnCourse(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<void> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
       userId,
@@ -46,7 +43,9 @@ export class CourseTakenV2Service {
       courseTaken.currentPartId,
     );
 
-    const currentTest: CMSTestDTO = tests.find((test) => test.id);
+    const currentTest: CMSTestDTO = tests.find(
+      (test) => test.id == courseTaken.currentTestId,
+    );
     const nextTestOrderNumber = this.getNextSequenceNumber(currentTest);
     const nextTest: CMSTestDTO = tests.find(
       (test) => test.ordem === nextTestOrderNumber,
@@ -69,7 +68,9 @@ export class CourseTakenV2Service {
       courseTaken.currentLessonId,
     );
 
-    const currentPart: CMSPartDTO = parts.find((part) => part.id);
+    const currentPart: CMSPartDTO = parts.find(
+      (part) => part.id == courseTaken.currentPartId,
+    );
     const nextPartOrderNumber = this.getNextSequenceNumber(currentPart);
     const nextPart: CMSPartDTO = parts.find(
       (part) => part.ordem === nextPartOrderNumber,
@@ -94,7 +95,9 @@ export class CourseTakenV2Service {
       CMSLessonDTO[]
     > = await this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId);
 
-    const currentLesson: CMSLessonDTO = lessons.find((lesson) => lesson.id);
+    const currentLesson: CMSLessonDTO = lessons.find(
+      (lesson) => lesson.id == courseTaken.currentLessonId,
+    );
     const nextLessonOrderNumber = this.getNextSequenceNumber(currentLesson);
     const nextLesson: CMSLessonDTO = lessons.find(
       (lesson) => lesson.ordem === nextLessonOrderNumber,
@@ -104,7 +107,7 @@ export class CourseTakenV2Service {
       const updatedCourseTaken = {
         ...courseTaken,
         currentTestId: null,
-        currentPartId: nextLesson.partes[0].id,
+        currentPartId: nextLesson.partes.find((parte) => parte.ordem == 1).id,
         currentLessonId: nextLesson.id,
       };
 
@@ -126,7 +129,7 @@ export class CourseTakenV2Service {
 
   private async findByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     const courseTaken = await this.repository.findByUserIdAndCourseId(
       userId,
@@ -138,7 +141,7 @@ export class CourseTakenV2Service {
     return courseTaken;
   }
 
-  public async currentStep(userId: string, courseId: string) {
+  public async currentStep(userId: string, courseId: number) {
     const courseTaken = await this.findByUserIdAndCourseId(userId, courseId);
     if (!courseTaken.currentTestId) {
       const { data: part } = await this.cmsIntegration.findPartById(
@@ -154,7 +157,7 @@ export class CourseTakenV2Service {
     }: AxiosResponse<CMSTestDTO> = await this.cmsIntegration.findTestById(
       courseTaken.currentTestId,
     );
-    const { alternativa_certa: alternativeCerta, ...rest } = test;
+    const { alternativa_certa: rightAlternative, ...rest } = test;
     return {
       doing: 'TEST',
       test: rest,
@@ -187,13 +190,13 @@ export class CourseTakenV2Service {
     const percentualPerTest = percentualPerPart / testsQuantity;
 
     const currentLesson = lessons.find(
-      (test) => test.id === courseTaken.currentLessonId,
+      (lesson) => lesson.id == courseTaken.currentLessonId,
     );
     const currentPart = parts.find(
-      (test) => test.id === courseTaken.currentPartId,
+      (part) => part.id == courseTaken.currentPartId,
     );
     const currentTest = tests.find(
-      (test) => test.id === courseTaken.currentTestId,
+      (test) => test.id == courseTaken.currentTestId,
     );
 
     const currentTestSequenceNumber = courseTaken.currentTestId

@@ -1,5 +1,5 @@
 export class CMSLessonDTO {
-  id: string;
+  id: number;
   Titulo: string;
   'published_at': Date;
   'created_at': Date;
@@ -16,22 +16,14 @@ export class CMSLessonDTO {
 
 export class Curso {
   id: string;
-  Titulo: string;
   descricao: string;
   'published_at': Date;
   'created_at': Date;
   'updated_at': Date;
-  title: string;
-  description: string;
-  authorName: string;
-  authorDescription: string;
-  workload: number;
-  enabled: boolean;
   titulo: string;
   nomeDoAutor: string;
   descricaoDoAutor: string;
   horas: number;
-  habilitado: boolean;
   capa: Capa;
 }
 
@@ -74,7 +66,7 @@ export class Format {
 }
 
 export class Parte {
-  id: string;
+  id: number;
   titulo: string;
   descricao: string;
   ordem: number;

@@ -119,7 +119,7 @@ export class UserService {
         ...user,
         salt,
         password: hashPassword,
-        inviteKey: Math.random().toString(36).substr(2, 20),
+        inviteKey: `${this.generateInviteKey()}${this.generateInviteKey()}`,
         role,
       });
     } catch (e) {
@@ -339,5 +339,9 @@ export class UserService {
   async getUserPhoto(id: string): Promise<string> {
     const user = await this.findById(id);
     return this.uploadService.getUserPhoto(user.photoPath);
+  }
+
+  private generateInviteKey(): string {
+    return Math.random().toString(36).substr(2, 20);
   }
 }

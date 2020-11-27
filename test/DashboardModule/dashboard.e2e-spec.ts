@@ -10,19 +10,17 @@ import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
 import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
-import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 import { UserService } from '../../src/UserModule/service/user.service';
-import { CourseService } from '../../src/CourseModule/service/course.service';
-import { CourseTakenService } from '../../src/CourseModule/service/course.taken.service';
 import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 import { OrderEnum } from '../../src/CommonsModule/enum/order.enum';
 import { REQUEST } from '@nestjs/core';
+import { CourseTakenService } from '../../src/CourseModule/service/v1/course-taken.service';
 import { CourseTakenRepository } from '../../src/CourseModule/repository/course.taken.repository';
 
 const stringToBase64 = (string: string) => {
@@ -68,14 +66,6 @@ describe('DashboardController (e2e)', () => {
     const userService: UserService = moduleFixture.get<UserService>(
       UserService,
     );
-
-    const courseService: CourseService = moduleFixture.get<CourseService>(
-      CourseService,
-    );
-
-    const courseTakenService: CourseTakenService = moduleFixture.get<
-      CourseTakenService
-    >(CourseTakenService);
 
     const roleRepository: Repository<Role> = moduleFixture.get<
       Repository<Role>
@@ -146,50 +136,50 @@ describe('DashboardController (e2e)', () => {
     };
     const addedUser2 = await userService.add(newUser2);
 
-    const newCourse: NewCourseDTO = {
-      title: 'Teste coursetaken E2E to add',
-      thumbUrl: 'http://teste.com/thumb.png',
-      authorName: 'Test',
-      authorDescription: 'Test description',
-      description: 'Este é um registro de teste',
-      workload: 1,
+    const addedCourse = {
+      id: new Date().getTime() + Math.floor(Math.random() * 100),
     };
-    const addedCourse = await courseService.add(newCourse, {
-      filename: 'teste',
-    });
 
-    const newCourse2: NewCourseDTO = {
-      title: 'Teste coursetaken E2E to add 2',
-      thumbUrl: 'http://teste.com/thumb.png',
-      authorName: 'Test',
-      authorDescription: 'Test description',
-      description: 'Este é um registro de teste',
-      workload: 1,
+    const addedCourse2 = {
+      id: new Date().getTime() + Math.floor(Math.random() * 100),
     };
-    const addedCourse2 = await courseService.add(newCourse2, {
-      filename: 'teste',
-    });
 
     const newCourseTaken = {
       userId: addedUser.id,
       courseId: addedCourse.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
-    await courseTakenService.add(newCourseTaken);
+
+    await courseTakenRepository.save({
+      ...newCourseTaken,
+      completion: 0,
+      status: CourseTakenStatusEnum.TAKEN,
+    });
 
     const newCourseTaken2 = {
       userId: addedUser.id,
       courseId: addedCourse2.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
-    await courseTakenService.add(newCourseTaken2);
+    await courseTakenRepository.save({
+      ...newCourseTaken2,
+      completion: 100,
+      status: CourseTakenStatusEnum.COMPLETED,
+    });
 
     const newCourseTaken3 = {
       userId: addedUser2.id,
       courseId: addedCourse2.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
-    await courseTakenService.add(newCourseTaken3);
-
-    await courseTakenService.advanceOnCourse(addedUser.id, addedCourse2.id);
-    await courseTakenService.advanceOnCourse(addedUser2.id, addedCourse2.id);
+    await courseTakenRepository.save({
+      ...newCourseTaken3,
+      completion: 100,
+      status: CourseTakenStatusEnum.COMPLETED,
+    });
   });
 
   it('should have 2 as quantity of certificates created', async () => {
