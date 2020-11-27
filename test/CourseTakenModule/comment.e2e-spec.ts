@@ -10,23 +10,18 @@ import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
 import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { GrantTypeEnum } from '../../src/SecurityModule/enum/grant-type.enum';
-import { NewCourseDTO } from '../../src/CourseModule/dto/new-course.dto';
 import { Constants } from '../../src/CommonsModule/constants';
 import { NewUserDTO } from '../../src/UserModule/dto/new-user.dto';
 import { User } from '../../src/UserModule/entity/user.entity';
-import { Part } from '../../src/CourseModule/entity/part.entity';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 import { AddCommentDTO } from '../../src/CourseModule/dto/add-comment.dto';
 import { UserService } from '../../src/UserModule/service/user.service';
-import { CourseService } from '../../src/CourseModule/service/course.service';
-import { CourseTakenService } from '../../src/CourseModule/service/course.taken.service';
-import { PartService } from '../../src/CourseModule/service/part.service';
-import { LessonService } from '../../src/CourseModule/service/lesson.service';
 import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
 import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
+import { CourseTaken } from '../../src/CourseModule/entity/course.taken.entity';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -124,31 +119,19 @@ describe('CommentController (e2e)', () => {
     };
     addedUser = await userService.add(newUser);
 
-    const courseService: CourseService = moduleFixture.get<CourseService>(
-      CourseService,
-    );
-
-    const newCourse: NewCourseDTO = {
-      title: 'Teste coursetaken E2E to add',
-      thumbUrl: 'http://teste.com/thumb.png',
-      authorName: 'Test',
-      authorDescription: 'Test description',
-      description: 'Este é um registro de teste',
-      workload: 1,
+    const addedCourse = {
+      id: new Date().getTime(),
     };
-    const addedCourse = await courseService.add(newCourse, {
-      filename: 'teste',
-    });
 
-    const courseTakenService: CourseTakenService = moduleFixture.get<
-      CourseTakenService
-    >(CourseTakenService);
+    const courseTakenRepository = moduleFixture.get<Repository<CourseTaken>>(
+      getRepositoryToken(CourseTaken),
+    );
 
     const newCourseTaken = {
       userId: addedUser.id,
       courseId: addedCourse.id,
     };
-    await courseTakenService.add(newCourseTaken);
+    await courseTakenRepository.save(newCourseTaken);
   });
 
   it('should add comment', async (done) => {

@@ -43,20 +43,20 @@ export class CourseTaken {
   userId: string;
 
   @Column('varchar', { primary: true, name: 'course_id', length: 36 })
-  courseId: string;
+  courseId: number;
 
-  @Column('varchar', { name: 'current_lesson_id', nullable: true, length: 36 })
-  currentLessonId: string | null;
+  @Column('int', { name: 'current_lesson_id', nullable: false })
+  currentLessonId: number;
 
-  @Column('varchar', { name: 'current_part_id', nullable: true, length: 36 })
-  currentPartId: string | null;
+  @Column('int', { name: 'current_part_id', nullable: false })
+  currentPartId: number;
 
-  @Column('varchar', { name: 'current_test_id', nullable: true, length: 36 })
-  currentTestId: string | null;
+  @Column('int', { name: 'current_test_id', nullable: true })
+  currentTestId?: number;
 
   @Column('int', { name: 'rating', nullable: true })
-  rating: number | null;
+  rating?: number;
 
   @Column('varchar', { name: 'feedback', nullable: true, length: 255 })
-  feedback: string | null;
+  feedback?: string;
 }

@@ -20,7 +20,7 @@ export class CourseTakenV2Controller {
   @Post('advance-on-course/user/:userId/course/:courseId')
   public async updateCourseStatus(
     @Param('userId') userId: string,
-    @Param('courseId') courseId: string,
+    @Param('courseId', ParseIntPipe) courseId: number,
   ): Promise<void> {
     await this.service.advanceOnCourse(userId, courseId);
   }
@@ -28,7 +28,7 @@ export class CourseTakenV2Controller {
   @Post('current-step/user/:userId/course/:courseId')
   public async currentStep(
     @Param('userId') userId: string,
-    @Param('courseId') courseId: string,
+    @Param('courseId', ParseIntPipe) courseId: number,
   ) {
     return await this.service.currentStep(userId, courseId);
   }

@@ -29,7 +29,6 @@ export class CmsIntegration implements OnModuleInit {
   public async getCourses(
     { queryString }: getCoursesOptions = { queryString: {} },
   ): Promise<AxiosResponse<CMSCourseDTO[]>> {
-    // const { data }: AxiosResponse<CMSLoginDTO> = await this.login();
     const url = `${this.cmsUrl}/cursos`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
@@ -43,7 +42,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async findCourseById(
-    id: string,
+    id: number,
   ): Promise<AxiosResponse<CMSCourseDTO>> {
     const url = `${this.cmsUrl}/cursos/${id}`;
     const headers = {
@@ -54,7 +53,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async getLessonsByCourseId(
-    courseId: string,
+    courseId: number,
   ): Promise<AxiosResponse<CMSLessonDTO[]>> {
     const url = `${this.cmsUrl}/aulas`;
     const headers = {
@@ -69,7 +68,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async findLessonById(
-    id: string,
+    id: number,
   ): Promise<AxiosResponse<CMSLessonDTO>> {
     const url = `${this.cmsUrl}/aulas/${id}`;
     const headers = {
@@ -80,7 +79,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async getPartsByLessonId(
-    courseId: string,
+    courseId: number,
   ): Promise<AxiosResponse<CMSPartDTO[]>> {
     const url = `${this.cmsUrl}/partes`;
     const headers = {
@@ -94,7 +93,7 @@ export class CmsIntegration implements OnModuleInit {
     return this.httpService.get<CMSPartDTO[]>(url, config).toPromise();
   }
 
-  public async findPartById(id: string): Promise<AxiosResponse<CMSPartDTO>> {
+  public async findPartById(id: number): Promise<AxiosResponse<CMSPartDTO>> {
     const url = `${this.cmsUrl}/partes/${id}`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
@@ -104,7 +103,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async getTestsByPartId(
-    partId: string,
+    partId: number,
   ): Promise<AxiosResponse<CMSTestDTO[]>> {
     const url = `${this.cmsUrl}/exercicios`;
     const headers = {
@@ -118,7 +117,7 @@ export class CmsIntegration implements OnModuleInit {
     return this.httpService.get<CMSTestDTO[]>(url, config).toPromise();
   }
 
-  public async findTestById(id: string): Promise<AxiosResponse<CMSTestDTO>> {
+  public async findTestById(id: number): Promise<AxiosResponse<CMSTestDTO>> {
     const url = `${this.cmsUrl}/exercicios/${id}`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,

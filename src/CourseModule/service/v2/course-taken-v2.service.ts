@@ -8,9 +8,6 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
-import { Lesson } from '../../entity/lesson.entity';
-import { Part } from '../../entity/part.entity';
-import { Test } from '../../entity/test.entity';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -28,7 +25,7 @@ export class CourseTakenV2Service {
 
   public async advanceOnCourse(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<void> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
       userId,
@@ -132,7 +129,7 @@ export class CourseTakenV2Service {
 
   private async findByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     const courseTaken = await this.repository.findByUserIdAndCourseId(
       userId,
@@ -144,7 +141,7 @@ export class CourseTakenV2Service {
     return courseTaken;
   }
 
-  public async currentStep(userId: string, courseId: string) {
+  public async currentStep(userId: string, courseId: number) {
     const courseTaken = await this.findByUserIdAndCourseId(userId, courseId);
     if (!courseTaken.currentTestId) {
       const { data: part } = await this.cmsIntegration.findPartById(
@@ -160,7 +157,7 @@ export class CourseTakenV2Service {
     }: AxiosResponse<CMSTestDTO> = await this.cmsIntegration.findTestById(
       courseTaken.currentTestId,
     );
-    const { alternativa_certa: alternativeCerta, ...rest } = test;
+    const { alternativa_certa: rightAlternative, ...rest } = test;
     return {
       doing: 'TEST',
       test: rest,

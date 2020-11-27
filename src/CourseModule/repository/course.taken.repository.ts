@@ -4,8 +4,7 @@ import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { User } from '../../UserModule/entity/user.entity';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { CertificateDTO } from '../dto/certificate.dto';
-import { MoreThanOrEqual } from 'typeorm/index';
+import { MoreThanOrEqual } from 'typeorm';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
@@ -19,7 +18,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
 
   public async getCompletedByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     return this.findOne(
       {
@@ -56,45 +55,9 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
   }
 
-  // public async findByUserAndCourseWithAllRelations(
-  //   user: CourseTaken['user'],
-  //   course: CourseTaken['course'],
-  // ): Promise<CourseTaken> {
-  //   return this.findOne(
-  //     { user, course },
-  //     {
-  //       relations: [
-  //         'user',
-  //       ],
-  //     },
-  //   );
-  // }
-
-  public async findByUserIdAndCourseIdWithAllRelations(
-    userId: string,
-    courseId: string,
-  ): Promise<CourseTaken> {
-    return this.findOne(
-      { user: { id: userId }, courseId },
-      {
-        relations: ['user'],
-      },
-    );
-  }
-
-  // public async findCertificateByUserAndCourse(
-  //   user: CourseTaken['user'],
-  //   course: CourseTaken['course'],
-  // ): Promise<CourseTaken> {
-  //   return this.findOne(
-  //     { user, course, status: CourseTakenStatusEnum.COMPLETED },
-  //     { relations: ['user'] },
-  //   );
-  // }
-
   public async findCertificateByUserIdAndCourseId(
     userId: string,
-    courseId: string,
+    courseId: number,
   ): Promise<CourseTaken> {
     return this.findOne(
       {
@@ -113,12 +76,6 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
       relations: ['user'],
       where: { user: user, status: CourseTakenStatusEnum.COMPLETED },
     });
-  }
-
-  public async findByCourseId(
-    courseId: string,
-  ): Promise<CourseTaken[] | undefined> {
-    return this.find({ courseId });
   }
 
   public async findByUserIdAndCourseId(

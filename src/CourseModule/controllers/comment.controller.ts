@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
-import { CommentService } from '../service/comment.service';
+import { CommentService } from '../service/v1/comment.service';
 import { AddCommentDTO } from '../dto/add-comment.dto';
 import { LikeCommentDTO } from '../dto/like-comment.dto';
 import { CommentMapper } from '../mapper/comment.mapper';

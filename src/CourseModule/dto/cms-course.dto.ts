@@ -1,5 +1,5 @@
 export class CMSCourseDTO {
-  id: string;
+  id: number;
   Titulo: string;
   descricao: string;
   'published_at': Date;

@@ -11,23 +11,19 @@ import {
   Min,
 } from 'class-validator';
 import { CourseTakenStatusEnum } from '../enum/enum';
-import { UserDTO } from '../../UserModule/dto/user.dto';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { CourseDTO } from './course.dto';
 import { Part } from '../entity/part.entity';
 import { Lesson } from '../entity/lesson.entity';
 import { Test } from '../entity/test.entity';
 
 export class CourseTakenDTO {
   @IsNotEmpty()
-  @Type(() => UserDTO)
   @Expose()
-  user: CourseTaken['user'];
+  userId: string;
 
-  @IsNotEmptyObject()
-  @Type(() => CourseDTO)
+  @IsNotEmpty()
   @Expose()
-  course: CourseTaken['course'];
+  courseId: number;
 
   @IsNotEmpty()
   @IsDate()
@@ -51,20 +47,14 @@ export class CourseTakenDTO {
   @Expose()
   completion: CourseTaken['completion'];
 
-  @Type(() => Lesson)
-  @IsNotEmptyObject()
   @Expose()
-  currentLesson: CourseTaken['currentLesson'];
+  currentLessonId: number;
 
-  @Type(() => Part)
-  @IsNotEmptyObject()
   @Expose()
-  currentPart: CourseTaken['currentPart'];
+  currentPartId: number;
 
-  @Type(() => Test)
-  @IsNotEmptyObject()
   @Expose()
-  currentTest: CourseTaken['currentTest'];
+  currentTestId?: number;
 
   @IsOptional()
   @Type(() => Number)

@@ -24,20 +24,22 @@ export class TestV2Controller {
   constructor(private readonly service: TestV2Service) {}
 
   @Get('part/:partId')
-  public async getAll(@Param('partId') partId: string): Promise<CMSTestDTO[]> {
+  public async getAll(
+    @Param('partId', ParseIntPipe) partId: number,
+  ): Promise<CMSTestDTO[]> {
     return this.service.getAll(partId);
   }
 
   @Get(':id')
   public async findById(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<CMSTestDTO> {
     return this.service.findById(id);
   }
 
   @Post(':id/check-test')
   public async checkTest(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() checkTest: CheckTestBodyDTO,
   ): Promise<CheckTestResponseDTO> {
     return {

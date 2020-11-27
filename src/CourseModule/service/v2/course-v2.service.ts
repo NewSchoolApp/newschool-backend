@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
 import { CMSCourseDTO } from '../../dto/cms-course.dto';
-import { CourseTaken } from '../../entity/course.taken.entity';
 
 @Injectable()
 export class CourseV2Service {
@@ -16,7 +15,7 @@ export class CourseV2Service {
     return data;
   }
 
-  public async findById(id: string): Promise<CMSCourseDTO> {
+  public async findById(id: number): Promise<CMSCourseDTO> {
     const errors = {
       404: () => {
         throw new NotFoundException('Course not found');

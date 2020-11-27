@@ -5,26 +5,16 @@ import { LessonRepository } from './repository/lesson.repository';
 import { TestRepository } from './repository/test.repository';
 import { CourseRepository } from './repository/course.repository';
 import { CourseMapper } from './mapper/course.mapper';
-import { TestService } from './service/test.service';
-import { CourseService } from './service/course.service';
-import { CourseController } from './controllers/course.controller';
 import { LessonMapper } from './mapper/lesson.mapper';
-import { PartService } from './service/part.service';
-import { LessonController } from './controllers/lesson.controller';
 import { Lesson } from './entity/lesson.entity';
-import { PartController } from './controllers/part.controller';
 import { TestMapper } from './mapper/test.mapper';
 import { PartRepository } from './repository/part.repository';
 import { Part } from './entity/part.entity';
-import { TestController } from './controllers/test.controller';
 import { UserModule } from '../UserModule/user.module';
 import { Course } from './entity/course.entity';
-import { LessonService } from './service/lesson.service';
 import { PartMapper } from './mapper/part.mapper';
 import { Test } from './entity/test.entity';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
-import { CourseTakenService } from './service/course.taken.service';
-import { CourseTakenController } from './controllers/course.taken.controller';
 import { CourseTakenMapper } from './mapper/course-taken.mapper';
 import { CourseTaken } from './entity/course.taken.entity';
 import { CourseTakenRepository } from './repository/course.taken.repository';
@@ -32,7 +22,7 @@ import { CommentRepository } from './repository/comment.repository';
 import { UserLikedCommentRepository } from './repository/user-liked-comment.repository';
 import { CommentController } from './controllers/comment.controller';
 import { CommentMapper } from './mapper/comment.mapper';
-import { CommentService } from './service/comment.service';
+import { CommentService } from './service/v1/comment.service';
 import { Comment } from './entity/comment.entity';
 import { UserLikedComment } from './entity/user-liked-comment.entity';
 import { UploadModule } from '../UploadModule/upload.module';
@@ -47,6 +37,7 @@ import { TestV2Service } from './service/v2/test-v2.service';
 import { TestV2Controller } from './controllers/v2/test-v2.controller';
 import { CourseTakenV2Controller } from './controllers/v2/course-taken-v2.controller';
 import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
+import { CourseTakenService } from './service/v1/course-taken.service';
 
 @Module({
   imports: [
@@ -74,11 +65,6 @@ import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
     UploadModule,
   ],
   controllers: [
-    CourseController,
-    LessonController,
-    PartController,
-    TestController,
-    CourseTakenController,
     CommentController,
     CourseV2Controller,
     LessonV2Controller,
@@ -87,15 +73,10 @@ import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
     CourseTakenV2Controller,
   ],
   providers: [
-    CourseService,
     CourseMapper,
-    LessonService,
     LessonMapper,
-    PartService,
     PartMapper,
-    TestService,
     TestMapper,
-    CourseTakenService,
     CourseTakenMapper,
     CommentMapper,
     CommentService,
@@ -105,13 +86,8 @@ import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
     PartV2Service,
     TestV2Service,
     CourseTakenV2Service,
-  ],
-  exports: [
-    CourseService,
-    LessonService,
-    PartService,
-    TestService,
     CourseTakenService,
   ],
+  exports: [CourseTakenService],
 })
 export class CourseModule {}
