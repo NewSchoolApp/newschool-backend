@@ -130,6 +130,8 @@ describe('CommentController (e2e)', () => {
     const newCourseTaken = {
       userId: addedUser.id,
       courseId: addedCourse.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
     await courseTakenRepository.save(newCourseTaken);
   });
