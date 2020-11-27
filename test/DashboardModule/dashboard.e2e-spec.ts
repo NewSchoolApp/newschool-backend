@@ -147,6 +147,8 @@ describe('DashboardController (e2e)', () => {
     const newCourseTaken = {
       userId: addedUser.id,
       courseId: addedCourse.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
 
     await courseTakenRepository.save({
@@ -158,6 +160,8 @@ describe('DashboardController (e2e)', () => {
     const newCourseTaken2 = {
       userId: addedUser.id,
       courseId: addedCourse2.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
     await courseTakenRepository.save({
       ...newCourseTaken2,
@@ -168,6 +172,8 @@ describe('DashboardController (e2e)', () => {
     const newCourseTaken3 = {
       userId: addedUser2.id,
       courseId: addedCourse2.id,
+      currentLessonId: 1,
+      currentPartId: 2,
     };
     await courseTakenRepository.save({
       ...newCourseTaken3,
