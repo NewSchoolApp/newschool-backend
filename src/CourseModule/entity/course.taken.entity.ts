@@ -6,6 +6,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { User } from '../../UserModule/entity/user.entity';
 import { Test } from './test.entity';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity('course_taken')
 @Index(
@@ -14,10 +15,7 @@ import { Test } from './test.entity';
     unique: true,
   },
 )
-export class CourseTaken {
-  @Column('datetime', { name: 'course_start_date' })
-  courseStartDate: Date;
-
+export class CourseTaken extends Audit {
   @Column('datetime', { name: 'course_complete_date', nullable: true })
   courseCompleteDate: Date | null;
 

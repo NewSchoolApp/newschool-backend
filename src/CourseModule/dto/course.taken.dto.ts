@@ -3,7 +3,6 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
-  IsNotEmptyObject,
   IsNumber,
   IsOptional,
   IsString,
@@ -12,9 +11,6 @@ import {
 } from 'class-validator';
 import { CourseTakenStatusEnum } from '../enum/enum';
 import { CourseTaken } from '../entity/course.taken.entity';
-import { Part } from '../entity/part.entity';
-import { Lesson } from '../entity/lesson.entity';
-import { Test } from '../entity/test.entity';
 
 export class CourseTakenDTO {
   @IsNotEmpty()
@@ -24,11 +20,6 @@ export class CourseTakenDTO {
   @IsNotEmpty()
   @Expose()
   courseId: number;
-
-  @IsNotEmpty()
-  @IsDate()
-  @Expose()
-  courseStartDate: CourseTaken['courseStartDate'];
 
   @IsOptional()
   @IsDate()
