@@ -8,6 +8,10 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
+import {
+  CurrentStepDoingEnum,
+  CurrentStepDTO,
+} from '../../dto/current-step.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -21,6 +25,30 @@ export class CourseTakenV2Service {
 
   public async getAllByUserId(userId: string): Promise<CourseTaken[]> {
     return await this.repository.findByUserId(userId);
+  }
+
+  public async startCourse(userId: string, courseId: number): Promise<void> {
+    const {
+      data: lessons,
+    }: AxiosResponse<
+      CMSLessonDTO[]
+    > = await this.cmsIntegration.getLessonsByCourseId(courseId);
+    const firstLesson = lessons.find((lesson) => lesson.ordem === 1);
+
+    const { data: parts } = await this.cmsIntegration.getPartsByLessonId(
+      firstLesson.id,
+    );
+    const firstPart = parts.find((part) => part.ordem === 1);
+
+    await this.repository.save({
+      userId,
+      courseId,
+      currentLessonId: firstLesson.id,
+      currentPartId: firstPart.id,
+      currentTestId: null,
+      status: CourseTakenStatusEnum.TAKEN,
+      completion: 0,
+    });
   }
 
   public async advanceOnCourse(
@@ -141,14 +169,27 @@ export class CourseTakenV2Service {
     return courseTaken;
   }
 
-  public async currentStep(userId: string, courseId: number) {
+  public async currentStep(
+    userId: string,
+    courseId: number,
+  ): Promise<CurrentStepDTO> {
     const courseTaken = await this.findByUserIdAndCourseId(userId, courseId);
+
+    if (
+      courseTaken.status === CourseTakenStatusEnum.COMPLETED &&
+      courseTaken.completion === 100
+    ) {
+      return {
+        doing: CurrentStepDoingEnum.FINISHED,
+      };
+    }
+
     if (!courseTaken.currentTestId) {
       const { data: part } = await this.cmsIntegration.findPartById(
         courseTaken.currentPartId,
       );
       return {
-        doing: 'PART',
+        doing: CurrentStepDoingEnum.PART,
         part,
       };
     }
@@ -159,7 +200,7 @@ export class CourseTakenV2Service {
     );
     const { alternativa_certa: rightAlternative, ...rest } = test;
     return {
-      doing: 'TEST',
+      doing: CurrentStepDoingEnum.TEST,
       test: rest,
     };
   }
