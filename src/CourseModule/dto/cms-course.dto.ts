@@ -1,35 +1,23 @@
 export class CMSCourseDTO {
   id: number;
-  Titulo: string;
   descricao: string;
   'published_at': Date;
   'created_at': Date;
   'updated_at': Date;
-  title: string;
-  description: string;
-  authorName: string;
-  authorDescription: string;
-  workload: number;
-  enabled: boolean;
   titulo: string;
   slug: string;
   nomeDoAutor: string;
   descricaoDoAutor: string;
   horas: number;
-  habilitado: boolean;
   capa: Capa;
   aulas: Aula[];
 }
 
 export class Aula {
   id: number;
-  Titulo: string;
   'published_at': Date;
   'created_at': Date;
   'updated_at': Date;
-  title: string;
-  description: string;
-  'seq_num': number;
   curso: number;
   ordem: number;
   titulo: string;

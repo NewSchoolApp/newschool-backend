@@ -16,22 +16,14 @@ export class CMSLessonDTO {
 
 export class Curso {
   id: string;
-  Titulo: string;
   descricao: string;
   'published_at': Date;
   'created_at': Date;
   'updated_at': Date;
-  title: string;
-  description: string;
-  authorName: string;
-  authorDescription: string;
-  workload: number;
-  enabled: boolean;
   titulo: string;
   nomeDoAutor: string;
   descricaoDoAutor: string;
   horas: number;
-  habilitado: boolean;
   capa: Capa;
 }
 

@@ -4,7 +4,6 @@ import { Constants } from '../../CommonsModule/constants';
 import { CommentService } from '../service/v1/comment.service';
 import { AddCommentDTO } from '../dto/add-comment.dto';
 import { LikeCommentDTO } from '../dto/like-comment.dto';
-import { CommentMapper } from '../mapper/comment.mapper';
 import { CommentDTO } from '../dto/comment.dto';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
