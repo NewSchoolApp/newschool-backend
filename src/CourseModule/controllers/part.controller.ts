@@ -41,7 +41,11 @@ export class PartController {
 
   @Get('lesson/:lessonId')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Get Parts', description: 'Get all Parts' })
+  @ApiOperation({
+    summary: 'Get Parts',
+    description: 'Get all Parts',
+    deprecated: true,
+  })
   @ApiOkResponse({ type: PartDTO, isArray: true, description: 'All courses' })
   @ApiParam({
     name: 'lesson',
@@ -64,7 +68,11 @@ export class PartController {
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ summary: 'Find Part by id', description: 'Find Part by id' })
+  @ApiOperation({
+    summary: 'Find Part by id',
+    description: 'Find Part by id',
+    deprecated: true,
+  })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: PartDTO['id']): Promise<PartDTO> {
@@ -74,7 +82,11 @@ export class PartController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: PartDTO, description: 'Part created' })
-  @ApiOperation({ summary: 'Add part', description: 'Creates a new part' })
+  @ApiOperation({
+    summary: 'Add part',
+    description: 'Creates a new part',
+    deprecated: true,
+  })
   @ApiBody({ type: NewPartDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -91,7 +103,11 @@ export class PartController {
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ summary: 'Update part', description: 'Update part by id' })
+  @ApiOperation({
+    summary: 'Update part',
+    description: 'Update part by id',
+    deprecated: true,
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -110,7 +126,11 @@ export class PartController {
     required: true,
     description: 'Part id',
   })
-  @ApiOperation({ summary: 'Delete part', description: 'Delete part by id' })
+  @ApiOperation({
+    summary: 'Delete part',
+    description: 'Delete part by id',
+    deprecated: true,
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: PartDTO['id']): Promise<void> {

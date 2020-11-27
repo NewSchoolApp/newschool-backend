@@ -45,6 +45,7 @@ export class LessonController {
   @ApiOperation({
     summary: 'Get Lessons',
     description: 'Get all Lessons by Course',
+    deprecated: true,
   })
   @ApiOkResponse({
     type: LessonDTO,
@@ -77,6 +78,7 @@ export class LessonController {
   @ApiOperation({
     summary: 'Find Lesson by id',
     description: 'Find Lesson by id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -87,7 +89,11 @@ export class LessonController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: LessonDTO, description: 'Lesson created' })
-  @ApiOperation({ summary: 'Add lesson', description: 'Creates a new lesson' })
+  @ApiOperation({
+    summary: 'Add lesson',
+    description: 'Creates a new lesson',
+    deprecated: true,
+  })
   @ApiBody({ type: NewLessonDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -107,6 +113,7 @@ export class LessonController {
   @ApiOperation({
     summary: 'Update lesson',
     description: 'Update lesson by id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -129,6 +136,7 @@ export class LessonController {
   @ApiOperation({
     summary: 'Delete lesson',
     description: 'Delete lesson by id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)

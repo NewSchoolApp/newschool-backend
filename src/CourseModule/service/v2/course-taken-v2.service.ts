@@ -46,7 +46,9 @@ export class CourseTakenV2Service {
       courseTaken.currentPartId,
     );
 
-    const currentTest: CMSTestDTO = tests.find((test) => test.id == courseTaken.currentTestId);
+    const currentTest: CMSTestDTO = tests.find(
+      (test) => test.id == courseTaken.currentTestId,
+    );
     const nextTestOrderNumber = this.getNextSequenceNumber(currentTest);
     const nextTest: CMSTestDTO = tests.find(
       (test) => test.ordem === nextTestOrderNumber,
@@ -69,7 +71,9 @@ export class CourseTakenV2Service {
       courseTaken.currentLessonId,
     );
 
-    const currentPart: CMSPartDTO = parts.find((part) => part.id == courseTaken.currentPartId);
+    const currentPart: CMSPartDTO = parts.find(
+      (part) => part.id == courseTaken.currentPartId,
+    );
     const nextPartOrderNumber = this.getNextSequenceNumber(currentPart);
     const nextPart: CMSPartDTO = parts.find(
       (part) => part.ordem === nextPartOrderNumber,
@@ -94,7 +98,9 @@ export class CourseTakenV2Service {
       CMSLessonDTO[]
     > = await this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId);
 
-    const currentLesson: CMSLessonDTO = lessons.find((lesson) => lesson.id == courseTaken.currentLessonId);
+    const currentLesson: CMSLessonDTO = lessons.find(
+      (lesson) => lesson.id == courseTaken.currentLessonId,
+    );
     const nextLessonOrderNumber = this.getNextSequenceNumber(currentLesson);
     const nextLesson: CMSLessonDTO = lessons.find(
       (lesson) => lesson.ordem === nextLessonOrderNumber,

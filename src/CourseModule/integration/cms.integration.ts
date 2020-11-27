@@ -8,8 +8,8 @@ import { CMSPartDTO } from '../dto/cms-part.dto';
 
 interface getCoursesOptions {
   queryString: {
-    [K in keyof CMSCourseDTO]?: string
-  }
+    [K in keyof CMSCourseDTO]?: string;
+  };
 }
 
 @Injectable()
@@ -23,11 +23,12 @@ export class CmsIntegration implements OnModuleInit {
 
   onModuleInit(): void {
     this.cmsJwt = this.configService.cmsJwt;
-    this.cmsUrl = this.configService.cmsUrl
+    this.cmsUrl = this.configService.cmsUrl;
   }
 
-
-  public async getCourses({ queryString }: getCoursesOptions = { queryString: {} }): Promise<AxiosResponse<CMSCourseDTO[]>> {
+  public async getCourses(
+    { queryString }: getCoursesOptions = { queryString: {} },
+  ): Promise<AxiosResponse<CMSCourseDTO[]>> {
     // const { data }: AxiosResponse<CMSLoginDTO> = await this.login();
     const url = `${this.cmsUrl}/cursos`;
     const headers = {
@@ -35,7 +36,7 @@ export class CmsIntegration implements OnModuleInit {
     };
     const params = {
       _limit: -1,
-      ...queryString
+      ...queryString,
     };
     const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();

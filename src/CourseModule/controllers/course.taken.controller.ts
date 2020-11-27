@@ -56,6 +56,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Get Courses',
     description: 'Get all courses by User id',
+    deprecated: true,
   })
   @ApiParam({
     name: 'userId',
@@ -83,6 +84,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Get Users',
     description: 'Get all users by Course id',
+    deprecated: true,
   })
   @ApiParam({
     name: 'courseId',
@@ -121,6 +123,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Find course taken',
     description: 'Find course taken by user id and course id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
@@ -140,6 +143,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Rate Course',
     description: 'Rate course taken by user id and course id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
@@ -159,6 +163,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Start a course',
     description: 'Creates a new entry on course taken',
+    deprecated: true,
   })
   @ApiBody({ type: NewCourseTakenDTO })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -214,6 +219,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Delete course taken',
     description: 'Delete course taken by user id and course id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
@@ -251,6 +257,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Update course taken',
     description: 'Update course taken by user id and course id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
@@ -281,6 +288,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Find certificates by user and course',
     description: 'Find certificates by user id and course id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
@@ -305,6 +313,7 @@ export class CourseTakenController {
   @ApiOperation({
     summary: 'Find certificates by user',
     description: 'Find certificates by user id',
+    deprecated: true,
   })
   @UserIdParam('userId')
   @UseGuards(StudentGuard)

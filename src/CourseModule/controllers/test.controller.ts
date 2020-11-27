@@ -52,6 +52,7 @@ export class TestController {
     type: String,
     required: true,
     description: 'Part id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -67,6 +68,7 @@ export class TestController {
     type: String,
     required: true,
     description: 'Part id',
+    deprecated: true,
   })
   @ApiOperation({ summary: 'Find Test by id', description: 'Find test by id' })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
@@ -78,7 +80,11 @@ export class TestController {
   @Post()
   @HttpCode(201)
   @ApiCreatedResponse({ type: TestDTO, description: 'Test created' })
-  @ApiOperation({ summary: 'Add test', description: 'Creates a new test' })
+  @ApiOperation({
+    summary: 'Add test',
+    description: 'Creates a new test',
+    deprecated: true,
+  })
   @ApiBody({ type: NewTestDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -95,7 +101,11 @@ export class TestController {
     required: true,
     description: 'Test id',
   })
-  @ApiOperation({ summary: 'Update test', description: 'Update test by id' })
+  @ApiOperation({
+    summary: 'Update test',
+    description: 'Update test by id',
+    deprecated: true,
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async update(
@@ -114,7 +124,11 @@ export class TestController {
     required: true,
     description: 'Test id',
   })
-  @ApiOperation({ summary: 'Delete test', description: 'Delete test by id' })
+  @ApiOperation({
+    summary: 'Delete test',
+    description: 'Delete test by id',
+    deprecated: true,
+  })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async delete(@Param('id') id: TestDTO['id']): Promise<void> {
@@ -139,6 +153,7 @@ export class TestController {
   @ApiOperation({
     summary: 'Check test answer',
     description: 'Check test by test id and chosen alternative',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)

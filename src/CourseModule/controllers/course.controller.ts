@@ -56,7 +56,11 @@ export class CourseController {
 
   @Get()
   @HttpCode(200)
-  @ApiOperation({ summary: 'Get Courses', description: 'Get all Courses' })
+  @ApiOperation({
+    summary: 'Get Courses',
+    description: 'Get all Courses',
+    deprecated: true,
+  })
   @ApiQuery({
     name: 'enabled',
     type: Boolean,
@@ -92,6 +96,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Find Course by id',
     description: 'Find Course by id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -107,10 +112,12 @@ export class CourseController {
     type: String,
     required: true,
     description: 'Course slug',
+    deprecated: true,
   })
   @ApiOperation({
     summary: 'Find Course by slug',
     description: 'Find Course by slug',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
@@ -124,7 +131,11 @@ export class CourseController {
   @UseInterceptors(FileInterceptor('photo'))
   @HttpCode(201)
   @ApiCreatedResponse({ type: CourseDTO, description: 'Course created' })
-  @ApiOperation({ summary: 'Add course', description: 'Creates a new course' })
+  @ApiOperation({
+    summary: 'Add course',
+    description: 'Creates a new course',
+    deprecated: true,
+  })
   @ApiBody({ type: NewCourseDTO })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -147,6 +158,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Update course',
     description: 'Update course by id',
+    deprecated: true,
   })
   @ApiBody({ type: CourseUpdateDTO })
   @NeedRole(RoleEnum.ADMIN)
@@ -170,6 +182,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Delete course',
     description: 'Delete course by id',
+    deprecated: true,
   })
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
@@ -189,6 +202,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Find courses by author name',
     description: 'Find courses by author name',
+    deprecated: true,
   })
   @ApiNotFoundResponse({ description: 'thrown if courses are not found' })
   @ApiUnauthorizedResponse({

@@ -77,9 +77,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return this.findOne(
       { user: { id: userId }, courseId },
       {
-        relations: [
-          'user',
-        ],
+        relations: ['user'],
       },
     );
   }
@@ -99,7 +97,11 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     courseId: string,
   ): Promise<CourseTaken> {
     return this.findOne(
-      { user: { id: userId }, courseId, status: CourseTakenStatusEnum.COMPLETED },
+      {
+        user: { id: userId },
+        courseId,
+        status: CourseTakenStatusEnum.COMPLETED,
+      },
       { relations: ['user'] },
     );
   }
