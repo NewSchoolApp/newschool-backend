@@ -1,3 +1,5 @@
+import { IsEnum, IsNotEmpty } from 'class-validator';
+
 export enum ChosenAlternativeEnum {
   A = 'A',
   B = 'B',
@@ -6,6 +8,8 @@ export enum ChosenAlternativeEnum {
 }
 
 export class CheckTestBodyDTO {
+  @IsNotEmpty()
+  @IsEnum(ChosenAlternativeEnum)
   chosenAlternative: ChosenAlternativeEnum;
 }
 
