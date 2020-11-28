@@ -146,16 +146,15 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   async findCompletedByUserIdAndCourseId(
     userId: string,
     courseId: number,
-  ): Promise<CourseTaken | undefined> {
+  ): Promise<CourseTaken> {
     const response = await this.find({
       where: {
-        user: { id: userId },
-        course: { id: courseId },
+        userId,
+        courseId,
         status: CourseTakenStatusEnum.COMPLETED,
         completion: 100,
       },
       take: 1,
-      relations: ['user', 'course'],
     });
     return response[0];
   }
@@ -176,5 +175,15 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
       relations: ['user'],
     });
     return response[0];
+  }
+
+  public async findFinishedCoursesByUserId(
+    userId: string,
+  ): Promise<CourseTaken[]> {
+    return this.find({
+      userId,
+      status: CourseTakenStatusEnum.COMPLETED,
+      completion: 100,
+    });
   }
 }

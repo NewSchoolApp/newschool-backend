@@ -6,9 +6,9 @@ import { CMSLessonDTO } from '../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../dto/cms-test.dto';
 import { CMSPartDTO } from '../dto/cms-part.dto';
 
-interface getCoursesOptions {
+interface getCoursesOptions<T = CMSCourseDTO> {
   queryString: {
-    [K in keyof CMSCourseDTO]?: string;
+    [K in keyof T]?: T[K] | T[K][];
   };
 }
 

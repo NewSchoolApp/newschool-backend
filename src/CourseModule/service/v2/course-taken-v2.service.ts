@@ -293,4 +293,21 @@ export class CourseTakenV2Service {
     }
     return step.ordem + 1;
   }
+
+  public async certificates(userId: string) {
+    const coursesTaken: CourseTaken[] = await this.repository.findFinishedCoursesByUserId(
+      userId,
+    );
+    const coursesId: number[] = coursesTaken.reduce(
+      (acc: number[], courseTaken) => [...acc, courseTaken.courseId],
+      [],
+    );
+    const { data: courses } = await this.cmsIntegration.getCourses({
+      queryString: { id: coursesId },
+    });
+    return coursesTaken.map((courseTaken) => ({
+      ...courseTaken,
+      course: courses.find((course) => course.id === courseTaken.courseId),
+    }));
+  }
 }

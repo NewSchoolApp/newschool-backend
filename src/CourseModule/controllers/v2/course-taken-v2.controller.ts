@@ -60,4 +60,11 @@ export class CourseTakenV2Controller {
   ): Promise<CurrentStepDTO> {
     return await this.service.currentStep(userId, courseId);
   }
+
+  @Get('certificate/user/:userId')
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async certificates(@Param('userId') userId: string) {
+    return await this.service.certificates(userId);
+  }
 }

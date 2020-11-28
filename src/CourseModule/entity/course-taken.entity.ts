@@ -13,7 +13,7 @@ import { Audit } from '../../CommonsModule/entity/audit.entity';
 )
 export class CourseTaken extends Audit {
   @Column('datetime', { name: 'course_complete_date', nullable: true })
-  courseCompleteDate: Date | null;
+  courseCompleteDate?: Date;
 
   @Column('enum', {
     name: 'status',
