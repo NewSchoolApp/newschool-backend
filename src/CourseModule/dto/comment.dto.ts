@@ -16,7 +16,7 @@ export class CommentDTO {
 
   user: UserDTO;
 
-  partId: string;
+  partId: number;
 
   @Type(() => ResponseInsideCommentDTO)
   responses: ResponseInsideCommentDTO[];

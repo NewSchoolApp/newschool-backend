@@ -30,8 +30,8 @@ export class Comment extends Audit {
   @Column('varchar', { name: 'userId', length: 36 })
   userId: string;
 
-  @Column('varchar', { name: 'partId', length: 36 })
-  partId: string;
+  @Column('int', { name: 'partId' })
+  partId: number;
 
   @ManyToOne(() => Comment, (comment) => comment.responses)
   @JoinColumn([{ name: 'parentCommentId', referencedColumnName: 'id' }])

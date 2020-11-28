@@ -36,7 +36,7 @@ export class CommentService {
     return response[0];
   }
 
-  public async findPartComments(partId: string): Promise<CommentDTO[]> {
+  public async findPartComments(partId: number): Promise<CommentDTO[]> {
     const comments = await this.repository.find({
       where: { partId },
       relations: ['user', 'likedBy'],
@@ -50,7 +50,7 @@ export class CommentService {
   }
 
   public async addComment(
-    partId: string,
+    partId: number,
     userId: string,
     text: string,
   ): Promise<CommentDTO> {
@@ -106,7 +106,7 @@ export class CommentService {
 
   public async addCommentResponse(
     id: string,
-    partId: string,
+    partId: number,
     userId: string,
     text: string,
   ): Promise<ResponseDTO> {

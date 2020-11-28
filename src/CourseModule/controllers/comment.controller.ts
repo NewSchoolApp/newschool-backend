@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { CommentService } from '../service/v1/comment.service';
@@ -58,7 +66,7 @@ export class CommentController {
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async getCommentsByPartId(
-    @Param('partId') partId: string,
+    @Param('partId', ParseIntPipe) partId: number,
   ): Promise<CommentDTO[]> {
     return await this.service.findPartComments(partId);
   }

@@ -143,7 +143,7 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
-    const partId = String(new Date().getTime());
+    const partId = 1;
 
     const addComentBody: AddCommentDTO = {
       partId,
@@ -171,7 +171,7 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
-    const partId = String(new Date().getTime());
+    const partId = 2;
 
     const addComentBody: AddCommentDTO = {
       partId,
@@ -214,7 +214,7 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
-    const partId = String(new Date().getTime());
+    const partId = 3;
 
     const addComentBody: AddCommentDTO = {
       partId,
@@ -261,7 +261,7 @@ describe('CommentController (e2e)', () => {
       .set('Content-Type', 'multipart/form-data')
       .field('grant_type', GrantTypeEnum.CLIENT_CREDENTIALS);
 
-    const partId = String(new Date().getTime());
+    const partId = 4;
 
     const addComentBody: AddCommentDTO = {
       partId,
