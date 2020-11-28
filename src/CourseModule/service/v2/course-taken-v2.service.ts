@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
@@ -46,15 +48,22 @@ export class CourseTakenV2Service {
     );
     const firstPart = parts.find((part) => part.ordem === 1);
 
-    await this.repository.save({
-      userId,
-      courseId,
-      currentLessonId: firstLesson.id,
-      currentPartId: firstPart.id,
-      currentTestId: null,
-      status: CourseTakenStatusEnum.TAKEN,
-      completion: 0,
-    });
+    try {
+      await this.repository.save({
+        userId,
+        courseId,
+        currentLessonId: firstLesson.id,
+        currentPartId: firstPart.id,
+        currentTestId: null,
+        status: CourseTakenStatusEnum.TAKEN,
+        completion: 0,
+      });
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('User is already enrolled in this course');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   public async advanceOnCourse(
