@@ -38,7 +38,7 @@
     "@nestjs/typeorm": "7.1.5",
     "@sentry/node": "5.27.4",
     "@sentry/tracing": "5.27.4",
-    "aws-sdk": "2.793.0",
+    "aws-sdk": "2.799.0",
     "cache-manager": "3.4.0",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
