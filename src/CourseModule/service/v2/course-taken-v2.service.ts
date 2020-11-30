@@ -239,6 +239,35 @@ export class CourseTakenV2Service {
     };
   }
 
+  public async getCertificates(userId: string) {
+    const coursesTaken: CourseTaken[] = await this.repository.findFinishedCoursesByUserId(
+      userId,
+    );
+    const coursesId: number[] = coursesTaken.reduce(
+      (acc: number[], courseTaken) => [...acc, courseTaken.courseId],
+      [],
+    );
+    const { data: courses } = await this.cmsIntegration.getCourses({
+      queryString: { id: coursesId },
+    });
+    return coursesTaken.map((courseTaken) => ({
+      ...courseTaken,
+      course: courses.find((course) => course.id === courseTaken.courseId),
+    }));
+  }
+
+  public async getCertificate(userId: string, courseId: number) {
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+    const { data: course } = await this.cmsIntegration.findCourseById(courseId);
+    return {
+      ...courseTaken,
+      course,
+    };
+  }
+
   private async calculateCompletion(courseTaken: CourseTaken): Promise<number> {
     if (courseTaken.status === CourseTakenStatusEnum.COMPLETED) {
       return 100;
@@ -290,22 +319,5 @@ export class CourseTakenV2Service {
       return 1;
     }
     return step.ordem + 1;
-  }
-
-  public async getCertificates(userId: string) {
-    const coursesTaken: CourseTaken[] = await this.repository.findFinishedCoursesByUserId(
-      userId,
-    );
-    const coursesId: number[] = coursesTaken.reduce(
-      (acc: number[], courseTaken) => [...acc, courseTaken.courseId],
-      [],
-    );
-    const { data: courses } = await this.cmsIntegration.getCourses({
-      queryString: { id: coursesId },
-    });
-    return coursesTaken.map((courseTaken) => ({
-      ...courseTaken,
-      course: courses.find((course) => course.id === courseTaken.courseId),
-    }));
   }
 }

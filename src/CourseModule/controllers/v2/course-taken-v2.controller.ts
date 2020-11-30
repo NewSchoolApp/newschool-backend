@@ -75,8 +75,16 @@ export class CourseTakenV2Controller {
   @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async certificates(@Param('userId') userId: string) {
+  public async getCertificates(@Param('userId') userId: string) {
     return await this.service.getCertificates(userId);
+  }
+
+  @Get('certificate/user/:userId/course/:courseId')
+  public async getCertificate(
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: number,
+  ) {
+    return await this.service.getCertificate(userId, courseId);
   }
 
   @Post('nps/user/:userId/course/:courseId')
