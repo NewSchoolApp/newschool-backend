@@ -80,6 +80,10 @@ export class CourseTakenV2Controller {
   }
 
   @Get('certificate/user/:userId/course/:courseId')
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT, RoleEnum.EXTERNAL)
+  @UseGuards(RoleGuard)
   public async getCertificate(
     @Param('userId') userId: string,
     @Param('courseId') courseId: number,
