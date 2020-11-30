@@ -61,25 +61,4 @@ export class CourseTakenService {
     }
     return courseTaken;
   }
-
-  async avaliateCourse(
-    userId: string,
-    courseId: number,
-    { rating, feedback }: NpsCourseTakenDTO,
-  ): Promise<void> {
-    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
-      userId,
-      courseId,
-    );
-
-    if (
-      courseTaken.status !== CourseTakenStatusEnum.COMPLETED ||
-      courseTaken.completion !== 100
-    ) {
-      throw new BadRequestException('Course not finished by user');
-    }
-
-    await this.repository.save({ ...courseTaken, rating, feedback });
-    this.publisherService.emitNpsReward(userId, courseId);
-  }
 }
