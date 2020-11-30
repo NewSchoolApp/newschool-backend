@@ -23,12 +23,10 @@ import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
-  @Inject(PublisherService)
-  private readonly publisherService: PublisherService;
-
   constructor(
     private readonly cmsIntegration: CmsIntegration,
     private readonly repository: CourseTakenRepository,
+    private readonly publisherService: PublisherService,
   ) {}
 
   public async getAllByUserId(userId: string): Promise<CourseTaken[]> {
@@ -170,7 +168,7 @@ export class CourseTakenV2Service {
     this.publisherService.emitCourseCompleted(courseTaken);
   }
 
-  async avaliateCourse(
+  public async avaliateCourse(
     userId: string,
     courseId: number,
     { rating, feedback }: NpsCourseTakenDTO,
@@ -294,7 +292,7 @@ export class CourseTakenV2Service {
     return step.ordem + 1;
   }
 
-  public async certificates(userId: string) {
+  public async getCertificates(userId: string) {
     const coursesTaken: CourseTaken[] = await this.repository.findFinishedCoursesByUserId(
       userId,
     );
