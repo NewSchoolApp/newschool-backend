@@ -38,8 +38,6 @@ export class CourseTakenV2Controller {
   }
 
   @Post('start-course')
-  @UserIdParam('userId')
-  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async startCourse(
