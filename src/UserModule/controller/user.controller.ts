@@ -146,7 +146,7 @@ export class UserController {
   @HttpCode(200)
   @UserIdParam('id')
   @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
+  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async uploadUserPhoto(
     @UploadedFile('file') file: Express.Multer.File,

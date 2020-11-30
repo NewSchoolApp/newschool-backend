@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import * as path from 'path';
 import {
   BadRequestException,
   ConflictException,
@@ -289,9 +290,20 @@ export class UserService {
     file: Express.Multer.File,
     userId: string,
   ): Promise<void> {
+    const acceptedFileExtensions = ['png', 'jpg', 'jpeg'];
+    const fileExtension = path.extname(file.originalname);
+
+    if (!acceptedFileExtensions[fileExtension]) {
+      throw new BadRequestException(
+        `Accepted file types are ${acceptedFileExtensions.join(
+          ',',
+        )}, you upload a ${fileExtension} file`,
+      );
+    }
+
     const user: User = await this.findById(userId);
 
-    const photoPath = `${user.id}/${file.originalname}`;
+    const photoPath = `${user.id}/avatar.jpg`;
 
     await this.uploadService.uploadUserPhoto(photoPath, file.buffer);
     await this.repository.save({ ...user, photoPath });
