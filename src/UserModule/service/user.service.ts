@@ -290,7 +290,7 @@ export class UserService {
     file: Express.Multer.File,
     userId: string,
   ): Promise<void> {
-    const acceptedFileExtensions = ['png', 'jpg', 'jpeg'];
+    const acceptedFileExtensions = ['.png', '.jpg', '.jpeg'];
     const fileExtension = path.extname(file.originalname);
 
     if (!acceptedFileExtensions[fileExtension]) {
