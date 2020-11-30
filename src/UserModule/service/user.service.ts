@@ -293,7 +293,7 @@ export class UserService {
     const acceptedFileExtensions = ['.png', '.jpg', '.jpeg'];
     const fileExtension = path.extname(file.originalname);
 
-    if (!acceptedFileExtensions[fileExtension]) {
+    if (!acceptedFileExtensions.includes(fileExtension)) {
       throw new BadRequestException(
         `Accepted file types are ${acceptedFileExtensions.join(
           ',',
