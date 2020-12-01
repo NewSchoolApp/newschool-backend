@@ -34,9 +34,9 @@ export class ClientCredentials extends Audit {
 
   @Column({
     name: 'refresh_token_validity',
-    nullable: false,
+    nullable: true,
   })
-  refreshTokenValidity: number;
+  refreshTokenValidity?: number;
 
   @ManyToOne<Role>(() => Role, (role: Role) => role.clientCredentials)
   role: Role;
