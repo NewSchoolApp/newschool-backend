@@ -73,6 +73,7 @@ export class CourseRewardsService implements OnModuleInit {
       rule: { completion: 100, status: CourseTakenStatusEnum.COMPLETED },
       completed: true,
       eventName: EventNameEnum.COURSE_REWARD_COMPLETE_COURSE,
+      points: badge.points,
     });
   }
 
@@ -141,6 +142,7 @@ export class CourseRewardsService implements OnModuleInit {
       completed: answerIsRight,
       badge: answerIsRight ? badge : null,
       user: { id: userId },
+      points: badge.points,
     });
   }
 
@@ -185,6 +187,7 @@ export class CourseRewardsService implements OnModuleInit {
       rule: { courseId },
       eventName: EventNameEnum.COURSE_REWARD_COURSE_NPS,
       completed: true,
+      points: badge.points,
     });
   }
 }
