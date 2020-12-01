@@ -318,7 +318,7 @@ export class AchievementRepository extends Repository<Achievement> {
     `;
     const params = [userId];
     const derivedTable = `
-    SELECT c2.id as 'userId', c2.name as 'userName', SUM(b2.points) as 'points' FROM achievement a2
+    SELECT c2.id as 'userId', c2.name as 'userName', SUM(a2.points) as 'points' FROM achievement a2
       inner join badge b2
       on a2.badgeId = b2.id
       inner join user c2
