@@ -35,7 +35,10 @@ export class Comment extends Audit {
 
   @ManyToOne(() => Comment, (comment) => comment.responses)
   @JoinColumn([{ name: 'parentCommentId', referencedColumnName: 'id' }])
-  parentComment: Comment;
+  parentComment?: Comment;
+
+  @Column('varchar', { name: 'parentCommentId', length: 36, nullable: true })
+  parentCommentId: string;
 
   @OneToMany(() => Comment, (comment) => comment.parentComment)
   responses: Comment[];
