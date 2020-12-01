@@ -17,7 +17,6 @@ export class Constants {
   static TEST_ENDPOINT = 'test';
   static SCHOOL_ENDPOINT = 'school';
   static GAMEFICATION_ENDPOINT = 'gamefication';
-  static BADGE_ENDPOINT = 'badge';
 
   static UPLOAD_ENDPOINT = 'upload';
 
