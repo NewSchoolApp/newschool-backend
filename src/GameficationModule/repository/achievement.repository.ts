@@ -223,9 +223,7 @@ export class AchievementRepository extends Repository<Achievement> {
     }
 
     const derivedTable = `
-    SELECT c2.id as 'userId', c2.name as 'userName', c2.photoPath as 'photoPath', SUM(b2.points) as 'points' FROM achievement a2
-      inner join badge b2
-      on a2.badgeId = b2.id
+    SELECT c2.id as 'userId', c2.name as 'userName', c2.photoPath as 'photoPath', SUM(a2.points) as 'points' FROM achievement a2
       inner join user c2
       on a2.userId = c2.id
       WHERE a2.completed = 1 ${timeRangeQuery} ${institutionQuery} ${cityQuery} ${stateQuery}

@@ -23,6 +23,9 @@ export class Achievement<T = unknown> extends Audit {
   @Column()
   completed: boolean;
 
+  @Column({ nullable: false })
+  points: number;
+
   @ManyToOne(() => Badge, (badge: Badge) => badge.achievements)
   @Expose()
   badge: Badge;

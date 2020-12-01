@@ -43,6 +43,7 @@ import { UploadModule } from '../UploadModule/upload.module';
     AchievementSubscriber,
     GameficationService,
     AchievementService,
+    BadgeService,
   ],
   exports: [PublisherService, AchievementService],
 })
