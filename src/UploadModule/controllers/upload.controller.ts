@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
-import { Constants } from '../../CommonsModule';
+import { Constants } from '../../CommonsModule/constants';
 import { ApiTags } from '@nestjs/swagger';
-import { UploadService } from '../service';
+import { UploadService } from '../service/upload.service';
 
 @ApiTags('Upload')
 @Controller(
@@ -11,7 +11,10 @@ export class UploadController {
   constructor(private readonly service: UploadService) {}
 
   @Get(':fileName')
-  async serveFile(@Param('fileName') fileName, @Res() response): Promise<void> {
+  async serveFile(
+    @Param('fileName') fileName: string,
+    @Res() response,
+  ): Promise<void> {
     return this.service.sendFile(fileName, response);
   }
 }

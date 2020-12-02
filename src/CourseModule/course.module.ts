@@ -1,72 +1,69 @@
-import { Module } from '@nestjs/common';
-import {
-  CourseController,
-  LessonController,
-  PartController,
-  TestController,
-} from './controllers';
-import {
-  CourseService,
-  LessonService,
-  PartService,
-  TestService,
-} from './service';
-import { ConfigService } from '@nestjs/config';
+import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  CourseRepository,
-  LessonRepository,
-  PartRepository,
-  TestRepository,
-} from './repository';
-import { Course, Lesson, Part, Test } from './entity';
-import { CourseMapper, LessonMapper, PartMapper, TestMapper } from './mapper';
-import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
-import { UserModule } from '../UserModule';
-import { SecurityModule } from '../SecurityModule';
+import { UserModule } from '../UserModule/user.module';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
+import { CourseTakenMapper } from './mapper/course-taken.mapper';
+import { CourseTaken } from './entity/course-taken.entity';
+import { CourseTakenRepository } from './repository/course.taken.repository';
+import { CommentRepository } from './repository/comment.repository';
+import { UserLikedCommentRepository } from './repository/user-liked-comment.repository';
+import { CommentController } from './controllers/comment.controller';
+import { CommentMapper } from './mapper/comment.mapper';
+import { CommentService } from './service/v1/comment.service';
+import { Comment } from './entity/comment.entity';
+import { UserLikedComment } from './entity/user-liked-comment.entity';
+import { UploadModule } from '../UploadModule/upload.module';
+import { CmsIntegration } from './integration/cms.integration';
+import { CourseV2Service } from './service/v2/course-v2.service';
+import { CourseV2Controller } from './controllers/v2/course-v2.controller';
+import { LessonV2Controller } from './controllers/v2/lesson-v2.controller';
+import { LessonV2Service } from './service/v2/lesson-v2.service';
+import { PartV2Service } from './service/v2/part-v2.service';
+import { PartV2Controller } from './controllers/v2/part-v2.controller';
+import { TestV2Service } from './service/v2/test-v2.service';
+import { TestV2Controller } from './controllers/v2/test-v2.controller';
+import { CourseTakenV2Controller } from './controllers/v2/course-taken-v2.controller';
+import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
+import { CourseTakenService } from './service/v1/course-taken.service';
 
 @Module({
   imports: [
+    HttpModule,
+    CacheModule.register(),
     TypeOrmModule.forFeature([
-      Course,
-      CourseRepository,
-      Lesson,
-      LessonRepository,
-      Part,
-      PartRepository,
-      Test,
-      TestRepository,
+      CourseTaken,
+      CourseTakenRepository,
+      Comment,
+      CommentRepository,
+      UserLikedComment,
+      UserLikedCommentRepository,
     ]),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
     MulterModule.register({ dest: './upload' }),
-    UserModule,
-    SecurityModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => GameficationModule),
+    UploadModule,
   ],
   controllers: [
-    CourseController,
-    LessonController,
-    PartController,
-    TestController,
+    CommentController,
+    CourseV2Controller,
+    LessonV2Controller,
+    PartV2Controller,
+    TestV2Controller,
+    CourseTakenV2Controller,
   ],
   providers: [
-    CourseService,
-    CourseMapper,
-    LessonService,
-    LessonMapper,
-    PartService,
-    PartMapper,
-    TestService,
-    TestMapper,
+    CourseTakenMapper,
+    CommentMapper,
+    CommentService,
+    CmsIntegration,
+    CourseV2Service,
+    LessonV2Service,
+    PartV2Service,
+    TestV2Service,
+    CourseTakenV2Service,
+    CourseTakenService,
   ],
-  exports: [CourseService, LessonService, PartService, TestService],
+  exports: [CourseTakenService],
 })
 export class CourseModule {}

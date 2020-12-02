@@ -8,13 +8,11 @@ import {
 } from 'typeorm-transactional-cls-hooked';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import 'reflect-metadata';
-import * as path from 'path';
-import { ConfigService } from './ConfigModule/service';
+import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
+import * as Sentry from '@sentry/node';
+import { RavenInterceptor } from 'nest-raven';
 
 async function bootstrap() {
-  require('dotenv-flow').config();
-  (global as any).appRoot = path.resolve(__dirname);
-
   initializeTransactionalContext();
   patchTypeORMRepositoryWithBaseRepository();
 
@@ -38,7 +36,10 @@ async function bootstrap() {
 
   const appConfigService = app.get<ConfigService>(ConfigService);
 
-  app.useGlobalFilters(new HttpExceptionFilter(appConfigService));
+  app.useGlobalInterceptors(new RavenInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  Sentry.init(appConfigService.getSentryConfiguration());
 
   await app.listen(appConfigService.port || 8080);
 }

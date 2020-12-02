@@ -3,11 +3,18 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter, MailerOptions } from '@nest-modules/mailer';
 import * as path from 'path';
-import Rollbar = require('rollbar');
+import * as Pusher from 'pusher';
+import * as Sentry from '@sentry/node';
+import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
+
+  jwtSecret: string = this.configService.get<string>('JWT_SECRET');
+  refreshTokenSecret: string = this.configService.get<string>(
+    'REFRESH_TOKEN_SECRET',
+  );
 
   changePasswordExpirationTime: number = this.configService.get<number>(
     'CHANGE_PASSWORD_EXPIRATION_TIME',
@@ -48,18 +55,41 @@ export class AppConfigService {
   databasePassword: string = this.configService.get<string>(
     'DATABASE_PASSWORD',
   );
-  synchronize: boolean = this.configService.get<boolean>('SYNC_DATABASE');
+  synchronize: boolean = this.configService.get<string>('NODE_ENV') === 'TEST';
   logging: boolean = this.configService.get<string>('NODE_ENV') !== 'TEST';
+  runMigrations: boolean =
+    this.configService.get<string>('NODE_ENV') !== 'TEST';
 
-  public getRollbarConfiguration(): Rollbar.Configuration {
+  pusherAppId: string = this.configService.get<string>('PUSHER_APP_ID');
+  pusherKey: string = this.configService.get<string>('PUSHER_KEY');
+  pusherSecret: string = this.configService.get<string>('PUSHER_SECRET');
+  pusherCluster: string = this.configService.get<string>('PUSHER_CLUSTER');
+
+  awsAccessKey: string = this.configService.get<string>('AWS_ACCESS_KEY');
+  awsAccessKeySecret: string = this.configService.get<string>(
+    'AWS_ACCESS_KEY_SECRET',
+  );
+  awsBucketEndpoint: string = this.configService.get<string>(
+    'AWS_BUCKET_ENDPOINT',
+  );
+  awsUserBucket: string = this.configService.get<string>('AWS_USER_BUCKET');
+
+  cmsUrl: string = this.configService.get<string>('CMS_URL');
+  cmsIdentifier: string = this.configService.get<string>('CMS_IDENTIFIER');
+  cmsPassword: string = this.configService.get<string>('CMS_PASSWORD');
+  cmsJwt: string = this.configService.get<string>('CMS_JWT');
+
+  public getSentryConfiguration(): Sentry.NodeOptions {
     return {
-      accessToken: this.configService.get<string>('ROLLBAR_TOKEN'),
-      captureUncaught: true,
-      captureUnhandledRejections: true,
+      dsn: this.configService.get<string>('SENTRY_URL'),
+      tracesSampleRate: 1.0,
+      enabled: this.nodeEnv !== 'TEST',
+      environment: this.nodeEnv,
+      attachStacktrace: true,
     };
   }
 
-  public getChangePasswordFrontUrl(changePasswordRequestId): string {
+  public getChangePasswordFrontUrl(changePasswordRequestId: string): string {
     return `${this.frontUrl}/${this.changePasswordFrontUrl}/${changePasswordRequestId}`;
   }
 
@@ -90,16 +120,54 @@ export class AppConfigService {
       type: 'mysql',
       multipleStatements: true,
       entities: [
-        path.resolve(path.join(__dirname, '..', '..')) +
-          '/**/*.entity{.ts,.js}',
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/**/*.entity{.ts,.js}`,
       ],
+      migrationsRun: this.runMigrations,
+      migrations: [
+        `${path.resolve(
+          path.join(__dirname, '..', '..'),
+        )}/migration/*{.ts,.js}`,
+      ],
+      migrationsTableName: 'migration',
+      cli: {
+        migrationsDir: 'src/migration',
+      },
       host: this.databaseHost,
       database: this.databaseName,
       port: this.databasePort,
       username: this.databaseUsername,
       password: this.databasePassword,
-      synchronize: false,
+      synchronize: this.synchronize || false,
       logging: this.logging,
+    };
+  }
+
+  public getPusherOptions(): Pusher.Options {
+    return {
+      appId: this.pusherAppId,
+      key: this.pusherKey,
+      secret: this.pusherSecret,
+      cluster: this.pusherCluster,
+      useTLS: true,
+    };
+  }
+
+  getAwsConfiguration(): S3.Types.ClientConfiguration {
+    return {
+      accessKeyId: this.awsAccessKey,
+      secretAccessKey: this.awsAccessKeySecret,
+      region: 'us-east-2',
+      signatureVersion: 'v4',
+    };
+  }
+
+  getCmsConfiguration() {
+    return {
+      cmsUrl: this.cmsUrl,
+      cmsIdentifier: this.cmsIdentifier,
+      cmsPassword: this.cmsPassword,
     };
   }
 }

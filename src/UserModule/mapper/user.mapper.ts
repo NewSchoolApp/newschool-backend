@@ -1,12 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Mapper } from '../../CommonsModule/mapper';
-import { UserDTO } from '../dto';
-import { User } from '../entity';
+import { UserDTO } from '../dto/user.dto';
+import { User } from '../entity/user.entity';
+import { Mapper } from '../../CommonsModule/mapper/mapper';
+import { UploadService } from '../../UploadModule/service/upload.service';
 
 @Injectable()
 export class UserMapper extends Mapper<User, UserDTO> {
-  constructor() {
+  constructor(private readonly uploadService: UploadService) {
     super(User, UserDTO);
+  }
+
+  async toDtoAsync(entityObject: User): Promise<UserDTO> {
+    const user = super.toDto(entityObject);
+    return {
+      ...user,
+      photo: entityObject.photoPath
+        ? await this.uploadService.getUserPhoto(entityObject.photoPath)
+        : null,
+    };
   }
 
   toDto(entityObject: User): UserDTO {

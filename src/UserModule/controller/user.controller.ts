@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   forwardRef,
   Get,
   Headers,
@@ -11,24 +10,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { UserService } from '../service';
-import { Constants, NeedRole, RoleGuard } from '../../CommonsModule';
-import {
-  AdminChangePasswordDTO,
-  ChangePasswordDTO,
-  ChangePasswordForgotFlowDTO,
-  ChangePasswordRequestIdDTO,
-  ForgotPasswordDTO,
-  NewStudentDTO,
-  NewUserDTO,
-  SelfUpdateDTO,
-  UserDTO,
-  UserUpdateDTO,
-} from '../dto';
-import { UserMapper } from '../mapper';
+import { UserService } from '../service/user.service';
+import { UserMapper } from '../mapper/user.mapper';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -41,10 +30,28 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { SecurityService } from '../../SecurityModule';
-import { User } from '../entity';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { SecurityService } from '../../SecurityModule/service/security.service';
+import { User } from '../entity/user.entity';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
+import { AdminChangePasswordDTO } from '../dto/admin-change-password.dto';
+import { ChangePasswordRequestIdDTO } from '../dto/change-password-request-id.dto';
+import { ForgotPasswordDTO } from '../dto/forgot-password';
+import { ChangePasswordForgotFlowDTO } from '../dto/change-password-forgot-flow.dto';
+import { UserDTO } from '../dto/user.dto';
+import { NewUserDTO } from '../dto/new-user.dto';
+import { UserUpdateDTO } from '../dto/user-update.dto';
+import { NewStudentDTO } from '../dto/new-student.dto';
+import { Constants } from '../../CommonsModule/constants';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
+import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
+import { NewUserSwagger } from '../swagger/new-user.swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
+import { StudentGuard } from '../../CommonsModule/guard/student.guard';
+import { PhotoDTO } from '../dto/photo.dto';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -59,6 +66,7 @@ export class UserController {
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -94,63 +102,57 @@ export class UserController {
   ): Promise<UserDTO> {
     const { id }: User = this.securityService.getUserFromToken(
       authorization.split(' ')[1],
+      this.configService.jwtSecret,
     );
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.findById(id));
+    return this.mapper.toDtoAsync(await this.service.findById(id));
   }
 
-  @Put('/me')
+  @Get('/:id/badge')
   @HttpCode(200)
   @ApiOkResponse({ type: UserDTO })
   @ApiOperation({
-    summary: 'Update user by jwt id',
-    description: 'Decodes de jwt and updates the user by the jwt id',
+    summary: 'Find user badges by user id',
+    description: 'Decodes de jwt and finds the user badges by the user id',
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({
     description:
-      'thrown if there is not an authorization token or if authorization token does not have ADMIN or STUDENT role',
+      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async updateUserByJwtId(
-    @Headers('authorization') authorization: string,
-    @Body() selfUpdatedInfo: SelfUpdateDTO,
-  ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(
-      authorization.split(' ')[1],
-    );
+  public async findBadgesWithQuantityByUserId(
+    @Param('id') id: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(
-      await this.service.update(id, selfUpdatedInfo as UserUpdateDTO),
-    );
+    return await this.service.findBadgesWithQuantityByUserId(id);
   }
 
-  @Put('/me/change-password')
+  @Get(':id/photo')
   @HttpCode(200)
-  @ApiOkResponse({ type: UserDTO })
-  @ApiOperation({
-    summary: 'Update user by jwt id',
-    description: 'Decodes de jwt and updates the user password by the jwt id',
-  })
-  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({
-    description:
-      'thrown if there is not an authorization token or if authorization token does not have STUDENT role',
-  })
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async changeUserPasswordByJwtId(
-    @Headers('authorization') authorization: string,
-    @Body() changePassword: ChangePasswordDTO,
-  ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(
-      authorization.split(' ')[1],
-    );
-    this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(
-      await this.service.changePassword(id, changePassword),
-    );
+  public async getUserPhoto(@Param('id') id: string): Promise<PhotoDTO> {
+    return { photo: await this.service.getUserPhoto(id) };
+  }
+
+  @Post(':id/photo')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(200)
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async uploadUserPhoto(
+    @UploadedFile('file') file: Express.Multer.File,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.service.uploadUserPhoto(file, id);
   }
 
   @Get(':id')
@@ -168,17 +170,19 @@ export class UserController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
-  @NeedRole(RoleEnum.ADMIN)
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: UserDTO['id']): Promise<UserDTO> {
     this.logger.log(`user id: ${id}`);
-    return this.mapper.toDto(await this.service.findById(id));
+    return this.mapper.toDtoAsync(await this.service.findById(id));
   }
 
   @Post()
   @HttpCode(201)
   @Transactional()
-  @ApiCreatedResponse({ type: NewUserDTO, description: 'User created' })
+  @ApiCreatedResponse({ type: NewUserSwagger, description: 'User created' })
   @ApiOperation({ summary: 'Add user', description: 'Creates a new user' })
   @ApiBody({ type: NewUserDTO })
   @ApiUnauthorizedResponse({
@@ -207,10 +211,16 @@ export class UserController {
   })
   @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async addStudent(@Body() user: NewStudentDTO): Promise<UserDTO> {
+  public async addStudent(
+    @Body() user: NewStudentDTO,
+    @Query('inviteKey') inviteKey?: string,
+  ): Promise<UserDTO> {
     this.logger.log(`user: ${user}`);
     return this.mapper.toDto(
-      await this.service.add({ ...user, role: RoleEnum.STUDENT }),
+      await this.service.addStudent(
+        { ...user, role: RoleEnum.STUDENT },
+        inviteKey,
+      ),
     );
   }
 
@@ -229,10 +239,12 @@ export class UserController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
-  @NeedRole(RoleEnum.ADMIN)
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async update(
-    @Param('id') id: UserDTO['id'],
+    @Param('id') id: string,
     @Body() userUpdatedInfo: UserUpdateDTO,
   ): Promise<UserDTO> {
     this.logger.log(`user id: ${id}, new user information: ${userUpdatedInfo}`);
@@ -251,6 +263,8 @@ export class UserController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
   public async changeUserPassword(
@@ -311,7 +325,7 @@ export class UserController {
   @UseGuards(RoleGuard)
   public async validateChangePasswordExpirationTime(
     @Param('changePasswordRequestId') changePasswordRequestId: string,
-  ) {
+  ): Promise<void> {
     this.logger.log(`change password request id: ${changePasswordRequestId}`);
     await this.service.validateChangePassword(changePasswordRequestId);
   }
@@ -343,41 +357,6 @@ export class UserController {
     );
   }
 
-  @Post('/:userId/certificate/:certificateId')
-  public async addCertificateToUser(
-    @Param('userId') userId: string,
-    @Param('certificateId') certificateId: string,
-  ) {
-    this.logger.log(`user id: ${userId}, certificate id: ${certificateId}`);
-    await this.service.addCertificateToUser(userId, certificateId);
-  }
-
-  @Get('me/certificate')
-  @HttpCode(200)
-  @ApiOperation({
-    summary: 'Get Certificates',
-    description: 'Get All Certificates',
-  })
-  @ApiOkResponse({
-    type: CertificateUserDTO,
-    isArray: true,
-    description: 'All Certificates',
-  })
-  @ApiUnauthorizedResponse({
-    description:
-      'thrown if there is not an authorization token or if authorization token does not have STUDENT role',
-  })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
-  @UseGuards(RoleGuard)
-  public async findUserCertificates(
-    @Headers('authorization') authorization: string,
-  ): Promise<CertificateUserDTO[]> {
-    const { id }: User = this.securityService.getUserFromToken(
-      authorization.split(' ')[1],
-    );
-    return await this.service.getCertificateByUser(id);
-  }
-
   @Get(':id/certificate')
   @HttpCode(200)
   @ApiOperation({
@@ -393,33 +372,13 @@ export class UserController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
   })
-  @NeedRole(RoleEnum.ADMIN)
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async findCertificatesByUser(
     @Param('id') id: string,
   ): Promise<CertificateUserDTO[]> {
     return await this.service.getCertificateByUser(id);
-  }
-
-  @Delete(':id')
-  @HttpCode(200)
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    required: true,
-    description: 'User id',
-  })
-  @ApiOperation({ summary: 'Delete user', description: 'Delete user by id' })
-  @ApiOkResponse({ type: null })
-  @ApiNotFoundResponse({ description: 'thrown if user is not found' })
-  @ApiUnauthorizedResponse({
-    description:
-      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
-  })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
-  public async delete(@Param('id') id: UserDTO['id']): Promise<void> {
-    this.logger.log(`user id: ${id}`);
-    await this.service.delete(id);
   }
 }

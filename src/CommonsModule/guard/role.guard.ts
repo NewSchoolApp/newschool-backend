@@ -6,15 +6,17 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleEnum } from '../../SecurityModule/enum';
-import { User } from '../../UserModule/entity';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../../UserModule/entity/user.entity';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -35,14 +37,18 @@ export class RoleGuard implements CanActivate {
     const [, token] = authorizationHeader.split(' ');
     let user: User;
     try {
-      user = this.jwtService.verify<User>(token);
+      user = this.jwtService.verify<User>(token, {
+        secret: this.configService.jwtSecret,
+      });
     } catch (e) {
       if (e.name === 'TokenExpiredError') {
         throw new UnauthorizedException(e.message);
       }
       throw new InternalServerErrorException(e);
     }
-    const hasPermission: boolean = roles.some(role => role === user.role.name);
+    const hasPermission: boolean = roles.some(
+      (role) => role === user.role.name,
+    );
     return user?.role && hasPermission;
   }
 }

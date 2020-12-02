@@ -1,46 +1,53 @@
 import * as crypto from 'crypto';
+import * as path from 'path';
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
   GoneException,
+  HttpService,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UserRepository } from '../repository';
-import { ChangePassword, User } from '../entity';
-import { UserNotFoundError } from '../../SecurityModule/exception';
 import { CertificateUserDTO } from '../dto/certificate-user.dto';
-import {
-  AdminChangePasswordDTO,
-  ChangePasswordDTO,
-  ChangePasswordForgotFlowDTO,
-  ForgotPasswordDTO,
-  NewUserDTO,
-  UserUpdateDTO,
-} from '../dto';
 
 import { ChangePasswordService } from './change-password.service';
 import { MailerService } from '@nest-modules/mailer';
-import { Certificate } from '../../CertificateModule/entity';
-import { CertificateService } from '../../CertificateModule/service';
-import { RoleService } from '../../SecurityModule/service';
-import { Role } from '../../SecurityModule/entity';
+import { RoleService } from '../../SecurityModule/service/role.service';
+import { Role } from '../../SecurityModule/entity/role.entity';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { ChangePassword } from '../entity/change-password.entity';
+import { AdminChangePasswordDTO } from '../dto/admin-change-password.dto';
+import { UserRepository } from '../repository/user.repository';
+import { User } from '../entity/user.entity';
+import { ForgotPasswordDTO } from '../dto/forgot-password';
+import { ChangePasswordForgotFlowDTO } from '../dto/change-password-forgot-flow.dto';
+import { UserNotFoundError } from '../../SecurityModule/exception/user-not-found.error';
+import { NewUserDTO } from '../dto/new-user.dto';
+import { UserUpdateDTO } from '../dto/user-update.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { AchievementService } from '../../GameficationModule/service/achievement.service';
+import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-quantity.dto';
+import { PublisherService } from '../../GameficationModule/service/publisher.service';
+import { UploadService } from '../../UploadModule/service/upload.service';
+import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 
 @Injectable()
 export class UserService {
+  @Inject(PublisherService)
+  private readonly publisherService: PublisherService;
+
   constructor(
     private readonly repository: UserRepository,
+    private readonly http: HttpService,
     private readonly changePasswordService: ChangePasswordService,
     private readonly mailerService: MailerService,
-    private readonly certificateService: CertificateService,
     private readonly configService: ConfigService,
-    @Inject(forwardRef(() => RoleService))
     private readonly roleService: RoleService,
+    private readonly achievementService: AchievementService,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Transactional()
@@ -48,11 +55,12 @@ export class UserService {
     return this.repository.find();
   }
 
-  @Transactional()
-  public async findById(id: User['id']): Promise<User> {
-    const user: User | undefined = await this.repository.findOne(id, {
+  public async findById(id: string): Promise<User> {
+    const response: User[] = await this.repository.find({
+      where: { id },
       relations: ['role'],
     });
+    const user = response[0];
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -60,10 +68,12 @@ export class UserService {
   }
 
   @Transactional()
-  public async getCertificateByUser(userId): Promise<CertificateUserDTO[]> {
+  public async getCertificateByUser(
+    userId: string,
+  ): Promise<CertificateUserDTO[]> {
     const certificates = await this.repository.getCertificateByUser(userId);
 
-    return certificates.map<CertificateUserDTO>(certificate => {
+    return certificates.map<CertificateUserDTO>((certificate) => {
       const c = new CertificateUserDTO();
       c.id = certificate.certificate_id;
       c.title = certificate.certificate_title;
@@ -75,6 +85,32 @@ export class UserService {
     });
   }
 
+  public async getUsersQuantity(): Promise<number> {
+    return this.repository.getUsersQuantity();
+  }
+
+  public async countUsersInvitedByUserId(id: string): Promise<number> {
+    return this.repository.countUsersInvitedByUserId(id);
+  }
+
+  public async addStudent(user: NewUserDTO, inviteKey: string): Promise<User> {
+    let invitedByUserId: string | null;
+    if (inviteKey) {
+      const invitedByUser: User = await this.repository.findByInviteKey(
+        inviteKey,
+      );
+      invitedByUserId = invitedByUser ? invitedByUser.id : null;
+    }
+
+    const newStudent = await this.add({ ...user, invitedByUserId });
+
+    if (inviteKey) {
+      // iniciar gameficação
+      this.publisherService.emitInviteUserReward(inviteKey);
+    }
+    return newStudent;
+  }
+
   public async add(user: NewUserDTO): Promise<User> {
     const role: Role = await this.roleService.findByRoleName(user.role);
     const salt: string = this.createSalt();
@@ -84,6 +120,7 @@ export class UserService {
         ...user,
         salt,
         password: hashPassword,
+        inviteKey: `${this.generateInviteKey()}${this.generateInviteKey()}`,
         role,
       });
     } catch (e) {
@@ -106,21 +143,20 @@ export class UserService {
     userUpdatedInfo: UserUpdateDTO,
   ): Promise<User> {
     const user: User = await this.findById(id);
+    let role = user.role;
     if (userUpdatedInfo.role) {
-      const role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-      return this.repository.save({
-        ...user,
-        ...userUpdatedInfo,
-        role,
-        id: user.id,
-      });
+      role = await this.roleService.findByRoleName(userUpdatedInfo.role);
     }
-    return await this.repository.save({
+    const updatedUser = await this.repository.save({
       ...user,
       ...userUpdatedInfo,
-      role: user.role,
+      role,
       id: user.id,
     });
+    if (updatedUser.role.name === RoleEnum.STUDENT) {
+      this.publisherService.emitupdateStudent(id);
+    }
+    return updatedUser;
   }
 
   public async forgotPassword(
@@ -171,7 +207,9 @@ export class UserService {
   }
 
   @Transactional()
-  public async validateChangePassword(changePasswordRequestId: string) {
+  public async validateChangePassword(
+    changePasswordRequestId: string,
+  ): Promise<void> {
     const changePassword: ChangePassword = await this.changePasswordService.findById(
       changePasswordRequestId,
     );
@@ -248,19 +286,27 @@ export class UserService {
     return await this.repository.save(user);
   }
 
-  @Transactional()
-  public async addCertificateToUser(
-    userId: User['id'],
-    certificateId: Certificate['id'],
-  ) {
-    const [user, certificate]: [User, Certificate] = await Promise.all([
-      this.repository.findByIdWithCertificates(userId),
-      this.certificateService.findById(certificateId),
-    ]);
-    return await this.repository.save({
-      ...user,
-      certificates: [...user.certificates, certificate],
-    });
+  async uploadUserPhoto(
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<void> {
+    const acceptedFileExtensions = ['.png', '.jpg', '.jpeg'];
+    const fileExtension = path.extname(file.originalname);
+
+    if (!acceptedFileExtensions.includes(fileExtension)) {
+      throw new BadRequestException(
+        `Accepted file types are ${acceptedFileExtensions.join(
+          ',',
+        )}, you upload a ${fileExtension} file`,
+      );
+    }
+
+    const user: User = await this.findById(userId);
+
+    const photoPath = `${user.id}/avatar.jpg`;
+
+    await this.uploadService.uploadUserPhoto(photoPath, file.buffer);
+    await this.repository.save({ ...user, photoPath });
   }
 
   private createSalt(): string {
@@ -293,5 +339,21 @@ export class UserService {
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
+  }
+
+  async findBadgesWithQuantityByUserId(
+    id: string,
+  ): Promise<BadgeWithQuantityDTO[]> {
+    const user = await this.findById(id);
+    return this.achievementService.findBadgesWithQuantityByUser(user);
+  }
+
+  async getUserPhoto(id: string): Promise<string> {
+    const user = await this.findById(id);
+    return this.uploadService.getUserPhoto(user.photoPath);
+  }
+
+  private generateInviteKey(): string {
+    return Math.random().toString(36).substr(2, 20);
   }
 }

@@ -1,9 +1,17 @@
-import { User } from '../entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
-import { RoleDTO } from '../../SecurityModule/dto';
-import { CourseDTO } from '../../CourseModule/dto';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { User } from '../entity/user.entity';
+import { Expose, Transform, Type } from 'class-transformer';
+import { RoleDTO } from '../../SecurityModule/dto/role.dto';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { GenderEnum } from '../enum/gender.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
+import { UserProfileEnum } from '../enum/user-profile.enum';
 
 export class UserDTO {
   @IsNotEmpty()
@@ -21,6 +29,67 @@ export class UserDTO {
   @Expose()
   email: User['email'];
 
+  @IsNotEmpty()
+  @IsEnum(UserProfileEnum)
+  @Expose()
+  profile: User['profile'];
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  nickname?: string;
+
+  @Transform((date) => date && new Date(date))
+  @IsNotEmpty()
+  @IsDate()
+  @Expose()
+  birthday?: Date;
+
+  @IsNotEmpty()
+  @IsEnum(GenderEnum)
+  @Expose()
+  gender?: GenderEnum;
+
+  @IsOptional()
+  @IsNumber()
+  @Expose()
+  inviteKey: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Expose()
+  invitedByUserId: string;
+
+  @IsNotEmpty()
+  @IsEnum(EscolarityEnum)
+  @Expose()
+  schooling?: EscolarityEnum;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  institutionName?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  profession?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  address?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  city?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  state?: string;
+
   @IsOptional()
   @IsString()
   @Expose()
@@ -36,8 +105,6 @@ export class UserDTO {
   @Expose()
   role: RoleDTO;
 
-  @ApiProperty({ type: () => CourseDTO, isArray: true })
-  @Type(() => CourseDTO)
   @Expose()
-  createdCourses: CourseDTO[];
+  photo: string;
 }

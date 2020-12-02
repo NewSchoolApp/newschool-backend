@@ -1,37 +1,49 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { ChangePasswordService, UserService } from './service';
+import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigService } from '@nestjs/config';
-import { ChangePasswordRepository, UserRepository } from './repository';
-import { ChangePassword, User } from './entity';
-import { UserMapper } from './mapper';
-import { JwtModule } from '@nestjs/jwt';
-import { SecurityModule } from '../SecurityModule';
-import { UserController } from './controller';
-import { CertificateModule } from '../CertificateModule';
+import { User } from './entity/user.entity';
+import { UserRepository } from './repository/user.repository';
+import { ChangePassword } from './entity/change-password.entity';
+import { ChangePasswordRepository } from './repository/change-password.repository';
+import { UserController } from './controller/user.controller';
+import { UserService } from './service/user.service';
+import { UserMapper } from './mapper/user.mapper';
+import { ChangePasswordService } from './service/change-password.service';
+import { SchoolController } from './controller/school.controller';
+import { SchoolService } from './service/school.service';
+import { GameficationModule } from '../GameficationModule/gamefication.module';
+import { UploadModule } from '../UploadModule/upload.module';
+import { CityController } from './controller/city.controller';
+import { CityService } from './service/city.service';
+import { StateService } from './service/state.service';
+import { StateController } from './controller/state.controller';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([
       User,
       UserRepository,
       ChangePassword,
       ChangePasswordRepository,
     ]),
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<number>('EXPIRES_IN_ACCESS_TOKEN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    forwardRef(() => SecurityModule),
-    CertificateModule,
+    HttpModule,
+    UploadModule,
+    forwardRef(() => GameficationModule),
   ],
-  controllers: [UserController],
-  providers: [UserService, UserMapper, ChangePasswordService],
+  controllers: [
+    UserController,
+    SchoolController,
+    CityController,
+    StateController,
+  ],
+  providers: [
+    UserService,
+    UserMapper,
+    ChangePasswordService,
+    SchoolService,
+    CityService,
+    StateService,
+  ],
   exports: [UserService, UserMapper],
 })
 export class UserModule {}

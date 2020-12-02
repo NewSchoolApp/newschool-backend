@@ -5,12 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { MailerService } from '@nest-modules/mailer';
-import { ContactUsDTO, EmailDTO } from '../dto';
 import { TemplateRepository } from '../repository/template.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { TemplateDTO } from '../dto/templates.dto';
 import { TemplateMapper } from '../mapper/template.mapper';
-import { ConfigService } from '../../ConfigModule/service';
+import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { ContactUsDTO } from '../dto/contactus.dto';
+import { EmailDTO } from '../dto/email.dto';
 
 @Injectable()
 export class MessageService {
@@ -132,12 +133,12 @@ export class MessageService {
     html: string,
     values: any[],
   ): string {
-    return html.replace(/({\d})/g, i => {
+    return html.replace(/({\d})/g, (i) => {
       return values[i.replace(/{/, '').replace(/}/, '')];
     });
   }
 
   private transformObjectToArray(model: any): any[] {
-    return Object.keys(model).map(key => model[key]);
+    return Object.keys(model).map((key) => model[key]);
   }
 }
