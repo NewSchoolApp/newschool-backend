@@ -96,11 +96,13 @@ export class CommentService {
     }
 
     const allClaps =
-      claps + userLikedComment.claps > 50 ? 50 : claps + userLikedComment.claps;
+      claps + userLikedComment.claps > 50
+        ? 50
+        : claps + (userLikedComment.claps ?? 0);
 
     await this.userLikedCommentRepository.save({
       ...userLikedComment,
-      clap: allClaps,
+      claps: allClaps,
     });
   }
 
@@ -133,8 +135,9 @@ export class CommentService {
       where: { id: commentId },
       relations: ['user'],
     });
+    console.log(await this.userLikedCommentRepository.find());
     const userLikedComments = await this.userLikedCommentRepository.find({
-      where: { comment },
+      where: { commentId },
       relations: ['user'],
     });
     const responses = await this.repository.find({

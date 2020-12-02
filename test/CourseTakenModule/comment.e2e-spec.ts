@@ -22,6 +22,7 @@ import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
 import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
 import { CourseTaken } from '../../src/CourseModule/entity/course-taken.entity';
+import { ClapCommentDTO } from '../../src/CourseModule/dto/clap-comment.dto';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
@@ -158,7 +159,8 @@ describe('CommentController (e2e)', () => {
 
     expect(addCommentRequest.body.user.id).toBe(addedUser.id);
     expect(addCommentRequest.body.responses).toStrictEqual([]);
-    expect(addCommentRequest.body.likedBy).toStrictEqual([]);
+    expect(addCommentRequest.body.clappedBy).toStrictEqual([]);
+    expect(addCommentRequest.body.clappedByTotalCount).toStrictEqual(0);
     expect(addCommentRequest.body.partId).toBe(partId);
     expect(addCommentRequest.body.text).toBe(addComentBody.text);
     done();
@@ -184,14 +186,16 @@ describe('CommentController (e2e)', () => {
       .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
       .send(addComentBody);
 
-    const likeComentBody: LikeCommentDTO = {
+    const clapComentBody: ClapCommentDTO = {
       userId: addedUser.id,
+      claps: 10,
     };
 
     await request(app.getHttpServer())
-      .post(`${commentUrl}/${addCommentRequest.body.id}/like`)
+      .post(`${commentUrl}/${addCommentRequest.body.id}/clap`)
       .set('Authorization', `Bearer ${oauthRequest.body.accessToken}`)
-      .send(likeComentBody);
+      .send(clapComentBody)
+      .expect(201);
 
     const getCommentRequest = await request(app.getHttpServer())
       .get(`${commentUrl}/part/${partId}`)
@@ -202,8 +206,9 @@ describe('CommentController (e2e)', () => {
     );
     const comment = filterComments[0];
 
-    expect(comment.likedBy.length).toBe(1);
-    expect(comment.likedBy[0].id).toBe(addedUser.id);
+    expect(comment.clappedByTotalCount).toBe(10);
+    expect(comment.clappedBy.length).toBe(1);
+    expect(comment.clappedBy[0].user.id).toBe(addedUser.id);
     done();
   });
 
