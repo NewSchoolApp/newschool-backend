@@ -11,7 +11,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { CommentService } from '../service/v1/comment.service';
 import { AddCommentDTO } from '../dto/add-comment.dto';
-import { LikeCommentDTO } from '../dto/like-comment.dto';
 import { CommentDTO } from '../dto/comment.dto';
 import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
@@ -69,16 +68,6 @@ export class CommentController {
     @Param('partId', ParseIntPipe) partId: number,
   ): Promise<CommentDTO[]> {
     return await this.service.findPartComments(partId);
-  }
-
-  @Post(':id/like')
-  @NeedRole(RoleEnum.STUDENT)
-  @UseGuards(RoleGuard)
-  public async likeComment(
-    @Param('id') id: string,
-    @Body() body: LikeCommentDTO,
-  ): Promise<void> {
-    await this.service.likeComment(id, body.userId);
   }
 
   @Post(':id/clap')

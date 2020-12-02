@@ -1,12 +1,21 @@
 import { Type } from 'class-transformer';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 
+class ClappedBy {
+  @Type(() => UserDTO)
+  user: UserDTO;
+
+  claps: number;
+}
+
 class ResponseInsideCommentDTO {
   id: string;
 
   text: string;
 
-  likedBy: UserDTO[];
+  clappedByTotalCount: number;
+
+  clappedBy: ClappedBy[];
 }
 
 export class CommentDTO {
@@ -21,5 +30,7 @@ export class CommentDTO {
   @Type(() => ResponseInsideCommentDTO)
   responses: ResponseInsideCommentDTO[];
 
-  likedBy: UserDTO[];
+  clappedByTotalCount: number;
+
+  clappedBy: ClappedBy[];
 }

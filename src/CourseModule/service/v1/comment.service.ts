@@ -133,7 +133,7 @@ export class CommentService {
       where: { id: commentId },
       relations: ['user'],
     });
-    const likes = await this.userLikedCommentRepository.find({
+    const userLikedComments = await this.userLikedCommentRepository.find({
       where: { comment },
       relations: ['user'],
     });
@@ -146,10 +146,15 @@ export class CommentService {
         return {
           ...response,
           user: await this.userMapper.toDtoAsync(response.user),
-          likedBy: await Promise.all(
-            response.likedBy.map(({ user }) =>
-              this.userMapper.toDtoAsync(user),
-            ),
+          clappedByTotalCount: response.likedBy.reduce(
+            (acc, { claps }) => acc + claps,
+            0,
+          ),
+          clappedBy: await Promise.all(
+            response.likedBy.map(async ({ user, claps }) => ({
+              user: await this.userMapper.toDtoAsync(user),
+              claps,
+            })),
           ),
         };
       }),
@@ -158,8 +163,15 @@ export class CommentService {
       ...comment,
       user: await this.userMapper.toDtoAsync(comment.user),
       responses: mappedResponses,
-      likedBy: await Promise.all(
-        likes.map(({ user }) => this.userMapper.toDtoAsync(user)),
+      clappedByTotalCount: userLikedComments.reduce(
+        (acc, { claps }) => acc + claps,
+        0,
+      ),
+      clappedBy: await Promise.all(
+        userLikedComments.map(async ({ user, claps }) => ({
+          user: await this.userMapper.toDtoAsync(user),
+          claps,
+        })),
       ),
     };
   }
@@ -186,10 +198,15 @@ export class CommentService {
           return {
             ...response,
             user: await this.userMapper.toDtoAsync(response.user),
-            likedBy: await Promise.all(
-              response.likedBy.map(({ user }) =>
-                this.userMapper.toDtoAsync(user),
-              ),
+            clappedByTotalCount: response.likedBy.reduce(
+              (acc, { claps }) => acc + claps,
+              0,
+            ),
+            clappedBy: await Promise.all(
+              response.likedBy.map(async ({ user, claps }) => ({
+                user: await this.userMapper.toDtoAsync(user),
+                claps,
+              })),
             ),
           };
         }),
@@ -204,13 +221,24 @@ export class CommentService {
         ...parentComment,
         user: await this.userMapper.toDtoAsync(parentComment.user),
         responses: parentCommentResponses,
-        likedBy: await Promise.all(
-          likes.map(({ user }) => this.userMapper.toDtoAsync(user)),
+        clappedByTotalCount: parentComment.likedBy.reduce(
+          (acc, { claps }) => acc + claps,
+          0,
+        ),
+        clappedBy: await Promise.all(
+          parentComment.likedBy.map(async ({ user, claps }) => ({
+            user: await this.userMapper.toDtoAsync(user),
+            claps,
+          })),
         ),
       },
       user: await this.userMapper.toDtoAsync(response.user),
-      likedBy: await Promise.all(
-        likes.map(({ user }) => this.userMapper.toDtoAsync(user)),
+      clappedByTotalCount: likes.reduce((acc, { claps }) => acc + claps, 0),
+      clappedBy: await Promise.all(
+        likes.map(async ({ user, claps }) => ({
+          user: await this.userMapper.toDtoAsync(user),
+          claps,
+        })),
       ),
     };
   }
