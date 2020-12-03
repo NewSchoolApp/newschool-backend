@@ -74,6 +74,26 @@ export class UserUpdateDTO {
   @Expose()
   city?: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  phone?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  cep?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  complement?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  houseNumber?: string;
+
   @IsOptional()
   @IsString()
   @Expose()
