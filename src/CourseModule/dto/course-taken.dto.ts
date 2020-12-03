@@ -59,4 +59,9 @@ export class CourseTakenDTO {
   @IsString()
   @Expose()
   feedback?: CourseTaken['feedback'];
+
+  @IsOptional()
+  @IsString()
+  @Expose()
+  challenge?: CourseTaken['challenge'];
 }

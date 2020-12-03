@@ -103,4 +103,25 @@ export class CourseTakenV2Controller {
   ): Promise<void> {
     await this.service.avaliateCourse(userId, courseId, avaliation);
   }
+
+  @Post('challenge/user/:userId/course/:courseId')
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async sendChallenge(
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: number,
+    @Body() data: any,
+  ): Promise<void> {
+    await this.service.sendChallenge(userId, courseId, data);
+  }
+
+  @Get('/challenge')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async findChallenges(): Promise<CourseTaken[]> {
+    return await this.service.findChallenges();
+  }
 }
