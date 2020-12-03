@@ -189,6 +189,28 @@ export class CourseTakenV2Service {
     this.publisherService.emitNpsReward(userId, courseId);
   }
 
+  public async sendChallenge(
+    userId: string,
+    courseId: number,
+    data: any,
+  ): Promise<CourseTaken> {
+    const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
+      userId,
+      courseId,
+    );
+    const { challenge } = data;
+
+    const payloadToInsert = {
+      ...courseTaken,
+      challenge,
+    };
+    return await this.repository.save(payloadToInsert);
+  }
+
+  public async findChallenges(): Promise<CourseTaken[]> {
+    return await this.repository.findChallenges();
+  }
+
   private async findByUserIdAndCourseId(
     userId: string,
     courseId: number,
@@ -215,6 +237,16 @@ export class CourseTakenV2Service {
     ) {
       return {
         doing: CurrentStepDoingEnum.FINISHED,
+      };
+    }
+
+    if (
+      !courseTaken.challenge &&
+      courseTaken.status === CourseTakenStatusEnum.COMPLETED &&
+      courseTaken.completion === 100
+    ) {
+      return {
+        doing: CurrentStepDoingEnum.CHALLENGE,
       };
     }
 

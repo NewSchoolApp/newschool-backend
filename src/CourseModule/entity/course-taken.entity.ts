@@ -53,4 +53,7 @@ export class CourseTaken extends Audit {
 
   @Column('varchar', { name: 'feedback', nullable: true, length: 255 })
   feedback?: string;
+
+  @Column('varchar', { name: 'challenge', nullable: true })
+  challenge?: string;
 }

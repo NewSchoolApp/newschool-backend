@@ -1,3 +1,4 @@
+import { IsNotEmpty } from 'class-validator';
 import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
@@ -88,6 +89,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
       relations: ['user'],
     });
     return response[0];
+  }
+
+  public async findChallenges(): Promise<CourseTaken[]> {
+    return await this.find({
+      where: { challenge: Not(IsNull()) },
+    });
   }
 
   public async getUsersWithTakenCourses(): Promise<number> {
