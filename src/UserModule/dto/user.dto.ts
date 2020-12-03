@@ -78,6 +78,26 @@ export class UserDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
+  phone?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  cep?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  complement?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  houseNumber?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   address?: string;
 
   @IsNotEmpty()
