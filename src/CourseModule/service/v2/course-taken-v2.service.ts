@@ -236,7 +236,7 @@ export class CourseTakenV2Service {
       courseTaken.completion === 100
     ) {
       return {
-        doing: CurrentStepDoingEnum.FINISHED,
+        doing: CurrentStepDoingEnum.COMPLETED,
       };
     }
 

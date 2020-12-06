@@ -2,7 +2,7 @@ import { CMSPartDTO } from './cms-part.dto';
 import { CMSTestDTO } from './cms-test.dto';
 
 export enum CurrentStepDoingEnum {
-  FINISHED = 'FINISHED',
+  COMPLETED = 'COMPLETED',
   PART = 'PART',
   TEST = 'TEST',
   CHALLENGE = 'CHALLENGE',
