@@ -178,7 +178,7 @@ export class CommentService {
     };
   }
 
-  async mapResponse(responseId: string): Promise<ResponseDTO> {
+  async mapResponse(responseId: string): Promise<any> {
     const response = await this.repository.findOne({
       where: { id: responseId },
       relations: ['user', 'parentComment'],
@@ -189,6 +189,7 @@ export class CommentService {
         'user',
         'responses',
         'likedBy',
+        'likedBy.user',
         'responses.user',
         'responses.likedBy',
       ],
@@ -199,7 +200,7 @@ export class CommentService {
         .map(async (response) => {
           return {
             ...response,
-            user: await this.userMapper.toDtoAsync(response.user),
+            // user: await this.userMapper.toDtoAsync(response.user),
             clappedByTotalCount: response.likedBy.reduce(
               (acc, { claps }) => acc + claps,
               0,
