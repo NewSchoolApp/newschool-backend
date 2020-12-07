@@ -167,6 +167,7 @@ describe('DashboardController (e2e)', () => {
       ...newCourseTaken2,
       completion: 100,
       status: CourseTakenStatusEnum.COMPLETED,
+      challenge: 'random challenge',
     });
 
     const newCourseTaken3 = {
@@ -179,6 +180,7 @@ describe('DashboardController (e2e)', () => {
       ...newCourseTaken3,
       completion: 100,
       status: CourseTakenStatusEnum.COMPLETED,
+      challenge: 'random challenge',
     });
   });
 
