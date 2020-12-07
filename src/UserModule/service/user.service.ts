@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
+import exportFromJSON from 'export-from-json';
 import {
   BadRequestException,
   ConflictException,
@@ -353,7 +354,36 @@ export class UserService {
     return this.uploadService.getUserPhoto(user.photoPath);
   }
 
+  public async acceptSemear(id: string): Promise<void> {
+    const filePath = `semear/${id}.json`;
+    const user: User = await this.findById(id);
+    const fileExists = await this.uploadService.fileExists(filePath);
+    if (fileExists) return;
+    await this.uploadService.uploadDataToS3(filePath, user);
+  }
+
+  public async userAcceptedSemear(id: string): Promise<boolean> {
+    const filePath = `semear/${id}.json`;
+    return await this.uploadService.fileExists(filePath);
+  }
+
   private generateInviteKey(): string {
     return Math.random().toString(36).substr(2, 20);
+  }
+
+  public async createSemearStudentsFile() {
+    const data = await this.uploadService.getFilesInsideFolder('semear');
+    let students = [];
+    for (const content of data.Contents) {
+      const filedata = await this.uploadService.getFile(content.Key);
+      const json = JSON.parse(filedata.Body.toString('utf-8'));
+      students = [...students, json];
+    }
+    return exportFromJSON({
+      data: students,
+      fileName: 'estudantes',
+      exportType: 'json',
+      withBOM: true,
+    });
   }
 }

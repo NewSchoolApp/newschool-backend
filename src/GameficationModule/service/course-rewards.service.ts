@@ -104,11 +104,12 @@ export class CourseRewardsService implements OnModuleInit {
           4,
         ),
     };
-    let [achievement]: Achievement<
-      CheckTestRule
-    >[] = await this.achievementRepository.getTestOnFirstTakeByUserIdAndRuleTestId<
-      CheckTestRule
-    >(test.id, userId);
+    let [
+      achievement,
+    ]: Achievement<CheckTestRule>[] = await this.achievementRepository.getTestOnFirstTakeByUserIdAndRuleTestId<CheckTestRule>(
+      test.id,
+      userId,
+    );
 
     if (achievement?.completed) return;
     if (achievement?.rule?.try >= 4) return;

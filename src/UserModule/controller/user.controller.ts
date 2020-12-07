@@ -11,6 +11,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -52,6 +53,7 @@ import { UserIdParam } from '../../CommonsModule/guard/student-metadata.guard';
 import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 import { PhotoDTO } from '../dto/photo.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { Response } from 'express';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -380,5 +382,37 @@ export class UserController {
     @Param('id') id: string,
   ): Promise<CertificateUserDTO[]> {
     return await this.service.getCertificateByUser(id);
+  }
+
+  @Get(':id/semear')
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async userAcceptedSemear(
+    @Param('id') id: string,
+  ): Promise<{ accepted: boolean }> {
+    return { accepted: await this.service.userAcceptedSemear(id) };
+  }
+
+  @Post(':id/semear')
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async acceptSemear(@Param('id') id: string): Promise<void> {
+    return await this.service.acceptSemear(id);
+  }
+
+  @Get('semear/students')
+  @UserIdParam('id')
+  @UseGuards(StudentGuard)
+  @NeedRole(RoleEnum.STUDENT)
+  @UseGuards(RoleGuard)
+  public async createSemearStudentsFile(@Res() res: Response) {
+    const file = this.service.createSemearStudentsFile();
+    res.set('Content-Type', 'text/plain');
+    res.write(file);
+    res.end();
   }
 }
