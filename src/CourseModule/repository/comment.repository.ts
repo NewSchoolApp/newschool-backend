@@ -3,7 +3,7 @@ import { Comment } from '../entity/comment.entity';
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
-  public getComments(partId, { order, orderBy }) {
+  public getCommentIds(partId, { order, orderBy }) {
     const orderByTranslation = {
       claps: 'totalClaps',
       createdAt: 'c.createdAt',
@@ -11,7 +11,7 @@ export class CommentRepository extends Repository<Comment> {
     return this.query(
       `
         SELECT
-          *,
+          id,
           SUM(ulc.claps) as totalClaps
         FROM
           comment c
