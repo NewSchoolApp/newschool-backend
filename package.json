@@ -71,7 +71,7 @@
     "@types/jest": "26.0.16",
     "@types/multer": "1.4.5",
     "@types/mysql": "2.15.16",
-    "@types/node": "13.13.34",
+    "@types/node": "13.13.35",
     "@types/nodemailer": "6.4.0",
     "@types/passport-jwt": "3.0.3",
     "@types/pubsub-js": "1.8.1",
