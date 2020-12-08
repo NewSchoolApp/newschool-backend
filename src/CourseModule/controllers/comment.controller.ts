@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,8 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { ResponseDTO } from '../dto/response.dto';
 import { ClapCommentDTO } from '../dto/clap-comment.dto';
+import { OrderEnum } from '../../CommonsModule/enum/order.enum';
+import { Comment } from '../entity/comment.entity';
 
 @ApiTags('Comment')
 @ApiBearerAuth()
@@ -66,8 +69,10 @@ export class CommentController {
   @UseGuards(RoleGuard)
   public async getCommentsByPartId(
     @Param('partId', ParseIntPipe) partId: number,
+    @Query('order') order: OrderEnum = OrderEnum.DESC,
+    @Query('orderBy') orderBy: 'claps' | 'createdAt' = 'claps',
   ): Promise<CommentDTO[]> {
-    return await this.service.findPartComments(partId);
+    return await this.service.findPartComments(partId, { order, orderBy });
   }
 
   @Post(':id/clap')

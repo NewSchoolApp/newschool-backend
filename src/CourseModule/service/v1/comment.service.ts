@@ -13,6 +13,7 @@ import { UserMapper } from '../../../UserModule/mapper/user.mapper';
 import { CommentDTO } from '../../dto/comment.dto';
 import { CommentMapper } from '../../mapper/comment.mapper';
 import { ResponseDTO } from '../../dto/response.dto';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class CommentService {
@@ -36,10 +37,13 @@ export class CommentService {
     return response[0];
   }
 
-  public async findPartComments(partId: number): Promise<CommentDTO[]> {
-    const comments = await this.repository.find({
-      where: { partId, parentCommentId: null },
-      relations: ['user', 'likedBy'],
+  public async findPartComments(
+    partId: number,
+    { order, orderBy },
+  ): Promise<CommentDTO[]> {
+    const comments: any[] = await this.repository.getComments(partId, {
+      order,
+      orderBy,
     });
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }
