@@ -68,7 +68,7 @@
     "@nestjs/testing": "7.5.5",
     "@types/dotenv": "8.2.0",
     "@types/express": "4.17.9",
-    "@types/jest": "26.0.16",
+    "@types/jest": "26.0.18",
     "@types/multer": "1.4.5",
     "@types/mysql": "2.15.16",
     "@types/node": "13.13.34",
