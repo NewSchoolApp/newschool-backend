@@ -41,7 +41,7 @@ export class CommentService {
     partId: number,
     { order, orderBy },
   ): Promise<CommentDTO[]> {
-    const comments: any[] = await this.repository.getComments(partId, {
+    const comments: any[] = await this.repository.getCommentIds(partId, {
       order,
       orderBy,
     });
