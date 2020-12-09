@@ -5,9 +5,6 @@ export class Notification1607548287894 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE `client-credentials` DROP COLUMN `grantType`',
-    );
-    await queryRunner.query(
       'ALTER TABLE `notification` ADD `important` tinyint NOT NULL DEFAULT 0',
     );
     await queryRunner.query(
@@ -21,9 +18,6 @@ export class Notification1607548287894 implements MigrationInterface {
     );
     await queryRunner.query(
       'ALTER TABLE `notification` DROP COLUMN `important`',
-    );
-    await queryRunner.query(
-      "ALTER TABLE `client-credentials` ADD `grantType` enum ('client_credentials', 'password', 'refresh_token') NOT NULL",
     );
   }
 }
