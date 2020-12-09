@@ -20,6 +20,7 @@ export class SemearService implements OnModuleInit {
   }
 
   public async sendSemearNotification(user: User): Promise<void> {
+    console.log('to aqui', user);
     if (
       user.schooling !== EscolarityEnum.ENSINO_MEDIO_COMPLETO &&
       user.schooling !== EscolarityEnum.TERCEIRO_ANO

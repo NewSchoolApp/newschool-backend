@@ -35,12 +35,10 @@ import { PublisherService } from '../../GameficationModule/service/publisher.ser
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
+import { SemearService } from './semear.service';
 
 @Injectable()
 export class UserService {
-  @Inject(PublisherService)
-  private readonly publisherService: PublisherService;
-
   constructor(
     private readonly repository: UserRepository,
     private readonly http: HttpService,
@@ -50,6 +48,8 @@ export class UserService {
     private readonly roleService: RoleService,
     private readonly achievementService: AchievementService,
     private readonly uploadService: UploadService,
+    private readonly semearService: SemearService,
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
@@ -139,7 +139,6 @@ export class UserService {
     await this.repository.delete(id);
   }
 
-  @Transactional()
   public async update(
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
@@ -155,14 +154,10 @@ export class UserService {
       role,
       id: user.id,
     });
-    if (
-      updatedUser.schooling === EscolarityEnum.TERCEIRO_ANO ||
-      updatedUser.schooling === EscolarityEnum.ENSINO_MEDIO_COMPLETO
-    ) {
-    }
     if (updatedUser.role.name === RoleEnum.STUDENT) {
       this.publisherService.emitupdateStudent(id);
     }
+    this.semearService.sendSemearNotification(updatedUser);
     return updatedUser;
   }
 
