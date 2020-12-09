@@ -9,12 +9,15 @@ import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 export class NotificationService {
   constructor(private readonly repository: NotificationRepository) {}
 
-  public async create<T>(
+  public async create<
+    T = { new () } | Record<string | number | symbol, unknown>
+  >(
     user: User,
     type: NotificationTypeEnum,
     content: T,
+    options = { important: false },
   ): Promise<Notification<T>> {
-    return this.repository.save({ user, type, content });
+    return this.repository.save({ user, type, content, ...options });
   }
 
   public async getNotificationsByUser(user: User): Promise<Notification[]> {

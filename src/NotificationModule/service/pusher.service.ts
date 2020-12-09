@@ -1,7 +1,7 @@
 import * as Pusher from 'pusher';
 import { Injectable } from '@nestjs/common';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
-import { ChannelEventEnum } from '../enum/channel-event.enum';
+import { Notification } from '../entity/notification.entity';
 
 @Injectable()
 export class PusherService {
@@ -11,11 +11,7 @@ export class PusherService {
     this.pusher = new Pusher(this.configService.getPusherOptions());
   }
 
-  public postMessageToUser(
-    userId: string,
-    event: ChannelEventEnum,
-    message: unknown,
-  ): void {
-    this.pusher.trigger(userId, event, message);
+  public postMessageToUser(notification: Notification): void {
+    this.pusher.trigger(notification.user.id, notification.type, notification);
   }
 }

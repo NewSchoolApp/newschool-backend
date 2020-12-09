@@ -34,6 +34,7 @@ import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-qu
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
 
 @Injectable()
 export class UserService {
@@ -154,6 +155,11 @@ export class UserService {
       role,
       id: user.id,
     });
+    if (
+      updatedUser.schooling === EscolarityEnum.TERCEIRO_ANO ||
+      updatedUser.schooling === EscolarityEnum.ENSINO_MEDIO_COMPLETO
+    ) {
+    }
     if (updatedUser.role.name === RoleEnum.STUDENT) {
       this.publisherService.emitupdateStudent(id);
     }

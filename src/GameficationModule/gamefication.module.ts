@@ -6,7 +6,6 @@ import { Badge } from './entity/badge.entity';
 import { Achievement } from './entity/achievement.entity';
 import { AchievementRepository } from './repository/achievement.repository';
 import { BadgeRepository } from './repository/badge.repository';
-import { PusherService } from './service/pusher.service';
 import { NotificationModule } from '../NotificationModule/notification.module';
 import { AchievementSubscriber } from './subscriber/achievement.subscriber';
 import { UserModule } from '../UserModule/user.module';
@@ -39,7 +38,6 @@ import { UploadModule } from '../UploadModule/upload.module';
     CourseRewardsService,
     UserRewardsService,
     PublisherService,
-    PusherService,
     AchievementSubscriber,
     GameficationService,
     AchievementService,
