@@ -16,6 +16,8 @@ import { CityController } from './controller/city.controller';
 import { CityService } from './service/city.service';
 import { StateService } from './service/state.service';
 import { StateController } from './controller/state.controller';
+import { SemearService } from './service/semear.service';
+import { NotificationModule } from '../NotificationModule/notification.module';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { StateController } from './controller/state.controller';
     ]),
     HttpModule,
     UploadModule,
+    NotificationModule,
     forwardRef(() => GameficationModule),
   ],
   controllers: [
@@ -43,6 +46,7 @@ import { StateController } from './controller/state.controller';
     SchoolService,
     CityService,
     StateService,
+    SemearService,
   ],
   exports: [UserService, UserMapper],
 })

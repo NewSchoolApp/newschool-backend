@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
+import exportFromJSON from 'export-from-json';
 import {
   BadRequestException,
   ConflictException,
@@ -33,12 +34,11 @@ import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-qu
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
+import { EscolarityEnum } from '../enum/escolarity.enum';
+import { SemearService } from './semear.service';
 
 @Injectable()
 export class UserService {
-  @Inject(PublisherService)
-  private readonly publisherService: PublisherService;
-
   constructor(
     private readonly repository: UserRepository,
     private readonly http: HttpService,
@@ -48,6 +48,8 @@ export class UserService {
     private readonly roleService: RoleService,
     private readonly achievementService: AchievementService,
     private readonly uploadService: UploadService,
+    private readonly semearService: SemearService,
+    private readonly publisherService: PublisherService,
   ) {}
 
   @Transactional()
@@ -137,7 +139,6 @@ export class UserService {
     await this.repository.delete(id);
   }
 
-  @Transactional()
   public async update(
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
@@ -156,6 +157,7 @@ export class UserService {
     if (updatedUser.role.name === RoleEnum.STUDENT) {
       this.publisherService.emitupdateStudent(id);
     }
+    this.semearService.sendSemearNotification(updatedUser);
     return updatedUser;
   }
 
@@ -353,7 +355,36 @@ export class UserService {
     return this.uploadService.getUserPhoto(user.photoPath);
   }
 
+  public async acceptSemear(id: string): Promise<void> {
+    const filePath = `semear/${id}.json`;
+    const user: User = await this.findById(id);
+    const fileExists = await this.uploadService.fileExists(filePath);
+    if (fileExists) return;
+    await this.uploadService.uploadDataToS3(filePath, user);
+  }
+
+  public async userAcceptedSemear(id: string): Promise<boolean> {
+    const filePath = `semear/${id}.json`;
+    return await this.uploadService.fileExists(filePath);
+  }
+
   private generateInviteKey(): string {
     return Math.random().toString(36).substr(2, 20);
+  }
+
+  public async createSemearStudentsFile() {
+    const data = await this.uploadService.getFilesInsideFolder('semear');
+    let students = [];
+    for (const content of data.Contents) {
+      const filedata = await this.uploadService.getFile(content.Key);
+      const json = JSON.parse(filedata.Body.toString('utf-8'));
+      students = [...students, json];
+    }
+    return exportFromJSON({
+      data: students,
+      fileName: 'estudantes',
+      exportType: 'json',
+      withBOM: true,
+    });
   }
 }

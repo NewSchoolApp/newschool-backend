@@ -46,6 +46,53 @@ export class UploadService implements OnModuleInit {
     return this.s3.getSignedUrlPromise('getObject', params);
   }
 
+  public async getFile(
+    filePath: string,
+  ): Promise<PromiseResult<S3.GetObjectOutput, AWSError>> {
+    const params: S3.GetObjectRequest = {
+      Bucket: this.configService.awsUserBucket,
+      Key: filePath,
+    };
+    return this.s3.getObject(params).promise();
+  }
+
+  public async fileExists(filePath: string): Promise<boolean> {
+    const params: S3.Types.HeadObjectRequest = {
+      Bucket: this.configService.awsUserBucket,
+      Key: filePath,
+    };
+    try {
+      await this.s3.headObject(params).promise();
+      return true;
+    } catch (e) {
+      if (e.code === 'NotFound') {
+        return false;
+      }
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+  public getFilesInsideFolder(folderName: string) {
+    const params: S3.Types.ListObjectsV2Request = {
+      Bucket: this.configService.awsUserBucket,
+      Prefix: folderName,
+    };
+    return this.s3.listObjectsV2(params).promise();
+  }
+
+  public uploadDataToS3(
+    filePath: string,
+    data: any,
+  ): Promise<PromiseResult<S3.PutObjectOutput, AWSError>> {
+    const params: S3.Types.PutObjectRequest = {
+      Bucket: this.configService.awsUserBucket,
+      Key: filePath,
+      Body: JSON.stringify(data),
+      ContentType: 'application/json',
+    };
+    return this.s3.putObject(params).promise();
+  }
+
   public async sendFile(fileName: string, response: Response): Promise<void> {
     await this.ensureFileExists(fileName);
     await this.sendFileToResponse(fileName, response);

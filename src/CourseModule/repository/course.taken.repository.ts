@@ -53,7 +53,13 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
   }
 
   public async getCertificateQuantity(): Promise<number> {
-    return this.count({ where: { status: CourseTakenStatusEnum.COMPLETED } });
+    return this.count({
+      where: {
+        status: CourseTakenStatusEnum.COMPLETED,
+        completion: 100,
+        challenge: Not(IsNull()),
+      },
+    });
   }
 
   public async findCertificateByUserIdAndCourseId(
@@ -188,9 +194,12 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     userId: string,
   ): Promise<CourseTaken[]> {
     return this.find({
-      userId,
-      status: CourseTakenStatusEnum.COMPLETED,
-      completion: 100,
+      where: {
+        userId,
+        status: CourseTakenStatusEnum.COMPLETED,
+        completion: 100,
+        challenge: Not(IsNull()),
+      },
     });
   }
 }

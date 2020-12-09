@@ -278,6 +278,8 @@ export class UserRewardsService implements OnModuleInit {
       1,
     );
 
+    if (!user) return;
+
     const badge = await this.badgeRepository.findByEventNameAndOrder(
       EventNameEnum.USER_REWARD_TOP_MONTH,
       1,

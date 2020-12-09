@@ -232,21 +232,22 @@ export class CourseTakenV2Service {
     const courseTaken = await this.findByUserIdAndCourseId(userId, courseId);
 
     if (
-      courseTaken.status === CourseTakenStatusEnum.COMPLETED &&
-      courseTaken.completion === 100
-    ) {
-      return {
-        doing: CurrentStepDoingEnum.FINISHED,
-      };
-    }
-
-    if (
       !courseTaken.challenge &&
       courseTaken.status === CourseTakenStatusEnum.COMPLETED &&
       courseTaken.completion === 100
     ) {
       return {
         doing: CurrentStepDoingEnum.CHALLENGE,
+      };
+    }
+
+    if (
+      courseTaken.challenge &&
+      courseTaken.status === CourseTakenStatusEnum.COMPLETED &&
+      courseTaken.completion === 100
+    ) {
+      return {
+        doing: CurrentStepDoingEnum.COMPLETED,
       };
     }
 

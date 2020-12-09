@@ -13,6 +13,7 @@ import { UserMapper } from '../../../UserModule/mapper/user.mapper';
 import { CommentDTO } from '../../dto/comment.dto';
 import { CommentMapper } from '../../mapper/comment.mapper';
 import { ResponseDTO } from '../../dto/response.dto';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class CommentService {
@@ -36,10 +37,13 @@ export class CommentService {
     return response[0];
   }
 
-  public async findPartComments(partId: number): Promise<CommentDTO[]> {
-    const comments = await this.repository.find({
-      where: { partId, parentCommentId: null },
-      relations: ['user', 'likedBy'],
+  public async findPartComments(
+    partId: number,
+    { order, orderBy },
+  ): Promise<CommentDTO[]> {
+    const comments: any[] = await this.repository.getCommentIds(partId, {
+      order,
+      orderBy,
     });
     return await Promise.all(comments.map(({ id }) => this.mapComment(id)));
   }
@@ -178,7 +182,7 @@ export class CommentService {
     };
   }
 
-  async mapResponse(responseId: string): Promise<ResponseDTO> {
+  async mapResponse(responseId: string): Promise<any> {
     const response = await this.repository.findOne({
       where: { id: responseId },
       relations: ['user', 'parentComment'],
@@ -189,6 +193,7 @@ export class CommentService {
         'user',
         'responses',
         'likedBy',
+        'likedBy.user',
         'responses.user',
         'responses.likedBy',
       ],
@@ -199,7 +204,7 @@ export class CommentService {
         .map(async (response) => {
           return {
             ...response,
-            user: await this.userMapper.toDtoAsync(response.user),
+            // user: await this.userMapper.toDtoAsync(response.user),
             clappedByTotalCount: response.likedBy.reduce(
               (acc, { claps }) => acc + claps,
               0,

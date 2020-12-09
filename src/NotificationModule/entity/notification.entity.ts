@@ -22,6 +22,11 @@ export class Notification<T = unknown> extends Audit {
   enabled: boolean = true;
 
   @Column({
+    default: false,
+  })
+  important: boolean = false;
+
+  @Column({
     type: 'enum',
     enum: NotificationTypeEnum,
     nullable: false,
