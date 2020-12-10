@@ -201,11 +201,15 @@ export class UserRewardsService implements OnModuleInit {
     if (!user) return;
     const propertiesToCheck: string[] = [
       'address',
-      'profession',
       'institutionName',
       'gender',
       'birthday',
       'nickname',
+      'cep',
+      'complement',
+      'houseNumber',
+      'phone',
+      'state',
     ];
     let isProfileComplete = true;
 
