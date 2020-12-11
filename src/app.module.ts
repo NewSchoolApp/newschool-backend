@@ -15,6 +15,7 @@ import { GameficationModule } from './GameficationModule/gamefication.module';
 import { NotificationModule } from './NotificationModule/notification.module';
 import { RavenModule } from 'nest-raven';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MulterModule } from '@nestjs/platform-express';
 
 const typeOrmAsyncModule: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -37,6 +38,10 @@ const mailerAsyncModule: MailerAsyncOptions = {
     ScheduleModule.forRoot(),
     NestConfigModule.forRoot({
       isGlobal: true,
+    }),
+    MulterModule.register({
+      dest: './upload',
+      limits: { fieldSize: 15 * 1024 * 1024 },
     }),
     TypeOrmModule.forRootAsync(typeOrmAsyncModule),
     MailerModule.forRootAsync(mailerAsyncModule),

@@ -39,10 +39,6 @@ import { CourseTakenService } from './service/v1/course-taken.service';
       UserLikedComment,
       UserLikedCommentRepository,
     ]),
-    MulterModule.register({
-      dest: './upload',
-      limits: { fieldSize: 15 * 1024 * 1024 },
-    }),
     forwardRef(() => UserModule),
     forwardRef(() => GameficationModule),
     UploadModule,

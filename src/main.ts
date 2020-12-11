@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -6,11 +7,11 @@ import {
   initializeTransactionalContext,
   patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
-import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
-import 'reflect-metadata';
-import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 import * as Sentry from '@sentry/node';
 import { RavenInterceptor } from 'nest-raven';
+import { urlencoded, json } from 'express';
+import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
+import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -40,6 +41,9 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   Sentry.init(appConfigService.getSentryConfiguration());
+
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
 
   await app.listen(appConfigService.port || 8080);
 }
