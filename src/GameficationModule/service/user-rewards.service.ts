@@ -206,7 +206,6 @@ export class UserRewardsService implements OnModuleInit {
       'birthday',
       'nickname',
       'cep',
-      'complement',
       'houseNumber',
       'phone',
       'state',
