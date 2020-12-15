@@ -1,6 +1,5 @@
 import { CacheModule, forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
 import { UserModule } from '../UserModule/user.module';
 import { GameficationModule } from '../GameficationModule/gamefication.module';
 import { CourseTakenMapper } from './mapper/course-taken.mapper';

@@ -1,11 +1,16 @@
-import { IsNotEmpty } from 'class-validator';
 import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
+import {
+  EntityRepository,
+  IsNull,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
 import { User } from '../../UserModule/entity/user.entity';
 import { CourseTaken } from '../entity/course-taken.entity';
-import { MoreThanOrEqual } from 'typeorm';
+import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
 
 @EntityRepository(CourseTaken)
 export class CourseTakenRepository extends Repository<CourseTaken> {
@@ -97,9 +102,29 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     return response[0];
   }
 
-  public async findChallenges(): Promise<CourseTaken[]> {
-    return await this.find({
-      where: { challenge: Not(IsNull()) },
+  public async findChallengesByCourseIdPaginated(
+    courseId: string,
+    options: { limit: number; page: number },
+  ): Promise<Pageable<CourseTaken>> {
+    const challenges = await this.findChallengesByCourseId(courseId, options);
+    const count = await this.count({
+      where: { challenge: Not(IsNull()), courseId },
+    });
+    return new PageableDTO<CourseTaken>({
+      content: challenges,
+      totalElements: count,
+      ...options,
+    });
+  }
+
+  public findChallengesByCourseId(
+    courseId: string,
+    { limit, page }: { limit: number; page: number },
+  ): Promise<CourseTaken[]> {
+    return this.find({
+      where: { challenge: Not(IsNull()), courseId },
+      take: limit,
+      skip: limit * (page - 1),
     });
   }
 

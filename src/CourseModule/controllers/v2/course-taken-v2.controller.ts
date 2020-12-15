@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Constants } from '../../../CommonsModule/constants';
@@ -19,6 +20,8 @@ import { RoleGuard } from '../../../CommonsModule/guard/role.guard';
 import { StudentGuard } from '../../../CommonsModule/guard/student.guard';
 import { UserIdParam } from '../../../CommonsModule/guard/student-metadata.guard';
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
+import { ChallengeDTO } from '../../../GameficationModule/dto/challenge.dto';
+import { PageableDTO } from '../../../CommonsModule/dto/pageable.dto';
 
 @ApiTags('CourseTakenV2')
 @ApiBearerAuth()
@@ -112,16 +115,20 @@ export class CourseTakenV2Controller {
   public async sendChallenge(
     @Param('userId') userId: string,
     @Param('courseId') courseId: number,
-    @Body() data: any,
+    @Body() data: ChallengeDTO,
   ): Promise<void> {
     await this.service.sendChallenge(userId, courseId, data);
   }
 
-  @Get('/challenge')
+  @Get('/challenge/course/:courseId')
   @UseGuards(StudentGuard)
   @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async findChallenges(): Promise<CourseTaken[]> {
-    return await this.service.findChallenges();
+  public async findChallenges(
+    @Param('courseId') courseId: string,
+    @Query('limit') limit = 10,
+    @Query('page') page = 1,
+  ): Promise<PageableDTO<CourseTaken>> {
+    return await this.service.findChallenges(courseId, { limit, page });
   }
 }
