@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -20,6 +19,8 @@ import {
   CurrentStepDTO,
 } from '../../dto/current-step.dto';
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
+import { ChallengeDTO } from '../../../GameficationModule/dto/challenge.dto';
+import { Pageable } from '../../../CommonsModule/dto/pageable.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -192,7 +193,7 @@ export class CourseTakenV2Service {
   public async sendChallenge(
     userId: string,
     courseId: number,
-    data: any,
+    data: ChallengeDTO,
   ): Promise<CourseTaken> {
     const courseTaken: CourseTaken = await this.findByUserIdAndCourseId(
       userId,
@@ -207,8 +208,14 @@ export class CourseTakenV2Service {
     return await this.repository.save(payloadToInsert);
   }
 
-  public async findChallenges(): Promise<CourseTaken[]> {
-    return await this.repository.findChallenges();
+  public findChallenges(
+    courseId: string,
+    { limit, page }: { limit: number; page: number },
+  ): Promise<Pageable<CourseTaken>> {
+    return this.repository.findChallengesByCourseIdPaginated(courseId, {
+      limit,
+      page,
+    });
   }
 
   private async findByUserIdAndCourseId(

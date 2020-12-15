@@ -17,7 +17,6 @@ import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { Notification } from '../../NotificationModule/entity/notification.entity';
-import { Comment } from '../../CourseModule/entity/comment.entity';
 import { UserLikedComment } from '../../CourseModule/entity/user-liked-comment.entity';
 
 @Entity()

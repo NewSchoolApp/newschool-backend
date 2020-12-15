@@ -13,7 +13,6 @@ import { UserMapper } from '../../../UserModule/mapper/user.mapper';
 import { CommentDTO } from '../../dto/comment.dto';
 import { CommentMapper } from '../../mapper/comment.mapper';
 import { ResponseDTO } from '../../dto/response.dto';
-import { IsNull } from 'typeorm';
 
 @Injectable()
 export class CommentService {

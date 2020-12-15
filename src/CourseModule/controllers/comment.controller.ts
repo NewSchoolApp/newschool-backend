@@ -19,7 +19,6 @@ import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { ResponseDTO } from '../dto/response.dto';
 import { ClapCommentDTO } from '../dto/clap-comment.dto';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import { Comment } from '../entity/comment.entity';
 
 @ApiTags('Comment')
 @ApiBearerAuth()

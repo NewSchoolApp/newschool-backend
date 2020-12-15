@@ -6,7 +6,6 @@ import {
   ConflictException,
   GoneException,
   HttpService,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -34,7 +33,6 @@ import { BadgeWithQuantityDTO } from '../../GameficationModule/dto/badge-with-qu
 import { PublisherService } from '../../GameficationModule/service/publisher.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
-import { EscolarityEnum } from '../enum/escolarity.enum';
 import { SemearService } from './semear.service';
 
 @Injectable()

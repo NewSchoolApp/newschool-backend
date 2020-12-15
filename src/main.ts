@@ -9,7 +9,7 @@ import {
 } from 'typeorm-transactional-cls-hooked';
 import * as Sentry from '@sentry/node';
 import { RavenInterceptor } from 'nest-raven';
-import { urlencoded, json } from 'express';
+import { json, urlencoded } from 'express';
 import { HttpExceptionFilter } from './CommonsModule/httpFilter/http-exception.filter';
 import { AppConfigService as ConfigService } from './ConfigModule/service/app-config.service';
 
