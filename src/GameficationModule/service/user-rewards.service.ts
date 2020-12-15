@@ -107,7 +107,7 @@ export class UserRewardsService implements OnModuleInit {
 
     await this.achievementRepository.save({
       ...sharedCourse,
-      user: courseTaken.user,
+      user: { id: userId },
       badge,
       rule: { courseId, platform },
       completed: true,
