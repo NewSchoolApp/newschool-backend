@@ -1,6 +1,5 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { School, Schools } from '../dto/school.dto';
-import { query } from 'express';
 
 @Injectable()
 export class SchoolService {

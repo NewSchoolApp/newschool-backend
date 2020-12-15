@@ -11,7 +11,6 @@ import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';
-import { UserDTO } from './user.dto';
 
 export class NewUserDTO {
   @IsNotEmpty()

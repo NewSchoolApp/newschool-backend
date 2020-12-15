@@ -1,15 +1,8 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { CourseTakenStatusEnum } from '../../enum/course-taken-status.enum';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderEnum } from '../../../CommonsModule/enum/order.enum';
 import { CourseTakenRepository } from '../../repository/course.taken.repository';
 import { CourseTaken } from '../../entity/course-taken.entity';
 import { getCoursesByFinished } from '../../../DashboardModule/interfaces/getCoursesByFinished';
-import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 
 @Injectable()
