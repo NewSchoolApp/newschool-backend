@@ -110,6 +110,10 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     const count = await this.count({
       where: { challenge: Not(IsNull()), courseId },
     });
+
+    challenges.forEach((item) => {
+      delete item.user.password;
+    });
     return new PageableDTO<CourseTaken>({
       content: challenges,
       totalElements: count,
