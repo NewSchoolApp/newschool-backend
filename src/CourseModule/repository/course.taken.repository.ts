@@ -125,6 +125,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
       where: { challenge: Not(IsNull()), courseId },
       take: limit,
       skip: limit * (page - 1),
+      relations: ['user'],
     });
   }
 
