@@ -8,7 +8,7 @@ import { TimeRangeEnum } from '../enum/time-range.enum';
 import { RankingDTO } from '../dto/ranking.dto';
 import { UserService } from '../../UserModule/service/user.service';
 import { UploadService } from '../../UploadModule/service/upload.service';
-import { Pageable, PageableDTO } from '../../CommonsModule/dto/pageable.dto';
+import { Pageable } from '../../CommonsModule/dto/pageable.dto';
 import { RankingQueryDTO } from '../dto/ranking-query.dto';
 
 @Injectable()
@@ -61,9 +61,16 @@ export class GameficationService {
 
   public async getUserRanking(
     userId: string,
-    timeRange: TimeRangeEnum,
+    options: {
+      timeRange;
+      limit;
+      page;
+      institutionName;
+      city;
+      state;
+    },
   ): Promise<RankingDTO> {
     await this.userService.findById(userId);
-    return this.achivementRepository.getUserRanking(userId, timeRange);
+    return this.achivementRepository.getUserRanking(userId, options);
   }
 }

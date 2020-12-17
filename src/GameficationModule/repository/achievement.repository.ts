@@ -309,13 +309,51 @@ export class AchievementRepository extends Repository<Achievement> {
 
   public async getUserRanking(
     userId: string,
-    timeRange: TimeRangeEnum,
+    {
+      timeRange,
+      limit,
+      institutionName,
+      page,
+      city,
+      state,
+    }: {
+      timeRange;
+      limit;
+      page;
+      institutionName;
+      city;
+      state;
+    },
   ): Promise<RankingDTO> {
+    let institutionQuery = ``;
     const timeRangeMethod =
       timeRange === TimeRangeEnum.MONTH ? 'MONTH' : 'YEAR';
     const timeRangeQuery = `
       AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
     `;
+    const limitQuery = `LIMIT ${mysql.escape(limit)} OFFSET ${mysql.escape(
+      limit * (page - 1),
+    )}`;
+    let cityQuery = ``;
+    let stateQuery = ``;
+
+    if (institutionName) {
+      institutionQuery = `
+      and c2.institutionName = ${mysql.escape(institutionName)}
+      `;
+    }
+
+    if (city) {
+      cityQuery = `
+      AND c2.city = ${mysql.escape(city)}
+      `;
+    }
+
+    if (state) {
+      stateQuery = `
+      AND c2.state = ${mysql.escape(state)}
+      `;
+    }
     const params = [userId];
     const derivedTable = `
     SELECT c2.id as 'userId', c2.name as 'userName', SUM(a2.points) as 'points' FROM achievement a2
@@ -323,7 +361,7 @@ export class AchievementRepository extends Repository<Achievement> {
       on a2.badgeId = b2.id
       inner join user c2
       on a2.userId = c2.id
-      WHERE a2.completed = 1 ${timeRangeQuery}
+      WHERE a2.completed = 1 ${timeRangeQuery} ${institutionQuery} ${cityQuery} ${stateQuery}
       GROUP by a2.userId
       order by points DESC
     `;
@@ -349,6 +387,7 @@ export class AchievementRepository extends Repository<Achievement> {
     FROM
       (${derivedTable})
     AS t WHERE t.userId = ?
+    ${limitQuery}
     `,
       params,
     );
