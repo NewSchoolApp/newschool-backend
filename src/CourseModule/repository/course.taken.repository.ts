@@ -109,10 +109,7 @@ export class CourseTakenRepository extends Repository<CourseTaken> {
     const challenges = await this.findChallengesByCourseId(courseId, options);
     const count = await this.count({
       where: { challenge: Not(IsNull()), courseId },
-    });
-
-    challenges.forEach((item) => {
-      delete item.user.password;
+      relations: ['user'],
     });
     return new PageableDTO<CourseTaken>({
       content: challenges,
