@@ -22,6 +22,7 @@ import { UserIdParam } from '../../../CommonsModule/guard/student-metadata.guard
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 import { ChallengeDTO } from '../../../GameficationModule/dto/challenge.dto';
 import { PageableDTO } from '../../../CommonsModule/dto/pageable.dto';
+import { CourseTakenDTO } from 'src/CourseModule/dto/course-taken.dto';
 
 @ApiTags('CourseTakenV2')
 @ApiBearerAuth()
@@ -128,7 +129,7 @@ export class CourseTakenV2Controller {
     @Param('courseId') courseId: string,
     @Query('limit') limit = 10,
     @Query('page') page = 1,
-  ): Promise<PageableDTO<CourseTaken>> {
+  ): Promise<PageableDTO<CourseTakenDTO>> {
     return await this.service.findChallenges(courseId, { limit, page });
   }
 }

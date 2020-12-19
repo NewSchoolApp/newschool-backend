@@ -20,7 +20,9 @@ import {
 } from '../../dto/current-step.dto';
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 import { ChallengeDTO } from '../../../GameficationModule/dto/challenge.dto';
-import { Pageable } from '../../../CommonsModule/dto/pageable.dto';
+import { Pageable, PageableDTO } from '../../../CommonsModule/dto/pageable.dto';
+import { UserMapper } from '../../../UserModule/mapper/user.mapper';
+import { CourseTakenDTO } from '../../dto/course-taken.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
@@ -28,6 +30,7 @@ export class CourseTakenV2Service {
     private readonly cmsIntegration: CmsIntegration,
     private readonly repository: CourseTakenRepository,
     private readonly publisherService: PublisherService,
+    private readonly userMapper: UserMapper,
   ) {}
 
   public async getAllByUserId(userId: string): Promise<CourseTaken[]> {
@@ -208,14 +211,29 @@ export class CourseTakenV2Service {
     return await this.repository.save(payloadToInsert);
   }
 
-  public findChallenges(
+  public async findChallenges(
     courseId: string,
     { limit, page }: { limit: number; page: number },
-  ): Promise<Pageable<CourseTaken>> {
-    return this.repository.findChallengesByCourseIdPaginated(courseId, {
-      limit,
-      page,
-    });
+  ): Promise<Pageable<CourseTakenDTO>> {
+    const challengesPaginated: PageableDTO<CourseTaken> = await this.repository.findChallengesByCourseIdPaginated(
+      courseId,
+      {
+        limit,
+        page,
+      },
+    );
+
+    return {
+      ...challengesPaginated,
+      content: await Promise.all(
+        challengesPaginated.content.map(async (challenge) => {
+          return {
+            ...challenge,
+            user: await this.userMapper.toDtoAsync(challenge.user),
+          };
+        }),
+      ),
+    };
   }
 
   private async findByUserIdAndCourseId(
