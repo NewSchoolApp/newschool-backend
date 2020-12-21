@@ -105,7 +105,7 @@ export class CourseTakenV2Service {
     );
 
     const nextTest: CMSTestDTO = tests.filter(
-      (test) => test.ordem > currentTest.ordem,
+      (test) => test.ordem > currentTest?.ordem ?? 0,
     )[0];
 
     if (nextTest) {
@@ -385,12 +385,5 @@ export class CourseTakenV2Service {
     completion += percentualPerTest * currentTestSequenceNumber;
 
     return completion > 100 ? 100 : completion;
-  }
-
-  private getNextSequenceNumber(step): number {
-    if (!step) {
-      return 1;
-    }
-    return step.ordem + 1;
   }
 }

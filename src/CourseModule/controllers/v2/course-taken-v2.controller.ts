@@ -51,10 +51,10 @@ export class CourseTakenV2Controller {
   }
 
   @Post('advance-on-course/user/:userId/course/:courseId')
-  @UserIdParam('userId')
-  @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.STUDENT)
-  @UseGuards(RoleGuard)
+  // @UserIdParam('userId')
+  // @UseGuards(StudentGuard)
+  // @NeedRole(RoleEnum.STUDENT)
+  // @UseGuards(RoleGuard)
   public async updateCourseStatus(
     @Param('userId') userId: string,
     @Param('courseId', ParseIntPipe) courseId: number,
