@@ -54,6 +54,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getLessonsByCourseId(
     courseId: number,
+    options: { _sort?: string } = {},
   ): Promise<AxiosResponse<CMSLessonDTO[]>> {
     const url = `${this.cmsUrl}/aulas`;
     const headers = {
@@ -62,6 +63,7 @@ export class CmsIntegration implements OnModuleInit {
     const params = {
       _limit: -1,
       'curso.id': courseId,
+      ...options,
     };
     const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSLessonDTO[]>(url, config).toPromise();
@@ -80,6 +82,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getPartsByLessonId(
     courseId: number,
+    options: { _sort?: string } = {},
   ): Promise<AxiosResponse<CMSPartDTO[]>> {
     const url = `${this.cmsUrl}/partes`;
     const headers = {
@@ -88,6 +91,7 @@ export class CmsIntegration implements OnModuleInit {
     const params = {
       _limit: -1,
       'aula.id': courseId,
+      ...options,
     };
     const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSPartDTO[]>(url, config).toPromise();
@@ -104,6 +108,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getTestsByPartId(
     partId: number,
+    options: { _sort?: string } = {},
   ): Promise<AxiosResponse<CMSTestDTO[]>> {
     const url = `${this.cmsUrl}/exercicios`;
     const headers = {
@@ -112,6 +117,7 @@ export class CmsIntegration implements OnModuleInit {
     const params = {
       _limit: -1,
       'parte.id': partId,
+      ...options,
     };
     const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSTestDTO[]>(url, config).toPromise();

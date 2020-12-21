@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
@@ -26,6 +27,8 @@ import { CourseTakenDTO } from '../../dto/course-taken.dto';
 
 @Injectable()
 export class CourseTakenV2Service {
+  private readonly logger = new Logger(CourseTakenV2Service.name);
+
   constructor(
     private readonly cmsIntegration: CmsIntegration,
     private readonly repository: CourseTakenRepository,
@@ -64,6 +67,7 @@ export class CourseTakenV2Service {
       if (e.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('User is already enrolled in this course');
       }
+      this.logger.log(e);
       throw new InternalServerErrorException();
     }
   }
@@ -86,15 +90,18 @@ export class CourseTakenV2Service {
       data: tests,
     }: AxiosResponse<CMSTestDTO[]> = await this.cmsIntegration.getTestsByPartId(
       courseTaken.currentPartId,
+      {
+        _sort: 'ordem:asc',
+      },
     );
 
     const currentTest: CMSTestDTO = tests.find(
       (test) => test.id == courseTaken.currentTestId,
     );
-    const nextTestOrderNumber = this.getNextSequenceNumber(currentTest);
-    const nextTest: CMSTestDTO = tests.find(
-      (test) => test.ordem === nextTestOrderNumber,
-    );
+
+    const nextTest: CMSTestDTO = tests.filter(
+      (test) => test.ordem > currentTest.ordem,
+    )[0];
 
     if (nextTest) {
       const updatedCourseTaken = { ...courseTaken, currentTestId: nextTest.id };
@@ -111,15 +118,16 @@ export class CourseTakenV2Service {
       CMSPartDTO[]
     > = await this.cmsIntegration.getPartsByLessonId(
       courseTaken.currentLessonId,
+      { _sort: 'ordem:asc' },
     );
 
     const currentPart: CMSPartDTO = parts.find(
       (part) => part.id == courseTaken.currentPartId,
     );
-    const nextPartOrderNumber = this.getNextSequenceNumber(currentPart);
+
     const nextPart: CMSPartDTO = parts.find(
-      (part) => part.ordem === nextPartOrderNumber,
-    );
+      (part) => part.ordem > currentPart.ordem,
+    )[0];
 
     if (nextPart) {
       const updatedCourseTaken = {
@@ -138,15 +146,17 @@ export class CourseTakenV2Service {
       data: lessons,
     }: AxiosResponse<
       CMSLessonDTO[]
-    > = await this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId);
+    > = await this.cmsIntegration.getLessonsByCourseId(courseTaken.courseId, {
+      _sort: 'ordem:asc',
+    });
 
     const currentLesson: CMSLessonDTO = lessons.find(
       (lesson) => lesson.id == courseTaken.currentLessonId,
     );
-    const nextLessonOrderNumber = this.getNextSequenceNumber(currentLesson);
+
     const nextLesson: CMSLessonDTO = lessons.find(
-      (lesson) => lesson.ordem === nextLessonOrderNumber,
-    );
+      (lesson) => lesson.ordem > currentLesson.ordem,
+    )[0];
 
     if (nextLesson) {
       const updatedCourseTaken = {
