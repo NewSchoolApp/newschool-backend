@@ -105,7 +105,7 @@ export class CourseTakenV2Service {
     );
 
     const nextTest: CMSTestDTO = tests.filter(
-      (test) => test.ordem > currentTest?.ordem ?? 0,
+      (test) => test.ordem > (currentTest?.ordem ?? 0),
     )[0];
 
     if (nextTest) {
