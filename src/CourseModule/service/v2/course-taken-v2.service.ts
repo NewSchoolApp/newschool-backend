@@ -130,7 +130,7 @@ export class CourseTakenV2Service {
       (part) => part.id == courseTaken.currentPartId,
     );
 
-    const nextPart: CMSPartDTO = parts.find(
+    const nextPart: CMSPartDTO = parts.filter(
       (part) => part.ordem > currentPart.ordem,
     )[0];
 
@@ -159,7 +159,7 @@ export class CourseTakenV2Service {
       (lesson) => lesson.id == courseTaken.currentLessonId,
     );
 
-    const nextLesson: CMSLessonDTO = lessons.find(
+    const nextLesson: CMSLessonDTO = lessons.filter(
       (lesson) => lesson.ordem > currentLesson.ordem,
     )[0];
 
