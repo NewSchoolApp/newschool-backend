@@ -45,13 +45,18 @@ export class CourseTakenV2Service {
       data: lessons,
     }: AxiosResponse<
       CMSLessonDTO[]
-    > = await this.cmsIntegration.getLessonsByCourseId(courseId);
-    const firstLesson = lessons.find((lesson) => lesson.ordem === 1);
+    > = await this.cmsIntegration.getLessonsByCourseId(courseId, {
+      _sort: 'ordem:asc',
+    });
+    const firstLesson = lessons[0];
 
     const { data: parts } = await this.cmsIntegration.getPartsByLessonId(
       firstLesson.id,
+      {
+        _sort: 'ordem:asc',
+      },
     );
-    const firstPart = parts.find((part) => part.ordem === 1);
+    const firstPart = parts[0];
 
     try {
       await this.repository.save({
