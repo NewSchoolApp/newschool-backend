@@ -105,7 +105,7 @@ export class CourseTakenV2Service {
     );
 
     const nextTest: CMSTestDTO = tests.filter(
-      (test) => test.ordem > currentTest.ordem,
+      (test) => test?.ordem > currentTest.ordem,
     )[0];
 
     if (nextTest) {
@@ -131,7 +131,7 @@ export class CourseTakenV2Service {
     );
 
     const nextPart: CMSPartDTO = parts.find(
-      (part) => part.ordem > currentPart.ordem,
+      (part) => part?.ordem > currentPart.ordem,
     )[0];
 
     if (nextPart) {
@@ -160,7 +160,7 @@ export class CourseTakenV2Service {
     );
 
     const nextLesson: CMSLessonDTO = lessons.find(
-      (lesson) => lesson.ordem > currentLesson.ordem,
+      (lesson) => lesson?.ordem > currentLesson.ordem,
     )[0];
 
     if (nextLesson) {
