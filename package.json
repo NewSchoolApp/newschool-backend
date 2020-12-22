@@ -57,7 +57,7 @@
     "rimraf": "3.0.2",
     "rxjs": "6.6.3",
     "slugify": "1.4.6",
-    "swagger-ui-express": "4.1.5",
+    "swagger-ui-express": "4.1.6",
     "typeorm": "0.2.29",
     "typeorm-transactional-cls-hooked": "0.1.19",
     "uuid": "8.3.2"
