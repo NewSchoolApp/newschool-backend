@@ -25,4 +25,5 @@ export class Part {
   aula: number;
   exercicio: string;
   video: string;
+  videoUrl: string;
 }

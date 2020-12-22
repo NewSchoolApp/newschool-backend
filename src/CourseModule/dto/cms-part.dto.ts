@@ -7,8 +7,8 @@ export class CMSPartDTO {
   'created_at': Date;
   'updated_at': Date;
   aula: Aula;
-  exercicio: string;
   video: string;
+  videoUrl: string;
   exercicios: Exercicio[];
 }
 
