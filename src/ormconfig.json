@@ -1,14 +1,14 @@
 {
   "type": "mysql",
-  "host": "mysql.newschoolapp.com.br",
+  "host": "0.0.0.0",
   "port": 3306,
-  "username": "newschool_dev",
+  "username": "mysql",
   "password": "t^ECX@i.@Im4",
-  "database": "newschool_dev",
+  "database": "mysql",
   "entities": ["src/**/entity/**/*.ts"],
   "migrationsTableName": "migration",
   "migrations": ["src/migrations/*.ts"],
-  "synchronize": false,
+  "synchronize": true,
   "cli": {
     "migrationsDir": "src/migration"
   }

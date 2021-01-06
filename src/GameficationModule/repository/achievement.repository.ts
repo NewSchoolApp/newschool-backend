@@ -414,7 +414,7 @@ export class AchievementRepository extends Repository<Achievement> {
       AND
         rule->>"$.month" = ?
       AND
-        rule->>"$.year"
+        rule->>"$.year" = ?
     `,
       [
         EventNameEnum.USER_REWARD_TOP_MONTH,
