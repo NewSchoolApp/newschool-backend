@@ -1,6 +1,6 @@
-FROM node:12
+FROM node:12.18.1-alpine
 
-WORKDIR /newschool
+WORKDIR /usr/app
 
 COPY package*.json ./
 

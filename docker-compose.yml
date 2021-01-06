@@ -3,11 +3,27 @@ version: "3"
 services:
   web:
     build: .
-    restart: always
-    command: npm run start:dev
+    container_name: "api-newschool"
+    command: sh ./dev.sh
     volumes:
-      - './:/newschool'
+      - .:/usr/app
     ports:
       - "3000:3000"
+    links:
+      - db
+
+    depends_on:
+      - db
     environment:
       NODE_ENV: "development"
+  db:
+    image: mysql
+    container_name: db-newschool
+    ports:
+      - "5432:5432"
+    environment:
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_NAME=${DATABASE_NAME}
+networks:
+  overlay:
