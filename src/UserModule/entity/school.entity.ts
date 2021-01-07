@@ -1,10 +1,5 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
-
 
 @Entity()
 export class School {
@@ -12,7 +7,7 @@ export class School {
   @Expose()
   id: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   @Expose()
   school: string;
 
