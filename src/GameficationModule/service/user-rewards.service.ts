@@ -295,7 +295,13 @@ export class UserRewardsService implements OnModuleInit {
       eventName: EventNameEnum.USER_REWARD_TOP_MONTH,
       badge,
       user: { id: user.userId },
-      rule: { month: new Date().getMonth(), year: new Date().getFullYear() },
+      rule: {
+        month: new Date().getMonth() === 0 ? 12 : new Date().getMonth() + 1,
+        year:
+          new Date().getMonth() === 0
+            ? new Date().getFullYear() - 1
+            : new Date().getFullYear(),
+      },
       completed: true,
       points: badge.points,
     });
