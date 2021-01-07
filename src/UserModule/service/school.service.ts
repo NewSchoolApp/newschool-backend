@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { School } from '../dto/school.dto';
 import { School as SchoolEntity } from '../entity/school.entity';
 
@@ -13,6 +13,6 @@ export class SchoolService {
   ) {}
 
   public async getUserSchool(name: string): Promise<School[]> {
-    return await this.repository.find({ where: { school: name } });
+    return await this.repository.find({ where: { school: Like(`%${name}`) } });
   }
 }
