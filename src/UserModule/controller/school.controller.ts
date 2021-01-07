@@ -32,8 +32,7 @@ export class SchoolController {
   @CacheTTL(secondsInADay)
   public async getSchool(
     @Query('name') name = '',
-    @Query('cityId') cityId = '',
   ): Promise<School[]> {
-    return await this.service.getUserSchool(name, cityId);
+    return await this.service.getUserSchool(name);
   }
 }
