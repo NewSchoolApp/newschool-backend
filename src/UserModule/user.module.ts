@@ -18,12 +18,14 @@ import { StateService } from './service/state.service';
 import { StateController } from './controller/state.controller';
 import { SemearService } from './service/semear.service';
 import { NotificationModule } from '../NotificationModule/notification.module';
+import { School } from './entity/school.entity';
 
 @Module({
   imports: [
     CacheModule.register(),
     TypeOrmModule.forFeature([
       User,
+      School,
       UserRepository,
       ChangePassword,
       ChangePasswordRepository,
