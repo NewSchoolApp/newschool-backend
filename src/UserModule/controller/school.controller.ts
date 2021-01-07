@@ -30,9 +30,7 @@ export class SchoolController {
   @UseGuards(RoleGuard)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)
-  public async getSchool(
-    @Query('name') name = '',
-  ): Promise<School[]> {
+  public async getSchool(@Query('name') name = ''): Promise<School[]> {
     return await this.service.getUserSchool(name);
   }
 }
