@@ -396,7 +396,7 @@ export class AchievementRepository extends Repository<Achievement> {
 
   public checkIfHasTopRankForLastMonth(): Promise<any[]> {
     const lastTopMonthRankMonth =
-      new Date().getMonth() === 0 ? 12 : new Date().getMonth();
+      new Date().getMonth() === 0 ? 12 : new Date().getMonth() + 1;
     const lastTopMonthRankYear =
       new Date().getMonth() === 0
         ? new Date().getFullYear() - 1
