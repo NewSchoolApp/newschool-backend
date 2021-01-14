@@ -262,8 +262,7 @@ export class UserController {
   })
   @ApiNotFoundResponse({ description: 'thrown if user is not found' })
   @ApiUnauthorizedResponse({
-    description:
-      'thrown if there is not an authorization token or if authorization token does not have ADMIN role',
+    description: `throw if there is not an authorization token, if authorization token does not have STUDENT role or if the id param is different from the user id`,
   })
   @UserIdParam('id')
   @UseGuards(StudentGuard)
