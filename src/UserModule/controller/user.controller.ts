@@ -267,7 +267,7 @@ export class UserController {
   })
   @UserIdParam('id')
   @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
   public async changeUserPassword(
     @Param('id') id: string,
