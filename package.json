@@ -74,7 +74,7 @@
     "@types/node": "13.13.39",
     "@types/nodemailer": "6.4.0",
     "@types/passport-jwt": "3.0.3",
-    "@types/pubsub-js": "1.8.1",
+    "@types/pubsub-js": "1.8.2",
     "@types/supertest": "2.0.10",
     "@typescript-eslint/eslint-plugin": "4.13.0",
     "@typescript-eslint/parser": "4.13.0",
