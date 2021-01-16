@@ -38,6 +38,18 @@ export class NotificationService {
     );
   }
 
+  public async getSemearNotSeenAndEanbledNotificationByUserId(
+    userId: string,
+  ): Promise<Notification> {
+    const otherNotSeenNotifications = await this.repository.getOtherNotificationsByUserId(
+      userId,
+    );
+    return otherNotSeenNotifications.find((notification) => {
+      const content = JSON.parse(notification.content as string);
+      return content.semearSiteUrl != null;
+    });
+  }
+
   public async setSeeNotification(id: string): Promise<void> {
     const notification = await this.findById(id);
     await this.repository.save({ ...notification, enabled: false, seen: true });
