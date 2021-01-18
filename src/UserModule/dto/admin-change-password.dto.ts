@@ -5,6 +5,11 @@ export class AdminChangePasswordDTO {
   @IsNotEmpty()
   @IsString()
   @Expose()
+  oldPassword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   newPassword: string;
 
   @IsNotEmpty()
