@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { Notification } from '../entity/notification.entity';
 import { InjectConnection } from '@nestjs/typeorm';
-import { NotificationService } from '../service/notification.service';
 import { PusherService } from '../service/pusher.service';
 
 @EventSubscriber()
