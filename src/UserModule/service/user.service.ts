@@ -227,12 +227,17 @@ export class UserService {
     id: string,
     changePasswordDTO: AdminChangePasswordDTO,
   ): Promise<User> {
-    if (
-      changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword
-    ) {
-      throw new BadRequestException('New passwords does not match');
-    }
+    if (changePasswordDTO.newPassword !== changePasswordDTO.confirmNewPassword)
+      throw new BadRequestException('New passwords are not the same');
     const user: User = await this.findById(id);
+    const oldPassword = this.createHashedPassword(
+      changePasswordDTO.oldPassword,
+      user.salt,
+    );
+    if (oldPassword !== user.password)
+      throw new BadRequestException(
+        'Old password does not match with current password',
+      );
     user.salt = this.createSalt();
     user.password = this.createHashedPassword(
       changePasswordDTO.newPassword,

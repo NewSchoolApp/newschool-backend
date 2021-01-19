@@ -10,6 +10,7 @@ import { CourseNpsRewardDTO } from '../dto/course-nps-reward.dto';
 import { CourseTakenRepository } from '../../CourseModule/repository/course.taken.repository';
 import { Achievement } from '../entity/achievement.entity';
 import { CMSTestDTO } from '../../CourseModule/dto/cms-test.dto';
+import { Badge } from '../entity/badge.entity';
 
 export interface TestTry {
   chosenAlternative: string;
@@ -112,7 +113,6 @@ export class CourseRewardsService implements OnModuleInit {
     );
 
     if (achievement?.completed) return;
-    if (achievement?.rule?.try >= 4) return;
 
     if (!achievement) {
       achievement = {
@@ -135,7 +135,9 @@ export class CourseRewardsService implements OnModuleInit {
     const answerIsRight =
       chosenAlternative.toLowerCase() === test.alternativa_certa.toLowerCase();
 
-    const badge = await points[achievement.rule.try]();
+    const badge: Badge = await points[
+      achievement.rule.try > 4 ? 4 : achievement.rule.try
+    ]();
 
     await this.achievementRepository.save({
       ...achievement,
