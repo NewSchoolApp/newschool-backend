@@ -13,6 +13,6 @@ export class SchoolService {
   ) {}
 
   public async getUserSchool(name: string): Promise<School[]> {
-    return await this.repository.find({ where: { school: Like(`%${name}`) } });
+    return await this.repository.find({ where: { school: Like(`%${name}%`) } });
   }
 }
