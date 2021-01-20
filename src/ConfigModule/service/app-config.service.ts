@@ -141,6 +141,7 @@ export class AppConfigService {
       password: this.databasePassword,
       synchronize: this.synchronize || false,
       logging: this.logging,
+      charset: 'utf8mb4_unicode_ci',
     };
   }
 
