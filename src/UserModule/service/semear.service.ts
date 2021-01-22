@@ -31,7 +31,7 @@ export class SemearService implements OnModuleInit {
       return;
 
     const userHasSemearFile = await this.uploadService.fileExists(
-      `/semear/${user.id}`,
+      `/semear/${user.id}.json`,
     );
     if (userHasSemearFile) return;
 
