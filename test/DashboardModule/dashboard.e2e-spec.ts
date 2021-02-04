@@ -20,12 +20,13 @@ import { CourseTakenStatusEnum } from '../../src/CourseModule/enum/course-taken-
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
 import { OrderEnum } from '../../src/CommonsModule/enum/order.enum';
 import { REQUEST } from '@nestjs/core';
-import { CourseTakenService } from '../../src/CourseModule/service/v1/course-taken.service';
-import { CourseTakenRepository } from '../../src/CourseModule/repository/course.taken.repository';
+import { RoleGuard } from '../../src/CommonsModule/guard/role.guard';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
+
+const roleGuardMock = { CanActivate: true };
 
 describe('DashboardController (e2e)', () => {
   let app: INestApplication;
@@ -49,6 +50,8 @@ describe('DashboardController (e2e)', () => {
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkQXQiOiIyMDIwLTA4LTI3VDEzOjM5OjA5LjkzN1oiLCJ1cGRhdGVkQXQiOiIyMDIwLTA4LTI3VDEzOjM5OjA5LjkzN1oiLCJ2ZXJzaW9uIjoxLCJpZCI6IjUyNTM4YWI5LThlMzAtNGViYS04ZGVhLTkwYTJlNDJlMzViNSIsIm5hbWUiOiJMZW9uYXJkbyAiLCJlbWFpbCI6Imxlb0BsZW8uY29tIiwicHJvZmlsZSI6IlNUVURFTlQiLCJwYXNzd29yZCI6IjVjOGVhMjVkNzFlMmU3NDE2M2VmYmU3NzkxYjM4OTFiZmJlZGYxOWNiMmExMTFlM2I3Y2ZhZTc4YjE0NTY0YjgxN2ZjYjMyNmZkMzVkM2Q1OTlhODI3OGE4OTk3ZDNiOGJjMjlkMTQ3NDk4MGI5ODc2NjdlNmQ4NWE3ODI3NzM3Iiwibmlja25hbWUiOiJMZW8iLCJiaXJ0aGRheSI6IjE5OTgtMTItMjZUMDI6MDA6MDAuMDAwWiIsImdlbmRlciI6Ik1BTEUiLCJzY2hvb2xpbmciOiJGQUNVTERBREVfQ1VSU0FORE8iLCJpbnN0aXR1dGlvbk5hbWUiOiJHRVJBTERJTk8gRE9TIFNBTlRPUyBERVBVVEFETyIsInByb2Zlc3Npb24iOiJEZXNlbnZvbHZlZG9yIiwiYWRkcmVzcyI6IkphcmRpbSBzYW50byBhbmRyw6ksIFPDo28gUGF1bG8gLSBTw6NvIFBhdWxvLCBCcmFzaWwiLCJ1cmxGYWNlYm9vayI6IiIsInVybEluc3RhZ3JhbSI6IiIsInNhbHQiOiIzOGVhZDJiNmJlZTczZTA3MDI3NjIwNTQyZDQ3ZWIxMiIsImVuYWJsZWQiOmZhbHNlLCJmYWNlYm9va0lkIjpudWxsLCJnb29nbGVTdWIiOm51bGwsInJvbGUiOnsiY3JlYXRlZEF0IjoiMjAyMC0wOC0xMVQxMjo1MDowNS40NTdaIiwidXBkYXRlZEF0IjoiMjAyMC0wOC0xMVQxMjo1MDowNS40NTdaIiwidmVyc2lvbiI6MSwiaWQiOiIxMDJmYmY4Ni1iNmVlLTQwMWYtODViNC0wZDM3MTNkMjkzOGYiLCJuYW1lIjoiQURNSU4ifSwiaWF0IjoxNjAxMzQ0MjYxLCJleHAiOjE2MDEzNDc4NjF9.w9EI130lFaR4aEIw6EcnvEW7nmCsiKK2FTD9e9cPRig',
         },
       })
+      .overrideGuard(RoleGuard)
+      .useValue(roleGuardMock)
       .compile();
 
     initializeTransactionalContext();

@@ -12,6 +12,9 @@ import { RoleEnum } from '../../src/SecurityModule/enum/role.enum';
 import { ClientCredentials } from '../../src/SecurityModule/entity/client-credentials.entity';
 import { ClientCredentialsEnum } from '../../src/SecurityModule/enum/client-credentials.enum';
 import { Constants } from '../../src/CommonsModule/constants';
+import { RoleGuard } from '../../src/CommonsModule/guard/role.guard';
+
+const roleGuardMock = { CanActivate: true };
 
 describe('UploadController (e2e)', () => {
   let app: INestApplication;
@@ -22,7 +25,10 @@ describe('UploadController (e2e)', () => {
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideGuard(RoleGuard)
+      .useValue(roleGuardMock)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());

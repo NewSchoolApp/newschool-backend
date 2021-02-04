@@ -14,10 +14,13 @@ import { ContactUsDTO } from '../../src/MessageModule/dto/contactus.dto';
 import { MailerService } from '@nest-modules/mailer';
 import { initializeTransactionalContext } from 'typeorm-transactional-cls-hooked';
 import { Constants } from '../../src/CommonsModule/constants';
+import { RoleGuard } from '../../src/CommonsModule/guard/role.guard';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
+
+const roleGuardMock = { CanActivate: true };
 
 describe('MessageController (e2e)', () => {
   let app: INestApplication;
@@ -39,6 +42,8 @@ describe('MessageController (e2e)', () => {
     })
       .overrideProvider(MailerService)
       .useValue(mailerServiceMock)
+      .overrideGuard(RoleGuard)
+      .useValue(roleGuardMock)
       .compile();
 
     initializeTransactionalContext();
