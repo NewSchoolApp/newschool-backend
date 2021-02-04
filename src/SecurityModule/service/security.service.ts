@@ -7,13 +7,11 @@ import {
 import * as Sentry from '@sentry/node';
 import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
 import { ClientCredentials } from '../entity/client-credentials.entity';
-import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
 import { classToPlain } from 'class-transformer';
 import { UserService } from '../../UserModule/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../../UserModule/entity/user.entity';
-import { Transactional } from 'typeorm-transactional-cls-hooked';
 import { FacebookAuthUserDTO } from '../dto/facebook-auth-user.dto';
 import { ClientCredentialsRepository } from '../repository/client-credentials.repository';
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
@@ -41,7 +39,7 @@ export class SecurityService {
       this.base64ToString(base64Login),
     );
     const clientCredentials: ClientCredentials = await this.findClientCredentialsByNameAndSecret(
-      ClientCredentialsEnum[name],
+      name,
       secret,
       GrantTypeEnum.CLIENT_CREDENTIALS,
     );
@@ -50,7 +48,6 @@ export class SecurityService {
     });
   }
 
-  @Transactional()
   public decodeToken(jwt: string): ClientCredentials | User {
     return this.jwtService.verify<ClientCredentials | User>(jwt);
   }
@@ -63,7 +60,6 @@ export class SecurityService {
     return Buffer.from(base64Login, 'base64').toString('ascii');
   }
 
-  @Transactional()
   public async validateUserCredentials(
     base64Login: string,
     username: string,
@@ -73,7 +69,7 @@ export class SecurityService {
       this.base64ToString(base64Login),
     );
     const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      ClientCredentialsEnum[name],
+      name,
       secret,
       GrantTypeEnum.PASSWORD,
     );
@@ -95,7 +91,7 @@ export class SecurityService {
       this.base64ToString(base64Login),
     );
     const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      ClientCredentialsEnum[name],
+      name,
       secret,
       GrantTypeEnum.PASSWORD,
     );
@@ -131,7 +127,7 @@ export class SecurityService {
       this.base64ToString(base64Login),
     );
     const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      ClientCredentialsEnum[name],
+      name,
       secret,
       GrantTypeEnum.PASSWORD,
     );
@@ -157,7 +153,6 @@ export class SecurityService {
     });
   }
 
-  @Transactional()
   public async refreshToken(
     base64Login: string,
     refreshToken: string,
@@ -166,7 +161,7 @@ export class SecurityService {
       this.base64ToString(base64Login),
     );
     const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      ClientCredentialsEnum[name],
+      name,
       secret,
       GrantTypeEnum.REFRESH_TOKEN,
     );
@@ -202,6 +197,7 @@ export class SecurityService {
     authenticatedUser: ClientCredentials | User,
     { accessTokenValidity, refreshTokenValidity }: GenerateLoginObjectOptions,
   ): GeneratedTokenDTO {
+    console.log('usuario', authenticatedUser);
     let loginObject: GeneratedTokenDTO = {
       accessToken: this.jwtService.sign(classToPlain(authenticatedUser), {
         expiresIn: accessTokenValidity,
@@ -223,7 +219,7 @@ export class SecurityService {
   }
 
   private async findClientCredentialsByNameAndSecret(
-    name: ClientCredentialsEnum,
+    name: string,
     secret: string,
     grantType: GrantTypeEnum,
   ): Promise<ClientCredentials> {

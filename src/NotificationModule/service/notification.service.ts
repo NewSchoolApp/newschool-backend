@@ -4,6 +4,7 @@ import { NotificationTypeEnum } from '../enum/notification-type.enum';
 import { Notification } from '../entity/notification.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
+import { CreateNotificationDTO } from '../dto/create-notification.dto';
 
 @Injectable()
 export class NotificationService {
@@ -61,5 +62,17 @@ export class NotificationService {
       throw new NotFoundException('Notification not found');
     }
     return response[0];
+  }
+
+  public async addNotificationToUser(
+    userId: string,
+    notification: CreateNotificationDTO,
+  ): Promise<Notification> {
+    return this.repository.save({
+      ...notification,
+      user: { id: userId },
+      seen: false,
+      enabled: true,
+    });
   }
 }

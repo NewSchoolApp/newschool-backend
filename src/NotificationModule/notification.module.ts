@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entity/notification.entity';
 import { NotificationRepository } from './repository/notification.repository';
@@ -7,7 +7,10 @@ import { NotificationController } from './controller/notification.controller';
 import { PusherService } from './service/pusher.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Notification, NotificationRepository])],
+  imports: [
+    TypeOrmModule.forFeature([Notification, NotificationRepository]),
+    HttpModule,
+  ],
   controllers: [NotificationController],
   providers: [NotificationService, PusherService],
   exports: [NotificationService],

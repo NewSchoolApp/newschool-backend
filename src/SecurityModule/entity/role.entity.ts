@@ -1,21 +1,38 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RoleEnum } from '../enum/role.enum';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ClientCredentials } from './client-credentials.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
+import { Policy } from './policy.entity';
+import slugify from 'slugify';
 
 @Entity()
 export class Role extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  name: string;
+
   @Column({
-    type: 'enum',
-    enum: RoleEnum,
     nullable: false,
     unique: true,
   })
-  name: RoleEnum;
+  get slug(): string {
+    return slugify(this.name);
+  }
+
+  set slug(name: string) {}
+
+  @ManyToMany<Policy>(() => Policy, (policy) => policy.roles)
+  @JoinTable()
+  policies: Policy[];
 
   @OneToMany<ClientCredentials>(
     () => ClientCredentials,

@@ -1,22 +1,35 @@
-import { GrantTypeEnum } from '../enum/grant-type.enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ClientCredentialsEnum } from '../enum/client-credentials.enum';
-import { Role } from './role.entity';
-import { Audit } from '../../CommonsModule/entity/audit.entity';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Expose } from 'class-transformer';
+import slugify from 'slugify';
+import { Role } from './role.entity';
+import { GrantTypeEnum } from '../enum/grant-type.enum';
+import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity({ name: 'client-credentials' })
 export class ClientCredentials extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  name: string;
+
+  private _slug: string;
+
   @Column({
-    type: 'enum',
-    enum: ClientCredentialsEnum,
     nullable: false,
     unique: true,
   })
-  name: ClientCredentialsEnum;
+  get slug(): string {
+    return slugify(this.name);
+  }
+
+  set slug(name: string) {}
 
   @Column({ type: 'varchar' })
   secret: string;
@@ -42,13 +55,18 @@ export class ClientCredentials extends Audit {
   role: Role;
 
   @Expose()
-  get authorizedGrantTypes(): GrantTypeEnum[] {
+  get authorizedGrantTypes(): string[] {
     return this._authorizedGrantTypes
       .split(',')
-      .filter((grantType) => grantType) as GrantTypeEnum[];
+      .filter((grantType) => grantType);
   }
 
-  set authorizedGrantTypes(authorizedGrantTypes: GrantTypeEnum[]) {
+  set authorizedGrantTypes(authorizedGrantTypes: string[]) {
     this._authorizedGrantTypes = authorizedGrantTypes.join(',');
+  }
+
+  @BeforeInsert()
+  setId() {
+    this.slug = slugify(this.name);
   }
 }
