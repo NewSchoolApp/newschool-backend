@@ -20,13 +20,15 @@ import { AddCommentDTO } from '../../src/CourseModule/dto/add-comment.dto';
 import { UserService } from '../../src/UserModule/service/user.service';
 import { REQUEST } from '@nestjs/core';
 import { UploadService } from '../../src/UploadModule/service/upload.service';
-import { LikeCommentDTO } from '../../src/CourseModule/dto/like-comment.dto';
 import { CourseTaken } from '../../src/CourseModule/entity/course-taken.entity';
 import { ClapCommentDTO } from '../../src/CourseModule/dto/clap-comment.dto';
+import { RoleGuard } from '../../src/CommonsModule/guard/role.guard';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
+
+const roleGuardMock = { CanActivate: true };
 
 describe('CommentController (e2e)', () => {
   let app: INestApplication;
@@ -56,6 +58,8 @@ describe('CommentController (e2e)', () => {
           return Promise.resolve('photo url');
         },
       })
+      .overrideGuard(RoleGuard)
+      .useValue(roleGuardMock)
       .compile();
 
     initializeTransactionalContext();
