@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseRewardsService } from './service/course-rewards.service';
 import { PublisherService } from './service/publisher.service';
@@ -29,6 +29,7 @@ import { UploadModule } from '../UploadModule/upload.module';
       CourseTakenRepository,
       UserRepository,
     ]),
+    HttpModule,
     forwardRef(() => UserModule),
     forwardRef(() => CourseModule),
     UploadModule,

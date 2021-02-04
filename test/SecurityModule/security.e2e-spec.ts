@@ -28,6 +28,8 @@ const createHashedPassword = (password: string, salt: string): string => {
   return crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
 };
 
+const roleGuardMock = { CanActivate: true };
+
 describe('SecurityController (e2e)', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;

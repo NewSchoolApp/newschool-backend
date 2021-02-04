@@ -16,10 +16,13 @@ import { Constants } from '../../src/CommonsModule/constants';
 import { GenderEnum } from '../../src/UserModule/enum/gender.enum';
 import { EscolarityEnum } from '../../src/UserModule/enum/escolarity.enum';
 import { UserProfileEnum } from '../../src/UserModule/enum/user-profile.enum';
+import { RoleGuard } from '../../src/CommonsModule/guard/role.guard';
 
 const stringToBase64 = (string: string) => {
   return Buffer.from(string).toString('base64');
 };
+
+const roleGuardMock = { CanActivate: true };
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -33,7 +36,10 @@ describe('UserController (e2e)', () => {
   beforeAll(async () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideGuard(RoleGuard)
+      .useValue(roleGuardMock)
+      .compile();
 
     initializeTransactionalContext();
     app = moduleFixture.createNestApplication();

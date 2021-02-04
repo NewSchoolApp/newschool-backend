@@ -11,6 +11,9 @@ import { S3 } from 'aws-sdk';
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
 
+  securityOauthTokenDetailsUrl: string = this.configService.get<string>(
+    'SECURITY_OAUTH_TOKEN_DETAILS_URL',
+  );
   jwtSecret: string = this.configService.get<string>('JWT_SECRET');
   refreshTokenSecret: string = this.configService.get<string>(
     'REFRESH_TOKEN_SECRET',
