@@ -1,9 +1,19 @@
-import { Controller, Get, HttpCode, Param, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
+import { CreateNotificationDTO } from '../dto/create-notification.dto';
 
 @ApiBearerAuth()
 @ApiTags('Notification')
@@ -36,5 +46,14 @@ export class NotificationController {
     @Query('order') seen = false,
   ): Promise<Notification[]> {
     return this.service.getNotificationsByUserId(userId, order, enabled, seen);
+  }
+
+  @Post('/user/:userId')
+  @HttpCode(200)
+  public async addNotificationsToUser(
+    @Param('userId') userId: string,
+    @Body() notification: CreateNotificationDTO,
+  ): Promise<Notification> {
+    return this.service.addNotificationToUser(userId, notification);
   }
 }

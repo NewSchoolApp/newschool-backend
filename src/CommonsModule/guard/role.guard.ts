@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpService,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -17,10 +18,11 @@ export class RoleGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const roles: RoleEnum[] = this.reflector.get<RoleEnum[]>(
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const roles: string[] = this.reflector.get<string[]>(
       'roles',
       context.getHandler(),
     );
@@ -34,20 +36,24 @@ export class RoleGuard implements CanActivate {
 
     if (!authorizationHeader) return false;
 
-    const [, token] = authorizationHeader.split(' ');
     let user: User;
     try {
-      user = this.jwtService.verify<User>(token, {
-        secret: this.configService.jwtSecret,
-      });
+      const { data } = await this.httpService
+        .post(this.configService.securityOauthTokenDetailsUrl, null, {
+          headers: { authorization: authorizationHeader },
+        })
+        .toPromise();
+      user = data;
     } catch (e) {
-      if (e.name === 'TokenExpiredError') {
-        throw new UnauthorizedException(e.message);
-      }
-      throw new InternalServerErrorException(e);
+      throw new UnauthorizedException(e.message);
     }
     const hasPermission: boolean = roles.some(
-      (role) => role === user.role.name,
+      (role) =>
+        role === user.role.name ||
+        role === user.role.slug ||
+        user.role.policies.some(
+          (policy) => policy.name === role || policy.slug === role,
+        ),
     );
     return user?.role && hasPermission;
   }
