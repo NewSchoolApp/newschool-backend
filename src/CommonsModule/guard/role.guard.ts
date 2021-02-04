@@ -45,13 +45,13 @@ export class RoleGuard implements CanActivate {
         .toPromise();
       user = data;
     } catch (e) {
-      throw new UnauthorizedException(e.message);
+      throw new UnauthorizedException(e.data);
     }
     const hasPermission: boolean = roles.some(
       (role) =>
         role === user.role.name ||
         role === user.role.slug ||
-        user.role.policies.some(
+        user.role?.policies?.some(
           (policy) => policy.name === role || policy.slug === role,
         ),
     );
