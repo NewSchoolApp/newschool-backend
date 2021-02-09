@@ -3,7 +3,7 @@ image:
 
 ports:
   - port: 8080
-    onOpen: open-preview
+    onOpen: open-browser
 
 tasks:
   - init: cp ./.env.example ./.env && npm install && npm run build
