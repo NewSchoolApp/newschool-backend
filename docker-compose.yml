@@ -2,15 +2,22 @@ version: "3"
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
     volumes:
-      - .:/usr/app
+    # WARNING: If you're using Linux, you should create and change ownership of
+    # current docker-compose folder to user node and group node
+      - .:/opt/node_app/app:delegated
+      - ./package.json:/opt/node_app/package.json
+      - notused:/opt/node_app/app/node_modules
     ports:
       - 3000:8080
+      - 9229:9229
+    command: npm run start:debug
     depends_on:
       - db
-    environment:
-      NODE_ENV: "development"
   db:
     image: mysql:5.7.31
     ports:
@@ -19,3 +26,6 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_NAME=${DATABASE_NAME}
+
+volumes:
+  notused:
