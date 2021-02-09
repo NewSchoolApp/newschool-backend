@@ -1,0 +1,10 @@
+image:
+  file: .gitpod.Dockerfile
+
+ports:
+  - port: 8080
+    onOpen: open-browser
+
+tasks:
+  - init: cp ./.env.example ./.env && npm install
+    command: npm run start
