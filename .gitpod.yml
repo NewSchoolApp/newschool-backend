@@ -6,5 +6,5 @@ ports:
     onOpen: open-preview
 
 tasks:
-  - init: npm install && npm run build
+  - init: cp ./.env.example ./.env && npm install && npm run build
     command: npm run start
