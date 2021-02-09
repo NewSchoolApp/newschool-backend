@@ -6,5 +6,5 @@ ports:
     onOpen: open-browser
 
 tasks:
-  - init: cp ./.env.example ./.env && npm install && npm run build
+  - init: cp ./.env.example ./.env && npm install
     command: npm run start
