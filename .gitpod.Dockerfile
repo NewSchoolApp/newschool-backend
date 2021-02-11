@@ -6,4 +6,6 @@ FROM gitpod/workspace-full
 #
 # More information: https://www.gitpod.io/docs/config-docker/
 
+ENV IS_GITPOD=true
+
 RUN npm install -g npm@7.5.2
