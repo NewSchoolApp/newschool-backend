@@ -50,7 +50,7 @@
     "nodemailer": "6.4.18",
     "passport-facebook-token": "4.0.0",
     "passport-jwt": "4.0.0",
-    "pubsub-js": "1.9.2",
+    "pubsub-js": "1.9.3",
     "pusher": "4.0.2",
     "reflect-metadata": "0.1.13",
     "remove": "0.1.5",
