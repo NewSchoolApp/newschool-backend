@@ -52,7 +52,7 @@ export class NotificationController {
   }
 
   @Post('/user/:userId')
-  @NeedRole('create-notification')
+  @NeedRole('@EDUCATION-PLATFORM/CREATE-NOTIFICATION')
   @UseGuards(RoleGuard)
   @HttpCode(200)
   public async addNotificationsToUser(
