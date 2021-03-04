@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
@@ -14,6 +15,8 @@ import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { CreateNotificationDTO } from '../dto/create-notification.dto';
+import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 
 @ApiBearerAuth()
 @ApiTags('Notification')
@@ -49,6 +52,8 @@ export class NotificationController {
   }
 
   @Post('/user/:userId')
+  @NeedRole('create-notification')
+  @UseGuards(RoleGuard)
   @HttpCode(200)
   public async addNotificationsToUser(
     @Param('userId') userId: string,
