@@ -63,7 +63,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@nestjs/cli": "7.5.5",
+    "@nestjs/cli": "7.5.6",
     "@nestjs/schematics": "7.2.7",
     "@nestjs/testing": "7.6.13",
     "@types/dotenv": "8.2.0",
