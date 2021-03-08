@@ -1,6 +1,5 @@
-import { RoleEnum } from '../enum/role.enum';
 import { Expose } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class RoleDTO {
   @IsNotEmpty()
@@ -9,7 +8,7 @@ export class RoleDTO {
   id: string;
 
   @IsNotEmpty()
-  @IsEnum(RoleEnum)
+  @IsString()
   @Expose()
-  name: RoleEnum;
+  name: string;
 }
