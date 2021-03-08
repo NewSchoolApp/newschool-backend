@@ -67,7 +67,11 @@ export class GameficationController {
   @Get('ranking/user/:userId')
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @NeedRole(
+    RoleEnum.STUDENT,
+    RoleEnum.ADMIN,
+    '@EDUCATION-PLATFORM/GET-USER-RANKING',
+  )
   @UseGuards(RoleGuard)
   public async getUserRanking(
     @Param('userId') userId: string,
