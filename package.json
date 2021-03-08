@@ -51,7 +51,7 @@
     "passport-facebook-token": "4.0.0",
     "passport-jwt": "4.0.0",
     "pubsub-js": "1.9.3",
-    "pusher": "4.0.2",
+    "pusher": "5.0.0",
     "reflect-metadata": "0.1.13",
     "remove": "0.1.5",
     "rimraf": "3.0.2",
