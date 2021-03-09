@@ -175,7 +175,7 @@ export class UserController {
   @NeedRole(
     RoleEnum.ADMIN,
     RoleEnum.STUDENT,
-    '@EDUCATION-PLATFORM/GET-USER-RANKING',
+    '@AUTHORIZATION-RESOURCE-SERVER/GET-USER',
   )
   @UseGuards(RoleGuard)
   public async findById(@Param('id') id: UserDTO['id']): Promise<UserDTO> {
