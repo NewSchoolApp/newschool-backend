@@ -39,7 +39,7 @@
     "@sentry/node": "6.2.2",
     "@sentry/tracing": "6.2.2",
     "aws-sdk": "2.856.0",
-    "cache-manager": "3.4.0",
+    "cache-manager": "3.4.1",
     "class-transformer": "0.3.1",
     "class-validator": "0.13.1",
     "dotenv": "8.2.0",
