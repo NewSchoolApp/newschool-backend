@@ -311,15 +311,11 @@ export class AchievementRepository extends Repository<Achievement> {
     userId: string,
     {
       timeRange,
-      limit,
       institutionName,
-      page,
       city,
       state,
     }: {
       timeRange;
-      limit;
-      page;
       institutionName;
       city;
       state;
@@ -331,9 +327,6 @@ export class AchievementRepository extends Repository<Achievement> {
     const timeRangeQuery = `
       AND ${timeRangeMethod}(a2.updatedAt) = ${timeRangeMethod}(CURRENT_DATE())
     `;
-    const limitQuery = `LIMIT ${mysql.escape(limit)} OFFSET ${mysql.escape(
-      limit * (page - 1),
-    )}`;
     let cityQuery = ``;
     let stateQuery = ``;
 
@@ -387,7 +380,46 @@ export class AchievementRepository extends Repository<Achievement> {
     FROM
       (${derivedTable})
     AS t WHERE t.userId = ?
-    ${limitQuery}
+    `,
+      params,
+    );
+    return response[0];
+  }
+
+  public async getUserTotalPoints(userId: string): Promise<RankingDTO> {
+    const params = [userId];
+    const derivedTable = `
+    SELECT c2.id as 'userId', c2.name as 'userName', SUM(a2.points) as 'points' FROM achievement a2
+      inner join badge b2
+      on a2.badgeId = b2.id
+      inner join user c2
+      on a2.userId = c2.id
+      WHERE a2.completed = 1
+      GROUP by a2.userId
+      order by points DESC
+    `;
+
+    const response: RankingDTO[] = await this.query(
+      `
+    SELECT
+      t.userId,
+      t.userName,
+      t.points,
+      1 + (
+        SELECT
+          count( * )
+        FROM
+          (${derivedTable})
+        AS
+          t2
+        WHERE
+          t2.points > t.points
+      )
+    AS
+      rank
+    FROM
+      (${derivedTable})
+    AS t WHERE t.userId = ?
     `,
       params,
     );

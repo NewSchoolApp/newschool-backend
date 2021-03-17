@@ -63,8 +63,6 @@ export class GameficationService {
     userId: string,
     options: {
       timeRange;
-      limit;
-      page;
       institutionName;
       city;
       state;
@@ -72,5 +70,10 @@ export class GameficationService {
   ): Promise<RankingDTO> {
     await this.userService.findById(userId);
     return this.achivementRepository.getUserRanking(userId, options);
+  }
+
+  public async getUserTotalPoints(userId: string): Promise<RankingDTO> {
+    await this.userService.findById(userId);
+    return this.achivementRepository.getUserTotalPoints(userId);
   }
 }

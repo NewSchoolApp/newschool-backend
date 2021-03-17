@@ -76,19 +76,30 @@ export class GameficationController {
   public async getUserRanking(
     @Param('userId') userId: string,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
-    @Query('limit') limit = 10,
-    @Query('page') page = 1,
     @Query('institutionName') institutionName?: string,
     @Query('city') city?: string,
     @Query('state') state?: string,
   ): Promise<RankingDTO> {
     return await this.service.getUserRanking(userId, {
       timeRange,
-      limit: Number(limit),
-      page: Number(page),
       institutionName,
       city,
       state,
     });
+  }
+
+  @Get('ranking/user/:userId/total-points')
+  @UserIdParam('userId')
+  @UseGuards(StudentGuard)
+  @NeedRole(
+    RoleEnum.STUDENT,
+    RoleEnum.ADMIN,
+    '@EDUCATION-PLATFORM/GET-USER-RANKING',
+  )
+  @UseGuards(RoleGuard)
+  public async getUserTotalPoints(
+    @Param('userId') userId: string,
+  ): Promise<RankingDTO> {
+    return await this.service.getUserTotalPoints(userId);
   }
 }
