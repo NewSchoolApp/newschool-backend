@@ -49,10 +49,10 @@ export class RoleGuard implements CanActivate {
     }
     const hasPermission: boolean = roles.some(
       (role) =>
-        role === user.role.name ||
-        role === user.role.slug ||
+        role === user.role?.name ||
+        role === user.role?.slug ||
         user.role?.policies?.some(
-          (policy) => policy.name === role || policy.slug === role,
+          (policy) => policy?.name === role || policy?.slug === role,
         ),
     );
     return user?.role && hasPermission;
