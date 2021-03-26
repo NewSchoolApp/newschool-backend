@@ -406,14 +406,9 @@ export class UserController {
   }
 
   @Get('semear/students')
-  @UserIdParam('id')
-  @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRole(RoleEnum.EXTERNAL)
   public async createSemearStudentsFile(@Res() res: Response) {
-    const file = this.service.createSemearStudentsFile();
-    res.set('Content-Type', 'text/plain');
-    res.write(file);
-    res.end();
+    return this.service.getStudentsAcceptedSemearTerms();
   }
 }
