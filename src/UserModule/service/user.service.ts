@@ -375,7 +375,7 @@ export class UserService {
     return Math.random().toString(36).substr(2, 20);
   }
 
-  public async createSemearStudentsFile() {
+  public async getStudentsAcceptedSemearTerms() {
     const data = await this.uploadService.getFilesInsideFolder('semear');
     let students = [];
     for (const content of data.Contents) {
@@ -383,11 +383,6 @@ export class UserService {
       const json = JSON.parse(filedata.Body.toString('utf-8'));
       students = [...students, json];
     }
-    return exportFromJSON({
-      data: students,
-      fileName: 'estudantes',
-      exportType: 'json',
-      withBOM: true,
-    });
+    return students;
   }
 }
