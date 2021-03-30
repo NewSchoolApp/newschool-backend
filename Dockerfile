@@ -1,4 +1,4 @@
-FROM node:12.21.0-alpine
+FROM node:12.22.0-alpine
 
 # set our node environment, either development or production
 # defaults to production, compose overrides this to development on build and run
