@@ -18,6 +18,7 @@ import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { Notification } from '../../NotificationModule/entity/notification.entity';
 import { UserLikedComment } from '../../CourseModule/entity/user-liked-comment.entity';
+import SecurePassword = require("secure-password");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
