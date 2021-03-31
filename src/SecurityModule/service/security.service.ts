@@ -17,6 +17,8 @@ import { ClientCredentialsRepository } from '../repository/client-credentials.re
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const securePassword = require('secure-password');
 
 interface GenerateLoginObjectOptions {
   accessTokenValidity: number;
@@ -31,6 +33,26 @@ export class SecurityService {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
+
+  hashPaths = {
+    [securePassword.INVALID_UNRECOGNIZED_HASH]: async ({ user, password }) => {
+      const isValidPassword = user.validPassword(password);
+      if (!isValidPassword)
+        throw new NotFoundException(
+          'User with this email or password not found',
+        );
+      return await this.userService.hashUserPassword(user, password);
+    },
+    [securePassword.INVALID]: async () => {
+      throw new NotFoundException('User with this email or password not found');
+    },
+    [securePassword.VALID_NEEDS_REHASH]: async ({ user, password }) => {
+      return await this.userService.hashUserPassword(user, password);
+    },
+    [securePassword.VALID]: async ({ user, password }) => {
+      return await this.userService.hashUserPassword(user, password);
+    },
+  };
 
   public async validateClientCredentials(
     base64Login: string,
@@ -73,11 +95,12 @@ export class SecurityService {
       secret,
       GrantTypeEnum.PASSWORD,
     );
-    const user: User = await this.userService.findByEmailAndPassword(
-      username,
-      password,
-    );
-    return this.generateLoginObject(user, {
+    const user: User = await this.userService.findByEmail(username);
+    const result = await user.validPasswordv2(password);
+
+    const updatedUser = await this.hashPaths[result]({ user, password });
+
+    return this.generateLoginObject(updatedUser, {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
