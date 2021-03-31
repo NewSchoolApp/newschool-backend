@@ -18,6 +18,8 @@ import { UserProfileEnum } from '../enum/user-profile.enum';
 import { Achievement } from '../../GameficationModule/entity/achievement.entity';
 import { Notification } from '../../NotificationModule/entity/notification.entity';
 import { UserLikedComment } from '../../CourseModule/entity/user-liked-comment.entity';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const securePassword = require('secure-password');
 
 @Entity()
 export class User extends Audit {
@@ -180,5 +182,10 @@ export class User extends Audit {
       .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
       .toString(`hex`);
     return this.password === hash;
+  }
+
+  async validPasswordv2(password: string) {
+    const pwd: SecurePassword = securePassword();
+    return pwd.verify(Buffer.from(password), Buffer.from(this.password));
   }
 }

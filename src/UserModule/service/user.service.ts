@@ -93,6 +93,15 @@ export class UserService {
     return this.repository.countUsersInvitedByUserId(id);
   }
 
+  public async hashUserPassword(user: User, password: string): Promise<User> {
+    const pwd: SecurePassword = securePassword();
+    const hashBuffer = await pwd.hash(Buffer.from(password));
+    return this.repository.save({
+      ...user,
+      password: hashBuffer.toString(),
+    });
+  }
+
   public async addStudent(user: NewUserDTO, inviteKey: string): Promise<User> {
     let invitedByUserId: string | null;
     if (inviteKey) {
