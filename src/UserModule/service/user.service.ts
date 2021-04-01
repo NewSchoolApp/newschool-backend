@@ -1,6 +1,5 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
-import exportFromJSON from 'export-from-json';
 import {
   BadRequestException,
   ConflictException,
@@ -34,6 +33,9 @@ import { PublisherService } from '../../GameficationModule/service/publisher.ser
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { SemearService } from './semear.service';
+import SecurePassword = require("secure-password");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const securePassword = require('secure-password');
 
 @Injectable()
 export class UserService {
@@ -91,6 +93,15 @@ export class UserService {
 
   public async countUsersInvitedByUserId(id: string): Promise<number> {
     return this.repository.countUsersInvitedByUserId(id);
+  }
+
+  public async hashUserPassword(user: User, password: string): Promise<User> {
+    const pwd: SecurePassword = securePassword();
+    const hashBuffer = await pwd.hash(Buffer.from(password));
+    return this.repository.save({
+      ...user,
+      password: hashBuffer.toString(),
+    });
   }
 
   public async addStudent(user: NewUserDTO, inviteKey: string): Promise<User> {
