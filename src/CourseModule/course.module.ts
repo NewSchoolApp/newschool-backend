@@ -25,6 +25,11 @@ import { TestV2Controller } from './controllers/v2/test-v2.controller';
 import { CourseTakenV2Controller } from './controllers/v2/course-taken-v2.controller';
 import { CourseTakenV2Service } from './service/v2/course-taken-v2.service';
 import { CourseTakenService } from './service/v1/course-taken.service';
+import { CmsService } from './service/v2/cms.service';
+import { PilarService } from './service/v2/pilar.service';
+import { TrailService } from './service/v2/trail.service';
+import { PilarController } from './controllers/v2/pilar.controller';
+import { TrailController } from './controllers/v2/trail.controller';
 
 @Module({
   imports: [
@@ -49,6 +54,8 @@ import { CourseTakenService } from './service/v1/course-taken.service';
     PartV2Controller,
     TestV2Controller,
     CourseTakenV2Controller,
+    PilarController,
+    TrailController,
   ],
   providers: [
     CourseTakenMapper,
@@ -61,6 +68,9 @@ import { CourseTakenService } from './service/v1/course-taken.service';
     TestV2Service,
     CourseTakenV2Service,
     CourseTakenService,
+    CmsService,
+    PilarService,
+    TrailService,
   ],
   exports: [CourseTakenService],
 })

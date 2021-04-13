@@ -26,9 +26,8 @@ Dentro de cada módulo, existe pastas para cada responsabilidade:
 - Swagger
     - Classes para documentação
 
-Cada pasta possue um `index.ts` para exportar os arquivos
-
 > Porque essa estrutura?
 
 Projetos em TypeScript tendem a seguir assim, o próprio NestJS
-usa essa estrutura para seu código fonte.
+usa essa estrutura para seu código fonte, então consideramos que seja
+uma estrutura forte o suficiente para que a comunidade possa seguir.
