@@ -5,8 +5,17 @@ import { CMSCourseDTO } from '../dto/cms-course.dto';
 import { CMSLessonDTO } from '../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../dto/cms-test.dto';
 import { CMSPartDTO } from '../dto/cms-part.dto';
+import { CMSPilarDTO } from '../dto/cms-pilar.dto';
+import { CMSTrailOrderDTO } from '../dto/cms-trail-order.dto';
+import { CMSTrailDTO } from '../dto/cms-trail.dto';
 
 interface getCoursesOptions<T = CMSCourseDTO> {
+  queryString: {
+    [K in keyof T]?: T[K] | T[K][];
+  };
+}
+
+interface getTrailOrdersOptions<T> {
   queryString: {
     [K in keyof T]?: T[K] | T[K][];
   };
@@ -130,5 +139,67 @@ export class CmsIntegration implements OnModuleInit {
     };
     const config: AxiosRequestConfig = { headers };
     return this.httpService.get<CMSTestDTO>(url, config).toPromise();
+  }
+
+  public async getPilars(): Promise<AxiosResponse<CMSPilarDTO[]>> {
+    const url = `${this.cmsUrl}/pilars`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSPilarDTO[]>(url, config).toPromise();
+  }
+
+  public async findPilarById(id: number): Promise<AxiosResponse<CMSPilarDTO>> {
+    const url = `${this.cmsUrl}/pilars/${id}`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSPilarDTO>(url, config).toPromise();
+  }
+
+  public async getTrails(): Promise<AxiosResponse<CMSTrailDTO[]>> {
+    const url = `${this.cmsUrl}/pilars`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSTrailDTO[]>(url, config).toPromise();
+  }
+
+  public async findTrailById(id: number): Promise<AxiosResponse<CMSTrailDTO>> {
+    const url = `${this.cmsUrl}/trilhas/${id}`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSTrailDTO>(url, config).toPromise();
+  }
+
+  public async getTrailOrders(
+    { queryString }: getCoursesOptions = { queryString: {} },
+  ): Promise<AxiosResponse<CMSTrailOrderDTO[]>> {
+    const url = `${this.cmsUrl}/ordenacao-da-trilhas`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const params = {
+      _limit: -1,
+      ...queryString,
+    };
+    const config: AxiosRequestConfig = { headers, params };
+    return this.httpService.get<CMSTrailOrderDTO[]>(url, config).toPromise();
+  }
+
+  public async findTrailOrderById(
+    id: number,
+  ): Promise<AxiosResponse<CMSTrailOrderDTO>> {
+    const url = `${this.cmsUrl}/ordenacao-da-trilhas/${id}`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSTrailOrderDTO>(url, config).toPromise();
   }
 }

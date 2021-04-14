@@ -1,4 +1,13 @@
-export interface CMSCourseDTO {
+export interface CMSPilarDTO {
+  id: number;
+  nome: string;
+  published_at: Date;
+  created_at: Date;
+  updated_at: Date;
+  cursos: Curso[];
+}
+
+export interface Curso {
   id: number;
   descricao: string;
   published_at: Date;
@@ -9,30 +18,8 @@ export interface CMSCourseDTO {
   descricaoDoAutor: string;
   horas: number;
   slug: string;
-  pilars: Pilar[];
+  pilar: number;
   capa: Capa;
-  aulas: Aula[];
-  ordenacao_da_trilhas: Aula[];
-}
-
-export interface Pilar {
-  id: number;
-  nome: string;
-  published_at: Date;
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface Aula {
-  id: number;
-  published_at: Date;
-  created_at: Date;
-  updated_at: Date;
-  curso: number;
-  ordem: number;
-  titulo?: string;
-  descricao?: string;
-  trilha?: number;
 }
 
 export interface Capa {
@@ -56,11 +43,13 @@ export interface Capa {
 }
 
 export interface Formats {
-  small: Small;
-  thumbnail: Small;
+  small: Large;
+  medium?: Large;
+  thumbnail: Large;
+  large?: Large;
 }
 
-export interface Small {
+export interface Large {
   ext: string;
   url: string;
   hash: string;
