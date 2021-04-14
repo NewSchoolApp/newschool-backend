@@ -22,14 +22,10 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles: string[] = this.reflector.get<string[]>(
-      'roles',
-      context.getHandler(),
-    );
-    const policies: string[] = this.reflector.get<string[]>(
-      'policies',
-      context.getHandler(),
-    );
+    const roles: string[] =
+      this.reflector.get<string[]>('roles', context.getHandler()) || [];
+    const policies: string[] =
+      this.reflector.get<string[]>('policies', context.getHandler()) || [];
     if ((!roles && !policies) || (!roles.length && !policies.length)) {
       return true;
     }
