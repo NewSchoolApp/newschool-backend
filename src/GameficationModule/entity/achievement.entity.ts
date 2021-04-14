@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Badge } from './badge.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { User } from '../../UserModule/entity/user.entity';

@@ -2,12 +2,7 @@ import * as fs from 'fs';
 import { AWSError, S3 } from 'aws-sdk';
 import { promisify } from 'util';
 import { Response } from 'express';
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 import { PromiseResult } from 'aws-sdk/lib/request';
 

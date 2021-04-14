@@ -1,12 +1,6 @@
 import { getCoursesByFinished } from '../../DashboardModule/interfaces/getCoursesByFinished';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
-import {
-  EntityRepository,
-  IsNull,
-  MoreThanOrEqual,
-  Not,
-  Repository,
-} from 'typeorm';
+import { EntityRepository, IsNull, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
 import { User } from '../../UserModule/entity/user.entity';
 import { CourseTaken } from '../entity/course-taken.entity';

@@ -1,14 +1,7 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 import slugify from 'slugify';
 import { Role } from './role.entity';
-import { GrantTypeEnum } from '../enum/grant-type.enum';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 
 @Entity({ name: 'client-credentials' })

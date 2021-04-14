@@ -1,9 +1,5 @@
 import { GrantTypeEnum } from '../enum/grant-type.enum';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
 import { ClientCredentials } from '../entity/client-credentials.entity';

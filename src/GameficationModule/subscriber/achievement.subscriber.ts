@@ -1,10 +1,4 @@
-import {
-  Connection,
-  EntitySubscriberInterface,
-  EventSubscriber,
-  InsertEvent,
-  UpdateEvent,
-} from 'typeorm';
+import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { Achievement } from '../entity/achievement.entity';
 import { NotificationService } from '../../NotificationModule/service/notification.service';
 import { NotificationTypeEnum } from '../../NotificationModule/enum/notification-type.enum';

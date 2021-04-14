@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ClientCredentials } from './client-credentials.entity';
 import { User } from '../../UserModule/entity/user.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';

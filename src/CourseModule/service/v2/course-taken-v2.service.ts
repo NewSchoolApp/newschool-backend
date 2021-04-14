@@ -15,10 +15,7 @@ import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { PublisherService } from '../../../GameficationModule/service/publisher.service';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
-import {
-  CurrentStepDoingEnum,
-  CurrentStepDTO,
-} from '../../dto/current-step.dto';
+import { CurrentStepDoingEnum, CurrentStepDTO } from '../../dto/current-step.dto';
 import { NpsCourseTakenDTO } from '../../dto/nps-course-taken.dto';
 import { ChallengeDTO } from '../../../GameficationModule/dto/challenge.dto';
 import { Pageable, PageableDTO } from '../../../CommonsModule/dto/pageable.dto';

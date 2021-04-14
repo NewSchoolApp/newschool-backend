@@ -15,8 +15,8 @@ import { Notification } from '../entity/notification.entity';
 import { NotificationService } from '../service/notification.service';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
 import { CreateNotificationDTO } from '../dto/create-notification.dto';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
+import { NeedPolicies } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Notification')
@@ -45,16 +45,16 @@ export class NotificationController {
   public async getNotificationsByUserId(
     @Param('userId') userId: string,
     @Query('order') order: OrderEnum = OrderEnum.DESC,
-    @Query('enabled') enabled = true,
-    @Query('order') seen = false,
+    @Query('enabled') enabled: boolean = true,
+    @Query('order') seen: boolean = false,
   ): Promise<Notification[]> {
     return this.service.getNotificationsByUserId(userId, order, enabled, seen);
   }
 
   @Post('/user/:userId')
-  @NeedRole('@EDUCATION-PLATFORM/CREATE-NOTIFICATION')
-  @UseGuards(RoleGuard)
   @HttpCode(200)
+  @UseGuards(RoleGuard)
+  @NeedPolicies('@EDUCATION-PLATFORM/CREATE-NOTIFICATION')
   public async addNotificationsToUser(
     @Param('userId') userId: string,
     @Body() notification: CreateNotificationDTO,

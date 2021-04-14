@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
 import { CMSPartDTO } from '../../dto/cms-part.dto';
 
