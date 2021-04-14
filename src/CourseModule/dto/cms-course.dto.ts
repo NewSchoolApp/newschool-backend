@@ -1,30 +1,41 @@
-export class CMSCourseDTO {
+export interface CMSCourseDTO {
   id: number;
   descricao: string;
-  'published_at': Date;
-  'created_at': Date;
-  'updated_at': Date;
+  published_at: Date;
+  created_at: Date;
+  updated_at: Date;
   titulo: string;
-  slug: string;
   nomeDoAutor: string;
   descricaoDoAutor: string;
   horas: number;
+  slug: string;
+  pilars: Pilar[];
   capa: Capa;
   aulas: Aula[];
+  ordenacao_da_trilhas: Aula[];
 }
 
-export class Aula {
+export interface Pilar {
   id: number;
-  'published_at': Date;
-  'created_at': Date;
-  'updated_at': Date;
+  nome: string;
+  published_at: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface Aula {
+  id: number;
+  published_at: Date;
+  created_at: Date;
+  updated_at: Date;
   curso: number;
   ordem: number;
-  titulo: string;
-  descricao: string;
+  titulo?: string;
+  descricao?: string;
+  trilha?: number;
 }
 
-export class Capa {
+export interface Capa {
   id: number;
   name: string;
   alternativeText: string;
@@ -37,26 +48,25 @@ export class Capa {
   mime: string;
   size: number;
   url: string;
-  previewUrl: string;
+  previewUrl: null;
   provider: string;
-  'provider_metadata': string;
-  'created_at': Date;
-  'updated_at': Date;
+  provider_metadata: null;
+  created_at: Date;
+  updated_at: Date;
 }
 
-export class Formats {
-  small: Medium;
-  medium: Medium;
-  thumbnail: Medium;
+export interface Formats {
+  small: Small;
+  thumbnail: Small;
 }
 
-export class Medium {
+export interface Small {
   ext: string;
   url: string;
   hash: string;
   mime: string;
   name: string;
-  path: string;
+  path: null;
   size: number;
   width: number;
   height: number;

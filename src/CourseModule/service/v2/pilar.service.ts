@@ -11,7 +11,7 @@ export class PilarService {
     return pilars;
   }
 
-  public async findById(id: number) {
+  public async findById(id: number): Promise<CMSPilarDTO> {
     const { data: pilar } = await this.cmsIntegration.findPilarById(id);
     return pilar;
   }
