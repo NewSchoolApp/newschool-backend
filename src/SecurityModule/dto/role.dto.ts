@@ -1,5 +1,6 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { PolicyDTO } from './policy.dto';
 
 export class RoleDTO {
   @IsNotEmpty()
@@ -11,4 +12,10 @@ export class RoleDTO {
   @IsString()
   @Expose()
   name: string;
+
+  @Type(() => PolicyDTO)
+  @IsArray()
+  @IsNotEmpty()
+  @Expose()
+  policies: PolicyDTO[];
 }
