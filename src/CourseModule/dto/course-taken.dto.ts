@@ -1,14 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { CourseTakenStatusEnum } from '../enum/course-taken-status.enum';
 import { CourseTaken } from '../entity/course-taken.entity';
 

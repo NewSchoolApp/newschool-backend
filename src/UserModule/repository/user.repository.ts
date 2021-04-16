@@ -4,7 +4,7 @@ import { User } from '../entity/user.entity';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.findOne({ email }, { relations: ['role'] });
+    return this.findOne({ email }, { relations: ['role', 'role.policies'] });
   }
 
   async findByIdWithCertificates(id: string): Promise<User | undefined> {

@@ -27,4 +27,6 @@ export class Constants {
   static NOTIFICATION_ENDPOINT = 'notification';
   static CITY_ENDPOINT = 'city';
   static STATE_ENDPOINT = 'state';
+
+  static POLICIES_PREFIX = '@EDUCATION_PLATFORM/COURSE_MANAGEMENT';
 }

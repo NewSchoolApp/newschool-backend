@@ -11,7 +11,10 @@ import {
 import { Constants } from '../../CommonsModule/constants';
 import { StartEventDTO } from '../dto/start-event.dto';
 import { GameficationService } from '../service/gamefication.service';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import {
+  NeedPolicies,
+  NeedRoles,
+} from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
@@ -34,16 +37,18 @@ export class GameficationController {
 
   @Post('start-event')
   @HttpCode(200)
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/START_EVENT`)
   public startEvent(@Body() body: StartEventDTO): void {
     this.service.startEvent(body.event, body.rule);
   }
 
   @Get('ranking')
   @ApiOkResponse({ type: PageableRankingSwagger })
-  @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_RANKING`)
   public async getRanking(
     @Query('order') order: OrderEnum = OrderEnum.ASC,
     @Query('timeRange') timeRange: TimeRangeEnum = TimeRangeEnum.MONTH,
@@ -67,9 +72,9 @@ export class GameficationController {
   @Get('ranking/user/:userId')
   @UserIdParam('userId')
   @UseGuards(StudentGuard)
-  @NeedRole(
-    RoleEnum.STUDENT,
-    RoleEnum.ADMIN,
+  @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @NeedPolicies(
+    `${Constants.POLICIES_PREFIX}/GET_RANKING`,
     '@EDUCATION-PLATFORM/GET-USER-RANKING',
   )
   @UseGuards(RoleGuard)
@@ -89,13 +94,14 @@ export class GameficationController {
   }
 
   @Get('ranking/user/:userId/total-points')
+  @UseGuards(RoleGuard, StudentGuard)
+  @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USER_TOTAL_POINTS`)
   @UserIdParam('userId')
-  @UseGuards(StudentGuard)
-  @NeedRole(RoleEnum.STUDENT, RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
   public async getUserTotalPoints(
     @Param('userId') userId: string,
-  ): Promise<RankingDTO> {
-    return await this.service.getUserTotalPoints(userId);
+  ): Promise<RankingDTO | { userId: string; points: string }> {
+    const userTotalPoints = await this.service.getUserTotalPoints(userId);
+    return userTotalPoints || { userId, points: '0' };
   }
 }

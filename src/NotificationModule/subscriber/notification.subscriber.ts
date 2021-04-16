@@ -1,10 +1,4 @@
-import {
-  Connection,
-  EntitySubscriberInterface,
-  EventSubscriber,
-  InsertEvent,
-  UpdateEvent,
-} from 'typeorm';
+import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { Notification } from '../entity/notification.entity';
 import { InjectConnection } from '@nestjs/typeorm';
 import { PusherService } from '../service/pusher.service';

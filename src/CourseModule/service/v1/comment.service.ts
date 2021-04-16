@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CommentRepository } from '../../repository/comment.repository';
 import { UserService } from '../../../UserModule/service/user.service';
 import { Comment } from '../../entity/comment.entity';

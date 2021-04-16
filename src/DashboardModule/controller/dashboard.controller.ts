@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { Constants } from '../../CommonsModule/constants';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { NeedPolicies, NeedRoles } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { DashboardService } from '../service/dashboard.service';
 import { UserStatusEnum } from '../enum/UserStatusEnum';
@@ -22,7 +22,8 @@ export class DashboardController {
 
   @Get('/user/quantity')
   @UseGuards(RoleGuard)
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USER_QUANTITY`)
   public async getUserQuantity(
     @Query('status') status?: UserStatusEnum,
   ): Promise<UserQuantityDTO> {
@@ -31,14 +32,16 @@ export class DashboardController {
 
   @Get('/certificate/quantity')
   @UseGuards(RoleGuard)
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_CERTIFICATE_QUANTITY`)
   public async getCertificateQuantity(): Promise<CertificateQuantityDTO> {
     return { totalElements: await this.service.getCertificateQuantity() };
   }
 
   @Get('/course-taken/user/quantity')
   @UseGuards(RoleGuard)
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USERS_IN_COURSE_QUANTITY`)
   public async getUsersInCourseQuantity(
     @Query('status') status?: CourseTakenStatusEnum,
   ): Promise<CourseTakenUsersDTO> {
@@ -49,7 +52,8 @@ export class DashboardController {
 
   @Get('/course/views')
   @UseGuards(RoleGuard)
-  @NeedRole(RoleEnum.ADMIN)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_COURSES_FREQUENCY`)
   public async getCoursesByViews(
     @Query('order') order: OrderEnum = OrderEnum.ASC, // Indica que order precisa ter um dos tipos presentes no enum. Se não, recebe o valor 'ASC'
     @Query('limit') limit = 10,

@@ -1,15 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Logger,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Logger, Post, Put, UseGuards } from '@nestjs/common';
 import { Constants } from '../../CommonsModule/constants';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { NeedPolicies, NeedRoles } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import {
   ApiBearerAuth,
@@ -53,9 +44,10 @@ export class MessageController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN/External role',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
-  public async sendemail(@Body() email: EmailDTO): Promise<void> {
+  @NeedRoles(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/SEND_EMAIL`)
+  public async sendEmail(@Body() email: EmailDTO): Promise<void> {
     this.logger.log(`email: ${email}`);
     await this.service.sendEmail(email);
   }
@@ -75,8 +67,9 @@ export class MessageController {
     description:
       'thrown if there is not an authorization token or if authorization token does not have ADMIN/External role',
   })
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN, RoleEnum.EXTERNAL)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/SEND_EMAIL_CONTACT_US`)
   public async sendEmailContactUs(
     @Body() contactUs: ContactUsDTO,
   ): Promise<void> {
@@ -102,8 +95,8 @@ export class MessageController {
   @ApiForbiddenResponse({
     description: 'You dont have permission',
   })
-  @NeedRole(RoleEnum.ADMIN)
-  @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/LIST_ALL_TEMPLATES`)
   public async listAllTemplates(): Promise<TemplateDTO[]> {
     return this.service.getAllTemplates();
   }
@@ -127,8 +120,9 @@ export class MessageController {
   @ApiForbiddenResponse({
     description: 'You dont have permission',
   })
-  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/EDIT_TEMPLATE`)
   public async editTemplate(
     @Body() updatedTemplate: TemplateDTO,
   ): Promise<TemplateDTO> {
@@ -160,8 +154,9 @@ export class MessageController {
   @ApiForbiddenResponse({
     description: 'You dont have permission',
   })
-  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/CREATE_TEMPLATE`)
   public async createTemplate(
     @Body() template: TemplateDTO,
   ): Promise<TemplateDTO> {
@@ -189,8 +184,9 @@ export class MessageController {
   @ApiForbiddenResponse({
     description: 'You dont have permission',
   })
-  @NeedRole(RoleEnum.ADMIN)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/SEND_MESSAGE`)
   public async sendMessage(@Body() model: any): Promise<void> {
     await this.service.sendMessage(
       model.data,

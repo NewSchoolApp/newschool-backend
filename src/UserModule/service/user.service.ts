@@ -33,7 +33,7 @@ import { PublisherService } from '../../GameficationModule/service/publisher.ser
 import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { SemearService } from './semear.service';
-import SecurePassword = require("secure-password");
+import SecurePassword = require('secure-password');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 

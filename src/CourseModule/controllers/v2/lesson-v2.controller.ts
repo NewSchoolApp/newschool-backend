@@ -1,17 +1,11 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Constants } from '../../../CommonsModule/constants';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LessonV2Service } from '../../service/v2/lesson-v2.service';
 import { CMSLessonDTO } from '../../dto/cms-lesson.dto';
-import { NeedRole } from '../../../CommonsModule/guard/role-metadata.guard';
 import { RoleEnum } from '../../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../../CommonsModule/guard/role.guard';
+import { NeedPolicies, NeedRoles } from '../../../CommonsModule/decorator/role-guard-metadata.decorator';
 
 @ApiTags('LessonV2')
 @ApiBearerAuth()
@@ -22,17 +16,19 @@ export class LessonV2Controller {
   constructor(private readonly service: LessonV2Service) {}
 
   @Get('course/:courseId')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
-  public async getAll(
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_LESSONS_BY_COURSE_ID`)
+  public async getAllByCourseId(
     @Param('courseId', ParseIntPipe) courseId: number,
   ): Promise<CMSLessonDTO[]> {
     return this.service.getAll(courseId);
   }
 
   @Get(':id')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/FIND_LESSON_BY_COURSE_ID`)
   public async findById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<CMSLessonDTO> {

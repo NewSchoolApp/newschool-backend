@@ -1,14 +1,6 @@
 import { SchoolService } from '../service/school.service';
-import {
-  CacheInterceptor,
-  CacheTTL,
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { CacheInterceptor, CacheTTL, Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { NeedPolicies, NeedRoles } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { Constants } from '../../CommonsModule/constants';
@@ -26,8 +18,9 @@ export class SchoolController {
   constructor(private service: SchoolService) {}
 
   @Get()
-  @NeedRole(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.ADMIN, RoleEnum.STUDENT, RoleEnum.EXTERNAL)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_CITIES_BY_UF`)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(secondsInADay)
   public async getSchool(@Query('name') name = ''): Promise<School[]> {

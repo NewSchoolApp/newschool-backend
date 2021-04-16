@@ -1,14 +1,7 @@
 import { User } from '../entity/user.entity';
 import { Expose, Transform, Type } from 'class-transformer';
 import { RoleDTO } from '../../SecurityModule/dto/role.dto';
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { GenderEnum } from '../enum/gender.enum';
 import { EscolarityEnum } from '../enum/escolarity.enum';
 import { UserProfileEnum } from '../enum/user-profile.enum';

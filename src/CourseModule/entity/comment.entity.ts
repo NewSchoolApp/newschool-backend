@@ -1,12 +1,5 @@
 import { User } from '../../UserModule/entity/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserLikedComment } from './user-liked-comment.entity';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { Expose } from 'class-transformer';

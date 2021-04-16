@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CmsIntegration } from '../../integration/cms.integration';
 import { CMSTestDTO } from '../../dto/cms-test.dto';
 import { ChosenAlternativeEnum } from '../../dto/check-test.dto';

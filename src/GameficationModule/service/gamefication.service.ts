@@ -72,7 +72,9 @@ export class GameficationService {
     return this.achivementRepository.getUserRanking(userId, options);
   }
 
-  public async getUserTotalPoints(userId: string): Promise<RankingDTO> {
+  public async getUserTotalPoints(
+    userId: string,
+  ): Promise<RankingDTO | undefined> {
     await this.userService.findById(userId);
     return this.achivementRepository.getUserTotalPoints(userId);
   }

@@ -1,19 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Constants } from '../../CommonsModule/constants';
 import { CommentService } from '../service/v1/comment.service';
 import { AddCommentDTO } from '../dto/add-comment.dto';
 import { CommentDTO } from '../dto/comment.dto';
-import { NeedRole } from '../../CommonsModule/guard/role-metadata.guard';
+import { NeedPolicies, NeedRoles } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { ResponseDTO } from '../dto/response.dto';
@@ -29,8 +20,9 @@ export class CommentController {
   constructor(private readonly service: CommentService) {}
 
   @Post()
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/ADD_COMMENT`)
   public async addComment(@Body() comment: AddCommentDTO): Promise<CommentDTO> {
     return await this.service.addComment(
       comment.partId,
@@ -40,8 +32,9 @@ export class CommentController {
   }
 
   @Get(':id/response')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_COMMENT_RESPONSES`)
   public async getCommentResponses(
     @Param('id') id: string,
   ): Promise<CommentDTO> {
@@ -49,8 +42,9 @@ export class CommentController {
   }
 
   @Post(':id/response')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/ADD_COMMENT_RESPONSE`)
   public async addCommentResponse(
     @Param('id') id: string,
     @Body() response: AddCommentDTO,
@@ -64,8 +58,9 @@ export class CommentController {
   }
 
   @Get('part/:partId')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_COMMENTS_BY_PART_ID`)
   public async getCommentsByPartId(
     @Param('partId', ParseIntPipe) partId: number,
     @Query('order') order: OrderEnum = OrderEnum.DESC,
@@ -75,8 +70,9 @@ export class CommentController {
   }
 
   @Post(':id/clap')
-  @NeedRole(RoleEnum.STUDENT)
   @UseGuards(RoleGuard)
+  @NeedRoles(RoleEnum.STUDENT)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/CLAP_COMMENT`)
   public async clapComment(
     @Param('id') id: string,
     @Body() body: ClapCommentDTO,

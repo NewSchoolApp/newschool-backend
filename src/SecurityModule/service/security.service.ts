@@ -1,9 +1,5 @@
 import { GrantTypeEnum } from '../enum/grant-type.enum';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
 import { ClientCredentials } from '../entity/client-credentials.entity';
@@ -17,6 +13,8 @@ import { ClientCredentialsRepository } from '../repository/client-credentials.re
 import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
+import { UserMapper } from '../../UserModule/mapper/user.mapper';
+import { UserDTO } from '../../UserModule/dto/user.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
@@ -32,6 +30,7 @@ export class SecurityService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly userMapper: UserMapper,
   ) {}
 
   hashPaths = {
@@ -98,9 +97,9 @@ export class SecurityService {
     const user: User = await this.userService.findByEmail(username);
     const result = await user.validPasswordv2(password);
 
-    const updatedUser = await this.hashPaths[result]({ user, password });
+    const updatedUser: User = await this.hashPaths[result]({ user, password });
 
-    return this.generateLoginObject(updatedUser, {
+    return this.generateLoginObject(this.userMapper.toDto(updatedUser), {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
@@ -128,15 +127,18 @@ export class SecurityService {
         user.id,
         userInfo,
       );
-      return this.generateLoginObject(userWithFacebookId, {
-        accessTokenValidity: clientCredentials.accessTokenValidity,
-        refreshTokenValidity: clientCredentials.refreshTokenValidity,
-      });
+      return this.generateLoginObject(
+        this.userMapper.toDto(userWithFacebookId),
+        {
+          accessTokenValidity: clientCredentials.accessTokenValidity,
+          refreshTokenValidity: clientCredentials.refreshTokenValidity,
+        },
+      );
     }
     if (user.facebookId !== facebookAuthUser.id) {
       throw new NotFoundException('User not found');
     }
-    return this.generateLoginObject(user, {
+    return this.generateLoginObject(this.userMapper.toDto(user), {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
@@ -162,15 +164,18 @@ export class SecurityService {
         user.id,
         userInfo,
       );
-      return this.generateLoginObject(userWithGoogleSub, {
-        accessTokenValidity: clientCredentials.accessTokenValidity,
-        refreshTokenValidity: clientCredentials.refreshTokenValidity,
-      });
+      return this.generateLoginObject(
+        this.userMapper.toDto(userWithGoogleSub),
+        {
+          accessTokenValidity: clientCredentials.accessTokenValidity,
+          refreshTokenValidity: clientCredentials.refreshTokenValidity,
+        },
+      );
     }
     if (user.googleSub !== googleAuthUser.sub) {
       throw new NotFoundException('User not found');
     }
-    return this.generateLoginObject(user, {
+    return this.generateLoginObject(this.userMapper.toDto(user), {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
@@ -204,7 +209,7 @@ export class SecurityService {
     const user: User = await this.userService.findByEmail(
       refreshTokenUser.email,
     );
-    return this.generateLoginObject(user, {
+    return this.generateLoginObject(this.userMapper.toDto(user), {
       accessTokenValidity: clientCredentials.accessTokenValidity,
       refreshTokenValidity: clientCredentials.refreshTokenValidity,
     });
@@ -217,7 +222,7 @@ export class SecurityService {
   }
 
   private generateLoginObject(
-    authenticatedUser: ClientCredentials | User,
+    authenticatedUser: ClientCredentials | UserDTO,
     { accessTokenValidity, refreshTokenValidity }: GenerateLoginObjectOptions,
   ): GeneratedTokenDTO {
     let loginObject: GeneratedTokenDTO = {

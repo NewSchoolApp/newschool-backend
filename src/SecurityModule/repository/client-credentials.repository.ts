@@ -7,6 +7,9 @@ export class ClientCredentialsRepository extends Repository<ClientCredentials> {
     name: string,
     secret: string,
   ): Promise<ClientCredentials> {
-    return this.findOne({ name, secret }, { relations: ['role'] });
+    return this.findOne(
+      { name, secret },
+      { relations: ['role', 'role.policies'] },
+    );
   }
 }

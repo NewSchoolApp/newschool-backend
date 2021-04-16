@@ -1,7 +1,7 @@
 import { Achievement } from './achievement.entity';
 import slugify from 'slugify';
 import { Expose } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from '../../CommonsModule/entity/audit.entity';
 import { EventNameEnum } from '../enum/event-name.enum';
 

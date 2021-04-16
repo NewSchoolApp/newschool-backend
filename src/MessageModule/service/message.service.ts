@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { MailerService } from '@nest-modules/mailer';
 import { TemplateRepository } from '../repository/template.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked';
