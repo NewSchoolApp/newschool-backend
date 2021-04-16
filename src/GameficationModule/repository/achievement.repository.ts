@@ -386,7 +386,7 @@ export class AchievementRepository extends Repository<Achievement> {
     return response[0];
   }
 
-  public async getUserTotalPoints(userId: string): Promise<RankingDTO> {
+  public async getUserTotalPoints(userId: string): Promise<RankingDTO | undefined> {
     const params = [userId];
     const derivedTable = `
     SELECT c2.id as 'userId', c2.name as 'userName', SUM(a2.points) as 'points' FROM achievement a2

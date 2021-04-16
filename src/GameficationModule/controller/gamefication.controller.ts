@@ -1,8 +1,20 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Constants } from '../../CommonsModule/constants';
 import { StartEventDTO } from '../dto/start-event.dto';
 import { GameficationService } from '../service/gamefication.service';
-import { NeedPolicies, NeedRoles } from '../../CommonsModule/decorator/role-guard-metadata.decorator';
+import {
+  NeedPolicies,
+  NeedRoles,
+} from '../../CommonsModule/decorator/role-guard-metadata.decorator';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { RoleGuard } from '../../CommonsModule/guard/role.guard';
 import { OrderEnum } from '../../CommonsModule/enum/order.enum';
@@ -82,14 +94,14 @@ export class GameficationController {
   }
 
   @Get('ranking/user/:userId/total-points')
-  @UseGuards(RoleGuard)
+  @UseGuards(RoleGuard, StudentGuard)
   @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
   @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USER_TOTAL_POINTS`)
-  @UseGuards(StudentGuard)
   @UserIdParam('userId')
   public async getUserTotalPoints(
     @Param('userId') userId: string,
-  ): Promise<RankingDTO> {
-    return await this.service.getUserTotalPoints(userId);
+  ): Promise<RankingDTO | { userId: string; points: string }> {
+    const userTotalPoints = await this.service.getUserTotalPoints(userId);
+    return userTotalPoints || { userId, points: '0' };
   }
 }
