@@ -50,7 +50,7 @@ export class RoleGuard implements CanActivate {
         if (error.response.status === 401) throw new UnauthorizedException();
         throw new InternalServerErrorException();
       }
-      throw new UnauthorizedException(e.data);
+      throw new InternalServerErrorException();
     }
 
     const hasRoles = roles.length
