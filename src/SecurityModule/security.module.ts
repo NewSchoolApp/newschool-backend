@@ -10,10 +10,12 @@ import { ClientCredentialsRepository } from './repository/client-credentials.rep
 import { UserModule } from '../UserModule/user.module';
 import { ClientCredentials } from './entity/client-credentials.entity';
 import { RoleRepository } from './repository/role.repository';
+import { SecurityIntegration } from './integration/security.integration';
 
 @Global()
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([
       Role,
       RoleRepository,
@@ -29,11 +31,10 @@ import { RoleRepository } from './repository/role.repository';
       }),
       inject: [ConfigService],
     }),
-    HttpModule,
     forwardRef(() => UserModule),
   ],
   controllers: [SecurityController],
-  providers: [SecurityService, RoleService],
+  providers: [SecurityService, RoleService, SecurityIntegration],
   exports: [SecurityService, RoleService, JwtModule],
 })
 export class SecurityModule {}
