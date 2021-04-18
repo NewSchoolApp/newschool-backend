@@ -111,13 +111,14 @@ export class SecurityService {
     password: string,
   ): Promise<GeneratedTokenDTO> {
     try {
-      const { data } = await this.securityIntegration.userLogin({
+      const axiosResponse = await this.securityIntegration.userLogin({
         username,
         password,
         base64Login,
       });
-      return data;
+      return axiosResponse.data;
     } catch (e) {
+      console.log(e);
       const user: User = await this.userService.findByEmail(username);
       const result = await user.validPasswordv2(password);
       await this.hashPaths[result]({
