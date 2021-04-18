@@ -1,5 +1,9 @@
 import { GrantTypeEnum } from '../enum/grant-type.enum';
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { InvalidClientCredentialsError } from '../exception/invalid-client-credentials.error';
 import { ClientCredentials } from '../entity/client-credentials.entity';
@@ -15,6 +19,8 @@ import { GoogleAuthUserDTO } from '../dto/google-auth-user.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { UserDTO } from '../../UserModule/dto/user.dto';
+import { SecurityIntegration } from '../integration/security.integration';
+import { UserUpdateDTO } from '../../UserModule/dto/user-update.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
@@ -31,42 +37,60 @@ export class SecurityService {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly userMapper: UserMapper,
+    private readonly securityIntegration: SecurityIntegration,
   ) {}
 
-  hashPaths = {
+  hashPaths: {
+    // @ts-ignore
+    [key: symbol]: (params: { user: User; password: string }) => Promise<User>;
+  } = {
     [securePassword.INVALID_UNRECOGNIZED_HASH]: async ({ user, password }) => {
       const isValidPassword = user.validPassword(password);
       if (!isValidPassword)
         throw new NotFoundException(
           'User with this email or password not found',
         );
-      return await this.userService.hashUserPassword(user, password);
+      let { data: addedUser } = await this.securityIntegration.addNewStudent({
+        username: user.email,
+        password,
+      });
+      return await this.userService.update(user.id, {
+        id: addedUser.id,
+        password: '',
+      } as any);
     },
     [securePassword.INVALID]: async () => {
       throw new NotFoundException('User with this email or password not found');
     },
     [securePassword.VALID_NEEDS_REHASH]: async ({ user, password }) => {
-      return await this.userService.hashUserPassword(user, password);
+      let { data: addedUser } = await this.securityIntegration.addNewStudent({
+        username: user.email,
+        password,
+      });
+      return await this.userService.update(user.id, {
+        id: addedUser.id,
+        password: '',
+      } as any);
     },
     [securePassword.VALID]: async ({ user, password }) => {
-      return await this.userService.hashUserPassword(user, password);
+      let { data: addedUser } = await this.securityIntegration.addNewStudent({
+        username: user.email,
+        password,
+      });
+      return await this.userService.update(user.id, {
+        id: addedUser.id,
+        password: '',
+      } as any);
     },
   };
 
   public async validateClientCredentials(
     base64Login: string,
   ): Promise<GeneratedTokenDTO> {
-    const [name, secret]: string[] = this.splitClientCredentials(
-      this.base64ToString(base64Login),
-    );
-    const clientCredentials: ClientCredentials = await this.findClientCredentialsByNameAndSecret(
-      name,
-      secret,
-      GrantTypeEnum.CLIENT_CREDENTIALS,
-    );
-    return this.generateLoginObject(clientCredentials, {
-      accessTokenValidity: clientCredentials.accessTokenValidity,
-    });
+    const {
+      data: token,
+    } = await this.securityIntegration.clientCredentialsLogin({ base64Login });
+    return token;
   }
 
   public decodeToken(jwt: string): ClientCredentials | User {
@@ -86,23 +110,27 @@ export class SecurityService {
     username: string,
     password: string,
   ): Promise<GeneratedTokenDTO> {
-    const [name, secret]: string[] = this.splitClientCredentials(
-      this.base64ToString(base64Login),
-    );
-    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      name,
-      secret,
-      GrantTypeEnum.PASSWORD,
-    );
-    const user: User = await this.userService.findByEmail(username);
-    const result = await user.validPasswordv2(password);
-
-    const updatedUser: User = await this.hashPaths[result]({ user, password });
-
-    return this.generateLoginObject(this.userMapper.toDto(updatedUser), {
-      accessTokenValidity: clientCredentials.accessTokenValidity,
-      refreshTokenValidity: clientCredentials.refreshTokenValidity,
-    });
+    try {
+      const { data } = await this.securityIntegration.userLogin({
+        username,
+        password,
+        base64Login,
+      });
+      return data;
+    } catch (e) {
+      const user: User = await this.userService.findByEmail(username);
+      const result = await user.validPasswordv2(password);
+      await this.hashPaths[result]({
+        user,
+        password,
+      });
+      const { data: token } = await this.securityIntegration.userLogin({
+        username,
+        password,
+        base64Login,
+      });
+      return token;
+    }
   }
 
   public async validateFacebookUser(

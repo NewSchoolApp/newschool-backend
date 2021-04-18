@@ -14,6 +14,19 @@ export class AppConfigService {
   securityOauthTokenDetailsUrl: string = this.configService.get<string>(
     'SECURITY_OAUTH_TOKEN_DETAILS_URL',
   );
+
+  private securityClientCredentialsName: string = this.configService.get<string>(
+    'SECURITY_CLIENT_CREDENTIALS_NAME',
+  );
+
+  private securityClientCredentialsSecret: string = this.configService.get<string>(
+    'SECURITY_CLIENT_CREDENTIALS_SECRET',
+  );
+
+  securityOauthTokenUrl: string = this.configService.get<string>(
+    'SECURITY_OAUTH_TOKEN_URL',
+  );
+
   jwtSecret: string = this.configService.get<string>('JWT_SECRET');
   refreshTokenSecret: string = this.configService.get<string>(
     'REFRESH_TOKEN_SECRET',
@@ -165,6 +178,11 @@ export class AppConfigService {
       region: 'us-east-2',
       signatureVersion: 'v4',
     };
+  }
+
+  getClientCredentialsBase64() {
+    const joinedUpClientCredentials = `${this.securityClientCredentialsName}:${this.securityClientCredentialsSecret}`;
+    return Buffer.from(joinedUpClientCredentials).toString('base64');
   }
 
   getCmsConfiguration() {
