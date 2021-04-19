@@ -115,7 +115,7 @@ export class SecurityService {
         base64Login,
       });
       await this.userService.update(user.id, {
-        id: addedUser.id,
+        id: securityStudent.id,
         password: '',
       } as any);
       return token;
