@@ -82,6 +82,7 @@ export class SecurityIntegration {
       ...params,
       roleName: 'STUDENT',
     };
+    console.log('fazendo request pra salvar o usuário', body)
     return await this.http
       .post(this.config.securityAddNewUserUrl, body, {
         headers,
