@@ -104,17 +104,19 @@ export class SecurityService {
         user,
         password,
       });
-      const {
-        data: securityStudent,
-      } = await this.securityIntegration.addNewStudent({ username, password });
+      await this.securityIntegration.addNewStudent({
+        id: user.id,
+        username,
+        password,
+        facebookId: user.facebookId,
+        googleSub: user.googleSub,
+      });
       const { data: token } = await this.securityIntegration.userLogin({
         username,
         password,
         base64Login,
       });
-      console.log('userId', user, securityStudent);
       await this.userService.update(user.id, {
-        id: securityStudent.id,
         password: '',
       } as any);
       return token;

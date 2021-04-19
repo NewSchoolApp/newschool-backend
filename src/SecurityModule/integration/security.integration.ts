@@ -93,8 +93,11 @@ export class SecurityIntegration {
   }
 
   public async addNewStudent(params: {
+    id: string;
     username: string;
     password: string;
+    facebookId?: string;
+    googleSub?: string;
   }): Promise<AxiosResponse> {
     const accessToken: string = await this.getAccessToken();
     const headers = {

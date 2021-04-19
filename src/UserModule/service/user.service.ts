@@ -156,7 +156,7 @@ export class UserService {
     const updatedUser = await this.repository.save({
       ...restUser,
       ...userUpdatedInfo,
-      id: userUpdatedInfo.id,
+      id,
     });
     this.publisherService.emitupdateStudent(id);
     this.semearService.sendSemearNotification(updatedUser);
