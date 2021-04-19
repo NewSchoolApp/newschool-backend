@@ -83,7 +83,7 @@ export class SecurityIntegration {
       roleName: 'STUDENT',
     };
     return await this.http
-      .post(this.config.securityOauthTokenUrl, body, {
+      .post(this.config.securityAddNewUserUrl, body, {
         headers,
       })
       .toPromise();

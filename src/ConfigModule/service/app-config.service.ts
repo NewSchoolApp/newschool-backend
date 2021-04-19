@@ -27,6 +27,10 @@ export class AppConfigService {
     'SECURITY_OAUTH_TOKEN_URL',
   );
 
+  securityAddNewUserUrl: string = this.configService.get<string>(
+    'SECURITY_ADD_NEW_USER_URL',
+  );
+
   jwtSecret: string = this.configService.get<string>('JWT_SECRET');
   refreshTokenSecret: string = this.configService.get<string>(
     'REFRESH_TOKEN_SECRET',
