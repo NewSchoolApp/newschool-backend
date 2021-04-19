@@ -98,11 +98,8 @@ export class SecurityService {
       });
       return axiosResponse.data;
     } catch (e) {
-      console.log('to no catch');
       const user: User = await this.userService.findByEmail(username);
-      console.log('user', user);
       const result = await user.validPasswordv2(password);
-      console.log('result', result);
       await this.hashPaths[result]({
         user,
         password,
@@ -110,7 +107,6 @@ export class SecurityService {
       const {
         data: securityStudent,
       } = await this.securityIntegration.addNewStudent({ username, password });
-      console.log('securityStudent', securityStudent);
       const { data: token } = await this.securityIntegration.userLogin({
         username,
         password,

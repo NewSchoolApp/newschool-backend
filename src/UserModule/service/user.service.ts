@@ -161,7 +161,6 @@ export class UserService {
       ...user,
       ...userUpdatedInfo,
       role,
-      id: user.id,
     });
     if (updatedUser.role.name === RoleEnum.STUDENT) {
       this.publisherService.emitupdateStudent(id);
