@@ -4,6 +4,7 @@ import { GeneratedTokenDTO } from '../dto/generated-token.dto';
 import { NewUserDTO } from '../dto/new-user.dto';
 import { AxiosResponse } from 'axios';
 import { LoginPasswordDTO } from '../dto/login-password.dto';
+import { UserJWTDTO } from '../../CommonsModule/dto/user-jwt.dto';
 
 @Injectable()
 export class SecurityIntegration {
@@ -28,6 +29,27 @@ export class SecurityIntegration {
       })
       .toPromise();
     return accessToken;
+  }
+
+  public async refreshToken({
+    authorizationHeader,
+    refreshToken,
+  }: {
+    authorizationHeader: string;
+    refreshToken: string;
+  }) {
+    const body: LoginPasswordDTO = {
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    };
+    const headers = {
+      Authorization: authorizationHeader,
+    };
+    return await this.http
+      .post<GeneratedTokenDTO>(this.config.securityOauthTokenUrl, body, {
+        headers,
+      })
+      .toPromise();
   }
 
   public async userLogin({
@@ -86,6 +108,14 @@ export class SecurityIntegration {
     return await this.http
       .post(this.config.securityAddNewUserUrl, body, {
         headers,
+      })
+      .toPromise();
+  }
+
+  getTokenDetails(authorizationHeader: string) {
+    return this.http
+      .post<UserJWTDTO>(this.config.securityOauthTokenDetailsUrl, null, {
+        headers: { authorization: authorizationHeader },
       })
       .toPromise();
   }

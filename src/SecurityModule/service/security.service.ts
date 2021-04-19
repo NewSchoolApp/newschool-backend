@@ -20,6 +20,8 @@ import { AppConfigService as ConfigService } from '../../ConfigModule/service/ap
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 import { SecurityIntegration } from '../integration/security.integration';
+import { AxiosResponse } from 'axios';
+import { UserJWTDTO } from '../../CommonsModule/dto/user-jwt.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
@@ -201,41 +203,20 @@ export class SecurityService {
   public async refreshToken(
     base64Login: string,
     refreshToken: string,
-  ): Promise<GeneratedTokenDTO> {
-    const [name, secret]: string[] = this.splitClientCredentials(
-      this.base64ToString(base64Login),
-    );
-    const clientCredentials = await this.findClientCredentialsByNameAndSecret(
-      name,
-      secret,
-      GrantTypeEnum.REFRESH_TOKEN,
-    );
-    let refreshTokenUser: User;
-    try {
-      refreshTokenUser = this.getUserFromToken(
-        refreshToken,
-        this.configService.refreshTokenSecret,
-      );
-    } catch (error) {
-      Sentry.captureException(error);
-      if (error instanceof TokenExpiredError) {
-        throw new UnauthorizedException('Refresh Token expired');
-      }
-      throw new UnauthorizedException();
-    }
-    const user: User = await this.userService.findByEmail(
-      refreshTokenUser.email,
-    );
-    return this.generateLoginObject(this.userMapper.toDto(user), {
-      accessTokenValidity: clientCredentials.accessTokenValidity,
-      refreshTokenValidity: clientCredentials.refreshTokenValidity,
+  ): Promise<any> {
+    return this.securityIntegration.refreshToken({
+      authorizationHeader: `Bearer ${base64Login}`,
+      refreshToken,
     });
   }
 
-  public getUserFromToken(jwt: string, secret: string): User {
-    return this.jwtService.verify<User>(jwt, {
-      secret,
-    });
+  public async getUserFromToken(
+    authorizationHeader: string,
+  ): Promise<UserJWTDTO> {
+    const { data: userJwt } = await this.securityIntegration.getTokenDetails(
+      authorizationHeader,
+    );
+    return userJwt;
   }
 
   private generateLoginObject(
