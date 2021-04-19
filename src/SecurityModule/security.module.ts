@@ -35,6 +35,6 @@ import { SecurityIntegration } from './integration/security.integration';
   ],
   controllers: [SecurityController],
   providers: [SecurityService, RoleService, SecurityIntegration],
-  exports: [SecurityService, RoleService, JwtModule],
+  exports: [SecurityService, RoleService, JwtModule, SecurityIntegration],
 })
 export class SecurityModule {}

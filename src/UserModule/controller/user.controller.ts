@@ -69,7 +69,6 @@ export class UserController {
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
-    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -82,7 +81,7 @@ export class UserController {
   })
   @UseGuards(RoleGuard)
   @NeedRoles(RoleEnum.ADMIN)
-  // @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_USERS`)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_USERS`)
   public async getAll(): Promise<UserDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll());
   }
