@@ -20,7 +20,6 @@ import { AppConfigService as ConfigService } from '../../ConfigModule/service/ap
 import { UserMapper } from '../../UserModule/mapper/user.mapper';
 import { UserDTO } from '../../UserModule/dto/user.dto';
 import { SecurityIntegration } from '../integration/security.integration';
-import { UserUpdateDTO } from '../../UserModule/dto/user-update.dto';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
@@ -129,8 +128,9 @@ export class SecurityService {
       });
       console.log('result', result);
       const {
-        data: securityStudet,
+        data: securityStudent,
       } = await this.securityIntegration.addNewStudent({ username, password });
+      console.log('securityStudent', securityStudent);
       const { data: token } = await this.securityIntegration.userLogin({
         username,
         password,
