@@ -152,19 +152,13 @@ export class UserService {
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
   ): Promise<User> {
-    const user: User = await this.findById(id);
-    let role = user.role;
-    if (userUpdatedInfo.role) {
-      role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-    }
+    const { role, ...restUser }: User = await this.findById(id);
     const updatedUser = await this.repository.save({
-      ...user,
+      ...restUser,
       ...userUpdatedInfo,
-      role,
+      id: userUpdatedInfo.id,
     });
-    if (updatedUser.role.name === RoleEnum.STUDENT) {
-      this.publisherService.emitupdateStudent(id);
-    }
+    this.publisherService.emitupdateStudent(id);
     this.semearService.sendSemearNotification(updatedUser);
     return updatedUser;
   }

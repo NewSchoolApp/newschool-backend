@@ -112,6 +112,7 @@ export class SecurityService {
         password,
         base64Login,
       });
+      console.log('userId', user, securityStudent);
       await this.userService.update(user.id, {
         id: securityStudent.id,
         password: '',
