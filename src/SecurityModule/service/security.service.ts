@@ -49,37 +49,16 @@ export class SecurityService {
         throw new NotFoundException(
           'User with this email or password not found',
         );
-      let { data: addedUser } = await this.securityIntegration.addNewStudent({
-        username: user.email,
-        password,
-      });
-      return await this.userService.update(user.id, {
-        id: addedUser.id,
-        password: '',
-      } as any);
+      return user;
     },
     [securePassword.INVALID]: async () => {
       throw new NotFoundException('User with this email or password not found');
     },
-    [securePassword.VALID_NEEDS_REHASH]: async ({ user, password }) => {
-      let { data: addedUser } = await this.securityIntegration.addNewStudent({
-        username: user.email,
-        password,
-      });
-      return await this.userService.update(user.id, {
-        id: addedUser.id,
-        password: '',
-      } as any);
+    [securePassword.VALID_NEEDS_REHASH]: async ({ user }) => {
+      return user;
     },
-    [securePassword.VALID]: async ({ user, password }) => {
-      let { data: addedUser } = await this.securityIntegration.addNewStudent({
-        username: user.email,
-        password,
-      });
-      return await this.userService.update(user.id, {
-        id: addedUser.id,
-        password: '',
-      } as any);
+    [securePassword.VALID]: async ({ user }) => {
+      return user;
     },
   };
 
@@ -126,7 +105,6 @@ export class SecurityService {
         user,
         password,
       });
-      console.log('result', result);
       const {
         data: securityStudent,
       } = await this.securityIntegration.addNewStudent({ username, password });
@@ -136,6 +114,10 @@ export class SecurityService {
         password,
         base64Login,
       });
+      await this.userService.update(user.id, {
+        id: addedUser.id,
+        password: '',
+      } as any);
       return token;
     }
   }
