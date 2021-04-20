@@ -34,6 +34,7 @@ import { UploadService } from '../../UploadModule/service/upload.service';
 import { RoleEnum } from '../../SecurityModule/enum/role.enum';
 import { SemearService } from './semear.service';
 import SecurePassword = require('secure-password');
+import { SecurityIntegration } from '../../SecurityModule/integration/security.integration';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const securePassword = require('secure-password');
 
@@ -50,6 +51,7 @@ export class UserService {
     private readonly uploadService: UploadService,
     private readonly semearService: SemearService,
     private readonly publisherService: PublisherService,
+    private readonly securityIntegration: SecurityIntegration,
   ) {}
 
   @Transactional()
@@ -115,6 +117,12 @@ export class UserService {
 
     const newStudent = await this.add({ ...user, invitedByUserId });
 
+    await this.securityIntegration.addNewStudent({
+      id: newStudent.id,
+      username: newStudent.email,
+      password: user.password,
+    });
+
     if (inviteKey) {
       // iniciar gameficação
       this.publisherService.emitInviteUserReward(inviteKey);
@@ -152,20 +160,13 @@ export class UserService {
     id: User['id'],
     userUpdatedInfo: UserUpdateDTO,
   ): Promise<User> {
-    const user: User = await this.findById(id);
-    let role = user.role;
-    if (userUpdatedInfo.role) {
-      role = await this.roleService.findByRoleName(userUpdatedInfo.role);
-    }
+    const { role, ...restUser }: User = await this.findById(id);
     const updatedUser = await this.repository.save({
-      ...user,
+      ...restUser,
       ...userUpdatedInfo,
-      role,
-      id: user.id,
+      id,
     });
-    if (updatedUser.role.name === RoleEnum.STUDENT) {
-      this.publisherService.emitupdateStudent(id);
-    }
+    this.publisherService.emitupdateStudent(id);
     this.semearService.sendSemearNotification(updatedUser);
     return updatedUser;
   }

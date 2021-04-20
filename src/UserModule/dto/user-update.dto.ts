@@ -102,9 +102,4 @@ export class UserUpdateDTO {
   @IsString()
   @Expose()
   urlInstagram?: User['urlInstagram'];
-
-  @IsEnum(RoleEnum)
-  @IsOptional()
-  @Expose()
-  role?: RoleEnum;
 }

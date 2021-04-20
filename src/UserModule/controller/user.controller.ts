@@ -54,6 +54,7 @@ import { StudentGuard } from '../../CommonsModule/guard/student.guard';
 import { PhotoDTO } from '../dto/photo.dto';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 import { Response } from 'express';
+import { UserJWTDTO } from '../../CommonsModule/dto/user-jwt.dto';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -68,7 +69,6 @@ export class UserController {
     private readonly mapper: UserMapper,
     @Inject(forwardRef(() => SecurityService))
     private readonly securityService: SecurityService,
-    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -81,7 +81,7 @@ export class UserController {
   })
   @UseGuards(RoleGuard)
   @NeedRoles(RoleEnum.ADMIN)
-  // @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_USERS`)
+  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_USERS`)
   public async getAll(): Promise<UserDTO[]> {
     return this.mapper.toDtoList(await this.service.getAll());
   }
@@ -103,9 +103,8 @@ export class UserController {
   public async findUserByJwtId(
     @Headers('authorization') authorization: string,
   ): Promise<UserDTO> {
-    const { id }: User = this.securityService.getUserFromToken(
-      authorization.split(' ')[1],
-      this.configService.jwtSecret,
+    const { id }: UserJWTDTO = await this.securityService.getUserFromToken(
+      authorization
     );
     this.logger.log(`user id: ${id}`);
     return this.mapper.toDtoAsync(await this.service.findById(id));
