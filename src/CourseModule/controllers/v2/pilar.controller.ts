@@ -17,8 +17,7 @@ export class PilarController {
 
   @Get()
   @UseGuards(RoleGuard)
-  @NeedRoles(RoleEnum.STUDENT)
-  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_PILARS`)
+  @NeedRoles(RoleEnum.STUDENT)  
   public getAll(): Promise<CMSPilarDTO[]> {
     return this.service.getAll();
   }
