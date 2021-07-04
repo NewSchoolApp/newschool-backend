@@ -161,7 +161,7 @@ export class CmsIntegration implements OnModuleInit {
   }
 
   public async getTrails(): Promise<AxiosResponse<CMSTrailDTO[]>> {
-    const url = `${this.cmsUrl}/pilars`;
+    const url = `${this.cmsUrl}/trilhas`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
     };
