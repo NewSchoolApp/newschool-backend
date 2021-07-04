@@ -10,7 +10,7 @@ import { NeedPolicies, NeedRoles } from '../../../CommonsModule/decorator/role-g
 @ApiTags('Highlight')
 @ApiBearerAuth()
 @Controller(
-  `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.PILAR_ENDPOINT}`,
+  `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.HIGHLIGHT_ENDPOINT}`,
 )
 export class HighlightController {
   constructor(private readonly service: HighlightService) {}
