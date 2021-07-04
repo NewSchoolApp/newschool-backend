@@ -16,6 +16,7 @@ export class TrailService {
   }
 
   public async findById(id: number): Promise<CMSTrailDTO> {
-    return await this.cmsService.findTrailById(id);
+    const { data: pilar } = await this.cmsIntegration.findTrailById(id);
+    return pilar;
   }
 }
