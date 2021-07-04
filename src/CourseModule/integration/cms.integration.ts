@@ -8,6 +8,7 @@ import { CMSPartDTO } from '../dto/cms-part.dto';
 import { CMSPilarDTO } from '../dto/cms-pilar.dto';
 import { CMSTrailOrderDTO } from '../dto/cms-trail-order.dto';
 import { CMSTrailDTO } from '../dto/cms-trail.dto';
+import { CMSHighlightDTO } from '../dto/cms-highlight.dto';
 
 interface getCoursesOptions<T = CMSCourseDTO> {
   queryString: {
@@ -176,6 +177,26 @@ export class CmsIntegration implements OnModuleInit {
     const config: AxiosRequestConfig = { headers };
     return this.httpService.get<CMSTrailDTO>(url, config).toPromise();
   }
+
+
+  public async getHighlights(): Promise<AxiosResponse<CMSHighlightDTO[]>> {
+    const url = `${this.cmsUrl}/destaques`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSHighlightDTO[]>(url, config).toPromise();
+  }
+
+  public async findHighlightById(id: number): Promise<AxiosResponse<CMSHighlightDTO>> {
+    const url = `${this.cmsUrl}/destaques/${id}`;
+    const headers = {
+      authorization: `Bearer ${this.cmsJwt}`,
+    };
+    const config: AxiosRequestConfig = { headers };
+    return this.httpService.get<CMSHighlightDTO>(url, config).toPromise();
+  }
+
 
   public async getTrailOrders(
     { queryString }: getCoursesOptions = { queryString: {} },

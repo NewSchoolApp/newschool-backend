@@ -1,6 +1,6 @@
 export interface CMSPilarDTO {
   id: number;
-  nome: string;
+  titulo: string;
   published_at: Date;
   created_at: Date;
   updated_at: Date;

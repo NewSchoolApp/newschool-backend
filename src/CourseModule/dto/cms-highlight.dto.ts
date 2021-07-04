@@ -1,4 +1,4 @@
-export interface CMSTrailDTO {
+export interface CMSHighlightDTO {
   id: number;
   titulo: string;
   published_at: Date;

@@ -28,8 +28,10 @@ import { CourseTakenService } from './service/v1/course-taken.service';
 import { CmsService } from './service/v2/cms.service';
 import { PilarService } from './service/v2/pilar.service';
 import { TrailService } from './service/v2/trail.service';
+import { HighlightService } from './service/v2/highlight.service';
 import { PilarController } from './controllers/v2/pilar.controller';
 import { TrailController } from './controllers/v2/trail.controller';
+import { HighlightController } from './controllers/v2/highlight.controller';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { TrailController } from './controllers/v2/trail.controller';
     CourseTakenV2Controller,
     PilarController,
     TrailController,
+    HighlightController
   ],
   providers: [
     CourseTakenMapper,
@@ -71,6 +74,7 @@ import { TrailController } from './controllers/v2/trail.controller';
     CmsService,
     PilarService,
     TrailService,
+    HighlightService
   ],
   exports: [CourseTakenService],
 })
