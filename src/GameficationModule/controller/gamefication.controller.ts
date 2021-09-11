@@ -71,12 +71,12 @@ export class GameficationController {
 
   @Get('ranking/user/:userId')
   @UserIdParam('userId')
-  @UseGuards(StudentGuard)
-  @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
-  @NeedPolicies(
-    `${Constants.POLICIES_PREFIX}/GET_RANKING`,
-    '@EDUCATION-PLATFORM/GET-USER-RANKING',
-  )
+  //@UseGuards(StudentGuard)
+  //@NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  //@NeedPolicies(
+  //  `${Constants.POLICIES_PREFIX}/GET_RANKING`,
+  //  '@EDUCATION-PLATFORM/GET-USER-RANKING',
+  //)
   @UseGuards(RoleGuard)
   public async getUserRanking(
     @Param('userId') userId: string,
@@ -94,9 +94,9 @@ export class GameficationController {
   }
 
   @Get('ranking/user/:userId/total-points')
-  @UseGuards(RoleGuard, StudentGuard)
-  @NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
-  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USER_TOTAL_POINTS`)
+  //@UseGuards(RoleGuard, StudentGuard)
+  //@NeedRoles(RoleEnum.STUDENT, RoleEnum.ADMIN)
+  //@NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_USER_TOTAL_POINTS`)
   @UserIdParam('userId')
   public async getUserTotalPoints(
     @Param('userId') userId: string,
