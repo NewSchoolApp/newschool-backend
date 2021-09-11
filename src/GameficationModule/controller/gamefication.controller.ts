@@ -28,7 +28,7 @@ import { RankingQueryDTO } from '../dto/ranking-query.dto';
 import { PageableRankingSwagger } from '../swagger/pageable-ranking.swagger';
 
 @ApiTags('Gamefication')
-@ApiBearerAuth()
+//@ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_1}/${Constants.GAMEFICATION_ENDPOINT}`,
 )
