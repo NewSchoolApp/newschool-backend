@@ -41,7 +41,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getCourses(
     { queryString }: getCoursesOptions = { queryString: {} },
-  ): Promise<any[]> {
+  ): Promise<AxiosResponse<CMSCourseDTO[]>> {
     const url = `${this.cmsUrl}/cursos`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
@@ -51,10 +51,10 @@ export class CmsIntegration implements OnModuleInit {
       ...queryString,
     };
 
-    //const config: AxiosRequestConfig = { headers, params };
-    //return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();
+    const config: AxiosRequestConfig = { headers, params };
+    return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();
 
-    return courses;
+    //return courses;
   }
 
   public async findCourseById(

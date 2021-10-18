@@ -7,7 +7,7 @@ export class CourseV2Service {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
   public async getAll(): Promise<CMSCourseDTO[]> {
-    const data = await this.cmsIntegration.getCourses();
+    const { data } = await this.cmsIntegration.getCourses();
     return data;
   }
 

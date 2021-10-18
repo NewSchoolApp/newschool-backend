@@ -317,7 +317,7 @@ export class CourseTakenV2Service {
       (acc: number[], courseTaken) => [...acc, courseTaken.courseId],
       [],
     );
-    const courses = await this.cmsIntegration.getCourses({
+    const { data: courses } = await this.cmsIntegration.getCourses({
       queryString: { id: coursesId },
     });
     return coursesTaken.map((courseTaken) => ({

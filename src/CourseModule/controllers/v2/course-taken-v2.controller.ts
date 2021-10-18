@@ -16,7 +16,7 @@ import { CourseTakenDTO } from 'src/CourseModule/dto/course-taken.dto';
 import { NeedPolicies, NeedRoles } from '../../../CommonsModule/decorator/role-guard-metadata.decorator';
 
 @ApiTags('CourseTakenV2')
-//@ApiBearerAuth()
+@ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.COURSE_TAKEN_ENDPOINT}`,
 )
