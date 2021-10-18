@@ -1,7 +1,9 @@
+import { Aula, Capa, CMSCourseDTO, Formats, Pilar } from './../dto/cms-course.dto';
+import { plainToClass } from 'class-transformer';
+import { json } from 'express';
 import { AppConfigService as ConfigService } from '../../ConfigModule/service/app-config.service';
 import { HttpService, Injectable, OnModuleInit } from '@nestjs/common';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { CMSCourseDTO } from '../dto/cms-course.dto';
 import { CMSLessonDTO } from '../dto/cms-lesson.dto';
 import { CMSTestDTO } from '../dto/cms-test.dto';
 import { CMSPartDTO } from '../dto/cms-part.dto';
@@ -9,6 +11,7 @@ import { CMSPilarDTO } from '../dto/cms-pilar.dto';
 import { CMSTrailOrderDTO } from '../dto/cms-trail-order.dto';
 import { CMSTrailDTO } from '../dto/cms-trail.dto';
 import { CMSHighlightDTO } from '../dto/cms-highlight.dto';
+import * as courses from '../data/courses.json';
 
 interface getCoursesOptions<T = CMSCourseDTO> {
   queryString: {
@@ -38,7 +41,7 @@ export class CmsIntegration implements OnModuleInit {
 
   public async getCourses(
     { queryString }: getCoursesOptions = { queryString: {} },
-  ): Promise<AxiosResponse<CMSCourseDTO[]>> {
+  ): Promise<any[]> {
     const url = `${this.cmsUrl}/cursos`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
@@ -47,8 +50,11 @@ export class CmsIntegration implements OnModuleInit {
       _limit: -1,
       ...queryString,
     };
-    const config: AxiosRequestConfig = { headers, params };
-    return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();
+
+    //const config: AxiosRequestConfig = { headers, params };
+    //return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();
+
+    return courses;
   }
 
   public async findCourseById(
