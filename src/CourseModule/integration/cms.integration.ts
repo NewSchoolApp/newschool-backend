@@ -54,7 +54,7 @@ export class CmsIntegration implements OnModuleInit {
     //const config: AxiosRequestConfig = { headers, params };
     //return this.httpService.get<CMSCourseDTO[]>(url, config).toPromise();
 
-    return courses;
+    return [courses[0], courses[1]];
   }
 
   public async findCourseById(
