@@ -16,7 +16,7 @@ import { CourseTakenDTO } from 'src/CourseModule/dto/course-taken.dto';
 import { NeedPolicies, NeedRoles } from '../../../CommonsModule/decorator/role-guard-metadata.decorator';
 
 @ApiTags('CourseTakenV2')
-@ApiBearerAuth()
+//@ApiBearerAuth()
 @Controller(
   `${Constants.API_PREFIX}/${Constants.API_VERSION_2}/${Constants.COURSE_TAKEN_ENDPOINT}`,
 )
@@ -26,7 +26,7 @@ export class CourseTakenV2Controller {
   @Get('/user/:userId')
   @UseGuards(RoleGuard, StudentGuard)
   @NeedRoles(RoleEnum.STUDENT)
-  @NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_COURSES_TAKEN_BY_USER_ID`)
+  //@NeedPolicies(`${Constants.POLICIES_PREFIX}/GET_ALL_COURSES_TAKEN_BY_USER_ID`)
   @UserIdParam('userId')
   public async getAllByUserId(
     @Param('userId') userId: string,
