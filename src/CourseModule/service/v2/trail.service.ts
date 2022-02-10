@@ -11,7 +11,14 @@ export class TrailService {
   ) {}
 
   public async getAll(): Promise<CMSTrailDTO[]> {
-    const { data: trails } = await this.cmsIntegration.getTrails();
+    const { data: trails } = await this.cmsIntegration.getTrails({
+      _sort: 'published_at:desc',
+    });
+
+    trails.forEach(function (trail){
+      trail.cursos = trail.cursos.sort((a, b) => (a. published_at > b.published_at ? -1 : 1));
+    });
+
     return trails;
   }
 
@@ -20,3 +27,4 @@ export class TrailService {
     return pilar;
   }
 }
+
