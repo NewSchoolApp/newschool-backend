@@ -7,7 +7,14 @@ export class PilarService {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
   public async getAll(): Promise<CMSPilarDTO[]> {
-    const { data: pilars } = await this.cmsIntegration.getPilars();
+    const { data: pilars } = await this.cmsIntegration.getPilars({
+      _sort: 'published_at:desc',
+    });
+
+    pilars.forEach(function (pilar){
+      pilar.cursos = pilar.cursos.sort((a, b) => (a. published_at > b.published_at ? -1 : 1));
+    });
+
     return pilars;
   }
 

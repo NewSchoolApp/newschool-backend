@@ -148,12 +148,18 @@ export class CmsIntegration implements OnModuleInit {
     return this.httpService.get<CMSTestDTO>(url, config).toPromise();
   }
 
-  public async getPilars(): Promise<AxiosResponse<CMSPilarDTO[]>> {
+  public async getPilars(options: { _sort?: string } = {}): Promise<AxiosResponse<CMSPilarDTO[]>> {
     const url = `${this.cmsUrl}/pilars`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
     };
-    const config: AxiosRequestConfig = { headers };
+
+    const params = {
+      _limit: -1,
+      ...options,
+    };
+
+    const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSPilarDTO[]>(url, config).toPromise();
   }
 
@@ -191,12 +197,16 @@ export class CmsIntegration implements OnModuleInit {
   }
 
 
-  public async getHighlights(): Promise<AxiosResponse<CMSHighlightDTO[]>> {
+  public async getHighlights(options: { _sort?: string } = {}): Promise<AxiosResponse<CMSHighlightDTO[]>> {
     const url = `${this.cmsUrl}/destaques`;
     const headers = {
       authorization: `Bearer ${this.cmsJwt}`,
     };
-    const config: AxiosRequestConfig = { headers };
+    const params = {
+      _limit: -1,
+      ...options,
+    };
+    const config: AxiosRequestConfig = { headers, params };
     return this.httpService.get<CMSHighlightDTO[]>(url, config).toPromise();
   }
 

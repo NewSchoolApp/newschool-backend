@@ -7,8 +7,15 @@ export class HighlightService {
   constructor(private readonly cmsIntegration: CmsIntegration) {}
 
   public async getAll(): Promise<CMSHighlightDTO[]> {
-    const { data: pilars } = await this.cmsIntegration.getHighlights();
-    return pilars;
+    const { data: highlights } = await this.cmsIntegration.getHighlights({
+      _sort: 'published_at:desc',
+    });
+
+    highlights.forEach(function (highlight){
+      highlight.cursos = highlight.cursos.sort((a, b) => (a. published_at > b.published_at ? -1 : 1));
+    });
+
+    return highlights;
   }
 
   public async findById(id: number): Promise<CMSHighlightDTO> {
