@@ -54,7 +54,7 @@
     "rimraf": "3.0.2",
     "rxjs": "6.6.7",
     "secure-password": "4.0.0",
-    "slugify": "1.5.0",
+    "slugify": "1.6.5",
     "swagger-ui-express": "4.1.6",
     "typeorm": "0.2.32",
     "typeorm-transactional-cls-hooked": "0.1.20",
