@@ -19,7 +19,7 @@ services:
     depends_on:
       - db
   db:
-    image: mysql:5.7.34
+    image: mysql:8.3.0
     ports:
       - 5432:5432
     environment:
